@@ -1,0 +1,199 @@
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <!--begin: load CloudEC JS SDK-->
+    <script src="./sdk/CloudEC-SDK.js" /></script>
+    <script src="./usage/event_process.js" /></script>
+    <script src="./usage/conference_usage.js" /></script>
+    <!--end: load CloudEC JS SDK-->
+
+    <!--begin:webcomponentsts component initialization-->
+    <script>
+        if (!window.customElements) { document.write('<!--'); } else { window.ShadyDOM = { force: true }; window.customElements.forcePolyfill = true; }
+    </script>
+    <script src="./usage/components/webcomponentsjs-1.0.20/custom-elements-es5-adapter.js"></script>
+    <!--! do not remove -->
+    <script src="./usage/components/webcomponentsjs-1.0.20/webcomponents-loader.js"></script>
+    <!--end:webcomponentsts component initialization-->
+    <script src="./usage/components/My97DatePicker/WdatePicker.js"></script>
+    <!--begin: Add components-->
+    <link rel="import" href="./usage/components/video_canvas.html">
+    <link rel="import" href="./usage/components/conf_list.html">
+    <link rel="import" href="./usage/components/book_conf.html">
+    <link rel="import" href="./usage/components/media_device.html">
+    <link rel="import" href="./usage/components/data_canvas.html">
+    <link rel="import" href="./usage/components/attendee_list.html">
+    <link rel="import" href="./usage/components/conf_control.html">
+    <link rel="import" href="./usage/components/eaddr_contact.html">
+    <link rel="import" href="./usage/components/eaddr_dept.html">
+    <!--end: Add components-->
+
+    <script type="text/javascript">
+        function configure() {
+            var options = {
+                domain: "localhost.cloudec.huaweicloud.com",
+                isWSS:1,
+                isTlsSupport:0, 
+                isWithSBC: 0, 
+                dropFrame: 2, 
+            }
+            cloudEC.configure(options)
+        }
+
+        function setProxyClick(obj) {
+            if (obj.checked)
+            {
+                document.getElementById("proxyDiv").style.display = 'block';
+            }
+            else
+            {
+                document.getElementById("proxyDiv").style.display = 'none';
+            }
+        }
+    </script>
+
+</head>
+
+<body onload="configure()">
+
+    <ul class="tabs">
+        <li>
+            <label for="tab1">User login</label>
+            <div id="tab-content1" class="tab-content">
+                <fieldset>
+                    <legend>User login</legend>
+                    <div id="login">
+                        server address:<input type="text" id="svr_addr" value="10.174.5.156" /> port:
+                        <input type="text" id="svr_port" value="8443" /> username:
+                        <input type="text" id="name" value="tup05@huawei.com"/> password:
+                        <input type="text" id="passwd" value="Aa123456" />
+                        <button onclick="login()">login</button>
+                        <br/>
+                        <input type="checkbox" id="setProxy_Select" onclick="setProxyClick(this)" />proxy server
+                        <div id="proxyDiv" style="display:none">
+                            address:<input type="text" id="proxy_addr" value="" /> 
+                            port:<input type="text" id="proxy_port" value="" /> 
+                            account number:<input type="text" id="proxy_account" value="" /> 
+                            password:<input type="text" id="proxy_pwd" value="" />
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>User logout</legend>
+                    <div id="call" style="display:none">
+                        <h2>WELCOME TO High-Level-API</h2>
+                        <div id="userinfo"></div>
+                        <button onclick="logout()">logout</button>
+                    </div>
+                </fieldset>
+            </div>
+        </li>        
+        <li>
+            <label for="tabAnonymousConf">Anonymous conference</label>
+            <div id="tab-contentAnonymous" class="tab-content">
+                <fieldset>
+                    <legend>Anonymous conference</legend>
+                    <div id="anonymousConf">                         
+                        server address:<input type="text" id="anony_svr_addr" value="10.174.5.182" /> port:
+                        <input type="text" id="anony_svr_port" value="443" /> conference ID:                        
+                        <input type="text" id="anony_conf_id" value=""/> conference password:                        
+                        <input type="text" id="anony_passwd" value="" />
+                        call type: <select id='anony_call_type'>  
+                                <option value=0>audio</option> 
+                                <option value=1 selected="selected">video</option>
+                             </select> 
+                        <button onclick="joinAnonymousConf()">anonymous conference</button>
+                    </div>
+                </fieldset>
+            </div>
+        </li>
+        <li>
+            <label for="tab2">Create conference</label>
+            <div id="tab-content2" class="tab-content">
+                <fieldset>
+                    <legend>Book conference</legend>
+                    <cloudec-bookconf/>
+                </fieldset>
+                <fieldset>
+                    <legend>Conference List</legend>
+                    <cloudec-conflist/>
+                </fieldset>
+            </div>
+        </li>
+        <li>
+            <label for="tab3">Join conference</label>
+            <div id="tab-content3" class="tab-content">
+                <fieldset>
+                    <legend>Instance conference</legend>
+                    conference type: <select id='instance_conf_type'>  
+                                <option value=0>audio</option> 
+                                <option value=1>video</option> 
+                                <option value=2>audio+Data</option> 
+                                <option value=3 selected="selected">video+Data</option>
+                             </select>                           
+                    members list:<input type="text" id="member_list" value="11005,11004" />
+                    <button onclick="joinInstanceConf()">instance conference</button>
+                </fieldset>
+                <fieldset>
+                    <legend>Book conference</legend>
+                    conference ID:<input type="text" id="conferenceId" value="121997039" /> access code:
+                    <input type="text" id="accessNumber" value="+865718001" /> conference password: <input type="text" id="confPasswd" value="33816412"
+                    />
+                    <button onclick="accessReservedConf()">access reserved conference</button>
+                </fieldset>
+
+                <fieldset style="margin-top:5px;height:500px;">
+                    <legend>Video canvas</legend>
+                    <cloudec-canvas />
+                </fieldset>
+                <fieldset style="margin-top:5px;">
+                    <legend>Data canvas</legend>
+                    <cloudec-datacanvas id="cloudec-datacanvas" width="1024px" height="768px" />
+                </fieldset>
+            </div>
+        </li>
+        <li>
+            <label for="tab4">Conference control</label>
+            <div id="tab-content4" class="tab-content">
+                <fieldset>
+                    <legend>Attendee list</legend>
+                    <div id="attendeeList" style="margin-top:5px;">
+                        <cloudec-attendeelist/>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Conference control</legend>
+                    <div id="confcontrol" style="margin-top:5px;">
+                        <cloudec-confcontrol/>
+                    </div>
+                </fieldset>
+            </div>
+        </li>
+        <li>
+            <label for="tab5">Media device</label>
+            <div id="tab-content5" class="tab-content" style="position: relative;left: 0px;top: 0px;">
+                <fieldset>
+                    <legend>Media control</legend>
+                    <cloudec-mediadevice/>
+                </fieldset>
+            </div>
+        </li>
+        <li>
+            <label for="tab6">Enterprise address</label>
+            <div id="tab-content6" class="tab-content" style="position: relative;left: 0px;top: 0px;">
+                <fieldset>
+                    <legend>Query contacts</legend>
+                    <cloudec-eaddrcontact>
+                </fieldset>
+                <fieldset>
+                    <legend>Query department</legend>
+                    <cloudec-eaddrdept/>
+                </fieldset>
+            </div>
+        </li>
+    </ul>
+</body>
+
+</html>

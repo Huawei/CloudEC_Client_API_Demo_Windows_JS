@@ -1,0 +1,1052 @@
+{
+    "register" : 
+    {
+        "403" : {
+            "desp" : "注册：鉴权失败（403）",
+            "howtofix" : "请检查当前用户名或密码是否正确"
+        },
+        "408" : {
+            "desp" : "注册：超时，服务器无响应（408）",
+            "howtofix" : "请检查当前配置的SIP服务器是否正确，以及是否可访问"
+        },
+        "499" : {
+            "desp" : "注册：请求无法发送（499）",
+            "howtofix" : "请检查当前网络是否可连通，或配置的本地IP地址是否正确"
+        },
+        "500":{
+            "desp" : "注册：服务器内部错误（500）",
+            "howtofix" : ""
+        }
+    },
+    "call" :
+    {
+        "404":
+        {
+            "desp" : "呼叫：未找到号码（404）",
+            "howtofix" : "请确认呼叫号码是否正确"
+        },
+        "480":
+        {
+            "desp" : "呼叫：临时失效（480）",
+            "howtofix" : ""
+        },
+        "481":
+        {
+            "desp" : "呼叫：无法接通（481）",
+            "howtofix" : "请确认呼叫号码是否正确"
+        },
+        "486":
+        {
+            "desp" : "呼叫：对方正忙（486）",
+            "howtofix" : "请稍后再拨"
+        },
+        "499":{
+            "desp" : "呼叫：网络不通（499）",
+            "howtofix" : "核对配置的本地IP地址是否正确"
+        },
+        "500":{
+            "desp" : "呼叫：服务器内部错误（500）",
+            "howtofix" : ""
+        },
+        "501":{
+            "desp" : "呼叫：服务器不可执行（501）",
+            "howtofix" : ""
+        },
+        "503":{
+            "desp" : "呼叫：服务无效（503）",
+            "howtofix" : ""
+        },
+        "504":{
+            "desp" : "呼叫：服务器超时（504）",
+            "howtofix" : ""
+        },
+        "603":{
+            "desp" : "呼叫：对端拒接（603）",
+            "howtofix" : ""
+        }
+    },
+    "watch_site" : 
+    {
+        "1" : {
+            "desp" : "观看与会者：远端终端不存在",
+            "howtofix" : "请检查远端终端是否正确"
+        },
+        "2" : {
+            "desp" : "观看与会者：请求终端不是主席终端",
+            "howtofix" : ""
+        },
+        "10" : {
+            "desp" : "观看与会者：会议管理员正管理会议",
+            "howtofix" : ""
+        },	
+        "ff" : {
+            "desp" : "观看与会者：其他错误",
+            "howtofix" : ""
+        }
+    },
+    "lock_conf" : 
+    {
+        "2" : {
+            "desp" : "锁定/解锁会议：非主席不允许锁定/解锁会议",
+            "howtofix" : "请检查请求终端是否是主席"
+        },
+        "7" : {
+            "desp" : "锁定/解锁会议：AS服务器返回失败",
+            "howtofix" : ""
+        },
+        "ff" : {
+            "desp" : "锁定/解锁会议：其他错误",
+            "howtofix" : ""
+        }
+    },
+    "svc_watch_sites" : 
+    {
+        "0" : {
+            "desp" : "多流观看请求：大画面会场不允许指定",
+            "howtofix" : "请检查请求的第一个会场的MT号是否都为0"
+        },
+        "ff" : {
+            "desp" : "多流观看请求：其他错误",
+            "howtofix" : ""
+        }
+    },
+    "upgrade_conf" : 
+    {
+	"8" : {
+            "desp" : "升级会议：数据会议资源不足",
+            "howtofix" : ""
+        },
+	"9" : {
+            "desp" : "升级会议：正在处理中，请等待",
+            "howtofix" : ""
+        },
+	"ff" : {
+            "desp" : "升级会议：其他错误",
+            "howtofix" : ""
+        }
+    },
+    "request_chairman" : 
+    {
+        "3" : {
+            "desp" : "申请主席：会议没有主席功能",
+            "howtofix" : "请检查会议信息"
+        },
+	"4" : {
+            "desp" : "申请主席：所操纵的终端没有主席功能",
+            "howtofix" : "请检查该终端的权限"
+        },
+	"5" : {
+            "desp" : "申请主席：会议中已有主席",
+            "howtofix" : ""
+        },
+	"6" : {
+            "desp" : "申请主席：主席密码错误",
+            "howtofix" : ""
+        },	
+        "ff" : {
+            "desp" : "申请主席：其他错误",
+            "howtofix" : ""
+        }
+    },
+    "add_attendee" : 
+    {
+        "1" : {
+            "desp" : "添加与会者：失败",
+            "howtofix" : ""
+        }
+    },
+    "broadcast" : 
+    {
+        "1" : {
+            "desp" : "主席广播：广播终端不存在",
+            "howtofix" : "请检查被广播的终端"
+        },
+	"2" : {
+            "desp" : "主席广播：请求终端不是主席终端",
+            "howtofix" : ""
+        },
+	"10" : {
+            "desp" : "主席广播：会议管理员正管理会议",
+            "howtofix" : ""
+        },
+        "ff" : {
+            "desp" : "主席广播：其他错误",
+            "howtofix" : ""
+        }
+    },
+    "cancel_broadcast" : 
+    {
+        "1" : {
+            "desp" : "主席取消广播：不存在主席广播",
+            "howtofix" : ""
+        },
+	"2" : {
+            "desp" : "主席取消广播：请求终端不是主席终端",
+            "howtofix" : ""
+        },
+	"10" : {
+            "desp" : "主席取消广播：会议管理员正管理会议",
+            "howtofix" : ""
+        },	
+        "ff" : {
+            "desp" : "主席取消广播：其他错误",
+            "howtofix" : ""
+        }
+    },
+    "postpone_conf" : 
+    {
+        "1" : {
+            "desp" : "延长会议：一般错误",
+            "howtofix" : ""
+        }
+    },
+    "book_conf" : 
+    {
+        "1" : {
+            "desp" : "预约会议：用户信息不合法",
+            "howtofix" : ""
+        },
+	"2" : {
+            "desp" : "预约会议：用户不存在",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "预约会议：密码错误",
+            "howtofix" : ""
+        },
+	"4" : {
+            "desp" : "预约会议：系统故障或系统资源不足",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "预约会议：会议冲突",
+            "howtofix" : ""
+        },
+	"10" : {
+            "desp" : "预约会议：网络故障",
+            "howtofix" : ""
+        },
+        "11" : {
+            "desp" : "预约会议：原因不明",
+            "howtofix" : ""
+        },
+	"12" : {
+            "desp" : "预约会议：已经在主叫呼集过程中",
+            "howtofix" : ""
+        },	
+        "18" : {
+            "desp" : "预订会议：主叫呼集超时",
+            "howtofix" : ""
+        },
+        "19" : {
+            "desp" : "预订会议：密码认证失败",
+            "howtofix" : ""
+        }	
+    },
+    "get_conf_list" : 
+    {
+        "1" : {
+            "desp" : "获取会议列表：用户信息不合法",
+            "howtofix" : ""
+        },
+	"2" : {
+            "desp" : "获取会议列表：用户不存在",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "获取会议列表：密码错误",
+            "howtofix" : ""
+        },
+	"4" : {
+            "desp" : "获取会议列表：系统故障或系统资源不足",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "获取会议列表：会议冲突",
+            "howtofix" : ""
+        },
+	"10" : {
+            "desp" : "获取会议列表：网络故障",
+            "howtofix" : ""
+        },
+        "11" : {
+            "desp" : "获取会议列表：原因不明",
+            "howtofix" : ""
+        },
+	"12" : {
+            "desp" : "获取会议列表：已经在主叫呼集过程中",
+            "howtofix" : ""
+        },	
+        "18" : {
+            "desp" : "获取会议列表：主叫呼集超时",
+            "howtofix" : ""
+        },
+        "19" : {
+            "desp" : "获取会议列表：密码认证失败",
+            "howtofix" : ""
+        }	
+    },    
+    "book_conf_uportal" : 
+    {
+    	"1" : {
+            "desp" : "预订会议：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "预订会议：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "预订会议：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "预订会议：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "预订会议：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "预订会议：服务器异常",
+            "howtofix" : ""
+        }	
+    },    
+    "subscribe_conf_uportal" : 
+    {
+        "1" : {
+            "desp" : "订阅会议信息：一般错误",
+            "howtofix" : ""
+        },
+	"3" : {
+            "desp" : "订阅会议信息：websocket超时没有响应",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "订阅会议信息：鉴权失败",
+            "howtofix" : ""
+        }
+    },  
+    "add_attendee_uportal" : 
+    {
+    	"1" : {
+            "desp" : "添加与会者：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "添加与会者：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "添加与会者：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "添加与会者：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "添加与会者：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "添加与会者：服务器异常",
+            "howtofix" : ""
+        }	
+    },    
+    "delete_attendee_uportal" : 
+    {
+    	"1" : {
+            "desp" : "删除与会者：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "删除与会者：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "删除与会者：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "删除与会者：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "删除与会者：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "删除与会者：服务器异常",
+            "howtofix" : ""
+        }
+    },    
+    "hangup_attendee_uportal" : 
+    {
+    	"1" : {
+            "desp" : "挂断与会者：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "挂断与会者：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "挂断与会者：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "挂断与会者：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "挂断与会者：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "挂断与会者：服务器异常",
+            "howtofix" : ""
+        }
+    },    
+    "mute_attendee_uportal" : 
+    {
+    	"1" : {
+            "desp" : "闭音/取消闭音与会者：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "闭音/取消闭音与会者：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "闭音/取消闭音与会者：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "闭音/取消闭音与会者：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "闭音/取消闭音与会者：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "闭音/取消闭音与会者：服务器异常",
+            "howtofix" : ""
+        }
+    },
+    "mute_conf_uportal" : 
+    {
+    	"1" : {
+            "desp" : "闭音/取消闭音会场：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "闭音/取消闭音会场：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "闭音/取消闭音会场：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "闭音/取消闭音会场：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "闭音/取消闭音会场：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "闭音/取消闭音会场：服务器异常",
+            "howtofix" : ""
+        }
+    },   
+    "postpone_conf_uportal" : 
+    {
+    	"1" : {
+            "desp" : "延长会议：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "延长会议：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "延长会议：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "延长会议：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "延长会议：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "延长会议：服务器异常",
+            "howtofix" : ""
+        }
+    },  
+    "request_chairman_uportal" : 
+    {
+    	"1" : {
+            "desp" : "申请主席：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "申请主席：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "申请主席：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "申请主席：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "申请主席：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "申请主席：服务器异常",
+            "howtofix" : ""
+        }
+    },  
+    "release_chairman_uportal" : 
+    {
+    	"1" : {
+            "desp" : "释放主席：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "释放主席：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "释放主席：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "释放主席：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "释放主席：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "释放主席：服务器异常",
+            "howtofix" : ""
+        }
+    },  
+    "lock_conf_uportal" : 
+    {
+    	"1" : {
+            "desp" : "锁定/解锁会议：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "锁定/解锁会议：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "锁定/解锁会议：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "锁定/解锁会议：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "锁定/解锁会议：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "锁定/解锁会议：服务器异常",
+            "howtofix" : ""
+        }
+    },       
+    "handup_uportal" : 
+    {
+    	"1" : {
+            "desp" : "举手/取消举手：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "举手/取消举手：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "举手/取消举手：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "举手/取消举手：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "举手/取消举手：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "举手/取消举手：服务器异常",
+            "howtofix" : ""
+        }
+    },
+    "upgrade_conf_uportal" : 
+    {
+    	"1" : {
+            "desp" : "升级会议：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "升级会议：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "升级会议：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "升级会议：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "升级会议：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "升级会议：服务器异常",
+            "howtofix" : ""
+        }
+    },    
+    "broadcast_uportal" : 
+    {
+    	"1" : {
+            "desp" : "广播：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "广播：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "广播：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "广播：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "广播：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "广播：服务器异常",
+            "howtofix" : ""
+        }
+    },  
+    "svc_watch_sites_uportal" : 
+    {
+    	"1" : {
+            "desp" : "多流观看请求：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "多流观看请求：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "多流观看请求：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "多流观看请求：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "多流观看请求：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "多流观看请求：服务器异常",
+            "howtofix" : ""
+        }
+    },   
+    "end_conf_uportal" : 
+    {
+    	"1" : {
+            "desp" : "结束会议：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "结束会议：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "结束会议：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "结束会议：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "结束会议：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "结束会议：服务器异常",
+            "howtofix" : ""
+        }
+    },   
+    "set_speaker_report" : 
+    {
+    	"1" : {
+            "desp" : "开启或关闭发言人上报：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "开启或关闭发言人上报：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "开启或关闭发言人上报：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "开启或关闭发言人上报：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "开启或关闭发言人上报：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "开启或关闭发言人上报：服务器异常",
+            "howtofix" : ""
+        }
+    },  
+    "get_vmr_list" : 
+    {
+    	"1" : {
+            "desp" : "获取个人VMR列表：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "获取个人VMR列表：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "获取个人VMR列表：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "获取个人VMR列表：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "获取个人VMR列表：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "获取个人VMR列表：服务器异常",
+            "howtofix" : ""
+        }
+    },         
+    "request_confctrl_right" : 
+    {
+    	"1" : {
+            "desp" : "请求会控权限：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "请求会控权限：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "请求会控权限：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "请求会控权限：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "请求会控权限：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "请求会控权限：服务器异常",
+            "howtofix" : ""
+        }
+    },   
+    "get_conf_info" : 
+    {
+    	"1" : {
+            "desp" : "获取会议信息：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "获取会议信息：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "获取会议信息：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "获取会议信息：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "获取会议信息：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "获取会议信息：服务器异常",
+            "howtofix" : ""
+        }
+    },     
+    "get_dataconf_params" : 
+     {
+    	"1" : {
+            "desp" : "获取数据会议参数：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "获取数据会议参数：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "获取数据会议参数：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "获取数据会议参数：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "获取数据会议参数：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "获取数据会议参数：服务器异常",
+            "howtofix" : ""
+        }
+    }, 
+    "get_conflist_uportal" : 
+    {
+    	"1" : {
+            "desp" : "获取会议列表：服务器返回业务失败",
+            "howtofix" : ""
+        },
+        "3" : {
+            "desp" : "获取会议列表：http连接超时",
+            "howtofix" : ""
+        },
+        "5" : {
+            "desp" : "获取会议列表：DNS解析异常",
+            "howtofix" : ""
+        },		
+        "6" : {
+            "desp" : "获取会议列表：请求消息异常",
+            "howtofix" : ""
+        },
+        "7" : {
+            "desp" : "获取会议列表：鉴权失败",
+            "howtofix" : ""
+        },	
+	"8" : {
+            "desp" : "获取会议列表：服务器异常",
+            "howtofix" : ""
+        }
+    },       
+    "login_get_license_type" :
+	{
+	    "6"  : {
+            "desp" : "解析服务器PTKT包异常",
+            "howtofix" : ""
+        }
+    },
+	"login_apply_license" :
+	{
+	    "6"  : {
+            "desp" : "解析服务器PTKT包异常",
+            "howtofix" : ""
+        }
+    },
+	"login_refresh_license" :
+	{
+        "3"  : {
+            "desp" : "超时",
+            "howtofix" : ""
+        },
+	    "6"  : {
+            "desp" : "解析服务器PTKT包异常",
+            "howtofix" : ""
+        }
+    },
+	"login_get_stg_param" :
+	{
+        "9"  : {
+            "desp" : "鉴权失败",
+            "howtofix" : ""
+        },
+        "11"  : {
+            "desp" : "服务器异常",
+            "howtofix" : ""
+        }
+    },
+	"login_get_http_proto" :
+	{
+        "16"  : {
+            "desp" : "无效的URL",
+            "howtofix" : ""
+        }
+    },
+	"login_search_server" :
+	{
+        "17"  : {
+            "desp" : "查询服务器地址失败",
+            "howtofix" : ""
+        }
+    },
+	"login_search_uportal" :
+	{
+        "7"  : {
+            "desp" : "DNS解析异常",
+            "howtofix" : ""
+        }
+    },
+	"login_parse_auth" :
+	{
+        "14"  : {
+            "desp" : "错误的服务器类型",
+            "howtofix" : ""
+        }
+    },
+	"login_get_authorize_url" :
+	{
+        "14"  : {
+            "desp" : "错误的服务器类型",
+            "howtofix" : ""
+        },
+        "15"  : {
+            "desp" : "错误的服务器版本",
+            "howtofix" : ""
+        }
+    },
+	"login_authorize" :
+	{
+        "8"  : {
+            "desp" : "请求消息异常",
+            "howtofix" : ""
+        },
+        "9"  : {
+            "desp" : "鉴权失败",
+            "howtofix" : ""
+        },
+        "12"  : {
+            "desp" : "账号被锁定",
+            "howtofix" : ""
+        }
+    },
+	"login_uportal_right_authorize" :
+	{
+        "7"  : {
+            "desp" : "DNS解析异常",
+            "howtofix" : ""
+        },
+        "12"  : {
+            "desp" : "账号被锁定",
+            "howtofix" : ""
+        }
+    },
+	"login_smc_authorize" :
+	{
+        "7"  : {
+            "desp" : "DNS解析异常",
+            "howtofix" : ""
+        }
+    },
+	"login_add_ipaddr_to_array" :
+	{
+        "7"  : {
+            "desp" : "DNS解析异常",
+            "howtofix" : ""
+        }
+    },
+	"login_change_password" :
+    {
+        "19"  : {
+            "desp" : "系统不支持修改密码",
+            "howtofix" : ""
+        },
+        "20"  : {
+            "desp" : "老密码错误",
+            "howtofix" : ""
+        },
+        "21"  : {
+            "desp" : "新密码长度非法",
+            "howtofix" : ""
+        },
+        "22"  : {
+            "desp" : "新密码复杂度不满足要求",
+            "howtofix" : ""
+        },
+        "23"  : {
+            "desp" : "新密码不能与最近旧密码相同",
+            "howtofix" : ""
+        },
+        "24"  : {
+            "desp" : "新密码不能包含3个以上重复字符",
+            "howtofix" : ""
+        },
+        "25"  : {
+            "desp" : "上次修改密码后5分钟内不能更新密码",
+            "howtofix" : ""
+        },
+        "26"  : {
+            "desp" : "密码不能包含账号或其逆序账号",
+            "howtofix" : ""
+        },
+        "27"  : {
+            "desp" : "新密码相较于老密码至少要有两个不同的字符",
+            "howtofix" : ""
+        },
+        "28"  : {
+            "desp" : "HSS上修改密码失败",
+            "howtofix" : ""
+        },
+        "29"  : {
+            "desp" : "用户名或者密码错误",
+            "howtofix" : ""
+        },
+        "30"  : {
+            "desp" : "用户已被锁定",
+            "howtofix" : ""
+        }
+    },
+    "ctd_start_call" :
+    {
+        "7"  : {
+            "desp" : "鉴权失败",
+            "howtofix" : ""
+        }
+    },
+	"ctd_end_call" :
+    {
+        "7"  : {
+            "desp" : "鉴权失败",
+            "howtofix" : ""
+        }
+    }
+
+}

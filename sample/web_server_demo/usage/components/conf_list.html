@@ -1,0 +1,208 @@
+<script>
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+    function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+    var cloudec_current_index = 0;
+    var cloudEC_conf_state = 0
+    var joinConference = function (conf_id, accessNumber, confPasswd) {
+
+        if (cloudEC_conf_state != 2) {
+            alert("Meeting has not yet started")
+            return
+        }
+        const joinConfParam = {
+            'conferenceId': conf_id,
+            'accessNumber': accessNumber,
+            'confPasswd': confPasswd,
+        }
+        client.joinConference(joinConfParam, function (ret) {
+            if (ret.result) {
+                console.info(JSON.stringify(ret))
+            }
+            else {
+                alert("joinConference failed")
+                console.error(JSON.stringify(ret.info))
+            }
+        });
+        var cloudec_confinfo_div = document.getElementById('cloudec_confinfo_div')
+        cloudec_confinfo_div.style.display = "none"
+    }
+
+    var defaultPsw = "******";
+    var getMyConfInfo = function (conf_id) {
+
+        client.getMyConfInfo(conf_id, function (ret) {
+            if (ret.info) {
+                var data = ret.info
+                var confPsw = data.chairmanPasswd
+                if (confPsw == defaultPsw) {
+                    confPsw = data.generalPasswd
+                }
+
+                cloudEC_conf_state = data.state
+                var conf_state
+                switch (cloudEC_conf_state) {
+                    case 0: conf_state = "book status"; break
+                    case 1: conf_state = "Creating status"; break
+                    case 2: conf_state = "Meeting has started"; break
+                    case 3: conf_state = "Meeting is closed"; break
+                }
+
+                var media_type
+                switch (data.mediaType) {
+                    case 1: media_type = "Audio"; break
+                    case 5: media_type = "video"; break
+                    case 17: media_type = "Audio+data"; break
+                    case 21: media_type = "video+data"; break
+                }
+                var cloudec_confinfo_div = document.getElementById('cloudec_confinfo_div')
+                cloudec_confinfo_div.style.display = "block"
+                cloudec_confinfo_div.innerHTML = "<ul>"
+                    + "<li>conf_id:" + data.conferenceID + "</li>"
+                    + "<li>access_number:" + data.accessNumber + "</li>"
+                    + "<li>chairman_pwd:" + data.chairmanPasswd + "</li>"
+                    + "<li>general_pwd:" + data.generalPasswd + "</li>"
+                    + "<li>conf_state:"
+                    + conf_state
+                    + "</li>"
+                    + "<li>conf_subject:" + data.topic + "</li>"
+                    + "<li>start_time:" + data.startTime + "</li>"
+                    + "<li>end_time:" + data.endTime + "</li>"
+                    + "<li>media_type:"
+                    + media_type
+                    + "</li>"
+                    + "<li>scheduser_name:" + data.scheduserName + "</li>"
+                    + "<li>scheduser_number:" + data.scheduerNumber + "</li>"
+                    + "<li>num_of_addendee:" + data.attendeeAmount + "</li>"
+                    + "</ul>"
+                    + "<button type='button' onclick=joinConference('"
+                    + conf_id + "','" + data.accessNumber + "','" + confPsw
+                    + "')>one-click join conference</button>"
+                cloudec_confinfo_div.addEventListener("mouseout", function (e) {
+                    cloudec_confinfo_div.ondblclick = function (e) {
+                        cloudec_confinfo_div.style.display = "none"
+                    }
+                }, false)
+            }
+        })
+    }
+
+    var getMyConfList = function (pageIndex) {
+        var pageSize = 6;
+        var div = document.getElementById("cloudec_conflist_div")
+        var table = document.getElementById("cloudec_conflist_table")
+        if (table) {
+            div.removeChild(table)
+        }
+
+        client.getMyConfList(pageIndex, pageSize, function (ret) {
+            if (ret.result) {
+                var t = document.createElement("table")
+                t.id = "cloudec_conflist_table"
+                t.insertRow(0)
+                var r = t.insertRow(0);
+                var c = r.insertCell(0);
+                c.innerHTML = "subject";
+                c = r.insertCell(1);
+                c.innerHTML = "start time";
+                c = r.insertCell(2);
+                c.innerHTML = "Conference details";
+
+                var data = ret.info
+
+                for (var m in data) {
+                    r = t.insertRow(parseInt(m) + 1);
+                    c = r.insertCell(0);
+                    c.innerHTML = data[m].topic//conf_subject
+                    c = r.insertCell(1);
+                    c.innerHTML = data[m].startTime//start_time
+
+                    var btn = document.createElement("button")
+                    btn.id = data[m].conferenceID;
+                    btn.innerHTML = "view"
+                    btn.addEventListener("mousedown", function (e) {
+                        getMyConfInfo(this.id)
+                    })
+                    c = r.insertCell(2);
+                    c.appendChild(btn)
+                }
+                div.appendChild(t)
+            }
+        })
+    }
+
+    var CloudEC_ConfList = function (_HTMLElement) {
+        _inherits(CloudEC_ConfList, _HTMLElement);
+
+        function CloudEC_ConfList() {
+            _classCallCheck(this, CloudEC_ConfList);
+            return _possibleConstructorReturn(this, (CloudEC_ConfList.__proto__ || Object.getPrototypeOf(CloudEC_ConfList)).call(this));
+        }
+
+
+        CloudEC_ConfList.prototype.connectedCallback = function () {
+            console.log("it's alive! connectedCallback");
+            this.callback()
+        }
+
+        CloudEC_ConfList.prototype.createdCallback = function () {
+            console.log("it's alive! createdCallback");
+            this.callback()
+        }
+
+        CloudEC_ConfList.prototype.callback = function () {
+
+            var cloudec_confinfo_div = document.createElement('div')
+            cloudec_confinfo_div.id = "cloudec_confinfo_div"
+            cloudec_confinfo_div.style.cssText = "width: 380px;height: 300px;background: rgb(247, 240, 146);"
+            cloudec_confinfo_div.style.display = "none"//disable
+
+            var cloudec_conflist_div = document.createElement('div')
+            cloudec_conflist_div.id = "cloudec_conflist_div"
+            
+            //监听登录自定义事件,登录成功后需要触发此事件,参考conference_usage.js登录成功处理逻辑
+            cloudec_conflist_div.addEventListener("cloudec:login", this.getMyConfListFirst, false);
+
+            var f_btn = document.createElement('button')
+            f_btn.innerHTML = "refresh meeting list"
+            f_btn.addEventListener("mousedown", this.getMyConfListFirst)
+
+            var n_btn = document.createElement("button")
+            n_btn.innerHTML = "next page"
+            n_btn.onclick = function () {
+                cloudec_current_index += 1;
+                if (cloudec_current_index > 5) {
+                    cloudec_current_index = 5
+                }
+                getMyConfList(cloudec_current_index)
+            }
+
+            var u_btn = document.createElement("button")
+            u_btn.innerHTML = "last page"
+            u_btn.onclick = function () {
+                cloudec_current_index -= 1;
+                if (cloudec_current_index < 1) {
+                    cloudec_current_index = 1
+                }
+                getMyConfList(cloudec_current_index)
+            }
+
+            cloudec_conflist_div.appendChild(n_btn)
+            cloudec_conflist_div.appendChild(u_btn)
+            cloudec_conflist_div.appendChild(f_btn)
+            this.appendChild(cloudec_conflist_div)
+            this.appendChild(cloudec_confinfo_div)
+        }
+
+        CloudEC_ConfList.prototype.getMyConfListFirst = function () {
+            cloudec_current_index = 1
+            getMyConfList(cloudec_current_index)
+        }
+
+        return CloudEC_ConfList;
+    }(HTMLElement);
+
+    customElements.define("cloudec-conflist", CloudEC_ConfList);
+
+</script>

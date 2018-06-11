@@ -1,0 +1,95 @@
+<script>
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+    function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+      var searchDept = function () {
+        var deptId = document.getElementById("deptId_ipt").value;
+        var div = document.getElementById("cloudec_deptlist_div")
+        var table = document.getElementById("cloudec_deptlist_table")
+        if (table) {
+            div.removeChild(table)
+        }
+
+        client.searchDeptInfo(deptId, function (ret) {
+            if (ret.result) {
+                var t = document.createElement("table")
+                t.id = "cloudec_deptlist_table"
+                t.insertRow(0)
+                var r = t.insertRow(0);
+                var c = r.insertCell(0);
+                c.innerHTML = "index";
+                c = r.insertCell(1);
+                c.innerHTML = "deptId";
+                c = r.insertCell(2);
+                c.innerHTML = "parentId";
+                c = r.insertCell(3);
+                c.innerHTML = "deptName";                 
+
+                var data = ret.info
+
+                if (data != "NULL") {
+                    for (var m in data) {
+                        r = t.insertRow(parseInt(m) + 1);
+                        c = r.insertCell(0);
+                        c.innerHTML =data[m].index;
+                        c = r.insertCell(1);
+                        c.innerHTML =data[m].deptId;
+                        c = r.insertCell(2);
+                        c.innerHTML =data[m].parentId;
+                        c = r.insertCell(3);
+                        c.innerHTML =data[m].deptName;                         
+                    }
+                }
+                
+                div.appendChild(t)
+            }
+        })
+    }
+
+    var CloudEC_DeptList = function (_HTMLElement) {
+        _inherits(CloudEC_DeptList, _HTMLElement);
+
+        function CloudEC_DeptList() {
+            _classCallCheck(this, CloudEC_DeptList);
+            return _possibleConstructorReturn(this, (CloudEC_DeptList.__proto__ || Object.getPrototypeOf(CloudEC_DeptList)).call(this));
+        }
+
+
+        CloudEC_DeptList.prototype.connectedCallback = function () {
+            console.log("it's alive! connectedCallback");
+            this.callback()
+        }
+
+        CloudEC_DeptList.prototype.createdCallback = function () {
+            console.log("it's alive! createdCallback");
+            this.callback()
+        }
+
+        CloudEC_DeptList.prototype.callback = function () {
+            var cloudec_deptlist_div = document.createElement('div')
+            cloudec_deptlist_div.id = "cloudec_deptlist_div"
+            
+            var deptId_ipt = document.createElement('input');
+            deptId_ipt.id = "deptId_ipt";
+            deptId_ipt.style.cssText = "height: 24px;margin-left: 5px;margin-right: 5px;width: 80px;";         
+
+            var searchDept_btn = document.createElement('button')
+            searchDept_btn.innerHTML = "search"
+            searchDept_btn.addEventListener("mousedown", this.searchDeptFirst)
+            
+            cloudec_deptlist_div.appendChild(deptId_ipt)
+            cloudec_deptlist_div.appendChild(searchDept_btn)
+            this.appendChild(cloudec_deptlist_div)
+        }        
+
+        CloudEC_DeptList.prototype.searchDeptFirst = function () {                    
+            searchDept()
+        }
+
+        return CloudEC_DeptList;
+    }(HTMLElement);
+
+    customElements.define("cloudec-eaddrdept", CloudEC_DeptList);
+
+</script>

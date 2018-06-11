@@ -1,0 +1,513 @@
+<script>
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+    function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+    //Custom variables and functions
+
+    var cloudecAddAttendee = function () {
+        var conference = client.getConfHandler();
+        var cloudecAttendeeNumber = document.getElementById("addAttendee_ipt").value;
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        } else if (cloudecAttendeeNumber == null || cloudecAttendeeNumber == "") {
+            alert("attendee number is empty");
+            return;
+        }
+
+        var cloudecAttendeesArray = cloudecAttendeeNumber.split(",");
+        var cloudecAttendees = new Array();
+        for (var i = 0; i < cloudecAttendeesArray.length; i++) {
+            cloudecAttendees[i] = { number: cloudecAttendeesArray[i], name: cloudecAttendeesArray[i], role: 0 };
+        }
+
+        client.addAttendee(cloudecAttendees);
+    }
+
+    var cloudecMuteAll = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.muteConference(true);
+    }
+
+    var cloudecUnmuteAll = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.muteConference(false);
+    }
+
+    var cloudecRequestChairman = function () {
+        var conference = client.getConfHandler();
+		var cloudecChairmanPwd = document.getElementById("chairmanPwd_ipt").value;
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.requestChairman(cloudecChairmanPwd);
+    }
+
+    var cloudecReleaseChairman = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.releaseChairman();
+    }
+
+    var cloudecStartShareScreen = function (dataconfUserId) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.startScreenSharing(parseInt(dataconfUserId));
+    }
+
+    var cloudecStopShareScreen = function (dataconfUserId) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.stopScreenSharing(parseInt(dataconfUserId));
+    }
+
+    var cloudecOpenShareScreen = function (dataconfUserId) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.sendMessage({ msgType: 1, msgContent: "CloudEC_OpenShareScreen", receiveID: parseInt(dataconfUserId) });
+    }
+
+    var cloudecCloseShareScreen = function (dataconfUserId) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.sendMessage({ msgType: 1, msgContent: "CloudEC_CloseShareScreen", receiveID: parseInt(dataconfUserId) });
+    }
+
+    var cloudecCreateWhiteBoard = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.createWhiteBoard();
+    }
+
+    var cloudecDeleleWhiteBorad = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.deleleWhiteBorad();
+    }
+
+    var cloudecSetRemoteCtrl = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }  
+        var useridSelect = document.getElementById("setUserid_select");
+        var index = useridSelect.selectedIndex;
+        var value = useridSelect[index].value;
+
+        client.setRemoteCtrl(1, 1, parseInt(value));
+    }
+
+    var cloudecRequestRemoteCtrl = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.requestRemoteCtrl(1);
+    }
+
+    var cloudecMuteAttendee = function (attendeeNumberStr) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        attendeeNumberStr = attendeeNumberStr + "";
+        client.muteAttendee(attendeeNumberStr,true);
+    }
+
+    var cloudecUnmuteAttendee = function (attendeeNumberStr) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        attendeeNumberStr = attendeeNumberStr + "";
+        client.muteAttendee(attendeeNumberStr,false);
+    }
+
+    var cloudecHandup = function (attendeeNumberStr) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        attendeeNumberStr = attendeeNumberStr + "";
+        client.handup(attendeeNumberStr);
+    }
+
+    var cloudecDelAttendee = function (attendeeNumberStr) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        attendeeNumberStr = attendeeNumberStr + "";
+        client.delAttendee(attendeeNumberStr);
+    }
+
+    var cloudec_speaker1_timer;
+    /**
+     * Show the speaker in the conference
+     */
+    var cloudecSpeaker = function (data) {
+        var cloudec_speaker_div = document.getElementById('cloudec_speaker_div');
+        var table = document.getElementById("cloudec_speaker_table");
+        if (!table) {
+            var t = document.createElement("table");
+            t.style.cssText = "width: 100%;";
+            t.id = "cloudec_speaker_table";       
+            var r = t.insertRow(0);
+            var c = r.insertCell(0);
+            c.innerHTML = "speaker";
+            c.style.cssText = "width: 20%;";
+            c = r.insertCell(1);
+            c.id = "cloudec_speaker1_td";
+            c.innerHTML = "";
+            c.style.cssText = "width: 40%;";
+            c = r.insertCell(2);
+            c.id = "cloudec_speaker2_td";
+            c.innerHTML = "";
+            c.style.cssText = "width: 40%;";
+            cloudec_speaker_div.appendChild(t);
+        }
+
+        if (cloudec_speaker1_timer != undefined) {
+            window.clearTimeout(cloudec_speaker1_timer);
+        }
+
+        //Get caller notification callback
+        var cloudec_speaker1 = document.getElementById("cloudec_speaker1_td");
+        var cloudec_speaker2 = document.getElementById("cloudec_speaker2_td");
+        var cloudec_speaker1Volume;
+        var cloudec_speaker2Volume;
+
+        //When there are multiple speakers (the return value has been sorted according to the volume), 
+        //it is recommended that the application interface press the volume level to display the first speaker and the second speaker.
+        cloudec_speaker1.innerHTML = data[0].number;
+        cloudec_speaker2.innerHTML = (data.length > 1) ? data[1].number : "";
+
+        //Timed empty
+        cloudec_speaker1_timer = setTimeout(function () {
+            cloudec_speaker1.innerHTML = "";
+            cloudec_speaker2.innerHTML = "";
+        }, 3000);
+
+    }
+
+    var cloudecGetAttendeeList = function () {
+        //Create a list of attenddee
+        var conference = client.getConfHandler();
+        var cloudec_attendeelist_body_div = document.getElementById('cloudec_attendeelist_body_div');
+        var table = document.getElementById("cloudec_attendeelist_table");
+        if (table) {
+            cloudec_attendeelist_body_div.removeChild(table);
+        }
+
+        client.getAttendeeList( function (ret){
+            if (ret) {
+                var attendeeList = new Array();
+                attendeeList = ret.info;
+
+                var t = document.createElement("table");
+                t.style.cssText = "width: 100%;";
+                t.id = "cloudec_attendeelist_table"
+
+                var r = t.insertRow(0);
+                var c = r.insertCell(0);
+                c.innerHTML = "";
+                c = r.insertCell(1);
+                c.innerHTML = "";
+                c = r.insertCell(2);
+                c.innerHTML = "";
+                c = r.insertCell(3);
+                c.innerHTML = "";
+                c = r.insertCell(4);
+                c.innerHTML = "";
+                c = r.insertCell(5);
+                c.innerHTML = "";
+                c = r.insertCell(6);
+                c.innerHTML = "";
+                c = r.insertCell(7);
+                c.innerHTML = "";
+                c = r.insertCell(8);
+                c.innerHTML = "";
+                c = r.insertCell(9);
+                c.innerHTML = "";
+
+                var cloudecChairman = 0;
+                //Judging yourself as chairperson
+                var attendee = attendeeList.find( function (value) {
+                    return 1 == value.role && 1 == value.isSelf;
+                });
+
+                if (attendee != undefined) {
+                    cloudecChairman = 1;
+                }
+
+                var useridSelect = document.getElementById("setUserid_select");
+                useridSelect.innerHTML="";
+                for (var m = 0; m < attendeeList.length; m++) {
+                    if (attendeeList[m].joinState == 0) {
+                        //Synchronize updates to useridList
+                        var option = document.createElement("option");
+                        option.setAttribute("value", attendeeList[m].dataconfUserId);
+                        option.appendChild(document.createTextNode(attendeeList[m].name));
+                        useridSelect.appendChild(option);
+
+                        //Update to attendee list
+                        var cloudecAttendeeNumberStr = attendeeList[m].number.toString();
+                        r = t.insertRow(m);
+                        c = r.insertCell(0);
+                        c.innerHTML = attendeeList[m].participantId;
+                        c.hidden = "hidden";
+                        c = r.insertCell(1);
+                        c.innerHTML = (attendeeList[m].role == 0) ? "member" : "chairman";
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 15%;";
+                        c = r.insertCell(2);
+                        c.innerHTML = attendeeList[m].name;
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 20%;";
+                        c = r.insertCell(3);
+                        c.innerHTML = "(" + attendeeList[m].number + ")";
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 15%;";
+                        c = r.insertCell(4);
+                        c.innerHTML = (attendeeList[m].isSelf == 1) ? "me" : "";
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 5%;";
+                        c = r.insertCell(5);
+                        if (1 == cloudecChairman && attendeeList[m].isSelf == 1) {
+                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreen("' + attendeeList[m].dataconfUserId + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].dataconfUserId + '") />');
+                        } else if (1 == cloudecChairman && attendeeList[m].isSelf != 1) {
+                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecOpenShareScreen("' + attendeeList[m].dataconfUserId + '") />' : '<input type="button" value = "cancel" onclick=cloudecCloseShareScreen("' + attendeeList[m].dataconfUserId + '") />');
+                        } else if (1 != cloudecChairman && attendeeList[m].isSelf == 1) {
+                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '' : '<input type="button" value = "cancel" onclick=cloudecCloseShareScreen("' + attendeeList[m].dataconfUserId + '") />');
+                        }
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+                        c.name = "cloudec_screenShare_btn";
+                        c = r.insertCell(6);
+                        if (1 == cloudecChairman) {
+                            c.innerHTML = (attendeeList[m].isMute == 1) ? '<input type="button" id="unmuteAttendee" value ="unmute" onclick=cloudecUnmuteAttendee("' + cloudecAttendeeNumberStr + '") />' : '<input type="button" id="muteAttendee"  value = "mute" onclick=cloudecMuteAttendee("' + cloudecAttendeeNumberStr + '") />';
+                        } else if (attendeeList[m].isSelf == 1) {
+                            c.innerHTML = (attendeeList[m].isMute == 1) ? '<input type="button" id="unmuteAttendee" value ="unmute" onclick=cloudecUnmuteAttendee("' + cloudecAttendeeNumberStr + '") />' : '<input type="button" id="muteAttendee"  value = "mute" onclick=cloudecMuteAttendee("' + cloudecAttendeeNumberStr + '") />';
+                        } else {
+                            c.innerHTML = (attendeeList[m].isMute == 1) ? 'mute' : 'unmute';
+                        }
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+                        c = r.insertCell(7);
+                        if (1 == cloudecChairman && attendeeList[m].isSelf == 1) {
+                            c.innerHTML = '';
+                        } else if (1 == cloudecChairman) {
+                            c.innerHTML = (attendeeList[m].raiseHandState == 1) ? '<input type="button" id="unraiseHand"  value = "cancel" onclick=cloudecHandup("' + cloudecAttendeeNumberStr + '") />' : '';
+                        } else if (attendeeList[m].isSelf == 1) {
+                            c.innerHTML = (attendeeList[m].raiseHandState == 1) ? '<input type="button" id="unraiseHand"  value = "cancel" onclick=cloudecHandup("' + cloudecAttendeeNumberStr + '") />' : '<input type="button" id="raiseHand"  value = "hand" onclick=cloudecHandup("' + cloudecAttendeeNumberStr + '") />';
+                        } else {
+                            c.innerHTML = (attendeeList[m].raiseHandState == 1) ? 'hand' : '';
+                        }
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+                        c = r.insertCell(8);
+                        c.innerHTML = "";
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+                        c = r.insertCell(9);
+                        if (1 == cloudecChairman && attendeeList[m].isSelf != 1) {
+                            c.innerHTML = '<input type="button" id="removeAttendee"  value = "del" onclick=cloudecDelAttendee("' + cloudecAttendeeNumberStr + '") />';
+                        } else {
+                            c.innerHTML = '';
+                        }
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+
+                    } else {
+                        var r = t.insertRow(m);
+                        var c = r.insertCell(0);
+                        c.innerHTML = "";
+                        c = r.insertCell(1);
+                        c.innerHTML = "";
+                        c = r.insertCell(2);
+                        c.innerHTML = "";
+                        c = r.insertCell(3);
+                        c.innerHTML = "";
+                        c = r.insertCell(4);
+                        c.innerHTML = "";
+                        c = r.insertCell(5);
+                        c.innerHTML = "";
+                        c = r.insertCell(6);
+                        c.innerHTML = "";
+                        c = r.insertCell(7);
+                        c.innerHTML = "";
+                        c = r.insertCell(8);
+                        c.innerHTML = "";
+                        c = r.insertCell(9);
+                        c.innerHTML = "";
+                    }
+
+                }
+                cloudec_attendeelist_body_div.appendChild(t);
+
+            }
+        })
+    }
+
+    var cloudecClearAttendeeList = function () {
+        var cloudec_attendeelist_body_div = document.getElementById('cloudec_attendeelist_body_div');
+        var table = document.getElementById("cloudec_attendeelist_table");
+        if (table) {
+            cloudec_attendeelist_body_div.removeChild(table);
+        }
+    }
+
+    var CloudEC_AttendeeList = function (_HTMLElement) {
+        _inherits(CloudEC_AttendeeList, _HTMLElement);
+
+        function CloudEC_AttendeeList() {
+            _classCallCheck(this, CloudEC_AttendeeList);
+            return _possibleConstructorReturn(this, (CloudEC_AttendeeList.__proto__ || Object.getPrototypeOf(CloudEC_AttendeeList)).call(this));
+        }
+
+
+        CloudEC_AttendeeList.prototype.connectedCallback = function () {
+            console.log("it's alive! connectedCallback");
+            this.callback()
+        }
+
+        CloudEC_AttendeeList.prototype.createdCallback = function () {
+            console.log("it's alive! createdCallback");
+            this.callback()
+        }
+
+        CloudEC_AttendeeList.prototype.callback = function () {
+            var cloudec_attendeelist_title_div = document.createElement('div');
+            cloudec_attendeelist_title_div.id = "cloudec_attendeelist_title_div";
+            cloudec_attendeelist_title_div.style.cssText = "width: 600px;height: 50px;";//background: rgb(224, 255, 255);
+            cloudec_attendeelist_title_div.style.display = "block"//disable none
+
+            var cloudec_attendeelist__hr = document.createElement('HR');
+            cloudec_attendeelist__hr.id = "cloudec_attendeelist__hr";
+            cloudec_attendeelist__hr.style.cssText = "width: 600px;height: 3px;background-color: grey;margin: 0px 0px 0px 0px;";
+            cloudec_attendeelist__hr.style.display = "block"//disable none
+
+            var cloudec_attendeelist_body_div = document.createElement('div');
+            cloudec_attendeelist_body_div.id = "cloudec_attendeelist_body_div";
+            cloudec_attendeelist_body_div.style.cssText = "width: 600px;height: 300px;";//background: rgb(224, 255, 255);
+            cloudec_attendeelist_body_div.style.display = "block";//disable or able block
+
+
+            var cloudec_attendeelist_div = document.createElement('div');
+
+            cloudec_attendeelist_div.id = "cloudec_attendeelist_div";
+
+            var addAttendee_ipt = document.createElement('input');
+            addAttendee_ipt.id = "addAttendee_ipt";
+            addAttendee_ipt.style.cssText = "width: 13%; height: 24px;margin-left: 5px;  border: 1px solid #dfffdf; border-style: inset;border-radius: 10px;";
+            addAttendee_ipt.innerHTML = "number";
+
+            var addAttendee_btn = document.createElement('button');
+            addAttendee_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            addAttendee_btn.innerHTML = "add";
+            addAttendee_btn.title = "add attendee";
+            addAttendee_btn.addEventListener("mousedown", cloudecAddAttendee);
+
+            var muteAll_btn = document.createElement('button');
+            muteAll_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            muteAll_btn.innerHTML = "all mute";
+            muteAll_btn.title = "all mute";
+            muteAll_btn.addEventListener("mousedown", cloudecMuteAll);
+
+            var unmuteAll_btn = document.createElement('button');
+            unmuteAll_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            unmuteAll_btn.innerHTML = "unmute";
+            unmuteAll_btn.title = "unmute";
+            unmuteAll_btn.addEventListener("mousedown", cloudecUnmuteAll);
+
+			var chairmanPwd_ipt = document.createElement('input');
+            chairmanPwd_ipt.id = "chairmanPwd_ipt";
+            chairmanPwd_ipt.style.cssText = "width: 13%; height: 24px;margin-left: 5px;  border: 1px solid #dfffdf; border-style: inset;border-radius: 10px;";
+            chairmanPwd_ipt.innerHTML = "Chairman's password";
+			
+            var requestChairman_btn = document.createElement('button');
+            requestChairman_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            requestChairman_btn.innerHTML = "request chairman";
+            requestChairman_btn.title = "request chairman";
+            requestChairman_btn.addEventListener("mousedown", cloudecRequestChairman);
+
+            var releaseChairman_btn = document.createElement('button');
+            releaseChairman_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            releaseChairman_btn.innerHTML = "release chairman";
+            releaseChairman_btn.title = "release chairman";
+            releaseChairman_btn.addEventListener("mousedown", cloudecReleaseChairman);
+
+            var setUserid_select = document.createElement('select');
+            setUserid_select.id = "setUserid_select";
+            setUserid_select.style.cssText = "height: 24px;margin-left: 5px; width: 60px;";
+
+            var setRemoteCtrl_btn = document.createElement('button');
+            setRemoteCtrl_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            setRemoteCtrl_btn.innerHTML = "set remoteCtrl";
+            setRemoteCtrl_btn.title = "set remoteCtrl";
+            setRemoteCtrl_btn.addEventListener("mousedown", cloudecSetRemoteCtrl);
+            var requestRemoteCtrl_btn = document.createElement('button');
+            requestRemoteCtrl_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            requestRemoteCtrl_btn.innerHTML = "request remoteCtrl";
+            requestRemoteCtrl_btn.title = "request remoteCtrl";
+            requestRemoteCtrl_btn.addEventListener("mousedown", cloudecRequestRemoteCtrl);
+
+            var cloudec_speaker_div = document.createElement('div');
+            cloudec_speaker_div.id = "cloudec_speaker_div";
+            cloudec_speaker_div.style.cssText = "";//background: rgb(224, 255, 255);
+            cloudec_speaker_div.style.display = "block";//disable or able block
+
+            cloudec_attendeelist_title_div.appendChild(addAttendee_ipt);
+            cloudec_attendeelist_title_div.appendChild(addAttendee_btn);
+            cloudec_attendeelist_title_div.appendChild(muteAll_btn);
+            cloudec_attendeelist_title_div.appendChild(unmuteAll_btn);
+			cloudec_attendeelist_title_div.appendChild(chairmanPwd_ipt);
+            cloudec_attendeelist_title_div.appendChild(requestChairman_btn);
+            cloudec_attendeelist_title_div.appendChild(releaseChairman_btn);
+            cloudec_attendeelist_title_div.appendChild(setUserid_select);
+            cloudec_attendeelist_title_div.appendChild(setRemoteCtrl_btn);
+            cloudec_attendeelist_title_div.appendChild(requestRemoteCtrl_btn);        
+            cloudec_attendeelist_body_div.appendChild(cloudec_speaker_div);
+            cloudec_attendeelist_div.appendChild(cloudec_attendeelist_title_div);
+            cloudec_attendeelist_div.appendChild(cloudec_attendeelist__hr);
+            cloudec_attendeelist_div.appendChild(cloudec_attendeelist_body_div);
+            cloudec_attendeelist_div.style.cssText = "width: 600px;border-style: solid;border-color: grey;";
+            this.appendChild(cloudec_attendeelist_div);
+
+            cloudec_attendeelist_div.addEventListener("cloudec:getAttendeeList", cloudecGetAttendeeList, false);
+            cloudec_attendeelist_div.addEventListener("cloudec:clearAttendeeList", cloudecClearAttendeeList, false);
+        }
+        return CloudEC_AttendeeList;
+    }(HTMLElement);
+
+    customElements.define("cloudec-attendeelist", CloudEC_AttendeeList);
+
+</script>

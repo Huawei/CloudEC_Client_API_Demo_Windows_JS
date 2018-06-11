@@ -1,0 +1,162 @@
+<script>
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function initSelects() {
+		var micvol = document.getElementById("MICVol");
+		var speakervol = document.getElementById("SpeakerVol");
+		var mictext = document.getElementById("MICText");
+		var speakertext = document.getElementById("SpeakerText");
+
+		var obj = document.getElementById("MICDevice");
+		client.getMediaDevice(0, function (data) {
+			if (data.info != null) {
+				for (var i = 0; i < data.info.length; i++) {
+					var option = document.createElement("option");
+					option.setAttribute("value", i);
+					option.appendChild(document.createTextNode(data.info[i].name));
+					obj.appendChild(option);
+				}
+
+				client.getVoiceVol(0, function (data)  {
+					micvol.value = data.info;
+					mictext.value = data.info;
+				});
+			}
+
+			var obj2 = document.getElementById("SpeackerDevice");
+			client.getMediaDevice(1, function (data)  {
+				if (data.info != null) {
+					for (var i = 0; i < data.info.length; i++) {
+						var option = document.createElement("option");
+						option.setAttribute("value", i);
+						option.appendChild(document.createTextNode(data.info[i].name));
+						obj2.appendChild(option);
+					}
+
+					client.getVoiceVol(1, function (data)  {
+						speakervol.value = data.info;
+						speakertext.value = data.info;
+					})
+				}
+
+				var obj3 = document.getElementById("CameraDevice");
+				client.getMediaDevice(2, function (data)  {
+					if (data.info != null) {
+						for (var i = 0; i < data.info.length; i++) {
+							var option = document.createElement("option");
+							option.setAttribute("value", i);
+							option.appendChild(document.createTextNode(data.info[i].name));
+							obj3.appendChild(option);
+						}
+					}
+				});
+			});
+		});
+	}
+
+	function updateText() {
+		var micvol = document.getElementById("MICVol");
+		var speakervol = document.getElementById("SpeakerVol");
+		var mictext = document.getElementById("MICText");
+		var speakertext = document.getElementById("SpeakerText");
+		mictext.value = micvol.value;
+		speakertext.value = speakervol.value;
+	}
+
+	function updateVol() {
+		var micvol = document.getElementById("MICVol");
+		var speakervol = document.getElementById("SpeakerVol");
+		var mictext = document.getElementById("MICText");
+		var speakertext = document.getElementById("SpeakerText");
+		micvol.value = mictext.value;
+		speakervol.value = speakertext.value;
+	}
+
+	function updateConfig() {
+		var micSel = document.getElementById("MICDevice");
+		var spkSel = document.getElementById("SpeackerDevice");
+		var camSel = document.getElementById("CameraDevice");
+
+		var micvol = document.getElementById("MICVol");
+		var speakervol = document.getElementById("SpeakerVol");		
+
+		var selIndex = micSel.selectedIndex;
+		if (selIndex !== -1) {
+			var micIndex = micSel.options[selIndex].value;
+			client.setMediaDevice(0, parseInt(micIndex));
+		}
+
+		selIndex = spkSel.selectedIndex;
+		if (selIndex !== -1) {
+			var spkIndex = spkSel.options[selIndex].value;
+			client.setMediaDevice(1, parseInt(spkIndex));
+		}
+
+		selIndex = camSel.selectedIndex;
+		if (selIndex !== -1) {
+			var camIndex = camSel.options[selIndex].value;
+			client.setMediaDevice(2, parseInt(camIndex));
+		}
+
+		client.setVoiceVol(0, parseInt(micvol.value));
+		client.setVoiceVol(1, parseInt(speakervol.value));
+	}
+
+	var CloudEC_MediaDevice = function (_HTMLElement) {
+		_inherits(CloudEC_MediaDevice, _HTMLElement);
+
+		function CloudEC_MediaDevice() {
+			_classCallCheck(this, CloudEC_MediaDevice);
+			return _possibleConstructorReturn(this, (CloudEC_MediaDevice.__proto__ || Object.getPrototypeOf(CloudEC_MediaDevice)).call(this));
+		}
+
+
+		CloudEC_MediaDevice.prototype.connectedCallback = function () {
+			console.log("it's alive! connectedCallback");
+			this.callback()
+		}
+
+		CloudEC_MediaDevice.prototype.createdCallback = function () {
+			console.log("it's alive! createdCallback");
+			this.callback()
+		}
+
+		CloudEC_MediaDevice.prototype.callback = function () {
+			var cloudec_mediadevice_div = document.createElement('div')
+			cloudec_mediadevice_div.id = "configPanel";
+			cloudec_mediadevice_div.addEventListener("cloudec:login", initSelects, false);
+			cloudec_mediadevice_div.innerHTML = "<dl>"
+				+ "<dd>"
+				+ "<select id='MICDevice'></select>"
+				+ "</dd>"
+				+ "<dd>"
+				+ "<select id='SpeackerDevice'></select>"
+				+ "</dd>"
+				+ "<dd>"
+				+ "<select id='CameraDevice'></select>"
+				+ "</dd>"
+				+ "<dd>"
+				+ "<label>audio input volume &nbsp;</label>"
+				+ "<input type='range' value='10' id='MICVol' oninput='updateText()'></input>"
+				+ "<input type='text' value='10' size='4' id='MICText' onchange='updateVol()'></input>"
+				+ "</dd>"
+				+ "<dd>"
+				+ "<label>audio output volume</label>"
+				+ "<input type='range' value='10' id='SpeakerVol' oninput='updateText()'></input>"
+				+ "<input type='text' value='10' size='4' id='SpeakerText' onchange='updateVol()'></input>"
+				+ "</dd>"
+				+ "<dd>"
+				+ "<button onclick='updateConfig()'>save config</button>"
+				+ "</dd>"
+				+ "</dl>"
+
+			this.appendChild(cloudec_mediadevice_div)
+		}
+		return CloudEC_MediaDevice;
+	}(HTMLElement);
+
+	customElements.define("cloudec-mediadevice", CloudEC_MediaDevice);
+
+</script>

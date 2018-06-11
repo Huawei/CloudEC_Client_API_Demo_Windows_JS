@@ -1,0 +1,257 @@
+<script>
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+    function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+    //Custom variables and functions
+    var roomTimeZone = [
+        ["-12", "(UTC-12:00)Marshall Islands"],
+        ["-11", "(UTC-11:00)Samoa"],
+        ["-10", "(UTC-10:00)Honolulu"],
+        ["-8", "(UTC-08:00)Anchorage"],
+        ["-7", "(UTC-07:00)Arizona"],
+        ["-7", "(UTC-07:00)San Francisco"],
+        ["-7", "(UTC-07:00)Tijuana"],
+        ["-7", "(UTC-07:00)Chihuahua"],
+        ["-6", "(UTC-06:00)Denver"],
+        ["-6", "(UTC-06:00)Saskatchewan"],
+        ["-6", "(UTC-06:00)Tegucigalpa"],
+        ["-6", "(UTC-06:00)Mexico City"],
+        ["-5", "(UTC-05:00)Bogota"],
+        ["-5", "(UTC-05:00)Chicago"],
+        ["-4.5", "(UTC-04:30)Caracas"],
+        ["-4", "(UTC-04:00)Atlantic City"],
+        ["-4", "(UTC-04:00)Indiana"],
+        ["-4", "(UTC-04:00)La Paz"],
+        ["-4", "(UTC-04:00)New York"],
+        ["-3", "(UTC-03:00)Nuuk"],
+        ["-3", "(UTC-03:00)Buenos Aires"],
+        ["-3", "(UTC-03:00)Halifax"],
+        ["-3", "(UTC-03:00)Recife"],
+        ["-2.5", "(UTC-02:30)Newfoundland"],
+        ["-2", "(UTC-02:00)Brasilia Time"],
+        ["-1", "(UTC-01:00)Azores"],
+        ["-1", "(UTC-01:00)Mid-Atlantic"],
+        ["0", "(UTC00:00)London"],
+        ["0", "(UTC+00:00)Casablanca"],
+        ["0", "(UTC)Reykjavik"],
+        ["0", "(UTC 00:00)Dakar"],
+        ["1", "(UTC+01:00)Paris"],
+        ["1", "(UTC+01:00)Madrid"],
+        ["1", "(UTC+01:00)Berlin"],
+        ["1", "(UTC+01:00)Amsterdam"],
+        ["1", "(UTC+01:00)West Africa"],
+        ["1", "(UTC+01:00)Warsaw"],
+        ["1", "(UTC+01:00)Stockholm"],
+        ["1", "(UTC+01:00)Rome"],
+        ["2", "(UTC+02:00)Pretoria"],
+        ["2", "(UTC+02:00)Helsinki,Kiev"],
+        ["2", "(UTC+02:00)Athens"],
+        ["2", "(UTC+02:00)Amman"],
+        ["2", "(UTC+02:00)Cairo"],
+        ["2", "(UTC+02:00)Tel Aviv"],
+        ["3", "(UTC+03:00)Riyadh"],
+        ["3", "(UTC+03:00)Nairobi"],
+        ["3", "(UTC+03:00)Minsk"],
+        ["3", "(UTC+03:00)Istanbul"],
+        ["3", "(UTC+03:00)Moscow"],
+        ["3.5", "(UTC+03:30)Tehran"],
+        ["4", "(UTC+04:00)Baku"],
+        ["4", "(UTC+04:00)Abu Dhabi,Muscat"],
+        ["4.5", "(UTC+04:30)Kabul"],
+        ["5", "(UTC+05:00)Islamabad"],
+        ["5", "(UTC+05:00)Ekaterinburg"],
+        ["5.5", "(UTC+05:30)Colombo"],
+        ["5.5", "(UTC+05:30)Mumbai"],
+        ["6", "(UTC+06:00)Yekaterinburg"],
+        ["6", "(UTC+06:00)Almaty"],
+        ["6.3", "(UTC+06:30)Yangon"],
+        ["7", "(UTC+07:00)Bangkok"],
+        ["7", "(UTC+07:00)Novosibirsk"],
+        ["8", "(UTC+08:00)Taipei"],
+        ["8", "(UTC+08:00)Singapore"],
+        ["8", "(UTC+08:00)Perth"],
+        ["8", "(UTC+08:00)Kuala Lumpur"],
+        ["8", "(UTC+08:00)Beijing"],
+        ["9", "(UTC+09:00)Tokyo"],
+        ["9", "(UTC+09:00)Seoul"],
+        ["9.5", "(UTC+09:30)Darwin"],
+        ["10", "(UTC+10:00)Yakutsk"],
+        ["10", "(UTC+10:00)Guam"],
+        ["10", "(UTC+10:00)Brisbane"],
+        ["10.5", "(UTC+10:30)Adelaide"],
+        ["11", "(UTC+11:00)Vladivostok"],
+        ["11", "(UTC+11:00)Sydney"],
+        ["11", "(UTC+11:00)Solomon Is"],
+        ["11", "(UTC+11:00)Hobart"],
+        ["13", "(UTC+13:00)Wellington"],
+        ["13", "(UTC+13:00)Fiji"]];
+    var confStartType = function (evt) {
+        var evt = evt || window.event;
+        var e = evt.srcElement || evt.target;
+        if (e.value == "0") {
+            document.getElementById('cloudec_input_datetime').style.display = 'none';
+        } else {
+            document.getElementById('cloudec_input_datetime').style.display = 'block';
+        }
+    }
+
+    //Custom element
+    var CloudEC_BookConf = function (_HTMLElement) {
+        _inherits(CloudEC_BookConf, _HTMLElement);
+
+        function CloudEC_BookConf() {
+            _classCallCheck(this, CloudEC_BookConf);
+            return _possibleConstructorReturn(this, (CloudEC_BookConf.__proto__ || Object.getPrototypeOf(CloudEC_BookConf)).call(this));
+        }
+
+
+        CloudEC_BookConf.prototype.connectedCallback = function () {
+            console.log("it's alive! connectedCallback");
+            this.callback()
+        }
+
+        CloudEC_BookConf.prototype.createdCallback = function () {
+            console.log("it's alive! createdCallback");
+            this.callback()
+        }
+
+        CloudEC_BookConf.prototype.callback = function () {
+            console.log("callback")
+            var select_str = ""
+            for (var m in roomTimeZone) {
+                if (roomTimeZone[m][1] == "(UTC+08:00)Beijing") {
+                    select_str += "<option selected='selected' value='" + roomTimeZone[m][0] + "'>" + roomTimeZone[m][1] + "</option>"
+                }
+                else {
+                    select_str += "<option value='" + roomTimeZone[m][0] + "'>" + roomTimeZone[m][1] + "</option>"
+                }
+            }
+
+            var cloudec_confbook_div = document.createElement('div')
+            cloudec_confbook_div.id = "cloudec_confbook_div"
+            cloudec_confbook_div.innerHTML = "<table>"
+                + "<tr>"
+                + "<td>conference type:</td><td>"
+                + "<input id='cloudec_conf_type' name='cloudec_conf_type' type='radio' value='0' />audio"
+                + "<input id='cloudec_conf_type' name='cloudec_conf_type' type='radio' value='1' />video"
+                + "<input id='cloudec_conf_type' name='cloudec_conf_type' type='radio' value='2' />audio+data"
+                + "<input id='cloudec_conf_type' name='cloudec_conf_type' checked='checked' type='radio' value='3' />video+data"
+                + "</td></tr>"
+                + "<tr>"
+                + "<td/>starting time:</td><td>"
+                + "<input id='cloudec_start_type' name='cloudec_start_type' onclick='confStartType()' type='radio' value='0' />now"
+                + "<input id='cloudec_start_type' name='cloudec_start_type' onclick='confStartType()' checked='checked' type='radio' value='1' />later"
+                + "</td></tr>"
+                + "<tr><td></td><td>"
+                + "<select id='cloudec_room_timezone' name='cloudec_room_timezone' style='width:200px'>"
+                + select_str
+                + "</select>"
+                + "</td></tr>"
+                + "<tr>"
+                + "<td></td>"
+                + "<td>"
+                + "<input type='text' id='cloudec_input_datetime' style='width:200px' onclick='WdatePicker({dateFmt:\"yyyy-MM-dd HH:mm:ss\",lang:\"en\"})'/>"
+                + "</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>duration (minutes):</td>"
+                + "<td><input id='cloudec_input_duration' type='text' value = '30' style='width:200px'/></td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>subject:</td>"
+                + "<td><input id='cloudec_input_topic' type='text' value = 'CloudEC-Meeting' style='width:200px'/></td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>chairman:</td>"
+                + "<td><input id='cloudec_input_chairmain' type='text' value='10010' style='width:200px'/></td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>attendee:</td>"
+                + "<td><input id='cloudec_input_attendees' type='text' value='10011,10012' style='width:200px'/></td>"
+                + "</tr>"
+                + "<tr>"
+                + "</table>"
+
+            var cloudec_confbook_btn = document.createElement('button')
+            cloudec_confbook_btn.innerHTML = "book conference"
+            cloudec_confbook_btn.addEventListener("mousedown", function (e) {
+                var startType = parseInt(document.querySelector('input[id="cloudec_start_type"]:checked').value)
+                var confType = parseInt(document.querySelector('input[id="cloudec_conf_type"]:checked').value)
+                var dateTime = document.getElementById("cloudec_input_datetime").value;
+                var topic = document.getElementById("cloudec_input_topic").value;
+                var duration = document.getElementById("cloudec_input_duration").value;
+                var chairmain = document.getElementById("cloudec_input_chairmain").value
+                var attendees_str = document.getElementById("cloudec_input_attendees").value
+                var attendees_array = attendees_str.split(",");
+                attendees_array.push(chairmain)
+                var attendeeList = [];
+                for (var m in attendees_array) {
+                    var attendeeParam = {}
+                    attendeeParam.name = attendees_array[m]
+                    attendeeParam.number = attendees_array[m]
+                    attendeeParam.autoInvite = 0
+                    attendeeParam.role = 0
+                    attendeeParam.smsPhone = ""
+                    attendeeParam.email = ""
+                    attendeeList[m] = attendeeParam
+                }
+                attendeeList[attendeeList.length - 1].role = 1;
+
+                //Get time and convert to UTC for the corresponding time zone
+                var timezone = document.getElementById("cloudec_room_timezone");
+                var offset = timezone.options[timezone.selectedIndex].value * 60 * 60 * 1000;
+
+                //According to the selected time zone converted to the corresponding UTC time
+                var utc_millisecond = Date.parse(dateTime)
+                utc_millisecond = utc_millisecond - offset
+                var newDate = new Date(utc_millisecond)
+
+                //Interface to call a book meeting
+                client.bookConference({
+                    topic: topic, duration: parseInt(duration), isVideo: confType,
+                    startTime: startType == 0 ? null : {
+                        year: newDate.getFullYear(), month: (newDate.getMonth() + 1), date: newDate.getDate(),
+                        hours: newDate.getHours(), minutes: newDate.getMinutes()
+                    }, language: 1,
+                    attendees: attendeeList
+                }, function (ret) {
+                    console.info(JSON.stringify(ret))
+                    alert("bookConference callback" + JSON.stringify(ret))
+                })
+
+            })
+
+            this.appendChild(cloudec_confbook_div)
+            this.appendChild(cloudec_confbook_btn)
+            //var jsurl = './usage/components/My97DatePicker/WdatePicker.js'
+            //this.loadJs(jsurl, null)
+        }
+
+        CloudEC_BookConf.prototype.loadJs = function (jsurl, callback) {
+            var nodeHead = document.getElementsByTagName('head')[0];
+            var nodeScript = null;
+            nodeScript = document.createElement('script');
+            nodeScript.setAttribute('charset', 'UTF-8');
+            nodeScript.setAttribute('type', 'text/javascript');
+            nodeScript.setAttribute('src', jsurl);
+            if (callback != null) {
+                nodeScript.onload = nodeScript.onreadystatechange = function () {
+                    if (nodeScript.ready) {
+                        return false;
+                    }
+                    if (!nodeScript.readyState || nodeScript.readyState == "loaded" || nodeScript.readyState == 'compvare') {
+                        nodeScript.ready = true;
+                        callback();
+                    }
+                };
+            }
+            nodeHead.appendChild(nodeScript);
+        }
+
+        return CloudEC_BookConf;
+    }(HTMLElement);
+
+    customElements.define("cloudec-bookconf", CloudEC_BookConf);
+
+</script>

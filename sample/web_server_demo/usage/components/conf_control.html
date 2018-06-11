@@ -1,0 +1,373 @@
+<script>
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    }
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+    }
+
+    //Custom variables and functions
+
+    //Custom element
+    var cloudecFlag = false;
+    var cloudecChat = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+
+        var cloudec_chat_div = document.getElementById('cloudec_chat_div');
+        if (cloudecFlag) {
+            cloudec_chat_div.style.display = "block";
+            cloudecFlag = false;
+        } else {
+            cloudec_chat_div.style.display = "none";
+            cloudecFlag = true;
+        }
+    }
+
+    var cloudecSendMsg = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+
+        var cloudec_chat_input_textarea = document.getElementById('cloudec_chat_input_textarea');
+        var msgContent = cloudec_chat_input_textarea.value;
+        var cloudecMessageParam = {
+            msgType: 0,
+            msgContent: msgContent,
+            receiveID: -1
+        }
+
+        if (msgContent != null) {
+            client.sendMessage(cloudecMessageParam);
+            cloudec_chat_input_textarea.value = "";
+        } else {
+            alert("The input is empty");
+        }
+    }
+
+    var cloudecReceiveMsg = function(data) {
+        var cloudec_chat_display_div = document.getElementById('cloudec_chat_display_div');
+
+        var cloudec_chat_one_div = document.createElement('div');
+        cloudec_chat_one_div.style.cssText = "width: 100%;"; //background: rgb(224, 255, 255);
+        cloudec_chat_one_div.style.display = "block" //disable none
+
+        var cloudec_chat_one_name_div = document.createElement('div');
+        cloudec_chat_one_name_div.style.cssText = "width: 100%;"; //background: rgb(224, 255, 255);
+        cloudec_chat_one_name_div.style.display = "block" //disable none
+        cloudec_chat_one_name_div.innerHTML = data.fromUserName;
+
+        var cloudec_chat_one_content_div = document.createElement('div');
+        cloudec_chat_one_content_div.style.cssText = "width: 100%;"; //background: rgb(224, 255, 255);
+        cloudec_chat_one_content_div.style.display = "block" //disable none
+        cloudec_chat_one_content_div.innerHTML = data.msgContent;
+
+        var cloudec_chat_one_content_br = document.createElement('br');
+
+        cloudec_chat_one_div.appendChild(cloudec_chat_one_name_div);
+        cloudec_chat_one_div.appendChild(cloudec_chat_one_content_br);
+        cloudec_chat_one_div.appendChild(cloudec_chat_one_content_div);
+        cloudec_chat_one_div.appendChild(cloudec_chat_one_content_br);
+        cloudec_chat_display_div.appendChild(cloudec_chat_one_div);
+
+    }
+
+    var cloudecMuteAll = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.muteConference(true);
+    }
+
+    var cloudecUnMuteAll = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.muteConference(false);
+    }
+
+
+    var cloudecOpenVideo = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.videoMute(true);
+    }
+
+    var cloudecCloseVideo = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.videoMute(false);
+    }
+
+    var cloudecLeaveConference = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.leaveConf();
+    }
+
+    var cloudecEndConference = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.endConf();
+    }
+
+    var cloudecBroadcastAttendee = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+
+        var cloudecAttendee = document.getElementById("broadcastAttendee_ipt").value;
+        client.broadcastAttendee(1, cloudecAttendee);
+    }
+
+    var cloudecCancelBroadcastAttendee = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        var cloudecAttendee = "";
+        client.broadcastAttendee(0, cloudecAttendee);
+    }
+
+    var cloudecWatchAttendee = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+
+        var cloudecAttendee = document.getElementById("watchAttendee_ipt").value;
+        client.watchAttendee(cloudecAttendee);
+    }
+
+    var cloudecSetConfMode = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+
+        var obj = document.getElementById("setConfMode_select");
+        var mode = obj.options[obj.selectedIndex].value;
+        client.setConfMode(parseInt(mode));
+    }
+
+    var cloudecClearChatList = function() {
+        var cloudec_chat_display_div = document.getElementById('cloudec_chat_display_div');
+        cloudec_chat_display_div.innerHTML = "";
+    }
+    var CloudEC_ConfControl = function(_HTMLElement) {
+        _inherits(CloudEC_ConfControl, _HTMLElement);
+
+        function CloudEC_ConfControl() {
+            _classCallCheck(this, CloudEC_ConfControl);
+            return _possibleConstructorReturn(this, (CloudEC_ConfControl.__proto__ || Object.getPrototypeOf(CloudEC_ConfControl)).call(this));
+        }
+
+
+        CloudEC_ConfControl.prototype.connectedCallback = function() {
+            console.log("it's alive! connectedCallback");
+            this.callback()
+        }
+
+        CloudEC_ConfControl.prototype.createdCallback = function() {
+            console.log("it's alive! createdCallback");
+            this.callback()
+        }
+
+        CloudEC_ConfControl.prototype.callback = function() {
+            var cloudec_confctrl_div = document.createElement('div');
+            cloudec_confctrl_div.id = "cloudec_confctrl_div";
+            cloudec_confctrl_div.style.cssText = "width: 560px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_confctrl_div.style.display = "block" //disable none
+
+            var cloudec_videoctrl_div = document.createElement('div');
+            cloudec_videoctrl_div.id = "cloudec_videoctrl_div";
+            cloudec_videoctrl_div.style.cssText = "width: 560px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_videoctrl_div.style.display = "block" //disable none
+
+            var cloudec_chat_div = document.createElement('div');
+            cloudec_chat_div.id = "cloudec_chat_div";
+            cloudec_chat_div.style.cssText = "width: 560px;height:300px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_chat_div.style.display = "block" //disable none
+
+            var cloudec_chat_display_div = document.createElement('div');
+            cloudec_chat_display_div.id = "cloudec_chat_display_div";
+            cloudec_chat_display_div.style.cssText = "width: 100%;height: 75%;overflow-y: scroll;"; //background: rgb(224, 255, 255);
+            cloudec_chat_display_div.style.display = "block" //disable none
+
+            var cloudec_chat_input_div = document.createElement('div');
+            cloudec_chat_input_div.id = "cloudec_chat_input_div";
+            cloudec_chat_input_div.style.cssText = "width: 100%;height: 25%;overflow-y: scroll;"; //background: rgb(224, 255, 255);
+            cloudec_chat_input_div.style.display = "block" //disable none
+
+            var cloudec_chat_input_textarea = document.createElement('textarea');
+            cloudec_chat_input_textarea.id = "cloudec_chat_input_textarea";
+            cloudec_chat_input_textarea.style.cssText = "width: 80%;height: 100%;float: left;"; //background: rgb(224, 255, 255);
+            cloudec_chat_input_textarea.style.display = "block" //disable none
+
+            var cloudec_chat_send_btn = document.createElement('button');
+            cloudec_chat_send_btn.id = "cloudec_chat_send_btn";
+            cloudec_chat_send_btn.style.cssText = "width: 20%;height: 100%;float: left;"; //background: rgb(224, 255, 255);
+            cloudec_chat_send_btn.innerHTML = "send";
+            cloudec_chat_send_btn.title = "send";
+            cloudec_chat_send_btn.addEventListener("mousedown", cloudecSendMsg);
+
+            //Listen for custom events
+            cloudec_chat_display_div.addEventListener("cloudec:clearChatList", cloudecClearChatList, false);
+
+            var chat_btn = document.createElement('button');
+            chat_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            chat_btn.innerHTML = "chat";
+            chat_btn.title = "chat";
+            chat_btn.addEventListener("mousedown", cloudecChat);
+
+            var muteAll_btn = document.createElement('button');
+            muteAll_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            muteAll_btn.innerHTML = "all mute";
+            muteAll_btn.title = "all mute";
+            muteAll_btn.addEventListener("mousedown", cloudecMuteAll);
+
+            var unmuteAll_btn = document.createElement('button');
+            unmuteAll_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            unmuteAll_btn.innerHTML = "all numute";
+            unmuteAll_btn.title = "all numute";
+            unmuteAll_btn.addEventListener("mousedown", cloudecUnMuteAll);
+
+            var openVideo_btn = document.createElement('button');
+            openVideo_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            openVideo_btn.innerHTML = "turn on video";
+            openVideo_btn.title = "turn on video";
+            openVideo_btn.addEventListener("mousedown", cloudecOpenVideo);
+
+            var closeVideo_btn = document.createElement('button');
+            closeVideo_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            closeVideo_btn.innerHTML = "turn off video";
+            closeVideo_btn.title = "turn off video";
+            closeVideo_btn.addEventListener("mousedown", cloudecCloseVideo);
+
+            var leaveConference_btn = document.createElement('button');
+            leaveConference_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            leaveConference_btn.innerHTML = "leave conference";
+            leaveConference_btn.title = "leave conference";
+            leaveConference_btn.addEventListener("mousedown", cloudecLeaveConference);
+
+            var endConference_btn = document.createElement('button');
+            endConference_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            endConference_btn.innerHTML = "end conference";
+            endConference_btn.title = "end conference";
+            endConference_btn.addEventListener("mousedown", cloudecEndConference);
+
+            var setConfMode_select = document.createElement('select');
+            setConfMode_select.id = "setConfMode_select";
+            setConfMode_select.style.cssText = "height: 24px;margin-left: 5px;";
+            setConfMode_select.options[0] = new Option("broadcast mode", 0);
+            setConfMode_select.options[1] = new Option("Voice control mode", 1);
+            setConfMode_select.options[2] = new Option("open to discussion", 2);
+            //setConfMode_select.size = 3;
+
+            var setConfMode_btn = document.createElement('button');
+            setConfMode_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            setConfMode_btn.innerHTML = "set conference mode";
+            setConfMode_btn.title = "set conference mode";
+            setConfMode_btn.addEventListener("mousedown", cloudecSetConfMode);
+
+            var broadcastAttendee_ipt = document.createElement('input');
+            broadcastAttendee_ipt.id = "broadcastAttendee_ipt";
+            broadcastAttendee_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 70px;";
+
+            var broadcastAttendee_btn = document.createElement('button');
+            broadcastAttendee_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            broadcastAttendee_btn.innerHTML = "broadcast attendee";
+            broadcastAttendee_btn.title = "broadcast attendee";
+            broadcastAttendee_btn.addEventListener("mousedown", cloudecBroadcastAttendee);
+
+            var cancelBroadcastAttendee_btn = document.createElement('button');
+            cancelBroadcastAttendee_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            cancelBroadcastAttendee_btn.innerHTML = "cancel broadcast";
+            cancelBroadcastAttendee_btn.title = "cancel broadcast";
+            cancelBroadcastAttendee_btn.addEventListener("mousedown", cloudecCancelBroadcastAttendee);
+
+            var watchAttendee_ipt = document.createElement('input');
+            watchAttendee_ipt.id = "watchAttendee_ipt";
+            watchAttendee_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 40px;";
+
+            var watchAttendee_btn = document.createElement('button');
+            watchAttendee_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            watchAttendee_btn.innerHTML = "watch attendee";
+            watchAttendee_btn.title = "watch attendee";
+            watchAttendee_btn.addEventListener("mousedown", cloudecWatchAttendee);
+
+            cloudec_confctrl_div.appendChild(chat_btn);
+            cloudec_confctrl_div.appendChild(muteAll_btn);
+            cloudec_confctrl_div.appendChild(unmuteAll_btn);
+            cloudec_confctrl_div.appendChild(openVideo_btn);
+            cloudec_confctrl_div.appendChild(closeVideo_btn);
+            cloudec_confctrl_div.appendChild(leaveConference_btn);
+            cloudec_confctrl_div.appendChild(endConference_btn);
+            cloudec_videoctrl_div.appendChild(setConfMode_select);
+            cloudec_videoctrl_div.appendChild(setConfMode_btn);
+            cloudec_videoctrl_div.appendChild(broadcastAttendee_ipt);
+            cloudec_videoctrl_div.appendChild(broadcastAttendee_btn);
+            cloudec_videoctrl_div.appendChild(cancelBroadcastAttendee_btn);
+            cloudec_videoctrl_div.appendChild(watchAttendee_ipt);
+            cloudec_videoctrl_div.appendChild(watchAttendee_btn);
+
+            cloudec_chat_div.appendChild(cloudec_chat_display_div);
+            cloudec_chat_input_div.appendChild(cloudec_chat_input_textarea);
+            cloudec_chat_input_div.appendChild(cloudec_chat_send_btn);
+            cloudec_chat_div.appendChild(cloudec_chat_input_div);
+            this.appendChild(cloudec_confctrl_div);
+            this.appendChild(cloudec_videoctrl_div);
+            this.appendChild(cloudec_chat_div);
+        }
+        return CloudEC_ConfControl;
+    }(HTMLElement);
+
+    customElements.define("cloudec-confcontrol", CloudEC_ConfControl);
+</script>
