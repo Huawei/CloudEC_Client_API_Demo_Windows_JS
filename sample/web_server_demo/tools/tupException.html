@@ -35,8 +35,9 @@
         function onDeamonClose(){
             $('#deamonConnection').val("TUP Deamon is Closed")
             $('#deamonConnection').attr("style", "background-color:red;border:none")
-        }
-		ConnectExceptionChannal()
+		}
+		//如果使用wss请将参数设为1，使用ws请将参数设为0
+		ConnectExceptionChannal(1)
 	</script>
 </body>
 

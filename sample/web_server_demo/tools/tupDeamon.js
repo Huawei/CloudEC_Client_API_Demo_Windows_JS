@@ -29,31 +29,44 @@
     {
         this.notifyFuncs = new Array();
         this.rspFuncs = new Array();
+        var uniSocket;
         var serviceAddr = opts.svrAddr || "127.0.0.1";
-        this.wsocket = new WebSocket("ws://" + serviceAddr + ":7682", "protocol_ws_deamon_service");
-        this.wsocket.onopen = opts.ready;
-        this.wsocket.onclose = opts.close;
-        this.wsocket.onmessage = function(msg)
-        {
-            var data = JSON.parse(msg.data);
-            console.log(msg.data);
-            data.notify = data.notify & 0x7fff;
-            if (data.notify > 0)
-            {
-                if(typeof this.notifyFuncs[data.notify] == "function")
-                {
-                    this.notifyFuncs[data.notify](data);
-                }
+
+        if (opts.socket) {
+            this.uniSocket = opts.socket;
+            this.uniSocket.registerService(this);
+        }
+        else {
+            var pcol = "ws://";
+            if (opts.ssl === 1) {
+                pcol = "wss://";
             }
-            if(data.rsp > 0)
+  
+            this.wsocket = new WebSocket(pcol + serviceAddr + ":7682", "protocol_ws_deamon_service");
+            this.wsocket.onopen = opts.ready;
+            this.wsocket.onclose = opts.close;
+            this.wsocket.onmessage = function(msg)
             {
-                var rspIdx = data.rsp & 0x7fff;
-                if(typeof this.rspFuncs[rspIdx] == "function")
+                var data = JSON.parse(msg.data);
+                console.log(msg.data);
+                data.notify = data.notify & 0x7fff;
+                if (data.notify > 0)
                 {
-                    this.rspFuncs[rspIdx](data);
+                    if(typeof this.notifyFuncs[data.notify] == "function")
+                    {
+                        this.notifyFuncs[data.notify](data);
+                    }
                 }
-            }
-        }.bind(this);
+                if(data.rsp > 0)
+                {
+                    var rspIdx = data.rsp & 0x7fff;
+                    if(typeof this.rspFuncs[rspIdx] == "function")
+                    {
+                        this.rspFuncs[rspIdx](data);
+                    }
+                }
+            }.bind(this);
+        }
     };
 
     TUPDeamon.prototype.sendData = function (data)

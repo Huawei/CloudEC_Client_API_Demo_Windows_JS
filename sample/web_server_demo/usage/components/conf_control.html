@@ -185,6 +185,38 @@
         client.watchAttendee(cloudecAttendee);
     }
 
+    var cloudecMixedPicture = function() {
+        var conference = client.getConfHandler();
+        var cloudecMixedPictureAttendee = document.getElementById("mixedPicture_ipt").value;
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+
+        var obj = document.getElementById("mixedPicture_select");
+        var mixedPictureType = obj.options[obj.selectedIndex].value;
+        var objMode = document.getElementById("setConfMode_select");
+        var mode = objMode.options[objMode.selectedIndex].value;
+
+        //todo Here I'm going to be a modal popup, simple implementation
+        if (cloudecMixedPictureAttendee != null && cloudecMixedPictureAttendee != "") {
+
+            var cloudecMixedPictureAttendeeArray = cloudecMixedPictureAttendee.split(",");
+            var cloudecMixedAttendees = new Array();
+            for (var i = 0; i < cloudecMixedPictureAttendeeArray.length; i++) {
+                cloudecMixedAttendees[i] = { number: cloudecMixedPictureAttendeeArray[i], name: cloudecMixedPictureAttendeeArray[i]};
+            }
+        }else{
+            var cloudecMixedAttendees = new Array();
+        }
+
+        
+        client.setConfMixedPicture(Number(mode),Number(mixedPictureType),cloudecMixedAttendees);
+    }
+
+
+    
+
     var cloudecSetConfMode = function() {
         var conference = client.getConfHandler();
         if (conference == null) {
@@ -223,17 +255,17 @@
         CloudEC_ConfControl.prototype.callback = function() {
             var cloudec_confctrl_div = document.createElement('div');
             cloudec_confctrl_div.id = "cloudec_confctrl_div";
-            cloudec_confctrl_div.style.cssText = "width: 560px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_confctrl_div.style.cssText = "width: 600px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
             cloudec_confctrl_div.style.display = "block" //disable none
 
             var cloudec_videoctrl_div = document.createElement('div');
             cloudec_videoctrl_div.id = "cloudec_videoctrl_div";
-            cloudec_videoctrl_div.style.cssText = "width: 560px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_videoctrl_div.style.cssText = "width: 600px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
             cloudec_videoctrl_div.style.display = "block" //disable none
 
             var cloudec_chat_div = document.createElement('div');
             cloudec_chat_div.id = "cloudec_chat_div";
-            cloudec_chat_div.style.cssText = "width: 560px;height:300px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_chat_div.style.cssText = "width: 600px;height:300px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
             cloudec_chat_div.style.display = "block" //disable none
 
             var cloudec_chat_display_div = document.createElement('div');
@@ -343,6 +375,28 @@
             watchAttendee_btn.title = "watch attendee";
             watchAttendee_btn.addEventListener("mousedown", cloudecWatchAttendee);
 
+            
+            var mixedPicture_select = document.createElement('select');
+            mixedPicture_select.id = "mixedPicture_select";
+            mixedPicture_select.style.cssText = "height: 24px;margin-left: 5px;";
+            mixedPicture_select.options[0] = new Option("single image", 0);
+            mixedPicture_select.options[1] = new Option("two image", 1);
+            mixedPicture_select.options[2] = new Option("three image", 2);
+            mixedPicture_select.options[3] = new Option("four image", 3);
+            mixedPicture_select.options[4] = new Option("six image", 4);
+            mixedPicture_select.options[5] = new Option("nine image", 6);
+            mixedPicture_select.options[6] = new Option("sixteen image", 9);
+           
+            var mixedPicture_ipt = document.createElement('input');
+            mixedPicture_ipt.id = "mixedPicture_ipt";
+            mixedPicture_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 40px;";
+
+            var mixedPicture_btn = document.createElement('button');
+            mixedPicture_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            mixedPicture_btn.innerHTML = "mixed Picture";
+            mixedPicture_btn.title = "mixed Picture";
+            mixedPicture_btn.addEventListener("mousedown", cloudecMixedPicture);
+
             cloudec_confctrl_div.appendChild(chat_btn);
             cloudec_confctrl_div.appendChild(muteAll_btn);
             cloudec_confctrl_div.appendChild(unmuteAll_btn);
@@ -357,6 +411,9 @@
             cloudec_videoctrl_div.appendChild(cancelBroadcastAttendee_btn);
             cloudec_videoctrl_div.appendChild(watchAttendee_ipt);
             cloudec_videoctrl_div.appendChild(watchAttendee_btn);
+            cloudec_videoctrl_div.appendChild(mixedPicture_select);
+            cloudec_videoctrl_div.appendChild(mixedPicture_ipt);
+            cloudec_videoctrl_div.appendChild(mixedPicture_btn);
 
             cloudec_chat_div.appendChild(cloudec_chat_display_div);
             cloudec_chat_input_div.appendChild(cloudec_chat_input_textarea);

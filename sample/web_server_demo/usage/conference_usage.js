@@ -51,6 +51,148 @@ function login() {
 		});
 }
 
+//call start
+function makeCall(){
+	var isVideoCall = 0;
+	var calleeNum = document.getElementById("callee_num").value;
+    if(document.getElementById("isVideoCall").checked)
+    {
+        isVideoCall = 1;
+    }
+        
+    client.makeCall(calleeNum, isVideoCall,function(data){
+		if(data.result){
+			document.getElementById("callState").innerHTML = "call state: make call";
+		}
+	});  
+}
+
+function answerCall(accept){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+	var isVideo = document.getElementById("isVideoCall").checked;
+	client.answerCall(accept, isVideo);
+}
+
+function hangup(){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+	client.hangup();
+}
+
+
+function micMute(bMute){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+	client.micMute(bMute);
+
+}
+
+function DTMF(dmtfNo){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+	client.sendDTMF(dmtfNo);
+}
+	
+function transfer2Conf(){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+
+	var memberList = document.getElementById("memberList").value;
+	if(memberList!=undefined && memberList!=null && memberList!=""){
+		var memberListArr = memberList.split(",");
+		var memberListTemp = new Array();
+		for (var i = 0; i < memberListArr.length; i++) {
+			memberListTemp[i] = { number: memberListArr[i], name: "", smsPhone: "", email: "", autoInvite: 1, role: 0,extensions: "" };
+		}
+		transfer2ConfParam = { attendees: memberListTemp }	
+	}else{
+		transfer2ConfParam=null;
+	}
+
+	client.transfer2Conf(transfer2ConfParam);	
+}
+
+var playHandle;
+function startPlayMedia(){
+	var mediaFilePath = document.getElementById("media_file_path").value;
+	client.startPlayMedia(0, mediaFilePath,function(data){
+		if(data.result){
+			 playHandle = data.info.playHandle;
+		}
+	});	
+}
+
+function stopPlayMedia(){
+	client.stopPlayMedia(playHandle);	
+}
+
+function addVideo(){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+
+	client.switchAudioCall(false);	
+}
+
+function delVideo(){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+
+	client.switchAudioCall(true);	
+}
+
+function replyAddVideo(accept){
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+
+	client.answerSwitch(accept);	
+}
+
+function uiSetIPTService(type){
+	var forwardNumber3 = document.getElementById("forwardNumber3").value;
+	var forwardNumber4 = document.getElementById("forwardNumber4").value;
+	var forwardNumber5 = document.getElementById("forwardNumber5").value;
+	var forwardNumber6 = document.getElementById("forwardNumber6").value;
+	if (type==25 || type ==26){
+        client.setIPTService(type, forwardNumber3);
+    } else if (type==29 || type ==30){
+        client.setIPTService(type, forwardNumber4);
+    } else if (type==27 || type ==28){
+        client.setIPTService(type, forwardNumber5);
+    } else if (type==31 || type ==32){
+        client.setIPTService(type, forwardNumber6);
+    } else {
+        client.setIPTService(type, 0);
+    }
+}
+
+function blindTransfer(){
+	var transtoNumber = document.getElementById("transtoNumber").value;
+	var call = client.getCallHandler();
+	if (call == null) {
+		return;
+	}
+
+	client.blindTransfer(transtoNumber);
+}
+//call end
+
 function joinInstanceConf() {
 	var conference;
 	var confTypeObj = document.getElementById("instance_conf_type");
@@ -76,7 +218,6 @@ function logout() {
 	document.getElementById("login").style.display = "block";
 	document.getElementById("call").style.display = "none";
 }
-
 
 function accessReservedConf() {
 	var conferenceId = document.getElementById("conferenceId").value;
@@ -118,4 +259,51 @@ function joinAnonymousConf() {
 		var conference = evt.info;
 		console.info(JSON.stringify(conference))
 	});
+}
+
+function setConfNativeWndSize() {
+	var width = parseInt(document.getElementById("nativeWnd_width").value);
+	var height = parseInt(document.getElementById("nativeWnd_height").value);
+	var xOffsetRate = parseInt(document.getElementById("nativeWnd_xOffsetRate").value);
+	var yOffsetRate = parseInt(document.getElementById("nativeWnd_yOffsetRate").value);
+
+	var nativeWndParam = {
+		width: width, 
+		height: height,
+		xOffsetRate: xOffsetRate,
+		yOffsetRate: yOffsetRate
+	};
+	client.resetNativeWndSize(nativeWndParam);	
+}
+
+function setConfNativeWndMinimize() {
+	var nativeWndParam = {
+		width: 0, 
+		height: 0,
+	};
+	client.resetNativeWndSize(nativeWndParam);	
+}
+
+function setConfNativeWndSmall() {
+	var nativeWndParam = {
+		width: 480, 
+		height: 352,
+	};
+	client.resetNativeWndSize(nativeWndParam);	
+}
+
+function setConfNativeWndMedium() {
+	var nativeWndParam = {
+		width: 720, 
+		height: 480,
+	};
+	client.resetNativeWndSize(nativeWndParam);	
+}
+
+function setConfNativeWndLarge() {
+	var nativeWndParam = {
+		width: 1080, 
+		height: 720,
+	};
+	client.resetNativeWndSize(nativeWndParam);	
 }

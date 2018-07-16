@@ -3,18 +3,27 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>High-Level-API</title>
     <!--begin: load CloudEC JS SDK-->
-    <script src="./sdk/CloudEC-SDK.js" /></script>
-    <script src="./usage/event_process.js" /></script>
-    <script src="./usage/conference_usage.js" /></script>
+    <script src="./sdk/CloudEC-SDK.js"></script>
+    <script src="./usage/config.js"></script>
+    <script src="./usage/event_process.js"></script>
+    <script src="./usage/conference_usage.js"></script>
     <!--end: load CloudEC JS SDK-->
 
     <!--begin:webcomponentsts component initialization-->
     <script>
-        if (!window.customElements) { document.write('<!--'); } else { window.ShadyDOM = { force: true }; window.customElements.forcePolyfill = true; }
+        if (!window.customElements) {
+            document.write('<!--');
+        } else {
+            window.ShadyDOM = {
+                force: true
+            };
+            window.customElements.forcePolyfill = true;
+        }
     </script>
     <script src="./usage/components/webcomponentsjs-1.0.20/custom-elements-es5-adapter.js"></script>
-    <!--! do not remove -->
+    <!--do not remove-->
     <script src="./usage/components/webcomponentsjs-1.0.20/webcomponents-loader.js"></script>
     <!--end:webcomponentsts component initialization-->
     <script src="./usage/components/My97DatePicker/WdatePicker.js"></script>
@@ -31,32 +40,19 @@
     <!--end: Add components-->
 
     <script type="text/javascript">
-        function configure() {
-            var options = {
-                domain: "localhost.cloudec.huaweicloud.com",
-                isWSS:1,
-                isTlsSupport:0, 
-                isWithSBC: 0, 
-                dropFrame: 2, 
-            }
-            cloudEC.configure(options)
-        }
-
         function setProxyClick(obj) {
-            if (obj.checked)
-            {
+            if (obj.checked) {
                 document.getElementById("proxyDiv").style.display = 'block';
-            }
-            else
-            {
+            } else {
                 document.getElementById("proxyDiv").style.display = 'none';
             }
         }
+
     </script>
 
 </head>
 
-<body onload="configure()">
+<body>
 
     <ul class="tabs">
         <li>
@@ -89,21 +85,129 @@
                     </div>
                 </fieldset>
             </div>
-        </li>        
+        </li>
+        <li>
+            <label for="call">Call</label>
+            <div id="tab-call" class="tab-content">
+                <fieldset>
+                    <legend>Call</legend>
+                    <div id="call">
+                        <!-- <input type="text" id="dail_number" value="11004" />
+                        <button onclick="makeCall()">呼叫测试</button>  -->
+                        callee num:<input type="text" id="callee_num" value="11026" /> 
+                        caller num:<input type="text" id="caller_num" />
+                        <p>
+                            <input type="button" value="1" onclick="DTMF(this.value)" />
+                            <input type="button" value="2" onclick="DTMF(this.value)" />
+                            <input type="button" value="3" onclick="DTMF(this.value)" />
+                            <input type="button" value="4" onclick="DTMF(this.value)" />
+                            <input type="button" value="5" onclick="DTMF(this.value)" />
+                            <input type="button" value="6" onclick="DTMF(this.value)" />
+                            <input type="button" value="7" onclick="DTMF(this.value)" />
+                            <input type="button" value="8" onclick="DTMF(this.value)" />
+                            <input type="button" value="9" onclick="DTMF(this.value)" />
+                            <input type="button" value="0" onclick="DTMF(this.value)" />
+                            <input type="button" value="*" onclick="DTMF(this.value)" />
+                            <input type="button" value="#" onclick="DTMF(this.value)" />
+                        </p>
+                        <p id="callState">call state: Not Update Yet</p>
+                        <p>
+                            <input type="checkbox" id="isVideoCall" checked="checked" />video call or answer
+                            <input type="button" value="call" id="startCall" onclick="makeCall()" />
+                            <input type="button" value="answer" id="acceptCall" onclick="answerCall(true)" />
+                            <input type="button" value="hang up" id="endCall" onclick="hangup()" />
+                            <br/>
+                            <input type="button" value="add video" onclick="addVideo()" />
+                            <input type="button" value="del video" onclick="delVideo()" />
+                            <input type="button" value="accept video increase" onclick="replyAddVideo(true)" />
+                            <input type="button" value="rejected video increase" onclick="replyAddVideo(false)" />
+                            <br/>
+                        </p>
+                        <p>
+                            <input type="button" value="mute mic" id="muteMic" onclick="micMute(true)" />
+                            <input type="button" value="unmute mic" id="unmutMic" onclick="micMute(false)" />
+                            <br/>media files:<input type="text" id="media_file_path" value="./audio/SoundTest.wav"/>
+                            <input type="button" value="play media files" onclick = "startPlayMedia()"/>
+                            <input type="button" value="stop playing media files" onclick = "stopPlayMedia()"/>
+                        </p>
+                        <p>
+                            members list:<input type="text" id="memberList" value="" />
+                            <input type="button" value="transfer to conf" id="transfer2Conf" onclick="transfer2Conf()" />
+                        </p>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>IPT</legend>
+                    <div id="ipt">
+                        <p>
+                            blind number:<input type="text" id="transtoNumber" value="">
+                            <input type="button" value="blind transfer" id="blindTransfer" onclick="blindTransfer()">
+                        </p>
+                        <p>
+                            <table>
+                                <tr>
+                                    <td>Call Wait :</td>
+                                    <td><input type="radio" name="callWait" id="regWait" onclick="uiSetIPTService(3)"/> enable <input type="radio" name="callWait" id="deregWait" onclick="uiSetIPTService(4)"/> disable</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>DND:</td>
+                                    <td><input type="radio" name="dnd" id="regDND" onclick="uiSetIPTService(1)"/> enable <input type="radio" name="dnd" id="deregDND" onclick="uiSetIPTService(2)"/> disable</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Uncondition Forward:</td>
+                                    <td><span id="span3"><input type="radio" name="unconditionForward" id="reguncondition" onclick="uiSetIPTService(25)"/> enable <input type="radio" name="unconditionForward" id="unreguncondition" onclick="uiSetIPTService(26)"/> disable </span></td>
+                                    <td><span id="span3s">Forward Number: <input type="text" id="forwardNumber3"/></span></td>
+                                </tr>  
+                                <tr>
+                                    <td>No Reply Forward:</td>
+                                    <td><span id="span4"><input type="radio" name="noReplyForward" id="regnoReply" onclick="uiSetIPTService(29)"/> enable <input type="radio" name="noReplyForward" id="deregnoReply" onclick="uiSetIPTService(30)"/> disable </span></td>
+                                    <td><span id="span4s">Forward Number: <input type="text" id="forwardNumber4"/></span></td>
+                                </tr>  
+                                <tr>
+                                    <td>Busy Forward:</td>
+                                    <td> <span id="span5"><input type="radio" name="busyForward" id="regbusy" onclick="uiSetIPTService(27)"/> enable <input type="radio" name="busyForward" id="deregbusy" onclick="uiSetIPTService(28)"/> disable </span></td>
+                                    <td> <span id="span5s">Forward Number: <input type="text" id="forwardNumber5"/></span></td>
+                                </tr>  
+                                <tr>
+                                    <td>OffLine Forward:</td>
+                                    <td> <span id="span6"><input type="radio" name="offLineForward" id="regoffline" onclick="uiSetIPTService(31)"/> enable <input type="radio" name="offLineForward" id="deregoffline" onclick="uiSetIPTService(32)"/> disable </span></td>
+                                    <td> <span id="span6s">Forward Number: <input type="text" id="forwardNumber6"/></span></td>
+                                </tr>                                                                
+                            </table>
+                        </p>
+                    </div>
+                </fieldset>
+            </div>
+        </li>
+        <li>
+            <label for="tabSetNativeWndSize">Native Window</label>
+            <div id="tab-contentNativeWnd" class="tab-content">
+                <fieldset>
+                    <legend>Native Window</legend>
+                    <div id="setNativeWndSize">
+                        <button onclick="setConfNativeWndMinimize()">minimize</button>
+                        <button onclick="setConfNativeWndSmall()">small(480*352)</button>
+                        <button onclick="setConfNativeWndMedium()">medium(720*480)</button>
+                        <button onclick="setConfNativeWndLarge()">large(1080*720)</button>
+                    </div>
+                </fieldset>
+            </div>
+        </li>
         <li>
             <label for="tabAnonymousConf">Anonymous conference</label>
             <div id="tab-contentAnonymous" class="tab-content">
                 <fieldset>
                     <legend>Anonymous conference</legend>
-                    <div id="anonymousConf">                         
+                    <div id="anonymousConf">
                         server address:<input type="text" id="anony_svr_addr" value="10.174.5.182" /> port:
-                        <input type="text" id="anony_svr_port" value="443" /> conference ID:                        
-                        <input type="text" id="anony_conf_id" value=""/> conference password:                        
-                        <input type="text" id="anony_passwd" value="" />
-                        call type: <select id='anony_call_type'>  
+                        <input type="text" id="anony_svr_port" value="443" /> conference ID:
+                        <input type="text" id="anony_conf_id" value="" /> conference password:
+                        <input type="text" id="anony_passwd" value="" /> call type: <select id='anony_call_type'>  
                                 <option value=0>audio</option> 
                                 <option value=1 selected="selected">video</option>
-                             </select> 
+                             </select>
                         <button onclick="joinAnonymousConf()">anonymous conference</button>
                     </div>
                 </fieldset>
@@ -132,15 +236,14 @@
                                 <option value=1>video</option> 
                                 <option value=2>audio+Data</option> 
                                 <option value=3 selected="selected">video+Data</option>
-                             </select>                           
-                    members list:<input type="text" id="member_list" value="11005,11004" />
+                               </select> 
+                    members list:<input type="text" id="member_list" value="70010,70011" />
                     <button onclick="joinInstanceConf()">instance conference</button>
                 </fieldset>
                 <fieldset>
                     <legend>Book conference</legend>
                     conference ID:<input type="text" id="conferenceId" value="121997039" /> access code:
-                    <input type="text" id="accessNumber" value="+865718001" /> conference password: <input type="text" id="confPasswd" value="33816412"
-                    />
+                    <input type="text" id="accessNumber" value="+865718001" /> conference password: <input type="text" id="confPasswd" value="33816412" />
                     <button onclick="accessReservedConf()">access reserved conference</button>
                 </fieldset>
 

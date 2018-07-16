@@ -68,10 +68,10 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(3);
-var core = __webpack_require__(24);
-var hide = __webpack_require__(13);
-var redefine = __webpack_require__(14);
-var ctx = __webpack_require__(20);
+var core = __webpack_require__(26);
+var hide = __webpack_require__(14);
+var redefine = __webpack_require__(15);
+var ctx = __webpack_require__(21);
 var PROTOTYPE = 'prototype';
 
 var $export = function (type, name, source) {
@@ -157,6 +157,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     exports.isInteger = function (obj) {
         return typeof obj === 'number' && obj % 1 === 0;
     };
+    exports.isIntegerRange = function (obj, start, end) {
+        if (!obj) {
+            return true;
+        }
+        return exports.isInteger(obj) && obj >= start && obj <= end;
+    };
     exports.formatDateYYYYMMDDHHMM = function (time, separator) {
         if (separator === void 0) { separator = "/"; }
         var date = new Date(time * 1.0);
@@ -204,7 +210,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         return (typeof param === 'number' && (param === 0 || param === 1));
     };
     exports.isUndefined = function (param) {
-        return param == undefined;
+        return param == undefined || param == null;
     };
     exports.isArray = function (param) {
         return (param instanceof Array);
@@ -342,7 +348,7 @@ module.exports = !__webpack_require__(4)(function () {
 
 var anObject = __webpack_require__(2);
 var IE8_DOM_DEFINE = __webpack_require__(101);
-var toPrimitive = __webpack_require__(25);
+var toPrimitive = __webpack_require__(27);
 var dP = Object.defineProperty;
 
 exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes) {
@@ -363,7 +369,7 @@ exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProp
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
-var toInteger = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
 var min = Math.min;
 module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
@@ -375,7 +381,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(28);
 module.exports = function (it) {
   return Object(defined(it));
 };
@@ -393,6 +399,40 @@ module.exports = function (it) {
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.CloudEC_SERVERCONFIG = {
+        LOGIN_ADDRESS: "szxuces-vip.huawei.com",
+        LOGIN_PORT: "8443",
+        CA_PATH: "./",
+        LOG_PATH: "./js_sdk_log",
+        LOG_LEVEL: 3,
+        LOG_FILE_COUNT: 5,
+        LOG_FILE_SIZE: 10240,
+        ENTERPRISE_DOMAIN: "127.0.0.1",
+        IS_WITH_SBC: 1,
+        IS_TLS_SUPPORT: 0,
+        IS_WSS: 1,
+        HWUC: 0,
+        DROP_FRAME_COUNT: 2,
+        IS_AUTO_ADAPT_FRAME: 0,
+        VIDEO_DISPLAY_MODE: 1,
+        NATIVE_WINDOW_X_OFFSET: 600,
+        NATIVE_WINDOW_Y_OFFSET: 300,
+        NATIVE_WINDOW_X_OFFSET_RATE: 50,
+        NATIVE_WINDOW_Y_OFFSET_RATE: 20,
+        NATIVE_WINDOW_WIDTH: 720,
+        NATIVE_WINDOW_HEIGHT: 480,
+    };
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports) {
 
 var hasOwnProperty = {}.hasOwnProperty;
@@ -402,7 +442,7 @@ module.exports = function (it, key) {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(8);
@@ -416,18 +456,18 @@ module.exports = __webpack_require__(7) ? function (object, key, value) {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(3);
-var hide = __webpack_require__(13);
-var has = __webpack_require__(12);
+var hide = __webpack_require__(14);
+var has = __webpack_require__(13);
 var SRC = __webpack_require__(39)('src');
 var TO_STRING = 'toString';
 var $toString = Function[TO_STRING];
 var TPL = ('' + $toString).split(TO_STRING);
 
-__webpack_require__(24).inspectSource = function (it) {
+__webpack_require__(26).inspectSource = function (it) {
   return $toString.call(it);
 };
 
@@ -453,12 +493,12 @@ __webpack_require__(24).inspectSource = function (it) {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
 var fails = __webpack_require__(4);
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(28);
 var quot = /"/g;
 // B.2.3.2.1 CreateHTML(string, tag, attribute, value)
 var createHTML = function (string, tag, attribute, value) {
@@ -478,403 +518,7 @@ module.exports = function (NAME, exec) {
 
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(56);
-var defined = __webpack_require__(26);
-module.exports = function (it) {
-  return IObject(defined(it));
-};
-
-
-/***/ }),
 /* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var pIE = __webpack_require__(57);
-var createDesc = __webpack_require__(38);
-var toIObject = __webpack_require__(16);
-var toPrimitive = __webpack_require__(25);
-var has = __webpack_require__(12);
-var IE8_DOM_DEFINE = __webpack_require__(101);
-var gOPD = Object.getOwnPropertyDescriptor;
-
-exports.f = __webpack_require__(7) ? gOPD : function getOwnPropertyDescriptor(O, P) {
-  O = toIObject(O);
-  P = toPrimitive(P, true);
-  if (IE8_DOM_DEFINE) try {
-    return gOPD(O, P);
-  } catch (e) { /* empty */ }
-  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
-};
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has = __webpack_require__(12);
-var toObject = __webpack_require__(10);
-var IE_PROTO = __webpack_require__(75)('IE_PROTO');
-var ObjectProto = Object.prototype;
-
-module.exports = Object.getPrototypeOf || function (O) {
-  O = toObject(O);
-  if (has(O, IE_PROTO)) return O[IE_PROTO];
-  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
-    return O.constructor.prototype;
-  } return O instanceof Object ? ObjectProto : null;
-};
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CloudEC_SERVERCONFIG = {
-        LOGIN_ADDRESS: "szxuces-vip.huawei.com",
-        LOGIN_PORT: "8443",
-        CA_PATH: "./",
-        LOG_PATH: "./js_sdk_log",
-        LOG_LEVEL: 3,
-        LOG_FILE_COUNT: 5,
-        LOG_FILE_SIZE: 10240,
-        ENTERPRISE_DOMAIN: "127.0.0.1",
-        IS_WITH_SBC: 1,
-        IS_TLS_SUPPORT: 0,
-        IS_WSS: 1,
-        HWUC: 0,
-        DROP_FRAME_COUNT: 2,
-        IS_AUTO_ADAPT_FRAME: 0,
-    };
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// optional / simple context binding
-var aFunction = __webpack_require__(11);
-module.exports = function (fn, that, length) {
-  aFunction(fn);
-  if (that === undefined) return fn;
-  switch (length) {
-    case 1: return function (a) {
-      return fn.call(that, a);
-    };
-    case 2: return function (a, b) {
-      return fn.call(that, a, b);
-    };
-    case 3: return function (a, b, c) {
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function (/* ...args */) {
-    return fn.apply(that, arguments);
-  };
-};
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = function (it) {
-  return toString.call(it).slice(8, -1);
-};
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var fails = __webpack_require__(4);
-
-module.exports = function (method, arg) {
-  return !!method && fails(function () {
-    // eslint-disable-next-line no-useless-call
-    arg ? method.call(null, function () { /* empty */ }, 1) : method.call(null);
-  });
-};
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Dispatcher = (function () {
-        function Dispatcher() {
-        }
-        Dispatcher.register = function (name, callback, context) {
-            var observers = Dispatcher.listeners[name];
-            if (!observers) {
-                Dispatcher.listeners[name] = [];
-            }
-            Dispatcher.listeners[name].push(new Observer(callback, context));
-        };
-        Dispatcher.remove = function (name, callback, context) {
-            var observers = Dispatcher.listeners[name];
-            if (!observers)
-                return;
-            var length = observers.length;
-            for (var i = 0; i < length; i++) {
-                var observer = observers[i];
-                if (observer.compar(context)) {
-                    observers.splice(i, 1);
-                    break;
-                }
-            }
-            if (observers.length == 0) {
-                delete Dispatcher.listeners[name];
-            }
-        };
-        Dispatcher.removeAll = function () {
-            for (var m in Dispatcher.listeners) {
-                if (Dispatcher.listeners[m]) {
-                    for (var i = 0; i < Dispatcher.listeners[m].length; ++i) {
-                        Dispatcher.listeners[m].splice(i, 1);
-                    }
-                }
-            }
-        };
-        Dispatcher.fire = function (name) {
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            return __awaiter(this, void 0, void 0, function () {
-                var observers, length, i, observer;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            util_1.default.info("dispatcher", "fire a event=" + name);
-                            observers = Dispatcher.listeners[name];
-                            if (!observers)
-                                return [2];
-                            length = observers.length;
-                            i = 0;
-                            _a.label = 1;
-                        case 1:
-                            if (!(i < length)) return [3, 4];
-                            observer = observers[i];
-                            return [4, observer.notify.apply(observer, [name].concat(args))];
-                        case 2:
-                            _a.sent();
-                            _a.label = 3;
-                        case 3:
-                            i++;
-                            return [3, 1];
-                        case 4: return [2];
-                    }
-                });
-            });
-        };
-        Dispatcher.listeners = {};
-        return Dispatcher;
-    }());
-    exports.default = Dispatcher;
-    var Observer = (function () {
-        function Observer(callback, context) {
-            this.context = null;
-            var self = this;
-            self.callback = callback;
-            self.context = context;
-        }
-        Observer.prototype.notify = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            return __awaiter(this, void 0, void 0, function () {
-                var self, _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            self = this;
-                            return [4, (_a = self.callback).call.apply(_a, [self.context].concat(args))];
-                        case 1:
-                            _b.sent();
-                            return [2];
-                    }
-                });
-            });
-        };
-        Observer.prototype.compar = function (context) {
-            return context == this.context;
-        };
-        return Observer;
-    }());
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-var core = module.exports = { version: '2.5.1' };
-if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = __webpack_require__(5);
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function (it, S) {
-  if (!isObject(it)) return it;
-  var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
-// 7.2.1 RequireObjectCoercible(argument)
-module.exports = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
-  return it;
-};
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-// 7.1.4 ToInteger
-var ceil = Math.ceil;
-var floor = Math.floor;
-module.exports = function (it) {
-  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-};
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// most Object methods by ES6 should accept primitives
-var $export = __webpack_require__(0);
-var core = __webpack_require__(24);
-var fails = __webpack_require__(4);
-module.exports = function (KEY, exec) {
-  var fn = (core.Object || {})[KEY] || Object[KEY];
-  var exp = {};
-  exp[KEY] = exec(fn);
-  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
-};
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 0 -> Array#forEach
-// 1 -> Array#map
-// 2 -> Array#filter
-// 3 -> Array#some
-// 4 -> Array#every
-// 5 -> Array#find
-// 6 -> Array#findIndex
-var ctx = __webpack_require__(20);
-var IObject = __webpack_require__(56);
-var toObject = __webpack_require__(10);
-var toLength = __webpack_require__(9);
-var asc = __webpack_require__(92);
-module.exports = function (TYPE, $create) {
-  var IS_MAP = TYPE == 1;
-  var IS_FILTER = TYPE == 2;
-  var IS_SOME = TYPE == 3;
-  var IS_EVERY = TYPE == 4;
-  var IS_FIND_INDEX = TYPE == 6;
-  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
-  var create = $create || asc;
-  return function ($this, callbackfn, that) {
-    var O = toObject($this);
-    var self = IObject(O);
-    var f = ctx(callbackfn, that, 3);
-    var length = toLength(self.length);
-    var index = 0;
-    var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
-    var val, res;
-    for (;length > index; index++) if (NO_HOLES || index in self) {
-      val = self[index];
-      res = f(val, index, O);
-      if (TYPE) {
-        if (IS_MAP) result[index] = res;   // map
-        else if (res) switch (TYPE) {
-          case 3: return true;             // some
-          case 5: return val;              // find
-          case 6: return index;            // findIndex
-          case 2: result.push(val);        // filter
-        } else if (IS_EVERY) return false; // every
-      }
-    }
-    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
-  };
-};
-
-
-/***/ }),
-/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
@@ -1342,9 +986,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         SUSPEND: "suspend"
     };
     exports.CLOUDEC_SDK_INFO = {
-        version: "6.1.0.RC1",
+        version: "6.1.0",
         name: "CloudEC JSSDK",
-        time: "2018.3.31"
+        time: "2018.7.6"
     };
     exports.CLOUDEC_COMMON_RESULT = {
         SUCCESS: 0,
@@ -1361,12 +1005,141 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         CONNECTED: 1,
         CLOSED: 2
     };
+    exports.CLOUDEC_LOGIN_E_DEPLOY_MODE = {
+        LOGIN_E_DEPLOY_ENTERPRISE_IPT: 0,
+        LOGIN_E_DEPLOY_ENTERPRISE_CC: 1,
+        LOGIN_E_DEPLOY_SPHOSTED_IPT: 2,
+        LOGIN_E_DEPLOY_SPHOSTED_CC: 3,
+        LOGIN_E_DEPLOY_SPHOSTED_CONF: 4,
+        LOGIN_E_DEPLOY_IMSHOSTED_IPT: 5,
+        LOGIN_E_DEPLOY_IMSHOSTED_CC: 6,
+    };
+    exports.CLOUDEC_IPT_TYPE = {
+        ENABLE_CALL_WAIT: 3,
+        DISABLE_CALL_WAIT: 4,
+        ENABLE_DO_NOT_DISTURB: 1,
+        DISABLE_DO_NOT_DISTURB: 2,
+        ENABLE_UNCONDITION_FORWARD: 25,
+        DISABLE_UNCONDITION_FORWARD: 26,
+        ENABLE_NO_REPLY_FORWARD: 29,
+        DISABLE_NO_REPLY_FORWARD: 30,
+        ENABLE_BUSY_FORWARD: 27,
+        DISABLE_BUSY_FORWARD: 28,
+        ENABLE_OFFLINE_FORWARD: 31,
+        DISABLE_OFFLINE_FORWARD: 32,
+    };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 31 */
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = __webpack_require__(56);
+var defined = __webpack_require__(28);
+module.exports = function (it) {
+  return IObject(defined(it));
+};
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pIE = __webpack_require__(57);
+var createDesc = __webpack_require__(38);
+var toIObject = __webpack_require__(18);
+var toPrimitive = __webpack_require__(27);
+var has = __webpack_require__(13);
+var IE8_DOM_DEFINE = __webpack_require__(101);
+var gOPD = Object.getOwnPropertyDescriptor;
+
+exports.f = __webpack_require__(7) ? gOPD : function getOwnPropertyDescriptor(O, P) {
+  O = toIObject(O);
+  P = toPrimitive(P, true);
+  if (IE8_DOM_DEFINE) try {
+    return gOPD(O, P);
+  } catch (e) { /* empty */ }
+  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
+};
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+var has = __webpack_require__(13);
+var toObject = __webpack_require__(10);
+var IE_PROTO = __webpack_require__(75)('IE_PROTO');
+var ObjectProto = Object.prototype;
+
+module.exports = Object.getPrototypeOf || function (O) {
+  O = toObject(O);
+  if (has(O, IE_PROTO)) return O[IE_PROTO];
+  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+    return O.constructor.prototype;
+  } return O instanceof Object ? ObjectProto : null;
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// optional / simple context binding
+var aFunction = __webpack_require__(11);
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = function (it) {
+  return toString.call(it).slice(8, -1);
+};
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fails = __webpack_require__(4);
+
+module.exports = function (method, arg) {
+  return !!method && fails(function () {
+    // eslint-disable-next-line no-useless-call
+    arg ? method.call(null, function () { /* empty */ }, 1) : method.call(null);
+  });
+};
+
+
+/***/ }),
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
@@ -1427,6 +1200,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         SDK_CONF_LEAVE_CONF: "SDK_CONF_LEAVE_CONF",
         SDK_CONF_END_CONF: "SDK_CONF_END_CONF",
         SDK_CONF_SET_CONFMODE: "SDK_CONF_SET_CONFMODE",
+        SDK_CONF_SET_CONF_MIXED_PICTURE: "SDK_CONF_SET_CONF_MIXED_PICTURE",
         SDK_CONF_BROADCAST_ATTENDEE: "SDK_CONF_BROADCAST_ATTENDEE",
         SDK_CONF_WATCH_ATTENDEE: "SDK_CONF_WATCH_ATTENDEE",
         SDK_CONF_VIDEO_SWITCH: "SDK_CONF_VIDEO_SWITCH",
@@ -1454,9 +1228,295 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         SDK_CMPT_GET_MEMORY_USAGE: "SDK_CMPT_GET_MEMORY_USAGE",
         SDK_EADDR_SEARCH_USER: "SDK_EADDR_SEARCH_USER",
         SDK_EADDR_SEARCH_DEPT: "SDK_EADDR_SEARCH_DEPT",
+        SDK_CALL_START_CALL: "SDK_CALL_START_CALL",
+        SDK_CALL_ACCEPT_CALL: "SDK_CALL_ACCEPT_CALL",
+        SDK_CALL_REJECT_CALL: "SDK_CALL_REJECT_CALL",
+        SDK_CALL_HOLD_CALL: "SDK_CALL_HOLD_CALL",
+        SDK_CALL_UNHOLD_CALL: "SDK_CALL_UNHOLD_CALL",
+        SDK_CALL_SEND_DTMF: "SDK_CALL_SEND_DTMF",
+        SDK_CALL_SET_VIDEO_RENDER: "SDK_CALL_SET_VIDEO_RENDER",
+        SDK_CALL_SET_LOCAL_VIDEOWH: "SDK_CALL_SET_LOCAL_VIDEOWH",
+        SDK_CALL_SET_REMOTE_VIDEOWH: "SDK_CALL_SET_REMOTE_VIDEOWH",
+        SDK_CONF_P2P_TRANSFER_TO_CONF: "SDK_CONF_P2P_TRANSFER_TO_CONF",
+        SDK_CALL_START_PLAY_MEDIA_FILE: "SDK_CALL_START_PLAY_MEDIA_FILE",
+        SDK_CALL_STOP_PLAY_MEDIA_FILE: "SDK_CALL_STOP_PLAY_MEDIA_FILE",
+        SDK_CALL_ADD_VIDEO: "SDK_CALL_ADD_VIDEO",
+        SDK_CALL_DEL_VIDEO: "SDK_CALL_DEL_VIDEO",
+        SDK_CALL_REPLY_ADD_VIDEO: "SDK_CALL_REPLY_ADD_VIDEO",
+        SDK_CALL_NATIVEWND_INIT: "SDK_CALL_NATIVEWND_INIT",
+        SDK_CALL_NATIVEWND_CREATE_WINDOW: "SDK_CALL_NATIVEWND_CREATE_WINDOW",
+        SDK_CALL_NATIVEWND_DESTROY_WINDOW: "SDK_CALL_NATIVEWND_DESTROY_WINDOW",
+        SDK_CALL_NATIVEWND_UNINIT: "SDK_CALL_NATIVEWND_UNINIT",
+        SDK_CALL_SET_VIDEO_WINDOW: "SDK_CALL_SET_VIDEO_WINDOW",
+        SDK_CALL_RESET_NATIVEWND_SIZE: "SDK_CALL_RESET_NATIVEWND_SIZE",
+        SDK_CALL_SET_IPT_SERVICE: "SDK_CALL_SET_IPT_SERVICE",
+        SDK_CALL_BLIND_TRANSFER: "SDK_CALL_BLIND_TRANSFER",
     };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Dispatcher = (function () {
+        function Dispatcher() {
+        }
+        Dispatcher.register = function (name, callback, context) {
+            var observers = Dispatcher.listeners[name];
+            if (!observers) {
+                Dispatcher.listeners[name] = [];
+            }
+            Dispatcher.listeners[name].push(new Observer(callback, context));
+        };
+        Dispatcher.remove = function (name, callback, context) {
+            var observers = Dispatcher.listeners[name];
+            if (!observers)
+                return;
+            var length = observers.length;
+            for (var i = 0; i < length; i++) {
+                var observer = observers[i];
+                if (observer.compar(context)) {
+                    observers.splice(i, 1);
+                    break;
+                }
+            }
+            if (observers.length == 0) {
+                delete Dispatcher.listeners[name];
+            }
+        };
+        Dispatcher.removeAll = function () {
+            for (var m in Dispatcher.listeners) {
+                if (Dispatcher.listeners[m]) {
+                    for (var i = 0; i < Dispatcher.listeners[m].length; ++i) {
+                        Dispatcher.listeners[m].splice(i, 1);
+                    }
+                }
+            }
+        };
+        Dispatcher.fire = function (name) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            return __awaiter(this, void 0, void 0, function () {
+                var observers, length, i, observer;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            util_1.default.info("dispatcher", "fire a event=" + name);
+                            observers = Dispatcher.listeners[name];
+                            if (!observers)
+                                return [2];
+                            length = observers.length;
+                            i = 0;
+                            _a.label = 1;
+                        case 1:
+                            if (!(i < length)) return [3, 4];
+                            observer = observers[i];
+                            return [4, observer.notify.apply(observer, [name].concat(args))];
+                        case 2:
+                            _a.sent();
+                            _a.label = 3;
+                        case 3:
+                            i++;
+                            return [3, 1];
+                        case 4: return [2];
+                    }
+                });
+            });
+        };
+        Dispatcher.listeners = {};
+        return Dispatcher;
+    }());
+    exports.default = Dispatcher;
+    var Observer = (function () {
+        function Observer(callback, context) {
+            this.context = null;
+            var self = this;
+            self.callback = callback;
+            self.context = context;
+        }
+        Observer.prototype.notify = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return __awaiter(this, void 0, void 0, function () {
+                var self, _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            self = this;
+                            return [4, (_a = self.callback).call.apply(_a, [self.context].concat(args))];
+                        case 1:
+                            _b.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        Observer.prototype.compar = function (context) {
+            return context == this.context;
+        };
+        return Observer;
+    }());
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+var core = module.exports = { version: '2.5.1' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = __webpack_require__(5);
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (it, S) {
+  if (!isObject(it)) return it;
+  var fn, val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+// 7.1.4 ToInteger
+var ceil = Math.ceil;
+var floor = Math.floor;
+module.exports = function (it) {
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// most Object methods by ES6 should accept primitives
+var $export = __webpack_require__(0);
+var core = __webpack_require__(26);
+var fails = __webpack_require__(4);
+module.exports = function (KEY, exec) {
+  var fn = (core.Object || {})[KEY] || Object[KEY];
+  var exp = {};
+  exp[KEY] = exec(fn);
+  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
+};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 0 -> Array#forEach
+// 1 -> Array#map
+// 2 -> Array#filter
+// 3 -> Array#some
+// 4 -> Array#every
+// 5 -> Array#find
+// 6 -> Array#findIndex
+var ctx = __webpack_require__(21);
+var IObject = __webpack_require__(56);
+var toObject = __webpack_require__(10);
+var toLength = __webpack_require__(9);
+var asc = __webpack_require__(92);
+module.exports = function (TYPE, $create) {
+  var IS_MAP = TYPE == 1;
+  var IS_FILTER = TYPE == 2;
+  var IS_SOME = TYPE == 3;
+  var IS_EVERY = TYPE == 4;
+  var IS_FIND_INDEX = TYPE == 6;
+  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+  var create = $create || asc;
+  return function ($this, callbackfn, that) {
+    var O = toObject($this);
+    var self = IObject(O);
+    var f = ctx(callbackfn, that, 3);
+    var length = toLength(self.length);
+    var index = 0;
+    var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
+    var val, res;
+    for (;length > index; index++) if (NO_HOLES || index in self) {
+      val = self[index];
+      res = f(val, index, O);
+      if (TYPE) {
+        if (IS_MAP) result[index] = res;   // map
+        else if (res) switch (TYPE) {
+          case 3: return true;             // some
+          case 5: return val;              // find
+          case 6: return index;            // findIndex
+          case 2: result.push(val);        // filter
+        } else if (IS_EVERY) return false; // every
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+  };
+};
 
 
 /***/ }),
@@ -1536,28 +1596,28 @@ if (__webpack_require__(7)) {
   var $export = __webpack_require__(0);
   var $typed = __webpack_require__(69);
   var $buffer = __webpack_require__(98);
-  var ctx = __webpack_require__(20);
+  var ctx = __webpack_require__(21);
   var anInstance = __webpack_require__(46);
   var propertyDesc = __webpack_require__(38);
-  var hide = __webpack_require__(13);
+  var hide = __webpack_require__(14);
   var redefineAll = __webpack_require__(48);
-  var toInteger = __webpack_require__(27);
+  var toInteger = __webpack_require__(29);
   var toLength = __webpack_require__(9);
   var toIndex = __webpack_require__(127);
   var toAbsoluteIndex = __webpack_require__(42);
-  var toPrimitive = __webpack_require__(25);
-  var has = __webpack_require__(12);
+  var toPrimitive = __webpack_require__(27);
+  var has = __webpack_require__(13);
   var classof = __webpack_require__(58);
   var isObject = __webpack_require__(5);
   var toObject = __webpack_require__(10);
   var isArrayIter = __webpack_require__(89);
   var create = __webpack_require__(43);
-  var getPrototypeOf = __webpack_require__(18);
+  var getPrototypeOf = __webpack_require__(20);
   var gOPN = __webpack_require__(44).f;
   var getIterFn = __webpack_require__(91);
   var uid = __webpack_require__(39);
   var wks = __webpack_require__(6);
-  var createArrayMethod = __webpack_require__(29);
+  var createArrayMethod = __webpack_require__(31);
   var createArrayIncludes = __webpack_require__(60);
   var speciesConstructor = __webpack_require__(67);
   var ArrayIterators = __webpack_require__(94);
@@ -1567,7 +1627,7 @@ if (__webpack_require__(7)) {
   var arrayFill = __webpack_require__(93);
   var arrayCopyWithin = __webpack_require__(117);
   var $DP = __webpack_require__(8);
-  var $GOPD = __webpack_require__(17);
+  var $GOPD = __webpack_require__(19);
   var dP = $DP.f;
   var gOPD = $GOPD.f;
   var RangeError = global.RangeError;
@@ -2073,7 +2133,7 @@ module.exports = {
 
 var META = __webpack_require__(39)('meta');
 var isObject = __webpack_require__(5);
-var has = __webpack_require__(12);
+var has = __webpack_require__(13);
 var setDesc = __webpack_require__(8).f;
 var id = 0;
 var isExtensible = Object.isExtensible || function () {
@@ -2133,7 +2193,7 @@ var meta = module.exports = {
 // 22.1.3.31 Array.prototype[@@unscopables]
 var UNSCOPABLES = __webpack_require__(6)('unscopables');
 var ArrayProto = Array.prototype;
-if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(13)(ArrayProto, UNSCOPABLES, {});
+if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(14)(ArrayProto, UNSCOPABLES, {});
 module.exports = function (key) {
   ArrayProto[UNSCOPABLES][key] = true;
 };
@@ -2314,7 +2374,7 @@ module.exports = Object.keys || function keys(O) {
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
 var max = Math.max;
 var min = Math.min;
 module.exports = function (index, length) {
@@ -2418,7 +2478,7 @@ module.exports = function (it, Constructor, name, forbiddenField) {
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ctx = __webpack_require__(20);
+var ctx = __webpack_require__(21);
 var call = __webpack_require__(115);
 var isArrayIter = __webpack_require__(89);
 var anObject = __webpack_require__(2);
@@ -2449,7 +2509,7 @@ exports.RETURN = RETURN;
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var redefine = __webpack_require__(14);
+var redefine = __webpack_require__(15);
 module.exports = function (target, src, safe) {
   for (var key in src) redefine(target, key, src[key], safe);
   return target;
@@ -2495,7 +2555,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(37), __webpack_require__(19), __webpack_require__(23), __webpack_require__(32), __webpack_require__(348), __webpack_require__(31), __webpack_require__(1), __webpack_require__(370), __webpack_require__(371), __webpack_require__(372), __webpack_require__(373), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, errorCode_1, serverConfig_1, dispatcher_1, observer_1, initialization_1, eventInfo_1, util, call_1, conference_1, device_1, eaddr_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(37), __webpack_require__(12), __webpack_require__(25), __webpack_require__(32), __webpack_require__(348), __webpack_require__(24), __webpack_require__(1), __webpack_require__(372), __webpack_require__(373), __webpack_require__(374), __webpack_require__(375), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, errorCode_1, serverConfig_1, dispatcher_1, observer_1, initialization_1, eventInfo_1, util, call_1, conference_1, device_1, eaddr_1, enum_2, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Client = (function () {
@@ -2503,6 +2563,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.timer = 0;
             this.currentFrame = serverConfig_1.CloudEC_SERVERCONFIG.DROP_FRAME_COUNT || 2;
             this.pcMemory = 0;
+            this.playHandle = -1;
+            this.parentFrameHwnd = 0;
+            this.frameHwndList = {};
+            this.isNativeWndExist = false;
             initialization_1.default.init();
             this._device = new device_1.default();
             this._eaddr = new eaddr_1.default();
@@ -2573,16 +2637,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             delete this._call;
             delete this._conf;
             this._status = 0;
-        };
-        Client.prototype.makeCall = function (callParam, callback) {
-            this.isLogin();
-            var call = new call_1.default();
-            call.setCallee(callParam.callee);
-            call.setCallStyle(1);
-            call.setCallType(callParam.callType);
-            dispatcher_1.default.fire("startCall", callParam.callee, callParam.callType);
-            this._call = call;
-            return call;
         };
         Client.prototype.bookConference = function (bookConferenceParam, callback) {
             this.isLogin();
@@ -2771,7 +2825,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         Client.prototype.joinConference = function (joinConfParam, callback) {
             var _this = this;
             this.isLogin();
-            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
+            var err = { cmdId: 300000002, errorCode: 300000002, errorInfo: "parameter error" };
             var evt = { result: true, info: "" };
             var mediaType;
             if ("" == joinConfParam.conferenceId || "" == joinConfParam.accessNumber || "" == joinConfParam.confPasswd) {
@@ -2783,7 +2837,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             this.getMyConfInfo(joinConfParam.conferenceId, function (ret) {
                 if (ret.result == true) {
-                    if (ret.info.mediaType == 5 || ret.info.mediaType == 21) {
+                    if (ret.info.mediaType == 5 || ret.info.mediaType == 21 || ret.info.mediaType == 19 || ret.info.mediaType == 3) {
                         mediaType = 1;
                     }
                     else {
@@ -2818,7 +2872,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             else {
                 util_1.default.error("client", JSON.stringify(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("Call")));
-                Client.notifyErr(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("Conference"));
+                Client.notifyErr(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("call"));
                 return null;
             }
         };
@@ -2930,16 +2984,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         Client.prototype.registerCallEvent = function () {
             var _this = this;
             observer_1.default.subscribe('CallIncomming', function (ret) {
+                var evt = { result: true, info: "you have a incoming call" };
                 _this._call = new call_1.default();
                 _this._call.setCallID(ret.callId);
-                _this._call.setCallStyle(ret.callType);
+                _this.callID = ret.callId;
+                _this._call.setCallStyle(0);
                 _this._call.setCallType(ret.isVideo);
                 _this._call.setCallee(ret.callNo);
-                _this.notify('CallIncomming', _this._call);
+                evt.info = {
+                    callNo: ret.callNo,
+                    callType: ret.isVideo,
+                };
+                _this.notify('CallIncomming', evt);
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, 0, "./audio/In.wav", function (data) {
+                    if (data.result == 0) {
+                        _this.playHandle = data.param.play_handle;
+                    }
+                });
             });
             observer_1.default.subscribe('onForceUnReg', function (ret) {
                 _this.logout();
                 _this.notify("ForceUnReg", ret);
+            });
+            observer_1.default.subscribe('CallDestroy', function (ret) {
+                _this.notify("CallDestroy", ret);
             });
             observer_1.default.subscribe('CallEnded', function (ret) {
                 delete _this._call;
@@ -2950,47 +3018,171 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 else {
                     evt = { result: ret, info: "end failure" };
                 }
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                    _this.delVideo();
+                }
+                else {
+                    _this.closeVideo();
+                }
+                if (_this.playHandle >= 0) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, _this.playHandle, function (data) {
+                        if (data.result == 0) {
+                            _this.playHandle = -1;
+                        }
+                    });
+                }
                 _this.notify('CallEnded', evt);
             });
             observer_1.default.subscribe('CallConnected', function (ret) {
-                _this.notify('CallConnected', ret);
-                _this.showVideo();
+                var evt = { result: true, info: "call connect!" };
+                _this.notify('CallConnected', evt);
+                _this.callID = ret.call_id;
+                if (_this.playHandle >= 0) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, _this.playHandle, function (data) {
+                        if (data.result == 0) {
+                            _this.playHandle = -1;
+                        }
+                    });
+                }
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && ret.call_type == 1) {
+                    _this.displayVideoEx(ret.call_id);
+                }
+                else if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && ret.call_type == 0 && _this.isNativeWndExist) {
+                    _this.closeVideo();
+                }
             });
             observer_1.default.subscribe('CallRingBack', function (ret) {
-                _this._call.setCallID(ret.call_id);
-                _this.notify('CallRingBack', ret);
-            });
-            observer_1.default.subscribe('HandleEndCall', function (ret) {
-                delete _this._call;
-                _this.notify('HandleEndCall', ret);
+                var evt = { result: true, info: "call ringBack!" };
+                if (_this.playHandle == -1) {
+                    _this.playHandle = -2;
+                    _this._call.setCallID(ret.call_id);
+                    _this.callID = ret.call_id;
+                    _this.notify('CallRingBack', evt);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, 0, "./audio/ringback.wav", function (data) {
+                        if (data.result == 0) {
+                            _this.playHandle = data.param.play_handle;
+                        }
+                    });
+                }
             });
             observer_1.default.subscribe('AddVideoRequest', function (ret) {
-                _this.notify('AddVideoRequest', ret);
+                var evt = { result: true, info: "Add video request!" };
+                _this.notify('AddVideoRequest', evt);
             });
             observer_1.default.subscribe('DelVideoRequest', function (ret) {
-                _this.notify('DelVideoRequest', ret);
+                var evt = { result: true, info: "Delete video request!" };
+                _this.notify('DelVideoRequest', evt);
             });
-            observer_1.default.subscribe('DelVideoRequest', function (ret) {
-                _this.notify('DelVideoRequest', ret);
+            observer_1.default.subscribe('CallModifyVideoResult', function (ret) {
+                var evt = { result: true, info: "Audio and video conversion succeed!" };
+                if (0 == ret.result) {
+                    if (1 == ret.is_video) {
+                        if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                            _this.showVideo();
+                        }
+                    }
+                    else {
+                        if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                            _this.closeVideo();
+                        }
+                    }
+                }
+                else {
+                    evt = { result: false, info: "Audio and video conversion failed!" };
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                        if (0 == ret.is_video) {
+                            _this.closeVideo();
+                        }
+                    }
+                }
+                _this.notify('CallModifyVideoResult', evt);
             });
             observer_1.default.subscribe('VideoSocketResult', function (ret) {
                 if (!ret.result) {
                     Client.notifyErr(ret);
                 }
             });
+            observer_1.default.subscribe('CallSessionModify', function (ret) {
+                _this.notify('CallSessionModify', ret);
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                    if (ret.nowIsVideoCall === 1) {
+                        _this.displayVideoEx(ret.call_id);
+                    }
+                    else {
+                        _this.closeVideo();
+                    }
+                }
+            });
+            observer_1.default.subscribe('NewServiceRight', function (ret) {
+                var evt = { result: true, info: ret };
+                _this.notify('NewServiceRight', evt);
+            });
+            observer_1.default.subscribe('SetIptServiceSuccess', function (ret) {
+                var evt = { result: true, info: "set ipt successful!" };
+                _this.notify('SetIptServiceResult', evt);
+            });
+            observer_1.default.subscribe('SetIptServiceFailed', function (ret) {
+                var evt = { result: false, info: "failed to set ipt!" };
+                _this.notify('SetIptServiceResult', evt);
+            });
+            observer_1.default.subscribe('CallBldTransferRecvSucRsp', function (ret) {
+                var evt = { result: true, info: "blind transfer request result!" };
+                _this.notify('CallBldTransferRecvSucRsp', evt);
+            });
+            observer_1.default.subscribe('CallBldTransferFailed', function (ret) {
+                var evt = { result: false, info: "blind transfer failed!" };
+                _this.notify('CallBldTransferResult', evt);
+            });
+            observer_1.default.subscribe('CallBldTransferSuccess', function (ret) {
+                var evt = { result: true, info: "blind transfer success!" };
+                _this.notify('CallBldTransferResult', evt);
+            });
         };
         Client.prototype.registerConfEvent = function () {
             var _this = this;
+            observer_1.default.subscribe("BeTransToConfInd", function (ret) {
+                if (_this._call) {
+                    delete _this._call;
+                }
+                if (ret.info.conf_info.media_type != 17 && ret.info.conf_info.media_type != 1) {
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                    }
+                }
+            });
             observer_1.default.subscribe("ConfConnected", function (ret) {
-                if (ret.connect_info.media_type != 17) {
-                    _this.showVideo();
+                if (util.isUndefined(_this._call) && ret.connect_info.media_type != 17 && ret.connect_info.media_type != 1) {
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                        _this.showVideo();
+                    }
+                    else {
+                    }
+                }
+                if (util.isUndefined(_this._conf)) {
+                    _this._conf = new conference_1.default();
                 }
                 _this._conf.setCallId(ret.call_id);
+                _this.callID = ret.call_id;
                 _this.notify('ConfConnected', { result: true, info: "Access conference successful" });
             });
             observer_1.default.subscribe("ConfInfoInd", function (ret) {
+                var mediaType = ret.info.mediaType;
+                var loginInfo = JSON.parse(sessionStorage.cloudEC_loginInfo);
+                var deployMode = loginInfo.deployMode;
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && mediaType != 17 && mediaType != 1) {
+                    _this.displayVideoEx(_this.callID);
+                }
+                else if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && (mediaType == 17 || mediaType == 1)) {
+                    if (deployMode == enum_2.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
+                        _this.closeVideo();
+                    }
+                }
                 if (_this._conf != undefined) {
                     _this._conf.setConfInfo(ret.info);
+                }
+                else {
+                    _this._conf = new conference_1.default();
+                    _this._conf.setCallId(ret.info.callid);
+                    _this.callID = ret.info.callid;
                 }
             });
             observer_1.default.subscribe("AttendeeListUpdate", function (ret) {
@@ -3010,7 +3202,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var _loop_1 = function (i) {
                         var flag = void 0;
                         flag = attendeeList.find(function (value) {
-                            return value.participant_id === attendeeListOrigin[i].participantId;
+                            return value.number === attendeeListOrigin[i].number;
                         });
                         if (flag == undefined && attendeeListOrigin[i].joinState == 0) {
                             _this._conf.deleteAttendeeList(attendeeListOrigin[i]);
@@ -3098,7 +3290,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 };
                 _this._conf.setConfInfo(confInfo);
                 evt.result = true;
-                evt.info = _this._conf;
+                evt.info = "You have a incoming conference";
                 _this.notify('ConfIncoming', evt);
             });
             observer_1.default.subscribe("confFinished", function (data) {
@@ -3107,6 +3299,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var objDataConfHandle = _this._conf.getDataConfHandle();
                 if (objConfHandle === data.confHandle && objDataConfHandle === data.dataConfHandle) {
                     delete _this._conf;
+                }
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                    _this.closeVideo();
                 }
                 if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
                     _this.delInterval();
@@ -3119,6 +3314,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var objConfHandle = _this._conf.getConfHandle();
                     if (objConfHandle === data.info.param.handle) {
                         delete _this._conf;
+                    }
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                        _this.closeVideo();
                     }
                     if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
                         _this.delInterval();
@@ -3151,7 +3349,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         Client.prototype.registerDataEvent = function () {
             var _this = this;
             observer_1.default.subscribe('UserEnterInd', function (data) {
-                var participantId = data.user_alt_uri;
+                var number = data.user_alt_uri;
                 var isDataconfMember = 1;
                 var dataconfUserId = data.user_alt_id;
                 var dataconfMemberType = data.value2;
@@ -3161,7 +3359,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     attendeeListOrigin = ret.info;
                 });
                 flag = attendeeListOrigin.find(function (value) {
-                    return participantId === value.participantId;
+                    return number === value.number;
                 });
                 if (flag != undefined) {
                     var attendee = {
@@ -3181,6 +3379,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         isBroadcast: flag.isBroadcast
                     };
                     _this._conf.updateAttendeeList(attendee);
+                }
+                else {
+                    var attendee = {
+                        participantId: "",
+                        name: "",
+                        number: number,
+                        isMute: 0,
+                        isDeaf: 0,
+                        raiseHandState: 0,
+                        role: 0,
+                        joinState: 0,
+                        isSelf: 0,
+                        isDataconfMember: 1,
+                        dataconfUserId: dataconfUserId,
+                        dataconfMemberType: dataconfMemberType,
+                        sharingPermit: 0,
+                        isBroadcast: 0
+                    };
+                    _this._conf.addAttendeeList(attendee);
                 }
                 var evt = { result: true, info: "Participant status changes, please update the list of attendees" };
                 _this.notify('UpdateAttendeeList', evt);
@@ -3506,7 +3723,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                 }
                 if ("CloudEC_OpenShareScreen" == data.lpMsg) {
-                    evt.info = _this._conf;
+                    evt.info = "You have a sharing invitation";
                     _this.notify('SharedInComing', evt);
                 }
                 else if ("CloudEC_CloseShareScreen" == data.lpMsg) {
@@ -3536,9 +3753,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     if ((typeof localView === "undefined") || (typeof remoteView === "undefined")) {
                         util_1.default.error("client", "can't find CloudEC:remoteCanvas and CloudEC:localCanvas");
                     }
-                    dispatcher_1.default.fire("setVideoRender", localView, remoteView);
-                    dispatcher_1.default.fire("setLocalVideoWH", localView.clientWidth, localView.clientHeight);
-                    dispatcher_1.default.fire("setRemoteVideoWH", remoteView.clientWidth, remoteView.clientHeight);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_RENDER, localView, remoteView);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_LOCAL_VIDEOWH, localView.clientWidth, localView.clientHeight);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_REMOTE_VIDEOWH, remoteView.clientWidth, remoteView.clientHeight);
                     localView.style.display = "block";
                     remoteView.style.display = "block";
                     if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
@@ -3559,28 +3776,145 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        Client.prototype.displayVideo = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
+                var count_1;
+                return __generator(this, function (_a) {
+                    if (this.parentFrameHwnd == 0 && !this.isNativeWndExist) {
+                        this.isNativeWndExist = true;
+                        count_1 = 2;
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_INIT, function (data) {
+                            if (0 == data.result) {
+                                _this.parentFrameHwnd = data.param.frameHwnd;
+                                util_1.default.info("client", "displayVideo parentFrameHwnd:" + _this.parentFrameHwnd);
+                                if (_this.parentFrameHwnd != 0) {
+                                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_CREATE_WINDOW, count_1, _this.parentFrameHwnd, function (data) {
+                                        if (0 == data.result) {
+                                            _this.frameHwndList = data.param.hwndList;
+                                            util_1.default.info("client", "displayVideo frameHwndList:" + JSON.stringify(_this.frameHwndList));
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    return [2];
+                });
+            });
+        };
+        Client.prototype.setVideoWindow = function (callId) {
+            util_1.default.info("client", "setVideoWindow frameHwndList:" + JSON.stringify(this.frameHwndList));
+            if (this.frameHwndList != null && this.frameHwndList.length > 0) {
+                util_1.default.info("client", "setVideoWindow callID:" + callId);
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_WINDOW, callId, this.frameHwndList);
+            }
+        };
+        Client.prototype.displayVideoEx = function (callId) {
+            return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
+                var count_2;
+                return __generator(this, function (_a) {
+                    if (this.parentFrameHwnd == 0 && !this.isNativeWndExist) {
+                        this.isNativeWndExist = true;
+                        count_2 = 2;
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_INIT, function (data) {
+                            if (0 == data.result) {
+                                _this.parentFrameHwnd = data.param.frameHwnd;
+                                util_1.default.info("client", "displayVideo parentFrameHwnd:" + _this.parentFrameHwnd);
+                                if (_this.parentFrameHwnd != 0) {
+                                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_CREATE_WINDOW, count_2, _this.parentFrameHwnd, function (data) {
+                                        if (0 == data.result) {
+                                            _this.frameHwndList = data.param.hwndList;
+                                            util_1.default.info("client", "displayVideo frameHwndList:" + JSON.stringify(_this.frameHwndList));
+                                            if (_this.frameHwndList != null && _this.frameHwndList.length > 0) {
+                                                util_1.default.info("client", "setVideoWindow callID:" + callId);
+                                                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_WINDOW, callId, _this.frameHwndList);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    return [2];
+                });
+            });
+        };
+        Client.prototype.closeVideo = function () {
+            util_1.default.info("client", "closeVideo parentFrameHwnd:" + this.parentFrameHwnd);
+            if (this.parentFrameHwnd != 0 && this.isNativeWndExist) {
+                this.isNativeWndExist = false;
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_DESTROY_WINDOW, this.parentFrameHwnd, this.frameHwndList);
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_UNINIT, this.parentFrameHwnd);
+                this.parentFrameHwnd = 0;
+                delete this.frameHwndList;
+            }
+        };
+        Client.prototype.delVideo = function () {
+            var localView = document.getElementById("CloudEC:localCanvas");
+            var remoteView = document.getElementById("CloudEC:remoteCanvas");
+            if ((typeof localView === "undefined") || (typeof remoteView === "undefined")) {
+                util_1.default.error("client", "can't find CloudEC:remoteCanvas and CloudEC:localCanvas");
+            }
+            localView.style.cssText = "position: absolute;left: 0px;top: 0px;width: 120px;height: 80px; z-index: 999;background: #c7c7c7;";
+            remoteView.style.cssText = "position: absolute;left: 0px;top: 0px;width: 720px;height: 480px; z-index: 1;background: black;";
+        };
         Client.prototype.resetVideoSize = function (videoSize) {
             return __awaiter(this, void 0, void 0, function () {
-                var _a;
+                var err, evt, _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
+                            err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
+                            evt = { result: false, info: err };
+                            this.isLogin();
+                            if (util.isUndefined(videoSize.target) || !util.isBinaryNumber(videoSize.target)) {
+                                Client.notifyErr(evt);
+                                return [2];
+                            }
+                            if (util.isUndefined(videoSize.width) || util.isUndefined(videoSize.height)) {
+                                Client.notifyErr(evt);
+                                return [2];
+                            }
+                            if (!util.isInteger(videoSize.width) || !util.isInteger(videoSize.height)) {
+                                Client.notifyErr(evt);
+                                return [2];
+                            }
                             _a = videoSize.target;
                             switch (_a) {
                                 case 0: return [3, 1];
                                 case 1: return [3, 3];
                             }
                             return [3, 5];
-                        case 1: return [4, dispatcher_1.default.fire("setLocalVideoWH", videoSize.width, videoSize.height)];
+                        case 1: return [4, dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_LOCAL_VIDEOWH, videoSize.width, videoSize.height)];
                         case 2:
                             _b.sent();
                             return [3, 5];
-                        case 3: return [4, dispatcher_1.default.fire("setRemoteVideoWH", videoSize.width, videoSize.height)];
+                        case 3: return [4, dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_REMOTE_VIDEOWH, videoSize.width, videoSize.height)];
                         case 4:
                             _b.sent();
                             return [3, 5];
                         case 5: return [2];
                     }
+                });
+            });
+        };
+        Client.prototype.resetNativeWndSize = function (nativeWndParam) {
+            return __awaiter(this, void 0, void 0, function () {
+                var err;
+                return __generator(this, function (_a) {
+                    if (util.isUndefined(nativeWndParam) || !util.isIntegerRange(nativeWndParam.width, 0, 4096)
+                        || !util.isIntegerRange(nativeWndParam.height, 0, 2048) || !util.isIntegerRange(nativeWndParam.xOffsetRate, 0, 100)
+                        || !util.isIntegerRange(nativeWndParam.yOffsetRate, 0, 100)) {
+                        err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("nativeWndParam");
+                        Client.notifyErr(err);
+                        return [2];
+                    }
+                    if (this.parentFrameHwnd) {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_RESET_NATIVEWND_SIZE, this.parentFrameHwnd, nativeWndParam);
+                    }
+                    return [2];
                 });
             });
         };
@@ -3626,6 +3960,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         Client.prototype.setConfMode = function (mode) {
             this._conf.setConfMode(mode);
         };
+        Client.prototype.setConfMixedPicture = function (mode, imageType, attendees) {
+            this._conf.setConfMixedPicture(mode, imageType, attendees);
+        };
         Client.prototype.broadcastAttendee = function (isBroad, attendee) {
             this._conf.broadcastAttendee(isBroad, attendee);
         };
@@ -3669,10 +4006,220 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this._conf.answerScreenSharing(accept);
         };
         Client.prototype.videoMute = function (bMute) {
-            this._conf.videoMute(bMute);
+            if (!this._call) {
+                this._call = new call_1.default();
+            }
+            this._call.videoMute(bMute, this.callID);
         };
         Client.prototype.micMute = function (bMute) {
-            this._conf.micMute(bMute);
+            if (!this._call) {
+                this._call = new call_1.default();
+            }
+            this._call.micMute(bMute, this.callID);
+        };
+        Client.prototype.transfer2Conf = function (confParam) {
+            var attendees = new Array();
+            var confParamTemp;
+            var callType = this._call.getCallType();
+            if (util.isUndefined(confParam)) {
+                var member = { number: "", name: "", smsPhone: "", email: "", autoInvite: 0, role: 0, extensions: "" };
+                attendees.push(member);
+                confParamTemp = {
+                    topic: "",
+                    isVideo: callType,
+                    attendees: attendees,
+                    language: 1,
+                    extensions: "",
+                };
+            }
+            else {
+                confParamTemp = {
+                    topic: confParam.topic ? confParam.topic : "",
+                    isVideo: confParam.isVideo ? confParam.isVideo : callType,
+                    attendees: confParam.attendees,
+                    language: confParam.language ? confParam.language : 1,
+                    extensions: confParam.extensions ? confParam.extensions : "",
+                };
+            }
+            var err = { cmdId: 400000000, errorCode: 400000002, errorInfo: "general error" };
+            var evt = { result: false, info: err };
+            var callback = function (data) {
+                if (!data.result) {
+                    Client.notifyErr(evt);
+                }
+            };
+            this._call.transfer2Conf(confParamTemp, this.callID, callback);
+        };
+        Client.prototype.makeCall = function (calleeNumber, isVideo, callback) {
+            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (util.isUndefined(calleeNumber) || util.isUndefined(isVideo)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            var call = new call_1.default();
+            call.setCallee(calleeNumber);
+            call.setCallStyle(1);
+            var callType = isVideo ? 1 : 0;
+            call.setCallType(callType);
+            this._call = call;
+            this._call.makeCall(calleeNumber, callType, callback);
+            if (isVideo) {
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                    this.showVideo();
+                }
+                else {
+                }
+            }
+        };
+        Client.prototype.answerCall = function (accept, isVideo) {
+            var _this = this;
+            this.isLogin();
+            if (this.playHandle >= 0) {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, this.playHandle, function (data) {
+                    if (data.result == 0) {
+                        _this.playHandle = -1;
+                    }
+                });
+            }
+            var isVideoCall = this._call.getCallType();
+            if (this._call && accept) {
+                if (isVideo && (isVideoCall == 1)) {
+                    this._call.acceptCall(isVideo);
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                        this.showVideo();
+                    }
+                    else {
+                    }
+                }
+                else {
+                    this._call.acceptCall(false);
+                }
+            }
+            else {
+                this._call.rejectCall();
+            }
+        };
+        Client.prototype.hangup = function () {
+            var _this = this;
+            if (this.playHandle >= 0) {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, this.playHandle, function (data) {
+                    if (data.result == 0) {
+                        _this.playHandle = -1;
+                    }
+                });
+            }
+            if (this._call) {
+                this._call.rejectCall();
+            }
+        };
+        Client.prototype.sendDTMF = function (dmtfNo) {
+            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (!dmtfNo || /[^0-9*#]/.test(dmtfNo)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            this._call.dialDTMF(dmtfNo);
+        };
+        Client.prototype.switchAudioCall = function (toAudioCall) {
+            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (toAudioCall == null) {
+                Client.notifyErr(evt);
+                return;
+            }
+            if (toAudioCall) {
+                this._call.tans2Audio();
+            }
+            else {
+                this._call.tans2Video();
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                }
+            }
+        };
+        Client.prototype.answerSwitch = function (accept) {
+            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (accept == null) {
+                Client.notifyErr(evt);
+                return;
+            }
+            this._call.answerSwitch(accept);
+            if (accept) {
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                    this.showVideo();
+                }
+                else {
+                }
+            }
+        };
+        Client.prototype.setIPTService = function (type, number) {
+            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(number) || util.isUndefined(type) || !util.isInteger(type)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_IPT_SERVICE, type, number);
+        };
+        Client.prototype.blindTransfer = function (transToNumber) {
+            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(transToNumber)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_BLIND_TRANSFER, this.callID, transToNumber, function (data) {
+                if (!data.result) {
+                    err = { cmdId: 200000000, errorCode: 290000005, errorInfo: "video call without this feature, please convert to audio call" };
+                    evt.info = err;
+                    Client.notifyErr(evt);
+                }
+            });
+        };
+        Client.prototype.startPlayMedia = function (loops, playFile, callback) {
+            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(loops) || util.isUndefined(playFile) || !util.isInteger(loops)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, loops, playFile, function (data) {
+                if (data.result == 0) {
+                    evt.result = true;
+                    evt.info = {
+                        playHandle: data.param.play_handle,
+                    };
+                    callback(evt);
+                }
+                else {
+                    evt.info = { cmdId: 200000000, errorCode: 290000003, errorInfo: "failed to start playing the file" };
+                    Client.notifyErr(evt);
+                }
+            });
+        };
+        Client.prototype.stopPlayMedia = function (handle) {
+            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(handle)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, handle, function (data) {
+                if (data.result == 0) {
+                    evt.result = true;
+                    evt.info = "Stop playing the file successfully";
+                }
+                else {
+                    evt.info = { cmdId: 200000000, errorCode: 290000004, errorInfo: "stopped playing file does not exist" };
+                    Client.notifyErr(evt);
+                }
+            });
         };
         Client.prototype.getInterval = function (timeInterval, checkInterval, pcMemory) {
             var _this = this;
@@ -3795,7 +4342,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(352), __webpack_require__(353), __webpack_require__(23), __webpack_require__(31), __webpack_require__(37), __webpack_require__(19), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLogin_1, tupUniCmdSocket_1, dispatcher_1, eventInfo_1, errorCode_1, serverConfig_1, client_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(352), __webpack_require__(353), __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(12), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLogin_1, tupUniCmdSocket_1, dispatcher_1, eventInfo_1, errorCode_1, serverConfig_1, client_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupLoginWrapper = (function () {
@@ -3852,7 +4399,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         ssl: serverConfig_1.CloudEC_SERVERCONFIG.IS_WSS,
                     });
                     tupLoginWrapper._instance.count--;
-                }, 5 * 1000);
+                }, 5000);
             }
             else {
                 client_1.default.notifyErr(errorCode_1.EC_SDK_ERROR.WEBSOCKET_IS_CLOSED("Login Module"));
@@ -3897,7 +4444,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var _this = this;
             var auth_data = {
                 "auth_type": authType,
-                "user_agent": "HUAWEI TE DESKTOP",
+                "user_agent": "WeLink-Desktop",
                 "user_tiket": authParam.token,
                 "auth_info": {
                     "user_name": authParam.account,
@@ -4151,7 +4698,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         resolve(data);
                         return;
                     }
-                    setTimeout(function () { data.result = 90000001; resolve(data); }, 10000);
+                    setTimeout(function () { data.result = 90000001; resolve(data); }, 60000);
                 };
                 _this.onForceUnReg = function (ret) {
                     _this.deRegister(sipImpi);
@@ -4193,6 +4740,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             tupCallWrapper.tupCall.startCall(calleeNum, isVideo, callbacks);
             return promise;
         };
+        tupCallWrapper.prototype.alertingCall = function (callid) {
+            tupCallWrapper.tupCall.alertingCall(callid, function (data) { });
+        };
         tupCallWrapper.prototype.accessReservedConf = function (callType, confId, accessCode, confPaswd) {
             var callbacks = { response: {} };
             var callId = 0;
@@ -4227,7 +4777,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     ret.rsp = data.rsp;
                     observer_1.default.unsubscribe(token);
                     resolve(ret);
-                }, 5000);
+                }, 60000);
             });
             tupCallWrapper.tupCall.accessReservedConfEx(callId, callType, pstconfparam, callbacks);
             return promise;
@@ -4262,8 +4812,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var callbacks = { response: {} };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
-                        util_1.default.debug("tupCallWrapper", "startPlayMediaFile is Successful");
+                    if (ret.result == 0) {
+                        util_1.default.debug("tupCallWrapper", "startPlayMediaFile is successful");
+                    }
+                    else {
+                        util_1.default.debug("tupCallWrapper", "startPlayMediaFile is failing");
                     }
                     resolve(ret);
                 };
@@ -4271,11 +4824,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             tupCallWrapper.tupCall.startPlayMediaFile(path, loop_times, callbacks);
             return promise;
         };
+        tupCallWrapper.prototype.stopPlayMediaFile = function (play_handle) {
+            var callbacks = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callbacks.response = function (ret) {
+                    if (ret.result == 0) {
+                        util_1.default.debug("tupCallWrapper", "stopPlayMediaFile is successful");
+                    }
+                    else {
+                        util_1.default.debug("tupCallWrapper", "stopPlayMediaFile is failing");
+                    }
+                    resolve(ret);
+                };
+            });
+            tupCallWrapper.tupCall.stopPlayMediaFile(play_handle, callbacks);
+            return promise;
+        };
         tupCallWrapper.prototype.holdCall = function (call_id) {
             var callbacks = { response: {} };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
+                    if (ret.result == 0) {
                         util_1.default.debug("tupCallWrapper", "holdCall is Successful");
                     }
                     resolve(ret);
@@ -4288,7 +4857,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var callbacks = { response: {} };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
+                    if (ret.result == 0) {
                         util_1.default.debug("tupCallWrapper", "unholdCall is Successful");
                     }
                     resolve(ret);
@@ -4314,7 +4883,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var callbacks = { response: {} };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
+                    if (ret.result == 0) {
                         util_1.default.debug("tupCallWrapper", "blindTransfer is Successful");
                     }
                     resolve(ret);
@@ -4340,7 +4909,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var callbacks = { response: {} };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
+                    if (ret.result == 0) {
                         util_1.default.debug("tupCallWrapper", "addVideo is Successful");
                     }
                     resolve(ret);
@@ -4349,30 +4918,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             tupCallWrapper.tupCall.addVideo(call_id, callbacks);
             return promise;
         };
+        tupCallWrapper.prototype.delVideo = function (call_id) {
+            var callbacks = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callbacks.response = function (ret) {
+                    if (ret.result == 0) {
+                        util_1.default.debug("tupCallWrapper", "delVideo is Successful");
+                    }
+                    resolve(ret);
+                };
+            });
+            tupCallWrapper.tupCall.delVideo(call_id, callbacks);
+            return promise;
+        };
         tupCallWrapper.prototype.replyAddVideo = function (call_id, is_accept) {
             var callbacks = { response: {} };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
+                    if (ret.result == 0) {
                         util_1.default.debug("tupCallWrapper", "replyAddVideo is Successful");
                     }
                     resolve(ret);
                 };
             });
             tupCallWrapper.tupCall.replyAddVideo(call_id, is_accept, callbacks);
-            return promise;
-        };
-        tupCallWrapper.prototype.transferConfEx = function (conf_id, call_id) {
-            var callbacks = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
-                        util_1.default.debug("tupCallWrapper", "transferConfEx is Successful");
-                    }
-                    resolve(ret);
-                };
-            });
-            tupCallWrapper.tupCall.TransferToConfEx(conf_id, call_id, callbacks);
             return promise;
         };
         tupCallWrapper.prototype.setVideoRender = function (localView, remoteView) {
@@ -4384,23 +4953,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         tupCallWrapper.prototype.setRemoteViewWH = function (width, height) {
             tupCallWrapper.tupCall.setRemoteViewWH(width, height);
         };
-        tupCallWrapper.prototype.delVideo = function (call_id) {
-            var callbacks = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
-                        util_1.default.debug("tupCallWrapper", "delVideo is Successful");
-                    }
-                    resolve(ret);
-                };
-            });
-            tupCallWrapper.tupCall.delVideo(call_id, callbacks);
-        };
         tupCallWrapper.prototype.dtmf = function (call_id, dtmfNo) {
             var callbacks = { response: {} };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.response = function (ret) {
-                    if (ret.param.result == 0) {
+                    if (ret.result == 0) {
                         util_1.default.debug("tupCallWrapper", "dtmf is Successful");
                     }
                     resolve(ret);
@@ -4408,7 +4965,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             });
             tupCallWrapper.tupCall.dtmf(call_id, dtmfNo, callbacks);
         };
-        tupCallWrapper.prototype.getMediaDevice = function (mediaDevice) {
+        tupCallWrapper.prototype.getMediaDeviceType = function (mediaDevice) {
             return __awaiter(this, void 0, void 0, function () {
                 var devicePromise, callbacks;
                 return __generator(this, function (_a) {
@@ -4428,7 +4985,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        tupCallWrapper.prototype.getMicVol = function () {
+        tupCallWrapper.prototype.getMicrophoneVolume = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var micVolPromise, callbacks;
                 return __generator(this, function (_a) {
@@ -4448,7 +5005,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        tupCallWrapper.prototype.getSpkVol = function () {
+        tupCallWrapper.prototype.getSpeakVolume = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var spkVolPromise, callbacks;
                 return __generator(this, function (_a) {
@@ -4565,6 +5122,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     };
                     tupCallWrapper.tupCall.setSpkVol(volume, null, callbacks);
                     return [2, setSpkVolPromise.promise];
+                });
+            });
+        };
+        tupCallWrapper.prototype.setForwardIPTService = function (type, forward_num) {
+            return __awaiter(this, void 0, void 0, function () {
+                var setForwardPromise, callbacks;
+                return __generator(this, function (_a) {
+                    setForwardPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result === 0) {
+                                setForwardPromise.resolve({ result: true, info: "" });
+                            }
+                            else {
+                                setForwardPromise.reject({ result: false, info: data });
+                            }
+                        }
+                    };
+                    tupCallWrapper.tupCall.setForwardIPTService(type, forward_num, callbacks);
+                    return [2, setForwardPromise.promise];
+                });
+            });
+        };
+        tupCallWrapper.prototype.setVideoWindow = function (frameHwndList, callid) {
+            return __awaiter(this, void 0, void 0, function () {
+                var setVideoWindowPromise, callbacks, count, callWindows, i, videoWndType;
+                return __generator(this, function (_a) {
+                    setVideoWindowPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result === 0) {
+                                setVideoWindowPromise.resolve({ result: true, info: "" });
+                            }
+                            else {
+                                setVideoWindowPromise.reject({ result: false, info: data });
+                            }
+                        }
+                    };
+                    count = frameHwndList.length;
+                    callWindows = new Array();
+                    for (i = 0; i < count; i++) {
+                        videoWndType = i === 0 ? 0 : 1;
+                        callWindows[i] = {
+                            video_wnd_type: videoWndType,
+                            render: frameHwndList[i].hwnd,
+                            index: i,
+                            startimage: ""
+                        };
+                    }
+                    tupCallWrapper.tupCall.setVideoWindow(count, callWindows, callid, callbacks);
+                    return [2, setVideoWindowPromise.promise];
                 });
             });
         };
@@ -4723,7 +5331,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var def = __webpack_require__(8).f;
-var has = __webpack_require__(12);
+var has = __webpack_require__(13);
 var TAG = __webpack_require__(6)('toStringTag');
 
 module.exports = function (it, tag, stat) {
@@ -4736,7 +5344,7 @@ module.exports = function (it, tag, stat) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(28);
 var fails = __webpack_require__(4);
 var spaces = __webpack_require__(79);
 var space = '[' + spaces + ']';
@@ -4790,7 +5398,7 @@ module.exports = function (it, TYPE) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = __webpack_require__(21);
+var cof = __webpack_require__(22);
 // eslint-disable-next-line no-prototype-builtins
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return cof(it) == 'String' ? it.split('') : Object(it);
@@ -4809,7 +5417,7 @@ exports.f = {}.propertyIsEnumerable;
 /***/ (function(module, exports, __webpack_require__) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = __webpack_require__(21);
+var cof = __webpack_require__(22);
 var TAG = __webpack_require__(6)('toStringTag');
 // ES3 wrong here
 var ARG = cof(function () { return arguments; }()) == 'Arguments';
@@ -4851,7 +5459,7 @@ module.exports = function (key) {
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = __webpack_require__(16);
+var toIObject = __webpack_require__(18);
 var toLength = __webpack_require__(9);
 var toAbsoluteIndex = __webpack_require__(42);
 module.exports = function (IS_INCLUDES) {
@@ -4886,7 +5494,7 @@ exports.f = Object.getOwnPropertySymbols;
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.2.2 IsArray(argument)
-var cof = __webpack_require__(21);
+var cof = __webpack_require__(22);
 module.exports = Array.isArray || function isArray(arg) {
   return cof(arg) == 'Array';
 };
@@ -4898,7 +5506,7 @@ module.exports = Array.isArray || function isArray(arg) {
 
 // 7.2.8 IsRegExp(argument)
 var isObject = __webpack_require__(5);
-var cof = __webpack_require__(21);
+var cof = __webpack_require__(22);
 var MATCH = __webpack_require__(6)('match');
 module.exports = function (it) {
   var isRegExp;
@@ -4960,10 +5568,10 @@ module.exports = function () {
 
 "use strict";
 
-var hide = __webpack_require__(13);
-var redefine = __webpack_require__(14);
+var hide = __webpack_require__(14);
+var redefine = __webpack_require__(15);
 var fails = __webpack_require__(4);
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(28);
 var wks = __webpack_require__(6);
 
 module.exports = function (KEY, length, exec) {
@@ -5012,7 +5620,7 @@ module.exports = function (O, D) {
 
 var global = __webpack_require__(3);
 var $export = __webpack_require__(0);
-var redefine = __webpack_require__(14);
+var redefine = __webpack_require__(15);
 var redefineAll = __webpack_require__(48);
 var meta = __webpack_require__(35);
 var forOf = __webpack_require__(47);
@@ -5101,7 +5709,7 @@ module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(3);
-var hide = __webpack_require__(13);
+var hide = __webpack_require__(14);
 var uid = __webpack_require__(39);
 var TYPED = uid('typed_array');
 var VIEW = uid('view');
@@ -5174,7 +5782,7 @@ module.exports = function (COLLECTION) {
 // https://tc39.github.io/proposal-setmap-offrom/
 var $export = __webpack_require__(0);
 var aFunction = __webpack_require__(11);
-var ctx = __webpack_require__(20);
+var ctx = __webpack_require__(21);
 var forOf = __webpack_require__(47);
 
 module.exports = function (COLLECTION) {
@@ -5218,7 +5826,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(3);
-var core = __webpack_require__(24);
+var core = __webpack_require__(26);
 var LIBRARY = __webpack_require__(40);
 var wksExt = __webpack_require__(102);
 var defineProperty = __webpack_require__(8).f;
@@ -5273,7 +5881,7 @@ module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
     function (test, buggy, set) {
       try {
-        set = __webpack_require__(20)(Function.call, __webpack_require__(17).f(Object.prototype, '__proto__').set, 2);
+        set = __webpack_require__(21)(Function.call, __webpack_require__(19).f(Object.prototype, '__proto__').set, 2);
         set(test, []);
         buggy = !(test instanceof Array);
       } catch (e) { buggy = true; }
@@ -5317,8 +5925,8 @@ module.exports = function (that, target, C) {
 
 "use strict";
 
-var toInteger = __webpack_require__(27);
-var defined = __webpack_require__(26);
+var toInteger = __webpack_require__(29);
+var defined = __webpack_require__(28);
 
 module.exports = function repeat(count) {
   var str = String(defined(this));
@@ -5361,8 +5969,8 @@ module.exports = (!$expm1
 /* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(27);
-var defined = __webpack_require__(26);
+var toInteger = __webpack_require__(29);
+var defined = __webpack_require__(28);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function (TO_STRING) {
@@ -5388,13 +5996,13 @@ module.exports = function (TO_STRING) {
 
 var LIBRARY = __webpack_require__(40);
 var $export = __webpack_require__(0);
-var redefine = __webpack_require__(14);
-var hide = __webpack_require__(13);
-var has = __webpack_require__(12);
+var redefine = __webpack_require__(15);
+var hide = __webpack_require__(14);
+var has = __webpack_require__(13);
 var Iterators = __webpack_require__(54);
 var $iterCreate = __webpack_require__(86);
 var setToStringTag = __webpack_require__(52);
-var getPrototypeOf = __webpack_require__(18);
+var getPrototypeOf = __webpack_require__(20);
 var ITERATOR = __webpack_require__(6)('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
 var FF_ITERATOR = '@@iterator';
@@ -5469,7 +6077,7 @@ var setToStringTag = __webpack_require__(52);
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(13)(IteratorPrototype, __webpack_require__(6)('iterator'), function () { return this; });
+__webpack_require__(14)(IteratorPrototype, __webpack_require__(6)('iterator'), function () { return this; });
 
 module.exports = function (Constructor, NAME, next) {
   Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
@@ -5483,7 +6091,7 @@ module.exports = function (Constructor, NAME, next) {
 
 // helper for String#{startsWith, endsWith, includes}
 var isRegExp = __webpack_require__(63);
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(28);
 
 module.exports = function (that, searchString, NAME) {
   if (isRegExp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
@@ -5545,7 +6153,7 @@ module.exports = function (object, index, value) {
 var classof = __webpack_require__(58);
 var ITERATOR = __webpack_require__(6)('iterator');
 var Iterators = __webpack_require__(54);
-module.exports = __webpack_require__(24).getIteratorMethod = function (it) {
+module.exports = __webpack_require__(26).getIteratorMethod = function (it) {
   if (it != undefined) return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
@@ -5595,7 +6203,7 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
 var addToUnscopables = __webpack_require__(36);
 var step = __webpack_require__(118);
 var Iterators = __webpack_require__(54);
-var toIObject = __webpack_require__(16);
+var toIObject = __webpack_require__(18);
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
@@ -5631,7 +6239,7 @@ addToUnscopables('entries');
 /* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ctx = __webpack_require__(20);
+var ctx = __webpack_require__(21);
 var invoke = __webpack_require__(108);
 var html = __webpack_require__(77);
 var cel = __webpack_require__(73);
@@ -5674,7 +6282,7 @@ if (!setTask || !clearTask) {
     delete queue[id];
   };
   // Node.js 0.8-
-  if (__webpack_require__(21)(process) == 'process') {
+  if (__webpack_require__(22)(process) == 'process') {
     defer = function (id) {
       process.nextTick(ctx(run, id, 1));
     };
@@ -5726,7 +6334,7 @@ var macrotask = __webpack_require__(95).set;
 var Observer = global.MutationObserver || global.WebKitMutationObserver;
 var process = global.process;
 var Promise = global.Promise;
-var isNode = __webpack_require__(21)(process) == 'process';
+var isNode = __webpack_require__(22)(process) == 'process';
 
 module.exports = function () {
   var head, last, notify;
@@ -5826,11 +6434,11 @@ var global = __webpack_require__(3);
 var DESCRIPTORS = __webpack_require__(7);
 var LIBRARY = __webpack_require__(40);
 var $typed = __webpack_require__(69);
-var hide = __webpack_require__(13);
+var hide = __webpack_require__(14);
 var redefineAll = __webpack_require__(48);
 var fails = __webpack_require__(4);
 var anInstance = __webpack_require__(46);
-var toInteger = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
 var toLength = __webpack_require__(9);
 var toIndex = __webpack_require__(127);
 var gOPN = __webpack_require__(44).f;
@@ -6347,8 +6955,8 @@ exports.f = __webpack_require__(6);
 /* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var has = __webpack_require__(12);
-var toIObject = __webpack_require__(16);
+var has = __webpack_require__(13);
+var toIObject = __webpack_require__(18);
 var arrayIndexOf = __webpack_require__(60)(false);
 var IE_PROTO = __webpack_require__(75)('IE_PROTO');
 
@@ -6390,7 +6998,7 @@ module.exports = __webpack_require__(7) ? Object.defineProperties : function def
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject = __webpack_require__(16);
+var toIObject = __webpack_require__(18);
 var gOPN = __webpack_require__(44).f;
 var toString = {}.toString;
 
@@ -6538,7 +7146,7 @@ module.exports = 1 / $parseFloat(__webpack_require__(79) + '-0') !== -Infinity ?
 /* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var cof = __webpack_require__(21);
+var cof = __webpack_require__(22);
 module.exports = function (it, msg) {
   if (typeof it != 'number' && cof(it) != 'Number') throw TypeError(msg);
   return +it;
@@ -6767,7 +7375,7 @@ module.exports = __webpack_require__(68)(MAP, function (get) {
 var dP = __webpack_require__(8).f;
 var create = __webpack_require__(43);
 var redefineAll = __webpack_require__(48);
-var ctx = __webpack_require__(20);
+var ctx = __webpack_require__(21);
 var anInstance = __webpack_require__(46);
 var forOf = __webpack_require__(47);
 var $iterDefine = __webpack_require__(85);
@@ -6936,8 +7544,8 @@ module.exports = __webpack_require__(68)(SET, function (get) {
 
 "use strict";
 
-var each = __webpack_require__(29)(0);
-var redefine = __webpack_require__(14);
+var each = __webpack_require__(31)(0);
+var redefine = __webpack_require__(15);
 var meta = __webpack_require__(35);
 var assign = __webpack_require__(106);
 var weak = __webpack_require__(126);
@@ -7008,8 +7616,8 @@ var anObject = __webpack_require__(2);
 var isObject = __webpack_require__(5);
 var anInstance = __webpack_require__(46);
 var forOf = __webpack_require__(47);
-var createArrayMethod = __webpack_require__(29);
-var $has = __webpack_require__(12);
+var createArrayMethod = __webpack_require__(31);
+var $has = __webpack_require__(13);
 var validate = __webpack_require__(55);
 var arrayFind = createArrayMethod(5);
 var arrayFindIndex = createArrayMethod(6);
@@ -7093,7 +7701,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/ecma262/#sec-toindex
-var toInteger = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
 var toLength = __webpack_require__(9);
 module.exports = function (it) {
   if (it === undefined) return 0;
@@ -7130,7 +7738,7 @@ module.exports = Reflect && Reflect.ownKeys || function ownKeys(it) {
 var isArray = __webpack_require__(62);
 var isObject = __webpack_require__(5);
 var toLength = __webpack_require__(9);
-var ctx = __webpack_require__(20);
+var ctx = __webpack_require__(21);
 var IS_CONCAT_SPREADABLE = __webpack_require__(6)('isConcatSpreadable');
 
 function flattenIntoArray(target, original, source, sourceLen, start, depth, mapper, thisArg) {
@@ -7173,7 +7781,7 @@ module.exports = flattenIntoArray;
 // https://github.com/tc39/proposal-string-pad-start-end
 var toLength = __webpack_require__(9);
 var repeat = __webpack_require__(81);
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(28);
 
 module.exports = function (that, maxLength, fillString, left) {
   var S = String(defined(that));
@@ -7193,7 +7801,7 @@ module.exports = function (that, maxLength, fillString, left) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var getKeys = __webpack_require__(41);
-var toIObject = __webpack_require__(16);
+var toIObject = __webpack_require__(18);
 var isEnum = __webpack_require__(57).f;
 module.exports = function (isEntries) {
   return function (it) {
@@ -7301,7 +7909,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(350), __webpack_require__(23), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmptWrapper_1, dispatcher_1, eventInfo_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(350), __webpack_require__(25), __webpack_require__(24)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmptWrapper_1, dispatcher_1, eventInfo_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CmptManager = (function () {
@@ -7808,61 +8416,85 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(359), __webpack_require__(360), __webpack_require__(51), __webpack_require__(32), __webpack_require__(23), __webpack_require__(31), __webpack_require__(30), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, audioCallService_1, videoCallService_1, tupCallWrapper_1, observer_1, dispatcher_1, eventInfo_1, enum_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(359), __webpack_require__(360), __webpack_require__(51), __webpack_require__(361), __webpack_require__(32), __webpack_require__(25), __webpack_require__(24), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, audioCallService_1, videoCallService_1, tupCallWrapper_1, tupNativeWndWrapper_1, observer_1, dispatcher_1, eventInfo_1, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CallManager = (function () {
         function CallManager() {
-            dispatcher_1.default.register("startCall", this.startCall, this);
-            dispatcher_1.default.register("acceptCall", this.acceptCall, this);
-            dispatcher_1.default.register("reject", this.endCall, this);
-            dispatcher_1.default.register("holdCall", this.holdCall, this);
-            dispatcher_1.default.register("unHoldCall", this.unHoldCall, this);
-            dispatcher_1.default.register("dialDTMF", this.dialDTMF, this);
-            dispatcher_1.default.register("setVideoRender", this.setVideoRender, this);
-            dispatcher_1.default.register("setLocalVideoWH", this.setLocalVideoWH, this);
-            dispatcher_1.default.register("setRemoteVideoWH", this.setRemoteVideoWH, this);
-            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_GET_MEDIA_DEVICE, this.getMediaDevice, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_CALL, this.startCall, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ACCEPT_CALL, this.acceptCall, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REJECT_CALL, this.endCall, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_HOLD_CALL, this.holdCall, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_UNHOLD_CALL, this.unHoldCall, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SEND_DTMF, this.dialDTMF, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_RENDER, this.setVideoRender, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_LOCAL_VIDEOWH, this.setLocalVideoWH, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_REMOTE_VIDEOWH, this.setRemoteVideoWH, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_GET_MEDIA_DEVICE, this.getMediaDeviceType, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_SET_MEDIA_DEVICE, this.setMediaDevice, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_GET_VOICE, this.getVoiceVol, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_SET_VOICE, this.setVoiceVol, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_VIDEO_SWITCH, this.videoSwitch, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_MIC_SWITCH, this.micSwitch, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, this.startPlayMediaFile, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, this.stopPlayMediaFile, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ADD_VIDEO, this.addVideo, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_DEL_VIDEO, this.delVideo, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REPLY_ADD_VIDEO, this.replyAddVideo, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_IPT_SERVICE, this.setIPTService, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_BLIND_TRANSFER, this.blindTransfer, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_INIT, this.nativewndInit, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_CREATE_WINDOW, this.nativewdCreateWindow, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_DESTROY_WINDOW, this.nativewdDestroyWindow, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_UNINIT, this.nativewndUninit, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_WINDOW, this.setVideoWindow, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CALL_RESET_NATIVEWND_SIZE, this.resetNativewndSize, this);
         }
-        CallManager.prototype.startCall = function (event, callee, isVideo) {
+        CallManager.prototype.startCall = function (event, callee, isVideo, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var callInfo, call, res;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            callInfo = { tel_num: callee };
+                            callInfo = { tel_num: callee, call_type: isVideo };
                             call = CallManager.getCallObject(callInfo, isVideo);
                             return [4, call.startCall(callInfo, isVideo)];
                         case 1:
                             res = _a.sent();
                             if (res) {
                                 CallManager.CallList[call.callInfo.callId] = call;
-                                util_1.default.debug("callManager", 'start call success');
+                                util_1.default.info("callManager", 'start call success');
                             }
                             else {
                                 util_1.default.debug("callManager", 'start call failed');
                             }
-                            return [2, res];
+                            callback(res);
+                            return [2];
                     }
                 });
             });
         };
-        CallManager.prototype.acceptCall = function (event, callId) {
+        CallManager.prototype.acceptCall = function (event, callId, isVideo) {
             return __awaiter(this, void 0, void 0, function () {
-                var call;
+                var call, callInfo, callAudio;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             call = CallManager.CallList[callId];
+                            if (!isVideo) return [3, 2];
                             return [4, call.acceptCall()];
                         case 1:
                             _a.sent();
-                            return [2];
+                            return [3, 3];
+                        case 2:
+                            callInfo = call.callInfo;
+                            callInfo.isVideo = false;
+                            callAudio = CallManager.getCallObject({ tel_num: callInfo.callNo }, 0);
+                            callAudio.callInfo = callInfo;
+                            CallManager.CallList[call.callInfo.callId] = callAudio;
+                            callAudio.acceptCall();
+                            _a.label = 3;
+                        case 3: return [2];
                     }
                 });
             });
@@ -7878,7 +8510,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("callManager", 'end call success');
+                                util_1.default.info("callManager", 'end call success');
                             }
                             else {
                                 util_1.default.debug("callManager", 'end call failed');
@@ -7932,19 +8564,95 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        CallManager.prototype.getMediaDevice = function (event, mediaDevice, callback) {
+        CallManager.prototype.getMediaDeviceType = function (event, mediaDevice, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper, ret;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             wrapper = tupCallWrapper_1.default.getInstance();
-                            return [4, wrapper.getMediaDevice(mediaDevice)];
+                            return [4, wrapper.getMediaDeviceType(mediaDevice)];
                         case 1:
                             ret = _a.sent();
                             callback(ret);
                             return [2];
                     }
+                });
+            });
+        };
+        CallManager.nativewndBuild = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper;
+                return __generator(this, function (_a) {
+                    wrapper = tupNativeWndWrapper_1.default.getInstance();
+                    wrapper.build();
+                    return [2];
+                });
+            });
+        };
+        CallManager.prototype.nativewndInit = function (event, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper, ret;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            wrapper = tupNativeWndWrapper_1.default.getInstance();
+                            return [4, wrapper.nativeWndInit()];
+                        case 1:
+                            ret = _a.sent();
+                            callback(ret);
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallManager.prototype.nativewdCreateWindow = function (event, count, parentFrameHwnd, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper, ret;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            wrapper = tupNativeWndWrapper_1.default.getInstance();
+                            return [4, wrapper.createWindow(count, parentFrameHwnd)];
+                        case 1:
+                            ret = _a.sent();
+                            callback(ret);
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallManager.prototype.setVideoWindow = function (event, callID, frameHwndList) {
+            var wrapper = tupCallWrapper_1.default.getInstance();
+            return wrapper.setVideoWindow(frameHwndList, callID);
+        };
+        CallManager.prototype.nativewdDestroyWindow = function (event, parentFrameHwnd, frameHwndList) {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper;
+                return __generator(this, function (_a) {
+                    wrapper = tupNativeWndWrapper_1.default.getInstance();
+                    wrapper.destroyWindow(parentFrameHwnd, frameHwndList);
+                    return [2];
+                });
+            });
+        };
+        CallManager.prototype.nativewndUninit = function (event, parentFrameHwnd) {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper;
+                return __generator(this, function (_a) {
+                    wrapper = tupNativeWndWrapper_1.default.getInstance();
+                    wrapper.uninit(parentFrameHwnd);
+                    return [2];
+                });
+            });
+        };
+        CallManager.prototype.resetNativewndSize = function (event, parentFrameHwnd, nativeWndParam) {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper;
+                return __generator(this, function (_a) {
+                    wrapper = tupNativeWndWrapper_1.default.getInstance();
+                    wrapper.attachByName(parentFrameHwnd, nativeWndParam);
+                    return [2];
                 });
             });
         };
@@ -7988,14 +8696,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 0:
                             wrapper = tupCallWrapper_1.default.getInstance();
                             if (!(mediaDevice == enum_1.MediaDevice.MICROPHONE)) return [3, 2];
-                            return [4, wrapper.getMicVol()];
+                            return [4, wrapper.getMicrophoneVolume()];
                         case 1:
                             ret = _a.sent();
                             callback(ret);
                             return [2];
                         case 2:
                             if (!(mediaDevice == enum_1.MediaDevice.SPEAKER)) return [3, 4];
-                            return [4, wrapper.getSpkVol()];
+                            return [4, wrapper.getSpeakVolume()];
                         case 3:
                             ret = _a.sent();
                             callback(ret);
@@ -8054,6 +8762,102 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        CallManager.prototype.startPlayMediaFile = function (event, loop_times, src, callback) {
+            if (loop_times === void 0) { loop_times = 0; }
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper, res;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            wrapper = tupCallWrapper_1.default.getInstance();
+                            return [4, wrapper.startPlayMediaFile(src, loop_times)];
+                        case 1:
+                            res = _a.sent();
+                            callback(res);
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallManager.prototype.stopPlayMediaFile = function (event, playHandle, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper, res;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            wrapper = tupCallWrapper_1.default.getInstance();
+                            return [4, wrapper.stopPlayMediaFile(playHandle)];
+                        case 1:
+                            res = _a.sent();
+                            callback(res);
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallManager.prototype.setIPTService = function (event, type, number) {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper, ret;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            wrapper = tupCallWrapper_1.default.getInstance();
+                            return [4, wrapper.setForwardIPTService(type, number)];
+                        case 1:
+                            ret = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallManager.prototype.addVideo = function (event, callId) {
+            return __awaiter(this, void 0, void 0, function () {
+                var call;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            call = CallManager.CallList[callId];
+                            util_1.default.debug("callManager", 'addVideo  callId= ' + callId);
+                            return [4, call.addVideo()];
+                        case 1:
+                            _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallManager.prototype.delVideo = function (event, callId) {
+            return __awaiter(this, void 0, void 0, function () {
+                var call;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            call = CallManager.CallList[callId];
+                            util_1.default.debug("callManager", 'delVideo  callId= ' + callId);
+                            return [4, call.delVideo()];
+                        case 1:
+                            _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallManager.prototype.replyAddVideo = function (event, callId, isAccept) {
+            return __awaiter(this, void 0, void 0, function () {
+                var call;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            call = CallManager.CallList[callId];
+                            util_1.default.debug("callManager", 'replyAddVideo  callId= ' + callId);
+                            return [4, call.replyAddVideo(isAccept)];
+                        case 1:
+                            _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
         CallManager.registerCallEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper;
@@ -8067,7 +8871,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         onCallEnded: CallManager.handleCallEnded,
                         onCallDestroy: CallManager.handleCallDestroy,
                         onCallRtpCreated: CallManager.handleCallRTPCreated,
-                        onSessionModified: CallManager.handleCallSessionModify
+                        onSessionModified: CallManager.handleCallSessionModify,
+                        onNewServiceRight: CallManager.handNewServiceRight,
+                        onSetIptServiceSuccess: CallManager.handSetIptServiceSuccess,
+                        onSetIptServiceFailed: CallManager.handSetIptServiceFailed,
+                        onCallBldTransferRecvSucRsp: CallManager.handCallBldTransferRecvSucRsp,
+                        onCallBldTransferFailed: CallManager.handCallBldTransferFailed,
+                        onCallBldTransferSuccess: CallManager.handCallBldTransferSuccess,
                     });
                     wrapper.registerVideoEvent({
                         onCallAddVideo: CallManager.handleCallAddVideo,
@@ -8080,6 +8890,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallManager.handleCallDestroy = function (callInfo) {
             util_1.default.debug("callManager", 'callManager got handleCallDestroy');
+            observer_1.default.publish('CallDestroy', callInfo);
         };
         CallManager.handleCallEnded = function (callInfo) {
             var call = CallManager.CallList[callInfo.param.call_id];
@@ -8109,6 +8920,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             call.callInfo.callType = callInfo.param.call_type;
             CallManager.CallList[call.callInfo.callId] = call;
             call.handleCallIncomming(callInfo);
+            var wrapper = tupCallWrapper_1.default.getInstance();
+            var ret = wrapper.alertingCall(callInfo.param.call_id);
             util_1.default.debug("callManager", 'handleCallIncomming, callInfo= ' + JSON.stringify(callInfo));
         };
         CallManager.handleCallConnected = function (callInfo) {
@@ -8191,25 +9004,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 util_1.default.debug("callManager", 'handleCallBldTransferFailed no found call by call_id = ' + callInfo.param.call_id);
             }
         };
-        CallManager.handleCallModifyVideoResult = function (result) {
-            var oldCall = CallManager.CallList[result.param.call_id];
-            if (oldCall) {
-                var newCallInfo = {
-                    call_id: result.param.call_id,
-                    tel_num: oldCall.callInfo.callNo,
-                    callType: result.param.is_video,
-                    callState: oldCall.callInfo.callState
-                };
-                delete CallManager.CallList[oldCall.callInfo.callId];
-                var newCall = CallManager.getCallObject(newCallInfo, result.param.is_video);
-                CallManager.CallList[newCall.callInfo.callId] = newCall;
-                newCall.handleCallModifyVideoResult(result);
-                util_1.default.debug("callManager", 'handleCallModifyVideoResult found call by call_id = ' + result.param.call_id + ",oldCall=" + oldCall);
-            }
-            else {
-                util_1.default.debug("callManager", 'handleCallModifyVideoResult no found call by call_id = ' + result.param.call_id);
-            }
-        };
         CallManager.handleCallSessionModify = function (result) {
             var oldCall = CallManager.CallList[result.param.call_id];
             if (oldCall) {
@@ -8221,6 +9015,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     nowIsVideoCall = 0;
                 }
                 else {
+                    if (result.param.video_send_mode === 4) {
+                        result.param.nowIsVideoCall = 1;
+                        oldCall.handleCallSessionModify(result);
+                    }
+                    else if (result.param.video_send_mode === 0) {
+                        result.param.nowIsVideoCall = 0;
+                        oldCall.handleCallSessionModify(result);
+                    }
                     util_1.default.debug("callManager", 'handleCallSessionModify, not update to video, return, video_send_mode =' + result.param.video_send_mode + 'oldCallType = ' + oldCall.callInfo.callType);
                     return;
                 }
@@ -8233,20 +9035,51 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 delete CallManager.CallList[oldCall.callInfo.callId];
                 var newCall = CallManager.getCallObject(newCallInfo, nowIsVideoCall);
                 CallManager.CallList[newCall.callInfo.callId] = newCall;
+                result.param.nowIsVideoCall = nowIsVideoCall;
                 newCall.handleCallSessionModify(result);
-                util_1.default.debug("callManager", 'handleCallModifyVideoResult found call by call_id = ' + result.param.call_id + ",oldCall=" + oldCall);
+                util_1.default.debug("callManager", 'handleCallSessionModify found call by call_id = ' + result.param.call_id + ",oldCall=" + JSON.stringify(oldCall));
             }
             else {
-                util_1.default.debug("callManager", 'handleCallModifyVideoResult no found call by call_id = ' + result.param.call_id);
+                util_1.default.debug("callManager", 'handleCallSessionModify no found call by call_id = ' + result.param.call_id);
             }
-            var call = CallManager.CallList[result.param.call_id];
-            if (call) {
-                call.handleCallSessionModify(result);
-                util_1.default.debug("callManager", 'handleCallSessionModify found call by result = ' + JSON.stringify(result));
+        };
+        CallManager.handNewServiceRight = function (result) {
+            var newServiceRight;
+            var serviceInfoArr = result.param.service_info_array;
+            newServiceRight = {
+                dnd: { register: serviceInfoArr[13].register, hasRight: serviceInfoArr[13].right },
+                callWait: { register: serviceInfoArr[39].register, hasRight: serviceInfoArr[39].right },
+                cfu: { register: serviceInfoArr[15].register, hasRight: serviceInfoArr[15].right },
+                cfb: { register: serviceInfoArr[16].register, hasRight: serviceInfoArr[16].right },
+                cfn: { register: serviceInfoArr[17].register, hasRight: serviceInfoArr[17].right },
+                cfo: { register: serviceInfoArr[18].register, hasRight: serviceInfoArr[18].right },
+            };
+            observer_1.default.publish('NewServiceRight', newServiceRight);
+        };
+        CallManager.handSetIptServiceSuccess = function (result) {
+            observer_1.default.publish('SetIptServiceSuccess', result);
+            util_1.default.debug("callManager", 'handSetIptServiceSuccess, SetIptServiceSuccess = ' + result);
+        };
+        CallManager.handSetIptServiceFailed = function (result) {
+            observer_1.default.publish('SetIptServiceFailed', result);
+            util_1.default.debug("callManager", 'handSetIptServiceFailed, SetIptServiceFailed = ' + result);
+        };
+        CallManager.handCallBldTransferRecvSucRsp = function (result) {
+            observer_1.default.publish('CallBldTransferRecvSucRsp', result);
+            util_1.default.debug("callManager", 'handCallBldTransferRecvSucRsp, CallBldTransferRecvSucRsp = ' + result);
+        };
+        CallManager.handCallBldTransferFailed = function (result) {
+            observer_1.default.publish('CallBldTransferFailed', result);
+            util_1.default.debug("callManager", 'handCallBldTransferFailed, CallBldTransferFailed = ' + result);
+            if (result.param.call_id != "") {
+                var call = CallManager.CallList[result.param.call_id];
+                util_1.default.debug("callManager", 'unHoldCall  callId= ' + result.param.call_id);
+                call.unHoldCall();
             }
-            else {
-                util_1.default.debug("callManager", 'handleCallSessionModify no found call by call_id = ' + call);
-            }
+        };
+        CallManager.handCallBldTransferSuccess = function (result) {
+            observer_1.default.publish('CallBldTransferSuccess', result);
+            util_1.default.debug("callManager", 'handCallBldTransferSuccess, CallBldTransferSuccess = ' + result);
         };
         CallManager.handleMicVolChange = function (result) {
             observer_1.default.publish('CallMicVolChange', result);
@@ -8273,6 +9106,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             else {
                 util_1.default.debug("callManager", 'handleCallDelVideo no found call by call_id = ' + callInfo.param.call_id);
+            }
+        };
+        CallManager.handleCallModifyVideoResult = function (result) {
+            var oldCall = CallManager.CallList[result.param.call_id];
+            if (oldCall) {
+                var newCallInfo = {
+                    call_id: result.param.call_id,
+                    tel_num: oldCall.callInfo.callNo,
+                    callType: result.param.is_video,
+                    callState: oldCall.callInfo.callState
+                };
+                delete CallManager.CallList[oldCall.callInfo.callId];
+                var newCall = CallManager.getCallObject(newCallInfo, result.param.is_video);
+                CallManager.CallList[newCall.callInfo.callId] = newCall;
+                newCall.handleCallModifyVideoResult(result);
+                util_1.default.debug("callManager", 'handleCallModifyVideoResult found call by call_id = ' + result.param.call_id + ",oldCall=" + JSON.stringify(oldCall));
+            }
+            else {
+                util_1.default.debug("callManager", 'handleCallModifyVideoResult no found call by call_id = ' + result.param.call_id);
             }
         };
         CallManager.handleVideoRefreshView = function (data) {
@@ -8308,35 +9160,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallManager.getCallObject = function (callInfo, isVideo) {
             if (isVideo) {
-                util_1.default.debug("callManager", 'getCallObject isVideo ');
+                util_1.default.debug("callManager", 'getCallObject is Video');
                 return new videoCallService_1.default(callInfo);
             }
             else {
-                util_1.default.debug("callManager", 'getCallObject not isVideo' + JSON.stringify(callInfo));
+                util_1.default.debug("callManager", 'getCallObject is audio');
                 return new audioCallService_1.default(callInfo);
             }
-        };
-        CallManager.prototype.startPlayMediaFile = function (src, loop_times) {
-            if (loop_times === void 0) { loop_times = 0; }
-            return __awaiter(this, void 0, void 0, function () {
-                var wrapper, res;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            wrapper = tupCallWrapper_1.default.getInstance();
-                            return [4, wrapper.startPlayMediaFile(src, loop_times)];
-                        case 1:
-                            res = _a.sent();
-                            if (0 === res.result) {
-                                util_1.default.debug("callManager", 'startPlayMediaFile start play media file success');
-                            }
-                            else {
-                                util_1.default.debug("callManager", 'startPlayMediaFile start play media file failed, res = ' + JSON.stringify(res));
-                            }
-                            return [2];
-                    }
-                });
-            });
         };
         CallManager.prototype.holdCall = function (event, callId) {
             return __awaiter(this, void 0, void 0, function () {
@@ -8386,13 +9216,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        CallManager.prototype.blindTransfer = function (callId, transtoNumber) {
+        CallManager.prototype.blindTransfer = function (event, callId, transtoNumber, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var call;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             call = CallManager.CallList[callId];
+                            if (call.callInfo.isVideo) {
+                                callback({ result: false, info: "call is video" });
+                                return [2];
+                            }
                             util_1.default.debug("callManager", 'blindTransfer = ' + transtoNumber);
                             return [4, call.blindTransfer(transtoNumber)];
                         case 1:
@@ -8418,22 +9252,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        CallManager.prototype.addVideo = function (callId) {
-            return __awaiter(this, void 0, void 0, function () {
-                var call;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            call = CallManager.CallList[callId];
-                            util_1.default.debug("callManager", 'addVideo  callId= ' + callId);
-                            return [4, call.addVideo()];
-                        case 1:
-                            _a.sent();
-                            return [2];
-                    }
-                });
-            });
-        };
         CallManager.prototype.getCallCount = function () {
             var count = 0;
             for (var callid in CallManager.CallList) {
@@ -8445,7 +9263,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         CallManager.prototype.newCallObject = function (callId, isVideoCall) {
             var call = CallManager.CallList[callId];
             if (!call) {
-                var newCall = CallManager.getCallObject({ call_id: callId }, isVideoCall);
+                var newCall = CallManager.getCallObject({ call_id: callId, call_type: isVideoCall }, isVideoCall);
                 if (newCall) {
                     CallManager.CallList[callId] = newCall;
                 }
@@ -8463,10 +9281,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             util_1.default.debug("callManager", 'deleteAudioCallObject, callId = ' + callId);
         };
         CallManager.CallList = {};
-        CallManager.handleEndCall = function (data) {
-            observer_1.default.publish('HandleEndCall', data.params);
-            util_1.default.debug("callManager", 'handleSipRegResult,SipRegResultNotify = ' + JSON.stringify(data));
-        };
         return CallManager;
     }());
     exports.default = CallManager;
@@ -8540,7 +9354,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 startTime: callDate.time,
                 date: callDate.date,
                 callUserInfo: "",
-                isVideo: (data.call_type === 1)
+                isVideo: (data.call_type == 1),
+                dtmfNo: ""
             };
         }
         CallService.prototype.getCallee = function (callNo, ucaccount) {
@@ -8701,7 +9516,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallService.prototype.handleCallRTPCreated = function (callInfo) {
             observer_1.default.publish('CallRTPCreated', callInfo.param);
-            util_1.default.debug("callService", 'CallRTPCreated result=' + callInfo.param);
+            util_1.default.debug("callService", 'CallRTPCreated result=' + JSON.stringify(callInfo.param));
         };
         CallService.prototype.handleCallModifyVideoResult = function (result) {
             observer_1.default.publish('CallModifyVideoResult', result.param);
@@ -8765,10 +9580,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(361), __webpack_require__(363), __webpack_require__(140), __webpack_require__(23), __webpack_require__(32), __webpack_require__(31), __webpack_require__(37), __webpack_require__(367), __webpack_require__(51), __webpack_require__(1), __webpack_require__(49), __webpack_require__(19), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrlWrapper_1, tupDataConfWrapper_1, tupEaddrWrapper_1, dispatcher_1, observer_1, eventInfo_1, errorCode_1, confAttendeeList_1, tupCallWrapper_1, util, client_1, serverConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(363), __webpack_require__(365), __webpack_require__(140), __webpack_require__(25), __webpack_require__(32), __webpack_require__(24), __webpack_require__(37), __webpack_require__(369), __webpack_require__(51), __webpack_require__(1), __webpack_require__(49), __webpack_require__(12), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrlWrapper_1, tupDataConfWrapper_1, tupEaddrWrapper_1, dispatcher_1, observer_1, eventInfo_1, errorCode_1, confAttendeeList_1, tupCallWrapper_1, util, client_1, serverConfig_1, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var confInfo = {
+        callid: 0,
         subject: "",
         mediaType: 0,
         confHandle: 0,
@@ -8808,6 +9624,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_LEAVE_CONF, this.leaveConf, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_END_CONF, this.endConf, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_CONFMODE, this.setConfMode, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_CONF_MIXED_PICTURE, this.setConfMixedPicture, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_BROADCAST_ATTENDEE, this.broadcastAttendee, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WATCH_ATTENDEE, this.watchAttendee, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SEND_MSG, this.sendMessage, this);
@@ -8837,6 +9654,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_LASERPOINTER_START, this.annotationLaserpointerStart, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_LASERPOINTER_MOVETO, this.annotationLaserpointerMoveto, this);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_LASERPOINTER_STOP, this.annotationLaserpointerStop, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_P2P_TRANSFER_TO_CONF, this.p2pTransferToConf, this);
             ConfManager._instance = this;
         }
         ConfManager.getInstance = function () {
@@ -8887,19 +9705,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                             cycle = { start_data: 0, end_data: 0, frequency: 0, appointed_type: 0, interval: 0, point_num: 0, point_list: 0, cycle_count: 0 };
                             assMedia = { mpi: 1, type: 1, code: 1, bandwidth: 1, size: 1 };
-                            mediaType = 21;
+                            mediaType = 19;
                             switch (bookConferenceParam.isVideo) {
                                 case 0:
                                     mediaType = 1;
                                     break;
                                 case 1:
-                                    mediaType = 5;
+                                    mediaType = 3;
                                     break;
                                 case 2:
                                     mediaType = 17;
                                     break;
                                 default:
-                                    mediaType = 21;
+                                    mediaType = 19;
                             }
                             phoneNumber = this.getPhoneNumber();
                             eaddrWrapper = tupEaddrWrapper_1.default.getInstance();
@@ -8911,19 +9729,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, eaddrWrapper.searchUserInfo(i + 1, { condition: attendees[i].number, pageIndex: 1, searchType: 0 })];
                         case 2:
                             data = _a.sent();
-                            if (0 == data.param.result) {
-                                if (data.param.TotalNum == 1) {
-                                    attendeeParam = data.param.entry[0];
-                                    configedAttendees[i] = {
-                                        acount_id: attendeeParam.ucaccount,
-                                        number: attendeeParam.espacenumber,
-                                        name: attendeeParam.name,
-                                        sms: attendeeParam.mobile,
-                                        email: attendeeParam.email,
-                                        role: attendees[i].role,
-                                        is_auto_invite: attendees[i].autoInvite
-                                    };
-                                }
+                            if (0 == data.param.result && 1 == data.param.TotalNum) {
+                                attendeeParam = data.param.entry[0];
+                                configedAttendees[i] = {
+                                    acount_id: attendeeParam.ucaccount,
+                                    number: attendeeParam.espacenumber,
+                                    name: attendeeParam.name,
+                                    sms: attendeeParam.mobile,
+                                    email: attendeeParam.email,
+                                    role: attendees[i].role,
+                                    is_auto_invite: attendees[i].autoInvite,
+                                    display_name: attendeeParam.name,
+                                };
                             }
                             else {
                                 configedAttendees[i] = {
@@ -8933,7 +9750,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                     sms: attendees[i].smsPhone,
                                     email: attendees[i].email,
                                     role: attendees[i].role,
-                                    is_auto_invite: attendees[i].autoInvite
+                                    is_auto_invite: attendees[i].autoInvite,
+                                    display_name: attendees[i].number,
                                 };
                             }
                             _a.label = 3;
@@ -8941,7 +9759,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             i++;
                             return [3, 1];
                         case 4:
-                            util_1.default.debug("confManager", 'configedAttendees: ' + JSON.stringify(configedAttendees));
                             confCtrlWrapper = tupConfctrlWrapper_1.default.getInstance();
                             confCtrlWrapper.bookConf(mediaType, subject, startTime_str, duration, configedAttendees, autoRecord, cycle, assMedia, language)
                                 .then(function (ret) {
@@ -8959,7 +9776,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfManager.prototype.createInstConf = function (event, instanceConfParam, callback) {
             return __awaiter(this, void 0, void 0, function () {
-                var attendees, cloudEC_loginInfo, loginInfo, userAccount, assMedia, language, mediaType, confSubject, confCtrlWrap, phoneNumber, configedAttendees, attendeeIndex, eaddrWrapper, i, number, data, attendeeParam;
+                var attendees, cloudEC_loginInfo, loginInfo, deployMode, userAccount, assMedia, language, mediaType, confSubject, confCtrlWrap, phoneNumber, configedAttendees, attendeeIndex, eaddrWrapper, i, number, data, attendeeParam, attendeeTemp;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -8967,25 +9784,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             util_1.default.debug("confManager", "step in createInstConf,event=" + event);
                             cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
                             loginInfo = JSON.parse(cloudEC_loginInfo);
+                            deployMode = loginInfo.deployMode;
                             userAccount = loginInfo.userAccount;
                             assMedia = { mpi: 1, type: 1, code: 1, bandwidth: 1, size: 1 };
                             language = 0;
                             if (instanceConfParam.language == 1) {
                                 language = 1;
                             }
-                            mediaType = 21;
+                            mediaType = 19;
                             switch (instanceConfParam.isVideo) {
                                 case 0:
                                     mediaType = 1;
                                     break;
                                 case 1:
-                                    mediaType = 5;
+                                    mediaType = 3;
                                     break;
                                 case 2:
                                     mediaType = 17;
                                     break;
                                 default:
-                                    mediaType = 21;
+                                    mediaType = 19;
                             }
                             confInfo.mediaType = mediaType;
                             confSubject = userAccount + "_Meeting";
@@ -9009,29 +9827,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, eaddrWrapper.searchUserInfo(i + 1, { condition: attendees[i].number, pageIndex: 1, searchType: 0 })];
                         case 2:
                             data = _a.sent();
-                            if (0 == data.param.result) {
-                                if (data.param.TotalNum == 1) {
-                                    attendeeParam = data.param.entry[0];
-                                    configedAttendees[attendeeIndex] = {
-                                        acount_id: attendeeParam.ucaccount,
-                                        number: attendeeParam.espacenumber,
-                                        name: attendeeParam.name,
-                                        sms: attendeeParam.mobile,
-                                        email: attendeeParam.email,
-                                        role: 0,
-                                        is_auto_invite: 1
-                                    };
-                                }
+                            if (0 == data.param.result && 1 == data.param.TotalNum) {
+                                attendeeParam = data.param.entry[0];
+                                configedAttendees[i] = {
+                                    acount_id: attendeeParam.ucaccount,
+                                    number: attendeeParam.espacenumber,
+                                    name: attendeeParam.name,
+                                    sms: attendeeParam.mobile,
+                                    email: attendeeParam.email,
+                                    role: 0,
+                                    is_auto_invite: 1,
+                                    display_name: attendeeParam.name,
+                                };
                             }
                             else {
                                 configedAttendees[attendeeIndex] = {
                                     acount_id: "",
                                     number: attendees[i].number,
-                                    name: attendees[i].name,
+                                    name: attendees[i].number,
                                     sms: attendees[i].smsPhone,
                                     email: attendees[i].email,
                                     role: 0,
-                                    is_auto_invite: 1
+                                    is_auto_invite: 1,
+                                    display_name: attendees[i].number,
                                 };
                             }
                             attendeeIndex++;
@@ -9040,6 +9858,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             i++;
                             return [3, 1];
                         case 4:
+                            if (deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
+                                attendeeTemp = {
+                                    acount_id: "",
+                                    number: phoneNumber,
+                                    name: userAccount,
+                                    sms: "",
+                                    email: "",
+                                    role: 1,
+                                    is_auto_invite: 0,
+                                    display_name: userAccount,
+                                };
+                                configedAttendees.unshift(attendeeTemp);
+                            }
                             confCtrlWrap.createConf(confSubject, mediaType, configedAttendees, assMedia, language)
                                 .then(function (ret) {
                                 var evt = { result: true, info: confInfo };
@@ -9153,13 +9984,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfManager.prototype.accessReservedConf = function (event, joinConfParam, mediaType, callback) {
             return __awaiter(this, void 0, void 0, function () {
-                var wrapper, ret, err;
+                var cloudEC_loginInfo, loginInfo, deployMode, wrapper, callNum, ret, err, ret, err;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
+                            cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                            loginInfo = JSON.parse(cloudEC_loginInfo);
+                            deployMode = loginInfo.deployMode;
                             wrapper = tupCallWrapper_1.default.getInstance();
-                            return [4, wrapper.accessReservedConf(mediaType, joinConfParam.conferenceId, joinConfParam.accessNumber, joinConfParam.confPasswd)];
+                            if (!(deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC)) return [3, 2];
+                            callNum = joinConfParam.accessNumber + "*" + joinConfParam.confPasswd + "#";
+                            return [4, wrapper.startCall(callNum, mediaType)];
                         case 1:
+                            ret = _a.sent();
+                            if (ret) {
+                                callback({ result: true, info: "access reserved conference succeed" });
+                            }
+                            else {
+                                err = { cmdId: 0, errorCode: -1, errorInfo: "ec smc access reserved conference failed,please check input conference info" };
+                                callback({ result: false, info: err });
+                            }
+                            return [3, 4];
+                        case 2:
+                            if (!(deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_SPHOSTED_CC)) return [3, 4];
+                            return [4, wrapper.accessReservedConf(mediaType, joinConfParam.conferenceId, joinConfParam.accessNumber, joinConfParam.confPasswd)];
+                        case 3:
                             ret = _a.sent();
                             if (ret.result == 0) {
                                 callback({ result: true, info: ret.param });
@@ -9169,7 +10018,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 Object.assign(err, util.getErrCode(ret.rsp, ret.result));
                                 callback({ result: false, info: err });
                             }
-                            return [2];
+                            _a.label = 4;
+                        case 4: return [2];
                     }
                 });
             });
@@ -9223,19 +10073,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, eaddrWrapper.searchUserInfo(i + 1, { condition: attendees[i].number, pageIndex: 1, searchType: 0 })];
                         case 2:
                             data_1 = _a.sent();
-                            if (0 == data_1.param.result) {
-                                if (data_1.param.TotalNum == 1) {
-                                    attendeeParam = data_1.param.entry[0];
-                                    configedAttendees[i] = {
-                                        acount_id: attendeeParam.ucaccount,
-                                        number: attendeeParam.espacenumber,
-                                        name: attendeeParam.name,
-                                        sms: attendeeParam.mobile,
-                                        email: attendeeParam.email,
-                                        role: 0,
-                                        is_auto_invite: 1
-                                    };
-                                }
+                            if (0 == data_1.param.result && 1 == data_1.param.TotalNum) {
+                                attendeeParam = data_1.param.entry[0];
+                                configedAttendees[i] = {
+                                    acount_id: attendeeParam.ucaccount,
+                                    number: attendeeParam.espacenumber,
+                                    name: attendeeParam.name,
+                                    sms: attendeeParam.mobile,
+                                    email: attendeeParam.email,
+                                    role: 0,
+                                    is_auto_invite: 1,
+                                    display_name: attendeeParam.name,
+                                };
                             }
                             else {
                                 configedAttendees[i] = {
@@ -9367,7 +10216,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 })];
                         case 2:
                             _a.sent();
-                            if (!!util.isUndefined(me.dataconfUserId)) return [3, 4];
+                            if (!(!util.isUndefined(me.dataconfUserId) && me.dataconfUserId != 0)) return [3, 4];
                             return [4, dataConfWrapper.userSetRole(2, dataConfHandle, 0).catch(function (ret) {
                                     util_1.default.error("confManager", "userSetRole failed, ret =  " + JSON.stringify(ret));
                                     client_1.default.notifyErr(util.getErrResult(ret.info.rsp, ret.info.param.result, ret.info.description));
@@ -9393,7 +10242,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             me = _a.sent();
                             confCtrlWrapper.requestChairman(confHandle, me.number, chairmanPwd)
                                 .then(function (ret) {
-                                if (!util.isUndefined(me.dataconfUserId)) {
+                                if (!util.isUndefined(me.dataconfUserId) && me.dataconfUserId != 0) {
                                     dataConfWrapper.userRequestRole(dataConfHandle, 2, "")
                                         .catch(function (ret) {
                                         util_1.default.error("confManager", "userRequestRole failed, ret = " + JSON.stringify(ret));
@@ -9457,7 +10306,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 var retInfo = util.getErrResult(ret.info.rsp, ret.info.result, "");
                                 client_1.default.notifyErr(retInfo);
                             }).then(function (ret) {
-                                if (!util.isUndefined(me) && (!util.isUndefined(me.dataconfUserId) && me.dataconfUserId != 0)) {
+                                if (!util.isUndefined(me) && (!util.isUndefined(me.dataconfUserId) && (me.dataconfUserId != 0) && me.dataconfUserId != 0)) {
                                     dataConfWrapper.leave(dataConfHandle)
                                         .then(function (ret) {
                                         return dataConfWrapper.release(dataConfHandle);
@@ -9507,7 +10356,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 })];
                         case 2:
                             _a.sent();
-                            if (!(!util.isUndefined(me.dataconfUserId) && dataConfHandle != 0)) return [3, 5];
+                            if (!(!util.isUndefined(me.dataconfUserId) && (me.dataconfUserId != 0) && (dataConfHandle != 0))) return [3, 5];
                             return [4, dataConfWrapper.terminal(dataConfHandle).catch(function (ret) {
                                     if (ret.info.description == "callback") {
                                         client_1.default.notifyErr(util.getErrResult(ret.info.rsp, ret.info.param.result, "terminal data conference error"));
@@ -9545,6 +10394,55 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                     client_1.default.notifyErr(util.getErrResult(data.info.notify, data.info.param.ret, data.info.description));
                                 })];
                         case 1:
+                            _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ConfManager.prototype.setConfMixedPicture = function (event, confHandle, mode, imageType, attendees) {
+            return __awaiter(this, void 0, void 0, function () {
+                var confCtrlWrapper, eaddrWrapper, configedAttendees, i, data, attendeeParam;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            confCtrlWrapper = tupConfctrlWrapper_1.default.getInstance();
+                            eaddrWrapper = tupEaddrWrapper_1.default.getInstance();
+                            configedAttendees = new Array();
+                            i = 0;
+                            _a.label = 1;
+                        case 1:
+                            if (!(i < attendees.length)) return [3, 4];
+                            return [4, eaddrWrapper.searchUserInfo(i + 1, { condition: attendees[i].number, pageIndex: 1, searchType: 0 })];
+                        case 2:
+                            data = _a.sent();
+                            if (0 == data.param.result && 1 == data.param.TotalNum) {
+                                attendeeParam = data.param.entry[0];
+                                configedAttendees[i] = {
+                                    acount_id: attendeeParam.ucaccount,
+                                    number: attendeeParam.espacenumber,
+                                    name: attendeeParam.name,
+                                    sms: attendeeParam.mobile,
+                                    email: attendeeParam.email,
+                                };
+                            }
+                            else {
+                                configedAttendees[i] = {
+                                    acount_id: "",
+                                    number: attendees[i].number,
+                                    name: attendees[i].name,
+                                    sms: attendees[i].smsPhone,
+                                    email: attendees[i].email,
+                                };
+                            }
+                            _a.label = 3;
+                        case 3:
+                            i++;
+                            return [3, 1];
+                        case 4: return [4, confCtrlWrapper.setConfMixedPicture(confHandle, mode, imageType, configedAttendees).catch(function (data) {
+                                client_1.default.notifyErr(util.getErrResult(data.info.notify, data.info.param.result, data.info.description));
+                            })];
+                        case 5:
                             _a.sent();
                             return [2];
                     }
@@ -9595,12 +10493,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfManager.prototype.getSelfMember = function (attendeeList) {
             return __awaiter(this, void 0, void 0, function () {
-                var phoneNumber, i, number;
+                var phoneNumber, i;
                 return __generator(this, function (_a) {
                     phoneNumber = this.getPhoneNumber();
                     for (i = 0; i < attendeeList.length; i++) {
-                        number = attendeeList[i].number.split("@")[0];
-                        if (phoneNumber.endsWith(number)) {
+                        if (attendeeList[i].isSelf == 1) {
                             return [2, attendeeList[i]];
                         }
                     }
@@ -9994,6 +10891,104 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var wrapper = tupDataConfWrapper_1.default.getInstance();
             wrapper.annotationLaserpointerStop(confHandle, ciid);
         };
+        ConfManager.prototype.p2pTransferToConf = function (eventType, instanceConfParam, callID, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var attendees, cloudEC_loginInfo, loginInfo, userAccount, assMedia, mediaType, confSubject, confCtrlWrap, phoneNumber, configedAttendees, attendeeIndex, eaddrWrapper, i, data, attendeeParam, createConfInfo, wrapper, result;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            attendees = instanceConfParam.attendees;
+                            cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                            loginInfo = JSON.parse(cloudEC_loginInfo);
+                            userAccount = loginInfo.userAccount;
+                            assMedia = { mpi: 1, type: 1, code: 1, bandwidth: 1, size: 1 };
+                            mediaType = 19;
+                            switch (instanceConfParam.isVideo) {
+                                case 0:
+                                    mediaType = 1;
+                                    break;
+                                case 1:
+                                    mediaType = 3;
+                                    break;
+                                case 2:
+                                    mediaType = 17;
+                                    break;
+                                default:
+                                    mediaType = 19;
+                            }
+                            confSubject = userAccount + "_Meeting";
+                            if (instanceConfParam.topic != "") {
+                                confSubject = instanceConfParam.topic;
+                            }
+                            confCtrlWrap = tupConfctrlWrapper_1.default.getInstance();
+                            phoneNumber = this.getPhoneNumber();
+                            configedAttendees = new Array();
+                            attendeeIndex = 0;
+                            eaddrWrapper = tupEaddrWrapper_1.default.getInstance();
+                            i = 0;
+                            _a.label = 1;
+                        case 1:
+                            if (!(i < attendees.length)) return [3, 4];
+                            return [4, eaddrWrapper.searchUserInfo(i + 1, { condition: attendees[i].number, pageIndex: 1, searchType: 0 })];
+                        case 2:
+                            data = _a.sent();
+                            if (0 == data.param.result && 1 == data.param.TotalNum) {
+                                attendeeParam = data.param.entry[0];
+                                configedAttendees[i] = {
+                                    acount_id: attendeeParam.ucaccount,
+                                    number: attendeeParam.espacenumber,
+                                    name: attendeeParam.name,
+                                    sms: attendeeParam.mobile,
+                                    email: attendeeParam.email,
+                                    role: attendees[i].role,
+                                    is_auto_invite: 1,
+                                    display_name: attendeeParam.name,
+                                };
+                            }
+                            else {
+                                configedAttendees[attendeeIndex] = {
+                                    acount_id: "",
+                                    number: attendees[i].number,
+                                    name: attendees[i].name,
+                                    sms: attendees[i].smsPhone,
+                                    email: attendees[i].email,
+                                    role: attendees[i].role,
+                                    is_auto_invite: 1,
+                                    display_name: attendees[i].name,
+                                };
+                            }
+                            attendeeIndex++;
+                            _a.label = 3;
+                        case 3:
+                            i++;
+                            return [3, 1];
+                        case 4:
+                            createConfInfo = {
+                                subject: confSubject,
+                                group_uri: "",
+                                welcome_voice_enable: 0,
+                                enter_prompt: 0,
+                                leave_prompt: 0,
+                                conf_filter: 0,
+                                record_flag: 0,
+                                multi_stream_flag: 0,
+                                media_type: mediaType,
+                                language: 0,
+                                conf_encrypt_mode: 0,
+                                user_type: 0,
+                                num_of_attendee: configedAttendees.length,
+                                attendee: configedAttendees
+                            };
+                            wrapper = tupConfctrlWrapper_1.default.getInstance();
+                            return [4, wrapper.p2pTransferToConf(createConfInfo, callID)];
+                        case 5:
+                            result = _a.sent();
+                            callback(result);
+                            return [2];
+                    }
+                });
+            });
+        };
         ConfManager.registerConfEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper, dataWrapper;
@@ -10010,6 +11005,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         onConfConnectedInd: ConfManager.onConfConnectedInd,
                         onConfInfoInd: ConfManager.onConfInfoInd,
                         onEndConfInd: ConfManager.onEndConfInd,
+                        onBeTransToConfInd: ConfManager.onBeTransToConfInd,
                     });
                     dataWrapper.setBasicMeetingEvent({
                         onConfTerminate: ConfManager.onConfTerminate,
@@ -10037,9 +11033,104 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             });
         };
         ConfManager._instance = new ConfManager();
+        ConfManager.isFirstUpdateAttendees = true;
         ConfManager.onAttendeeListUpdate = function (data) {
             observer_1.default.publish('AttendeeListUpdate', data.param);
             observer_1.default.publish("UpdateConfinfo", confInfo);
+            if (ConfManager.isFirstUpdateAttendees && data.param.conf_status.media_type > 16) {
+                ConfManager.isFirstUpdateAttendees = false;
+                var confCtrlWrap = tupConfctrlWrapper_1.default.getInstance();
+                var dataConfWrap_1 = tupDataConfWrapper_1.default.getInstance();
+                var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                var loginInfo = JSON.parse(cloudEC_loginInfo);
+                var deployMode = loginInfo.deployMode;
+                var dataUrl = loginInfo.dataUrl;
+                var passcode = data.param.conf_status.conf_key;
+                var confParams = void 0;
+                var userAccount_1 = loginInfo.userAccount, sipImpi = loginInfo.sipImpi;
+                var phoneNumber_1 = sipImpi.split("@")[0];
+                if (deployMode != enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
+                    return;
+                }
+                confParams = {
+                    conf_url: dataUrl,
+                    mcu_addr: { server_addr: "", server_port: 0 },
+                    random: "",
+                    passcode: passcode,
+                    sip_num: "",
+                    conf_id: "",
+                    password: "",
+                    type: 1
+                };
+                confCtrlWrap.getDataconfParams(confParams).then(function (bigparam) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        var hostKey, title, userId, option, siteId, userTypeTemp, userType, siteUrl, serverIp, serverInterip, encryptionKey, confId, userCapability, userName, logUrl, userM, userT;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    hostKey = bigparam.param.conf_params.host_key;
+                                    confInfo.hostKey = hostKey;
+                                    title = "subject";
+                                    userId = parseInt(bigparam.param.conf_params.user_id);
+                                    option = 4096;
+                                    siteId = bigparam.param.conf_params.site_id;
+                                    userTypeTemp = parseInt(bigparam.param.conf_params.user_role);
+                                    if (userTypeTemp < 8) {
+                                        userType = 3;
+                                    }
+                                    else {
+                                        userType = 8;
+                                    }
+                                    siteUrl = bigparam.param.conf_params.cm_address;
+                                    serverIp = bigparam.param.conf_params.server_ip;
+                                    serverInterip = "";
+                                    encryptionKey = bigparam.param.conf_params.crypt_key;
+                                    confId = parseInt(bigparam.param.conf_params.conf_id);
+                                    userCapability = 2046;
+                                    userName = userAccount_1;
+                                    logUrl = phoneNumber_1;
+                                    userM = bigparam.param.conf_params.M;
+                                    userT = bigparam.param.conf_params.T;
+                                    return [4, dataConfWrap_1.createConference(title, option, userType, userId, userName, hostKey, confId, encryptionKey, siteId, siteUrl, serverIp, serverInterip, userCapability, 0, logUrl, userM, userT)];
+                                case 1: return [2, _a.sent()];
+                            }
+                        });
+                    });
+                }).then(function (confResponse) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    confInfo.dataConfHandle = confResponse.param.confHandle;
+                                    return [4, dataConfWrap_1.joinConference(confResponse.param.confHandle)];
+                                case 1: return [2, _a.sent()];
+                            }
+                        });
+                    });
+                }).then(function (joinResponse) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, dataConfWrap_1.loadComponent(joinResponse.param.confHandle, 546)];
+                                case 1: return [2, _a.sent()];
+                            }
+                        });
+                    });
+                }).then(function (loadCompResponse) {
+                    util_1.default.debug("confManager", "into conf good");
+                    var evt = { result: true, info: confInfo };
+                    observer_1.default.publish('ConfInfoInd', evt);
+                }).catch(function (data) {
+                    if (data.description === "CONFCTRL_E_EVT_CREATE_CONF_RESULT") {
+                    }
+                    else {
+                        var err = util.getErrResult(40000100, data.param.value1, data.description);
+                        client_1.default.notifyErr(err);
+                        var evt = { result: false, info: confInfo };
+                        observer_1.default.publish('ConfInfoInd', evt);
+                    }
+                });
+            }
         };
         ConfManager.onFloorAttendeeInd = function (data) {
             observer_1.default.publish("FloorAttendeeInd", data.param.floor_attendee_info);
@@ -10058,23 +11149,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var dataConfWrap = tupDataConfWrapper_1.default.getInstance();
             var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
             var loginInfo = JSON.parse(cloudEC_loginInfo);
+            var deployMode = loginInfo.deployMode;
+            var dataUrl = loginInfo.dataUrl;
+            var passcode = "";
             var userAccount = loginInfo.userAccount, sipImpi = loginInfo.sipImpi;
-            var sipMUN = sipImpi;
+            var phoneNumber = sipImpi.split("@")[0];
             var _a = confinfodata.param.conf_info, conf_id = _a.conf_id, conf_uri = _a.conf_uri, data_random = _a.data_random, password = _a.password, media_type = _a.media_type;
             var handle = confinfodata.param.handle;
             confInfo.confId = conf_id;
             confInfo.confHandle = handle;
-            var confParams = {
-                conf_url: conf_uri,
-                mcu_addr: { server_addr: "", server_port: 0 },
-                random: data_random,
-                passcode: password,
-                sip_mun: sipImpi,
-                conf_id: conf_id,
-                password: password,
-                type: 3
-            };
-            if ((media_type - 16) < 0) {
+            confInfo.callid = confinfodata.param.call_id;
+            confInfo.mediaType = confinfodata.param.conf_info.media_type;
+            var confParams;
+            if (deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_SPHOSTED_CC) {
+                confParams = {
+                    conf_url: conf_uri,
+                    mcu_addr: { server_addr: "", server_port: 0 },
+                    random: data_random,
+                    passcode: password,
+                    sip_num: sipImpi,
+                    conf_id: conf_id,
+                    password: password,
+                    type: 3
+                };
+                if ((media_type - 16) < 0) {
+                    var evt = { result: true, info: confInfo };
+                    observer_1.default.publish('ConfInfoInd', evt);
+                    return;
+                }
+            }
+            else if (deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
+                util_1.default.debug("confManager", "into conf good");
                 var evt = { result: true, info: confInfo };
                 observer_1.default.publish('ConfInfoInd', evt);
                 return;
@@ -10093,7 +11198,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 siteId = bigparam.param.conf_params.site_id;
                                 userTypeTemp = parseInt(bigparam.param.conf_params.user_role);
                                 if (userTypeTemp < 8) {
-                                    userType = 2;
+                                    userType = 3;
                                 }
                                 else {
                                     userType = 8;
@@ -10111,7 +11216,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 confId = parseInt(bigparam.param.conf_params.conf_id);
                                 userCapability = 2046;
                                 userName = userAccount;
-                                logUrl = bigparam.param.conf_params.participant_id;
+                                logUrl = bigparam.param.conf_params.user_uri;
                                 userM = bigparam.param.conf_params.M;
                                 userT = bigparam.param.conf_params.T;
                                 return [4, dataConfWrap.createConference(title, option, userType, userId, userName, hostKey, confId, encryptionKey, siteId, siteUrl, serverIp, serverInterip, userCapability, 0, logUrl, userM, userT)];
@@ -10152,26 +11257,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 else {
                     var err = util.getErrResult(40000100, data.param.value1, data.description);
                     client_1.default.notifyErr(err);
-                    util_1.default.error("confManager", data);
-                    var evt = { result: false, info: data };
+                    var evt = { result: false, info: confInfo };
                     observer_1.default.publish('ConfInfoInd', evt);
                 }
             });
         };
         ConfManager.onuserLeaveKickout = function (data) {
+            ConfManager.isFirstUpdateAttendees = true;
             util_1.default.info("confManager", "You were kicked out of the data conference");
             var wrapper = tupDataConfWrapper_1.default.getInstance();
             wrapper.release(data.param.confHandle);
         };
         ConfManager.onConfLeave = function (data) {
+            ConfManager.isFirstUpdateAttendees = true;
             util_1.default.info("confManager", "Leave the data meeting" + data.param.user_alt_uri);
             observer_1.default.publish('dataUserleave', { result: true, info: data.param });
         };
         ConfManager.onEndConfInd = function (data) {
+            ConfManager.isFirstUpdateAttendees = true;
             observer_1.default.publish('ConfEnd', { result: true, info: data });
             util_1.default.debug("confManager", 'ConfEnd data=' + JSON.stringify(data));
         };
+        ConfManager.onBeTransToConfInd = function (data) {
+            observer_1.default.publish('BeTransToConfInd', { result: true, info: data.param });
+        };
         ConfManager.onConfTerminate = function (data) {
+            ConfManager.isFirstUpdateAttendees = true;
             var dataConfWrapper = tupDataConfWrapper_1.default.getInstance();
             dataConfWrapper.release(data.param.confHandle)
                 .then(function () { observer_1.default.publish('ConfTerminal', { result: true, info: "" }); })
@@ -10271,7 +11382,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(366), __webpack_require__(19), __webpack_require__(50), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddr_1, serverConfig_1, tupLoginWrapper_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(368), __webpack_require__(12), __webpack_require__(50), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddr_1, serverConfig_1, tupLoginWrapper_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupEaddrWrapper = (function () {
@@ -10293,7 +11404,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             socket: tupLoginWrapper_1.default.tupUniSock
                         });
                         tupEaddrWrapper.tupEaddr.eaddrInit();
-                        setTimeout(function () { tupEaddrWrapper._instance.eaddrInit(); }, 2000);
+                        setTimeout(function () { tupEaddrWrapper._instance.eaddrInit(); }, 10000);
                     }
                     else {
                         this.eaddrInit();
@@ -10314,7 +11425,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             };
             tupEaddrWrapper.tupEaddr.eaddrSetLogPara(param2);
             var proxy_result = sessionStorage.cloudEC_proxy;
-            if (proxy_result != undefined) {
+            if (proxy_result != undefined && proxy_result.proxyAddress != undefined) {
                 proxy_result = JSON.parse(proxy_result);
             }
             else {
@@ -10469,7 +11580,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(140), __webpack_require__(23), __webpack_require__(31), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddrWrapper_1, dispatcher_1, eventInfo_1, util) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(140), __webpack_require__(25), __webpack_require__(24), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddrWrapper_1, dispatcher_1, eventInfo_1, util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var EaddrManager = (function () {
@@ -10794,7 +11905,7 @@ __webpack_require__(338);
 __webpack_require__(339);
 __webpack_require__(340);
 __webpack_require__(341);
-module.exports = __webpack_require__(24);
+module.exports = __webpack_require__(26);
 
 
 /***/ }),
@@ -10805,10 +11916,10 @@ module.exports = __webpack_require__(24);
 
 // ECMAScript 6 symbols shim
 var global = __webpack_require__(3);
-var has = __webpack_require__(12);
+var has = __webpack_require__(13);
 var DESCRIPTORS = __webpack_require__(7);
 var $export = __webpack_require__(0);
-var redefine = __webpack_require__(14);
+var redefine = __webpack_require__(15);
 var META = __webpack_require__(35).KEY;
 var $fails = __webpack_require__(4);
 var shared = __webpack_require__(59);
@@ -10820,12 +11931,12 @@ var wksDefine = __webpack_require__(74);
 var enumKeys = __webpack_require__(147);
 var isArray = __webpack_require__(62);
 var anObject = __webpack_require__(2);
-var toIObject = __webpack_require__(16);
-var toPrimitive = __webpack_require__(25);
+var toIObject = __webpack_require__(18);
+var toPrimitive = __webpack_require__(27);
 var createDesc = __webpack_require__(38);
 var _create = __webpack_require__(43);
 var gOPNExt = __webpack_require__(105);
-var $GOPD = __webpack_require__(17);
+var $GOPD = __webpack_require__(19);
 var $DP = __webpack_require__(8);
 var $keys = __webpack_require__(41);
 var gOPD = $GOPD.f;
@@ -11029,7 +12140,7 @@ $JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function () {
 });
 
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(13)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(14)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
 setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
@@ -11091,10 +12202,10 @@ $export($export.S + $export.F * !__webpack_require__(7), 'Object', { definePrope
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-var toIObject = __webpack_require__(16);
-var $getOwnPropertyDescriptor = __webpack_require__(17).f;
+var toIObject = __webpack_require__(18);
+var $getOwnPropertyDescriptor = __webpack_require__(19).f;
 
-__webpack_require__(28)('getOwnPropertyDescriptor', function () {
+__webpack_require__(30)('getOwnPropertyDescriptor', function () {
   return function getOwnPropertyDescriptor(it, key) {
     return $getOwnPropertyDescriptor(toIObject(it), key);
   };
@@ -11107,9 +12218,9 @@ __webpack_require__(28)('getOwnPropertyDescriptor', function () {
 
 // 19.1.2.9 Object.getPrototypeOf(O)
 var toObject = __webpack_require__(10);
-var $getPrototypeOf = __webpack_require__(18);
+var $getPrototypeOf = __webpack_require__(20);
 
-__webpack_require__(28)('getPrototypeOf', function () {
+__webpack_require__(30)('getPrototypeOf', function () {
   return function getPrototypeOf(it) {
     return $getPrototypeOf(toObject(it));
   };
@@ -11124,7 +12235,7 @@ __webpack_require__(28)('getPrototypeOf', function () {
 var toObject = __webpack_require__(10);
 var $keys = __webpack_require__(41);
 
-__webpack_require__(28)('keys', function () {
+__webpack_require__(30)('keys', function () {
   return function keys(it) {
     return $keys(toObject(it));
   };
@@ -11136,7 +12247,7 @@ __webpack_require__(28)('keys', function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.7 Object.getOwnPropertyNames(O)
-__webpack_require__(28)('getOwnPropertyNames', function () {
+__webpack_require__(30)('getOwnPropertyNames', function () {
   return __webpack_require__(105).f;
 });
 
@@ -11149,7 +12260,7 @@ __webpack_require__(28)('getOwnPropertyNames', function () {
 var isObject = __webpack_require__(5);
 var meta = __webpack_require__(35).onFreeze;
 
-__webpack_require__(28)('freeze', function ($freeze) {
+__webpack_require__(30)('freeze', function ($freeze) {
   return function freeze(it) {
     return $freeze && isObject(it) ? $freeze(meta(it)) : it;
   };
@@ -11164,7 +12275,7 @@ __webpack_require__(28)('freeze', function ($freeze) {
 var isObject = __webpack_require__(5);
 var meta = __webpack_require__(35).onFreeze;
 
-__webpack_require__(28)('seal', function ($seal) {
+__webpack_require__(30)('seal', function ($seal) {
   return function seal(it) {
     return $seal && isObject(it) ? $seal(meta(it)) : it;
   };
@@ -11179,7 +12290,7 @@ __webpack_require__(28)('seal', function ($seal) {
 var isObject = __webpack_require__(5);
 var meta = __webpack_require__(35).onFreeze;
 
-__webpack_require__(28)('preventExtensions', function ($preventExtensions) {
+__webpack_require__(30)('preventExtensions', function ($preventExtensions) {
   return function preventExtensions(it) {
     return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
   };
@@ -11193,7 +12304,7 @@ __webpack_require__(28)('preventExtensions', function ($preventExtensions) {
 // 19.1.2.12 Object.isFrozen(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(28)('isFrozen', function ($isFrozen) {
+__webpack_require__(30)('isFrozen', function ($isFrozen) {
   return function isFrozen(it) {
     return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
   };
@@ -11207,7 +12318,7 @@ __webpack_require__(28)('isFrozen', function ($isFrozen) {
 // 19.1.2.13 Object.isSealed(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(28)('isSealed', function ($isSealed) {
+__webpack_require__(30)('isSealed', function ($isSealed) {
   return function isSealed(it) {
     return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
   };
@@ -11221,7 +12332,7 @@ __webpack_require__(28)('isSealed', function ($isSealed) {
 // 19.1.2.11 Object.isExtensible(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(28)('isExtensible', function ($isExtensible) {
+__webpack_require__(30)('isExtensible', function ($isExtensible) {
   return function isExtensible(it) {
     return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
   };
@@ -11278,7 +12389,7 @@ var classof = __webpack_require__(58);
 var test = {};
 test[__webpack_require__(6)('toStringTag')] = 'z';
 if (test + '' != '[object z]') {
-  __webpack_require__(14)(Object.prototype, 'toString', function toString() {
+  __webpack_require__(15)(Object.prototype, 'toString', function toString() {
     return '[object ' + classof(this) + ']';
   }, true);
 }
@@ -11323,7 +12434,7 @@ NAME in FProto || __webpack_require__(7) && dP(FProto, NAME, {
 "use strict";
 
 var isObject = __webpack_require__(5);
-var getPrototypeOf = __webpack_require__(18);
+var getPrototypeOf = __webpack_require__(20);
 var HAS_INSTANCE = __webpack_require__(6)('hasInstance');
 var FunctionProto = Function.prototype;
 // 19.2.3.6 Function.prototype[@@hasInstance](V)
@@ -11363,13 +12474,13 @@ $export($export.G + $export.F * (parseFloat != $parseFloat), { parseFloat: $pars
 "use strict";
 
 var global = __webpack_require__(3);
-var has = __webpack_require__(12);
-var cof = __webpack_require__(21);
+var has = __webpack_require__(13);
+var cof = __webpack_require__(22);
 var inheritIfRequired = __webpack_require__(80);
-var toPrimitive = __webpack_require__(25);
+var toPrimitive = __webpack_require__(27);
 var fails = __webpack_require__(4);
 var gOPN = __webpack_require__(44).f;
-var gOPD = __webpack_require__(17).f;
+var gOPD = __webpack_require__(19).f;
 var dP = __webpack_require__(8).f;
 var $trim = __webpack_require__(53).trim;
 var NUMBER = 'Number';
@@ -11428,7 +12539,7 @@ if (!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')) {
   }
   $Number.prototype = proto;
   proto.constructor = $Number;
-  __webpack_require__(14)(global, NUMBER, $Number);
+  __webpack_require__(15)(global, NUMBER, $Number);
 }
 
 
@@ -11439,7 +12550,7 @@ if (!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')) {
 "use strict";
 
 var $export = __webpack_require__(0);
-var toInteger = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
 var aNumberValue = __webpack_require__(111);
 var repeat = __webpack_require__(81);
 var $toFixed = 1.0.toFixed;
@@ -11994,7 +13105,7 @@ $export($export.S + $export.F * (!!$fromCodePoint && $fromCodePoint.length != 1)
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
-var toIObject = __webpack_require__(16);
+var toIObject = __webpack_require__(18);
 var toLength = __webpack_require__(9);
 
 $export($export.S, 'String', {
@@ -12157,7 +13268,7 @@ $export($export.P + $export.F * __webpack_require__(88)(STARTS_WITH), 'String', 
 "use strict";
 
 // B.2.3.2 String.prototype.anchor(name)
-__webpack_require__(15)('anchor', function (createHTML) {
+__webpack_require__(16)('anchor', function (createHTML) {
   return function anchor(name) {
     return createHTML(this, 'a', 'name', name);
   };
@@ -12171,7 +13282,7 @@ __webpack_require__(15)('anchor', function (createHTML) {
 "use strict";
 
 // B.2.3.3 String.prototype.big()
-__webpack_require__(15)('big', function (createHTML) {
+__webpack_require__(16)('big', function (createHTML) {
   return function big() {
     return createHTML(this, 'big', '', '');
   };
@@ -12185,7 +13296,7 @@ __webpack_require__(15)('big', function (createHTML) {
 "use strict";
 
 // B.2.3.4 String.prototype.blink()
-__webpack_require__(15)('blink', function (createHTML) {
+__webpack_require__(16)('blink', function (createHTML) {
   return function blink() {
     return createHTML(this, 'blink', '', '');
   };
@@ -12199,7 +13310,7 @@ __webpack_require__(15)('blink', function (createHTML) {
 "use strict";
 
 // B.2.3.5 String.prototype.bold()
-__webpack_require__(15)('bold', function (createHTML) {
+__webpack_require__(16)('bold', function (createHTML) {
   return function bold() {
     return createHTML(this, 'b', '', '');
   };
@@ -12213,7 +13324,7 @@ __webpack_require__(15)('bold', function (createHTML) {
 "use strict";
 
 // B.2.3.6 String.prototype.fixed()
-__webpack_require__(15)('fixed', function (createHTML) {
+__webpack_require__(16)('fixed', function (createHTML) {
   return function fixed() {
     return createHTML(this, 'tt', '', '');
   };
@@ -12227,7 +13338,7 @@ __webpack_require__(15)('fixed', function (createHTML) {
 "use strict";
 
 // B.2.3.7 String.prototype.fontcolor(color)
-__webpack_require__(15)('fontcolor', function (createHTML) {
+__webpack_require__(16)('fontcolor', function (createHTML) {
   return function fontcolor(color) {
     return createHTML(this, 'font', 'color', color);
   };
@@ -12241,7 +13352,7 @@ __webpack_require__(15)('fontcolor', function (createHTML) {
 "use strict";
 
 // B.2.3.8 String.prototype.fontsize(size)
-__webpack_require__(15)('fontsize', function (createHTML) {
+__webpack_require__(16)('fontsize', function (createHTML) {
   return function fontsize(size) {
     return createHTML(this, 'font', 'size', size);
   };
@@ -12255,7 +13366,7 @@ __webpack_require__(15)('fontsize', function (createHTML) {
 "use strict";
 
 // B.2.3.9 String.prototype.italics()
-__webpack_require__(15)('italics', function (createHTML) {
+__webpack_require__(16)('italics', function (createHTML) {
   return function italics() {
     return createHTML(this, 'i', '', '');
   };
@@ -12269,7 +13380,7 @@ __webpack_require__(15)('italics', function (createHTML) {
 "use strict";
 
 // B.2.3.10 String.prototype.link(url)
-__webpack_require__(15)('link', function (createHTML) {
+__webpack_require__(16)('link', function (createHTML) {
   return function link(url) {
     return createHTML(this, 'a', 'href', url);
   };
@@ -12283,7 +13394,7 @@ __webpack_require__(15)('link', function (createHTML) {
 "use strict";
 
 // B.2.3.11 String.prototype.small()
-__webpack_require__(15)('small', function (createHTML) {
+__webpack_require__(16)('small', function (createHTML) {
   return function small() {
     return createHTML(this, 'small', '', '');
   };
@@ -12297,7 +13408,7 @@ __webpack_require__(15)('small', function (createHTML) {
 "use strict";
 
 // B.2.3.12 String.prototype.strike()
-__webpack_require__(15)('strike', function (createHTML) {
+__webpack_require__(16)('strike', function (createHTML) {
   return function strike() {
     return createHTML(this, 'strike', '', '');
   };
@@ -12311,7 +13422,7 @@ __webpack_require__(15)('strike', function (createHTML) {
 "use strict";
 
 // B.2.3.13 String.prototype.sub()
-__webpack_require__(15)('sub', function (createHTML) {
+__webpack_require__(16)('sub', function (createHTML) {
   return function sub() {
     return createHTML(this, 'sub', '', '');
   };
@@ -12325,7 +13436,7 @@ __webpack_require__(15)('sub', function (createHTML) {
 "use strict";
 
 // B.2.3.14 String.prototype.sup()
-__webpack_require__(15)('sup', function (createHTML) {
+__webpack_require__(16)('sup', function (createHTML) {
   return function sup() {
     return createHTML(this, 'sup', '', '');
   };
@@ -12350,7 +13461,7 @@ $export($export.S, 'Date', { now: function () { return new Date().getTime(); } }
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(25);
+var toPrimitive = __webpack_require__(27);
 
 $export($export.P + $export.F * __webpack_require__(4)(function () {
   return new Date(NaN).toJSON() !== null
@@ -12422,7 +13533,7 @@ var TO_STRING = 'toString';
 var $toString = DateProto[TO_STRING];
 var getTime = DateProto.getTime;
 if (new Date(NaN) + '' != INVALID_DATE) {
-  __webpack_require__(14)(DateProto, TO_STRING, function toString() {
+  __webpack_require__(15)(DateProto, TO_STRING, function toString() {
     var value = getTime.call(this);
     // eslint-disable-next-line no-self-compare
     return value === value ? $toString.call(this) : INVALID_DATE;
@@ -12437,7 +13548,7 @@ if (new Date(NaN) + '' != INVALID_DATE) {
 var TO_PRIMITIVE = __webpack_require__(6)('toPrimitive');
 var proto = Date.prototype;
 
-if (!(TO_PRIMITIVE in proto)) __webpack_require__(13)(proto, TO_PRIMITIVE, __webpack_require__(228));
+if (!(TO_PRIMITIVE in proto)) __webpack_require__(14)(proto, TO_PRIMITIVE, __webpack_require__(228));
 
 
 /***/ }),
@@ -12447,7 +13558,7 @@ if (!(TO_PRIMITIVE in proto)) __webpack_require__(13)(proto, TO_PRIMITIVE, __web
 "use strict";
 
 var anObject = __webpack_require__(2);
-var toPrimitive = __webpack_require__(25);
+var toPrimitive = __webpack_require__(27);
 var NUMBER = 'number';
 
 module.exports = function (hint) {
@@ -12472,7 +13583,7 @@ $export($export.S, 'Array', { isArray: __webpack_require__(62) });
 
 "use strict";
 
-var ctx = __webpack_require__(20);
+var ctx = __webpack_require__(21);
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
 var call = __webpack_require__(115);
@@ -12544,11 +13655,11 @@ $export($export.S + $export.F * __webpack_require__(4)(function () {
 
 // 22.1.3.13 Array.prototype.join(separator)
 var $export = __webpack_require__(0);
-var toIObject = __webpack_require__(16);
+var toIObject = __webpack_require__(18);
 var arrayJoin = [].join;
 
 // fallback for not array-like strings
-$export($export.P + $export.F * (__webpack_require__(56) != Object || !__webpack_require__(22)(arrayJoin)), 'Array', {
+$export($export.P + $export.F * (__webpack_require__(56) != Object || !__webpack_require__(23)(arrayJoin)), 'Array', {
   join: function join(separator) {
     return arrayJoin.call(toIObject(this), separator === undefined ? ',' : separator);
   }
@@ -12563,7 +13674,7 @@ $export($export.P + $export.F * (__webpack_require__(56) != Object || !__webpack
 
 var $export = __webpack_require__(0);
 var html = __webpack_require__(77);
-var cof = __webpack_require__(21);
+var cof = __webpack_require__(22);
 var toAbsoluteIndex = __webpack_require__(42);
 var toLength = __webpack_require__(9);
 var arraySlice = [].slice;
@@ -12610,7 +13721,7 @@ $export($export.P + $export.F * (fails(function () {
   // V8 bug
   test.sort(null);
   // Old WebKit
-}) || !__webpack_require__(22)($sort)), 'Array', {
+}) || !__webpack_require__(23)($sort)), 'Array', {
   // 22.1.3.25 Array.prototype.sort(comparefn)
   sort: function sort(comparefn) {
     return comparefn === undefined
@@ -12627,8 +13738,8 @@ $export($export.P + $export.F * (fails(function () {
 "use strict";
 
 var $export = __webpack_require__(0);
-var $forEach = __webpack_require__(29)(0);
-var STRICT = __webpack_require__(22)([].forEach, true);
+var $forEach = __webpack_require__(31)(0);
+var STRICT = __webpack_require__(23)([].forEach, true);
 
 $export($export.P + $export.F * !STRICT, 'Array', {
   // 22.1.3.10 / 15.4.4.18 Array.prototype.forEach(callbackfn [, thisArg])
@@ -12667,9 +13778,9 @@ module.exports = function (original) {
 "use strict";
 
 var $export = __webpack_require__(0);
-var $map = __webpack_require__(29)(1);
+var $map = __webpack_require__(31)(1);
 
-$export($export.P + $export.F * !__webpack_require__(22)([].map, true), 'Array', {
+$export($export.P + $export.F * !__webpack_require__(23)([].map, true), 'Array', {
   // 22.1.3.15 / 15.4.4.19 Array.prototype.map(callbackfn [, thisArg])
   map: function map(callbackfn /* , thisArg */) {
     return $map(this, callbackfn, arguments[1]);
@@ -12684,9 +13795,9 @@ $export($export.P + $export.F * !__webpack_require__(22)([].map, true), 'Array',
 "use strict";
 
 var $export = __webpack_require__(0);
-var $filter = __webpack_require__(29)(2);
+var $filter = __webpack_require__(31)(2);
 
-$export($export.P + $export.F * !__webpack_require__(22)([].filter, true), 'Array', {
+$export($export.P + $export.F * !__webpack_require__(23)([].filter, true), 'Array', {
   // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
   filter: function filter(callbackfn /* , thisArg */) {
     return $filter(this, callbackfn, arguments[1]);
@@ -12701,9 +13812,9 @@ $export($export.P + $export.F * !__webpack_require__(22)([].filter, true), 'Arra
 "use strict";
 
 var $export = __webpack_require__(0);
-var $some = __webpack_require__(29)(3);
+var $some = __webpack_require__(31)(3);
 
-$export($export.P + $export.F * !__webpack_require__(22)([].some, true), 'Array', {
+$export($export.P + $export.F * !__webpack_require__(23)([].some, true), 'Array', {
   // 22.1.3.23 / 15.4.4.17 Array.prototype.some(callbackfn [, thisArg])
   some: function some(callbackfn /* , thisArg */) {
     return $some(this, callbackfn, arguments[1]);
@@ -12718,9 +13829,9 @@ $export($export.P + $export.F * !__webpack_require__(22)([].some, true), 'Array'
 "use strict";
 
 var $export = __webpack_require__(0);
-var $every = __webpack_require__(29)(4);
+var $every = __webpack_require__(31)(4);
 
-$export($export.P + $export.F * !__webpack_require__(22)([].every, true), 'Array', {
+$export($export.P + $export.F * !__webpack_require__(23)([].every, true), 'Array', {
   // 22.1.3.5 / 15.4.4.16 Array.prototype.every(callbackfn [, thisArg])
   every: function every(callbackfn /* , thisArg */) {
     return $every(this, callbackfn, arguments[1]);
@@ -12737,7 +13848,7 @@ $export($export.P + $export.F * !__webpack_require__(22)([].every, true), 'Array
 var $export = __webpack_require__(0);
 var $reduce = __webpack_require__(116);
 
-$export($export.P + $export.F * !__webpack_require__(22)([].reduce, true), 'Array', {
+$export($export.P + $export.F * !__webpack_require__(23)([].reduce, true), 'Array', {
   // 22.1.3.18 / 15.4.4.21 Array.prototype.reduce(callbackfn [, initialValue])
   reduce: function reduce(callbackfn /* , initialValue */) {
     return $reduce(this, callbackfn, arguments.length, arguments[1], false);
@@ -12754,7 +13865,7 @@ $export($export.P + $export.F * !__webpack_require__(22)([].reduce, true), 'Arra
 var $export = __webpack_require__(0);
 var $reduce = __webpack_require__(116);
 
-$export($export.P + $export.F * !__webpack_require__(22)([].reduceRight, true), 'Array', {
+$export($export.P + $export.F * !__webpack_require__(23)([].reduceRight, true), 'Array', {
   // 22.1.3.19 / 15.4.4.22 Array.prototype.reduceRight(callbackfn [, initialValue])
   reduceRight: function reduceRight(callbackfn /* , initialValue */) {
     return $reduce(this, callbackfn, arguments.length, arguments[1], true);
@@ -12773,7 +13884,7 @@ var $indexOf = __webpack_require__(60)(false);
 var $native = [].indexOf;
 var NEGATIVE_ZERO = !!$native && 1 / [1].indexOf(1, -0) < 0;
 
-$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(22)($native)), 'Array', {
+$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(23)($native)), 'Array', {
   // 22.1.3.11 / 15.4.4.14 Array.prototype.indexOf(searchElement [, fromIndex])
   indexOf: function indexOf(searchElement /* , fromIndex = 0 */) {
     return NEGATIVE_ZERO
@@ -12791,13 +13902,13 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(22)($nati
 "use strict";
 
 var $export = __webpack_require__(0);
-var toIObject = __webpack_require__(16);
-var toInteger = __webpack_require__(27);
+var toIObject = __webpack_require__(18);
+var toInteger = __webpack_require__(29);
 var toLength = __webpack_require__(9);
 var $native = [].lastIndexOf;
 var NEGATIVE_ZERO = !!$native && 1 / [1].lastIndexOf(1, -0) < 0;
 
-$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(22)($native)), 'Array', {
+$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(23)($native)), 'Array', {
   // 22.1.3.14 / 15.4.4.15 Array.prototype.lastIndexOf(searchElement [, fromIndex])
   lastIndexOf: function lastIndexOf(searchElement /* , fromIndex = @[*-1] */) {
     // convert -0 to +0
@@ -12845,7 +13956,7 @@ __webpack_require__(36)('fill');
 
 // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
 var $export = __webpack_require__(0);
-var $find = __webpack_require__(29)(5);
+var $find = __webpack_require__(31)(5);
 var KEY = 'find';
 var forced = true;
 // Shouldn't skip holes
@@ -12866,7 +13977,7 @@ __webpack_require__(36)(KEY);
 
 // 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
 var $export = __webpack_require__(0);
-var $find = __webpack_require__(29)(6);
+var $find = __webpack_require__(31)(6);
 var KEY = 'findIndex';
 var forced = true;
 // Shouldn't skip holes
@@ -12929,7 +14040,7 @@ if (__webpack_require__(7) && (!CORRECT_NEW || __webpack_require__(4)(function (
   for (var keys = gOPN(Base), i = 0; keys.length > i;) proxy(keys[i++]);
   proto.constructor = $RegExp;
   $RegExp.prototype = proto;
-  __webpack_require__(14)(global, 'RegExp', $RegExp);
+  __webpack_require__(15)(global, 'RegExp', $RegExp);
 }
 
 __webpack_require__(45)('RegExp');
@@ -12949,7 +14060,7 @@ var TO_STRING = 'toString';
 var $toString = /./[TO_STRING];
 
 var define = function (fn) {
-  __webpack_require__(14)(RegExp.prototype, TO_STRING, fn, true);
+  __webpack_require__(15)(RegExp.prototype, TO_STRING, fn, true);
 };
 
 // 21.2.5.14 RegExp.prototype.toString()
@@ -13102,7 +14213,7 @@ __webpack_require__(66)('split', 2, function (defined, SPLIT, $split) {
 
 var LIBRARY = __webpack_require__(40);
 var global = __webpack_require__(3);
-var ctx = __webpack_require__(20);
+var ctx = __webpack_require__(21);
 var classof = __webpack_require__(58);
 var $export = __webpack_require__(0);
 var isObject = __webpack_require__(5);
@@ -13317,7 +14428,7 @@ if (!USE_NATIVE) {
 $export($export.G + $export.W + $export.F * !USE_NATIVE, { Promise: $Promise });
 __webpack_require__(52)($Promise, PROMISE);
 __webpack_require__(45)(PROMISE);
-Wrapper = __webpack_require__(24)[PROMISE];
+Wrapper = __webpack_require__(26)[PROMISE];
 
 // statics
 $export($export.S + $export.F * !USE_NATIVE, PROMISE, {
@@ -13647,7 +14758,7 @@ $export($export.S + $export.F * (NEW_TARGET_BUG || ARGS_BUG), 'Reflect', {
 var dP = __webpack_require__(8);
 var $export = __webpack_require__(0);
 var anObject = __webpack_require__(2);
-var toPrimitive = __webpack_require__(25);
+var toPrimitive = __webpack_require__(27);
 
 // MS Edge has broken Reflect.defineProperty - throwing instead of returning false
 $export($export.S + $export.F * __webpack_require__(4)(function () {
@@ -13674,7 +14785,7 @@ $export($export.S + $export.F * __webpack_require__(4)(function () {
 
 // 26.1.4 Reflect.deleteProperty(target, propertyKey)
 var $export = __webpack_require__(0);
-var gOPD = __webpack_require__(17).f;
+var gOPD = __webpack_require__(19).f;
 var anObject = __webpack_require__(2);
 
 $export($export.S, 'Reflect', {
@@ -13723,9 +14834,9 @@ $export($export.S, 'Reflect', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.6 Reflect.get(target, propertyKey [, receiver])
-var gOPD = __webpack_require__(17);
-var getPrototypeOf = __webpack_require__(18);
-var has = __webpack_require__(12);
+var gOPD = __webpack_require__(19);
+var getPrototypeOf = __webpack_require__(20);
+var has = __webpack_require__(13);
 var $export = __webpack_require__(0);
 var isObject = __webpack_require__(5);
 var anObject = __webpack_require__(2);
@@ -13750,7 +14861,7 @@ $export($export.S, 'Reflect', { get: get });
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.7 Reflect.getOwnPropertyDescriptor(target, propertyKey)
-var gOPD = __webpack_require__(17);
+var gOPD = __webpack_require__(19);
 var $export = __webpack_require__(0);
 var anObject = __webpack_require__(2);
 
@@ -13767,7 +14878,7 @@ $export($export.S, 'Reflect', {
 
 // 26.1.8 Reflect.getPrototypeOf(target)
 var $export = __webpack_require__(0);
-var getProto = __webpack_require__(18);
+var getProto = __webpack_require__(20);
 var anObject = __webpack_require__(2);
 
 $export($export.S, 'Reflect', {
@@ -13846,9 +14957,9 @@ $export($export.S, 'Reflect', {
 
 // 26.1.13 Reflect.set(target, propertyKey, V [, receiver])
 var dP = __webpack_require__(8);
-var gOPD = __webpack_require__(17);
-var getPrototypeOf = __webpack_require__(18);
-var has = __webpack_require__(12);
+var gOPD = __webpack_require__(19);
+var getPrototypeOf = __webpack_require__(20);
+var has = __webpack_require__(13);
 var $export = __webpack_require__(0);
 var createDesc = __webpack_require__(38);
 var anObject = __webpack_require__(2);
@@ -13957,7 +15068,7 @@ var $export = __webpack_require__(0);
 var flattenIntoArray = __webpack_require__(129);
 var toObject = __webpack_require__(10);
 var toLength = __webpack_require__(9);
-var toInteger = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
 var arraySpeciesCreate = __webpack_require__(92);
 
 $export($export.P, 'Array', {
@@ -14061,7 +15172,7 @@ __webpack_require__(53)('trimRight', function ($trim) {
 
 // https://tc39.github.io/String.prototype.matchAll/
 var $export = __webpack_require__(0);
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(28);
 var toLength = __webpack_require__(9);
 var isRegExp = __webpack_require__(63);
 var getFlags = __webpack_require__(65);
@@ -14111,8 +15222,8 @@ __webpack_require__(74)('observable');
 // https://github.com/tc39/proposal-object-getownpropertydescriptors
 var $export = __webpack_require__(0);
 var ownKeys = __webpack_require__(128);
-var toIObject = __webpack_require__(16);
-var gOPD = __webpack_require__(17);
+var toIObject = __webpack_require__(18);
+var gOPD = __webpack_require__(19);
 var createProperty = __webpack_require__(90);
 
 $export($export.S, 'Object', {
@@ -14208,9 +15319,9 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object',
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(25);
-var getPrototypeOf = __webpack_require__(18);
-var getOwnPropertyDescriptor = __webpack_require__(17).f;
+var toPrimitive = __webpack_require__(27);
+var getPrototypeOf = __webpack_require__(20);
+var getOwnPropertyDescriptor = __webpack_require__(19).f;
 
 // B.2.2.4 Object.prototype.__lookupGetter__(P)
 __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object', {
@@ -14233,9 +15344,9 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object',
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(25);
-var getPrototypeOf = __webpack_require__(18);
-var getOwnPropertyDescriptor = __webpack_require__(17).f;
+var toPrimitive = __webpack_require__(27);
+var getPrototypeOf = __webpack_require__(20);
+var getOwnPropertyDescriptor = __webpack_require__(19).f;
 
 // B.2.2.5 Object.prototype.__lookupSetter__(P)
 __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object', {
@@ -14360,7 +15471,7 @@ $export($export.S, 'System', { global: __webpack_require__(3) });
 
 // https://github.com/ljharb/proposal-is-error
 var $export = __webpack_require__(0);
-var cof = __webpack_require__(21);
+var cof = __webpack_require__(22);
 
 $export($export.S, 'Error', {
   isError: function isError(it) {
@@ -14558,7 +15669,7 @@ $export($export.S, 'Math', { signbit: function signbit(x) {
 // https://github.com/tc39/proposal-promise-finally
 
 var $export = __webpack_require__(0);
-var core = __webpack_require__(24);
+var core = __webpack_require__(26);
 var global = __webpack_require__(3);
 var speciesConstructor = __webpack_require__(67);
 var promiseResolve = __webpack_require__(121);
@@ -14637,7 +15748,7 @@ metadata.exp({ deleteMetadata: function deleteMetadata(metadataKey, target /* , 
 
 var metadata = __webpack_require__(34);
 var anObject = __webpack_require__(2);
-var getPrototypeOf = __webpack_require__(18);
+var getPrototypeOf = __webpack_require__(20);
 var ordinaryHasOwnMetadata = metadata.has;
 var ordinaryGetOwnMetadata = metadata.get;
 var toMetaKey = metadata.key;
@@ -14662,7 +15773,7 @@ var Set = __webpack_require__(124);
 var from = __webpack_require__(133);
 var metadata = __webpack_require__(34);
 var anObject = __webpack_require__(2);
-var getPrototypeOf = __webpack_require__(18);
+var getPrototypeOf = __webpack_require__(20);
 var ordinaryOwnMetadataKeys = metadata.keys;
 var toMetaKey = metadata.key;
 
@@ -14714,7 +15825,7 @@ metadata.exp({ getOwnMetadataKeys: function getOwnMetadataKeys(target /* , targe
 
 var metadata = __webpack_require__(34);
 var anObject = __webpack_require__(2);
-var getPrototypeOf = __webpack_require__(18);
+var getPrototypeOf = __webpack_require__(20);
 var ordinaryHasOwnMetadata = metadata.has;
 var toMetaKey = metadata.key;
 
@@ -14774,7 +15885,7 @@ $metadata.exp({ metadata: function metadata(metadataKey, metadataValue) {
 var $export = __webpack_require__(0);
 var microtask = __webpack_require__(96)();
 var process = __webpack_require__(3).process;
-var isNode = __webpack_require__(21)(process) == 'process';
+var isNode = __webpack_require__(22)(process) == 'process';
 
 $export($export.G, {
   asap: function asap(fn) {
@@ -14793,14 +15904,14 @@ $export($export.G, {
 // https://github.com/zenparsing/es-observable
 var $export = __webpack_require__(0);
 var global = __webpack_require__(3);
-var core = __webpack_require__(24);
+var core = __webpack_require__(26);
 var microtask = __webpack_require__(96)();
 var OBSERVABLE = __webpack_require__(6)('observable');
 var aFunction = __webpack_require__(11);
 var anObject = __webpack_require__(2);
 var anInstance = __webpack_require__(46);
 var redefineAll = __webpack_require__(48);
-var hide = __webpack_require__(13);
+var hide = __webpack_require__(14);
 var forOf = __webpack_require__(47);
 var RETURN = forOf.RETURN;
 
@@ -15034,9 +16145,9 @@ $export($export.G + $export.B, {
 
 var $iterators = __webpack_require__(94);
 var getKeys = __webpack_require__(41);
-var redefine = __webpack_require__(14);
+var redefine = __webpack_require__(15);
 var global = __webpack_require__(3);
-var hide = __webpack_require__(13);
+var hide = __webpack_require__(14);
 var Iterators = __webpack_require__(54);
 var wks = __webpack_require__(6);
 var ITERATOR = wks('iterator');
@@ -15840,7 +16951,7 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(344);
-module.exports = __webpack_require__(24).RegExp.escape;
+module.exports = __webpack_require__(26).RegExp.escape;
 
 
 /***/ }),
@@ -15885,18 +16996,11 @@ window.cloudEC = new __WEBPACK_IMPORTED_MODULE_0__logic_cloudec___default.a();
 /* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(49), __webpack_require__(374), __webpack_require__(19), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, client_1, tupDeamon_1, serverConfig_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(49), __webpack_require__(376), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, client_1, tupDeamon_1, serverConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CloudEC = (function () {
         function CloudEC() {
-            this.tupDeamon = new tupDeamon_1.default({ ready: this.onDeamonReady, close: this.onDeamonClose });
-            var callbacks = {
-                serviceStartUp: this.serviceStartUp,
-                serviceShutDown: this.serviceShutDown,
-                serviceRecover: this.serviceRecover
-            };
-            this.tupDeamon.setSeviceCallBack(callbacks);
         }
         CloudEC.prototype.serviceStartUp = function () {
             util_1.default.info("cloudec", "TSDK Service StartUp");
@@ -15921,6 +17025,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 versionInfo.version + " of the TSDK library, compile time" + versionInfo.compileDate;
         };
         CloudEC.prototype.createClient = function (listeners) {
+            this.tupDeamon = new tupDeamon_1.default({ ready: this.onDeamonReady, close: this.onDeamonClose,
+                svrAddr: serverConfig_1.CloudEC_SERVERCONFIG.ENTERPRISE_DOMAIN, ssl: serverConfig_1.CloudEC_SERVERCONFIG.IS_WSS });
+            var callbacks = {
+                serviceStartUp: this.serviceStartUp,
+                serviceShutDown: this.serviceShutDown,
+                serviceRecover: this.serviceRecover
+            };
+            this.tupDeamon.setSeviceCallBack(callbacks);
             var client = new client_1.default();
             if (typeof (listeners) === "undefined") {
                 return client;
@@ -15946,18 +17058,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onConfConnected) != "undefined") {
                 client.on('ConfConnected', listeners.onConfConnected);
             }
-            if (typeof (listeners.onCallIncomming) != "undefined") {
-                client.on('CallIncomming', listeners.onCallIncomming);
-            }
-            if (typeof (listeners.onCallRingBack) != "undefined") {
-                client.on('CallRingBack', listeners.onCallRingBack);
-            }
-            if (typeof (listeners.onCallConnected) != "undefined") {
-                client.on('CallConnected', listeners.onCallConnected);
-            }
-            if (typeof (listeners.onCallEnded) != "undefined") {
-                client.on('CallEnded', listeners.onCallEnded);
-            }
             if (typeof (listeners.onLeaveConference) != "undefined") {
                 client.on('LeaveConference', listeners.onLeaveConference);
             }
@@ -15978,6 +17078,39 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (listeners.onError) != "undefined") {
                 client.onError(listeners.onError);
+            }
+            if (typeof (listeners.onCallIncomming) != "undefined") {
+                client.on('CallIncomming', listeners.onCallIncomming);
+            }
+            if (typeof (listeners.onCallRingBack) != "undefined") {
+                client.on('CallRingBack', listeners.onCallRingBack);
+            }
+            if (typeof (listeners.onCallConnected) != "undefined") {
+                client.on('CallConnected', listeners.onCallConnected);
+            }
+            if (typeof (listeners.onCallEnded) != "undefined") {
+                client.on('CallEnded', listeners.onCallEnded);
+            }
+            if (typeof (listeners.onAddVideoRequest) != "undefined") {
+                client.on('AddVideoRequest', listeners.onAddVideoRequest);
+            }
+            if (typeof (listeners.onDelVideoRequest) != "undefined") {
+                client.on('DelVideoRequest', listeners.onDelVideoRequest);
+            }
+            if (typeof (listeners.onCallModifyVideoResult) != "undefined") {
+                client.on('CallModifyVideoResult', listeners.onCallModifyVideoResult);
+            }
+            if (typeof (listeners.onNewServiceRight) != "undefined") {
+                client.on('NewServiceRight', listeners.onNewServiceRight);
+            }
+            if (typeof (listeners.onSetIptServiceResult) != "undefined") {
+                client.on('SetIptServiceResult', listeners.onSetIptServiceResult);
+            }
+            if (typeof (listeners.onCallBldTransferRecvSucRsp) != "undefined") {
+                client.on('CallBldTransferRecvSucRsp', listeners.onCallBldTransferRecvSucRsp);
+            }
+            if (typeof (listeners.onCallBldTransferResult) != "undefined") {
+                client.on('CallBldTransferResult', listeners.onCallBldTransferResult);
             }
             return client;
         };
@@ -16008,6 +17141,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.isAutoAdaptFrame) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME = options.isAutoAdaptFrame;
+            }
+            if (typeof (options.videoDisplayMode) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE = options.videoDisplayMode;
+            }
+            if (typeof (options.nativeWindowHeight) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_HEIGHT = options.nativeWindowHeight;
+            }
+            if (typeof (options.nativeWindowWidth) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_WIDTH = options.nativeWindowWidth;
+            }
+            if (typeof (options.nativeWindowXOffset) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_X_OFFSET = options.nativeWindowXOffset;
+            }
+            if (typeof (options.nativeWindowYOffset) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_Y_OFFSET = options.nativeWindowYOffset;
+            }
+            if (typeof (options.nativeWindowXOffsetRate) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_X_OFFSET_RATE = options.nativeWindowXOffsetRate;
+            }
+            if (typeof (options.nativeWindowYOffsetRate) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_Y_OFFSET_RATE = options.nativeWindowYOffsetRate;
             }
         };
         return CloudEC;
@@ -16097,7 +17251,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(23), __webpack_require__(354), __webpack_require__(355), __webpack_require__(139), __webpack_require__(135), __webpack_require__(142), __webpack_require__(32), __webpack_require__(50), __webpack_require__(369), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, eventInfo_1, dispatcher_1, uportal_1, sipServer_1, confManager_1, cmptManager_1, eaddrManager_1, observer_1, tupLoginWrapper_1, anonyConf_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(24), __webpack_require__(25), __webpack_require__(354), __webpack_require__(355), __webpack_require__(139), __webpack_require__(135), __webpack_require__(142), __webpack_require__(32), __webpack_require__(50), __webpack_require__(371), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, eventInfo_1, dispatcher_1, uportal_1, sipServer_1, confManager_1, cmptManager_1, eaddrManager_1, observer_1, tupLoginWrapper_1, anonyConf_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LoginService = (function () {
@@ -16283,7 +17437,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(351), __webpack_require__(50), __webpack_require__(19), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmpt_1, tupLoginWrapper_1, serverConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(351), __webpack_require__(50), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmpt_1, tupLoginWrapper_1, serverConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TupCmptWrapper = (function () {
@@ -16539,6 +17693,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         TUPCmpt.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
+            util_1.default.debug("tupCmpt", "tupCmpt send data" + sendStr);
             if (this.uniSocket) {
                 this.uniSocket.sendData(sendStr);
             }
@@ -16690,6 +17845,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPLogin.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
+            util_1.default.debug("tupLogin", sendStr);
             if (this.uniSocket)
                 this.uniSocket.sendData(sendStr);
             else
@@ -17164,7 +18320,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(50), __webpack_require__(30), __webpack_require__(19), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(50), __webpack_require__(17), __webpack_require__(12), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Uportal = (function () {
@@ -17174,8 +18330,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var siteInfo = ret.uportal_authorize_result.site_info;
                 if (siteInfo && siteInfo[0]) {
                     var _a = siteInfo[0], num_of_server = _a.num_of_server, access_server = _a.access_server;
-                    var sipUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "";
+                    var sipUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "", maaUri = "";
                     var tmsServer = "", tmsAccount = "", tmsPwd = "";
+                    var dataUrl = "";
+                    var passcode = "";
                     for (var i = 0; i < num_of_server; i++) {
                         if (!access_server || !access_server[i]) {
                             continue;
@@ -17190,8 +18348,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         eserverStgUri += access_server[i].stg_info.eserver_stg_uri;
                         stgAccount = access_server[0].stg_info.account;
                         stgPassword = access_server[0].stg_info.password;
+                        dataUrl = "https://" + access_server[0].ms_param_uri + access_server[0].ms_param_path_uri;
                         if (!eserverUri) {
                             eserverUri = access_server[i].eserver_uri;
+                        }
+                        if (!maaUri) {
+                            maaUri = access_server[i].maa_uri;
                         }
                         if (!tmsServer) {
                             tmsServer = access_server[i].tms_server;
@@ -17211,7 +18373,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             eserverStgUri += ';';
                         }
                     }
-                    var _b = ret.uportal_authorize_result, auth_token = _b.auth_token, sip_account = _b.sip_account, sip_impi = _b.sip_impi, sip_password = _b.sip_password, password_type = _b.password_type, eab_server = _b.eab_server, group_server = _b.group_server, deploy_mode = _b.deploy_mode, sip_domain = _b.sip_domain, sip_short_num = _b.sip_short_num, _c = _b.auth_serinfo, server_uri = _c.server_uri, server_port = _c.server_port, real_user_account = _b.real_user_account;
+                    var _b = ret.uportal_authorize_result, auth_token = _b.auth_token, sip_account = _b.sip_account, sip_impi = _b.sip_impi, sip_password = _b.sip_password, password_type = _b.password_type, eab_server = _b.eab_server, group_server = _b.group_server, deploy_mode = _b.deploy_mode, sip_domain = _b.sip_domain, sip_short_num = _b.sip_short_num, _c = _b.auth_serinfo, server_uri = _c.server_uri, server_port = _c.server_port, real_user_account = _b.real_user_account, terminal_func_type = _b.terminal_func_type;
                     var _d = eserverUri.split(":"), eserver_address = _d[0], eserver_port = _d[1];
                     var sipUriList = sipUri.split(";");
                     var _e = sipUriList[0] ? sipUriList[0].split(":") : ["", "0"], sipserver_address = _e[0], sipserver_port = _e[1];
@@ -17248,10 +18410,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         sipStgUri: sipStgUri,
                         eserverStgUri: eserverStgUri,
                         deployMode: deploy_mode,
+                        dataUrl: dataUrl,
+                        passcode: passcode,
                         tmsServer: tmsServer,
                         tmsAccount: tmsAccount,
                         tmsPwd: tmsPwd,
-                        shortNumber: sip_short_num
+                        shortNumber: sip_short_num,
+                        terminalFuncType: terminal_func_type,
+                        maaUri: maaUri
                     };
                     _this.updateLoginInfo(loginInfo);
                     return loginInfo;
@@ -17473,7 +18639,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     tmsAccount: "",
                     tmsPwd: "",
                     shortNumber: "",
-                    isTempUser: 0
+                    isTempUser: 0,
+                    maaUri: "",
+                    terminalFuncType: 0
                 };
                 var cloudEC_loginInfo = JSON.stringify(loginInfo);
                 sessionStorage.cloudEC_loginInfo = cloudEC_loginInfo;
@@ -17684,14 +18852,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(356), __webpack_require__(51), __webpack_require__(137), __webpack_require__(1), __webpack_require__(30), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, sipCallConfig_1, tupCallWrapper_1, callManager_1, util, enum_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(356), __webpack_require__(51), __webpack_require__(137), __webpack_require__(1), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, sipCallConfig_1, tupCallWrapper_1, callManager_1, util, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SipServer = (function () {
         function SipServer() {
             var _this = this;
             this.sipserverLogin = function () { return __awaiter(_this, void 0, void 0, function () {
-                var cloudEC_loginInfo, loginInfo, sipPassword, sipImpi, sipAccount, fireWallMode, configLogInfo, configSipInfo, configCallInfo, configMKIInfo, configRTPInfo, configVideoInfo, configBFCPInfo, configSessionTimerInfo, configBandwidthLimitInfo, ret, err;
+                var cloudEC_loginInfo, loginInfo, sipPassword, sipImpi, sipAccount, fireWallMode, configLogInfo, configSipInfo, configCallInfo, configMKIInfo, configRTPInfo, configVideoInfo, configBFCPInfo, configSessionTimerInfo, configBandwidthLimitInfo, initIPTParamInfo, i, ret, err;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -17739,11 +18907,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, this.wrapper.config(configBandwidthLimitInfo)];
                         case 10:
                             _a.sent();
+                            initIPTParamInfo = sipCallConfig_1.initIPTParam();
+                            i = 0;
+                            _a.label = 11;
+                        case 11:
+                            if (!(i < initIPTParamInfo.length)) return [3, 14];
+                            return [4, this.wrapper.config(initIPTParamInfo[i])];
+                        case 12:
+                            _a.sent();
+                            _a.label = 13;
+                        case 13:
+                            i++;
+                            return [3, 11];
+                        case 14:
                             if (sipAccount.indexOf("sip:") != -1) {
                                 sipAccount = sipAccount.substring(4);
                             }
                             return [4, this.wrapper.register(sipImpi, sipAccount, sipPassword)];
-                        case 11:
+                        case 15:
                             ret = _a.sent();
                             if (ret.result == 0) {
                                 util_1.default.debug("sipserver", "sip register execute success.");
@@ -17796,6 +18977,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, callManager_1.default.registerCallEvent()];
                         case 3:
                             _a.sent();
+                            return [4, callManager_1.default.nativewndBuild()];
+                        case 4:
+                            _a.sent();
                             return [2, ret];
                     }
                 });
@@ -17847,7 +19031,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(19), __webpack_require__(99), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, serverConfig_1, userConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(12), __webpack_require__(99), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, serverConfig_1, userConfig_1, util_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -17878,7 +19062,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     exports.configSip = function () {
         var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
         var loginInfo = JSON.parse(cloudEC_loginInfo);
-        var sipServerAddress = loginInfo.sipServerAddress, sipServerPort = loginInfo.sipServerPort, sipServerBackup1 = loginInfo.sipServerBackup1, sipServerPortBackup1 = loginInfo.sipServerPortBackup1, sipServerLocal = loginInfo.sipServerLocal, sipServerPortLocal = loginInfo.sipServerPortLocal, sipPasswordType = loginInfo.sipPasswordType, sipOutgoingAccCode = loginInfo.sipOutgoingAccCode, fireWallMode = loginInfo.fireWallMode, sipDomain = loginInfo.sipDomain, serverAddress = loginInfo.serverAddress, isSiptls = loginInfo.isSiptls;
+        var sipServerAddress = loginInfo.sipServerAddress, sipServerPort = loginInfo.sipServerPort, sipServerBackup1 = loginInfo.sipServerBackup1, sipServerPortBackup1 = loginInfo.sipServerPortBackup1, sipServerLocal = loginInfo.sipServerLocal, sipServerPortLocal = loginInfo.sipServerPortLocal, sipPasswordType = loginInfo.sipPasswordType, sipOutgoingAccCode = loginInfo.sipOutgoingAccCode, fireWallMode = loginInfo.fireWallMode, sipDomain = loginInfo.sipDomain, serverAddress = loginInfo.serverAddress, isSiptls = loginInfo.isSiptls, terminalFuncType = loginInfo.terminalFuncType, eServerAddress = loginInfo.eServerAddress, maaUri = loginInfo.maaUri;
         var env = 0;
         var stgModeForCall = enum_1.CALL_FIREWALL_MODE.CALL_E_FIREWALL_MODE_LINE;
         if (enum_1.FIREWALL_MODE.LOGIN_E_FIREWALL_MODE_ONLY_HTTP === fireWallMode) {
@@ -17890,8 +19074,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         else {
             stgModeForCall = enum_1.CALL_FIREWALL_MODE.CALL_E_FIREWALL_MODE_LINE;
         }
-        var user_agent = "HUAWEI TE DESKTOP";
-        var isTlsEnable = isSiptls == 1 ? true : false;
+        var user_agent = "WeLink-Desktop";
+        var isTlsEnable = false;
+        if (isSiptls === 1) {
+            isTlsEnable = true;
+            sipServerPort = 5061;
+            sipServerPortBackup1 = 5061;
+            sipServerPortLocal = 5061;
+        }
+        if (0 == (terminalFuncType & 0x0002) || (!eServerAddress && !maaUri)) {
+            user_agent = "Huawei TE Desktop";
+        }
         if (stgModeForCall === enum_1.CALL_FIREWALL_MODE.CALL_E_FIREWALL_MODE_STG) {
             isTlsEnable = false;
         }
@@ -17998,7 +19191,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
         var loginInfo = JSON.parse(cloudEC_loginInfo);
         var isSrtp = loginInfo.isSrtp;
-        var SRTPMode = isSrtp == 1 ? 2 : 0;
+        var SRTPMode = isSrtp == 1 ? 1 : 0;
         var rtpPriority = 2;
         if (SRTPMode === 0) {
             rtpPriority = 1;
@@ -18435,6 +19628,76 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         util_1.default.debug("sipCallConfig", "media:BP/HP parameters, media =" + JSON.stringify(media));
         return media;
     };
+    exports.initIPTParam = function () {
+        var noReplyForwardCfg = {
+            service: {
+                server_right: {
+                    type: 17,
+                    right: 1,
+                    register: 0,
+                    active_accesscode: "**61*",
+                    deactive_accesscode: "##61#"
+                }
+            }
+        };
+        var callWaitCfg = {
+            service: {
+                server_right: {
+                    type: 39,
+                    right: 1,
+                    register: 0,
+                    active_accesscode: "*43#",
+                    deactive_accesscode: "#43#"
+                }
+            }
+        };
+        var DNDCfg = {
+            service: {
+                server_right: {
+                    type: 13,
+                    right: 1,
+                    register: 0,
+                    active_accesscode: "*56*#",
+                    deactive_accesscode: "#56#"
+                }
+            }
+        };
+        var unConditionForwardCfg = {
+            service: {
+                server_right: {
+                    type: 15,
+                    right: 1,
+                    register: 0,
+                    active_accesscode: "**21*",
+                    deactive_accesscode: "##21#"
+                }
+            }
+        };
+        var busyForwardCfg = {
+            service: {
+                server_right: {
+                    type: 16,
+                    right: 1,
+                    register: 0,
+                    active_accesscode: "**67*",
+                    deactive_accesscode: "##67#"
+                }
+            }
+        };
+        var offLineForwardCfg = {
+            service: {
+                server_right: {
+                    type: 18,
+                    right: 1,
+                    register: 0,
+                    active_accesscode: "**45*",
+                    deactive_accesscode: "##45#"
+                }
+            }
+        };
+        var iptParam = [noReplyForwardCfg, callWaitCfg, DNDCfg, unConditionForwardCfg, busyForwardCfg, offLineForwardCfg];
+        return iptParam;
+    };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -18443,7 +19706,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(358), __webpack_require__(32), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, TUPRender_1, observer_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(358), __webpack_require__(32), __webpack_require__(1), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, TUPRender_1, observer_1, util_1, serverConfig_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPCall = (function () {
@@ -18460,8 +19723,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     }
                     else if (ret.result && "remote_frame" == ret.info.canvasType) {
                         _this.remoteRState = 1;
-                        _this.remoteR.setDropFrame(_this.dropFrame);
-                        _this.dropFrame = _this.dropFrame + 1;
                     }
                     else if (!ret.result && "local_frame" == ret.info.errorInfo.canvasType) {
                         _this.localRState = 0;
@@ -18475,7 +19736,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     if (typeof _this.localR != "undefined") {
                         _this.localR.closeChannel();
                     }
-                    _this.localR = new TUPRender_1.default({ getUri: "local_frame", canvas: localView });
+                    _this.localR = new TUPRender_1.default({ getUri: "local_frame", canvas: localView, svrAddr: serverConfig_1.CloudEC_SERVERCONFIG.ENTERPRISE_DOMAIN, ssl: serverConfig_1.CloudEC_SERVERCONFIG.IS_WSS });
                 }
                 else {
                     _this.localR.makeYUVCanvas(localView);
@@ -18484,7 +19745,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     if (typeof _this.remoteR != "undefined") {
                         _this.remoteR.closeChannel();
                     }
-                    _this.remoteR = new TUPRender_1.default({ getUri: "remote_frame", canvas: remoteView });
+                    _this.remoteR = new TUPRender_1.default({ getUri: "remote_frame", canvas: remoteView, svrAddr: serverConfig_1.CloudEC_SERVERCONFIG.ENTERPRISE_DOMAIN, ssl: serverConfig_1.CloudEC_SERVERCONFIG.IS_WSS });
                 }
                 else {
                     _this.remoteR.makeYUVCanvas(remoteView);
@@ -18509,6 +19770,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             };
             this.sendData = function (data) {
                 var sendStr = JSON.stringify(data);
+                util_1.default.debug("tupCall", "tupCall send data" + sendStr);
                 if (_this.uniSocket)
                     _this.uniSocket.sendData(sendStr);
                 else
@@ -18592,6 +19854,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
                 if (callbacks && typeof callbacks.onServerConfDataConfParam == "function") {
                     _this.notifyFuncs[144] = callbacks.onServerConfDataConfParam;
+                }
+                if (callbacks && typeof callbacks.onNewServiceRight == "function") {
+                    _this.notifyFuncs[136] = callbacks.onNewServiceRight;
+                }
+                if (callbacks && typeof callbacks.onSetIptServiceSuccess == "function") {
+                    _this.notifyFuncs[50] = callbacks.onSetIptServiceSuccess;
+                }
+                if (callbacks && typeof callbacks.onSetIptServiceFailed == "function") {
+                    _this.notifyFuncs[51] = callbacks.onSetIptServiceFailed;
+                }
+                if (callbacks && typeof callbacks.onCallHoldSuccess == "function") {
+                    _this.notifyFuncs[39] = callbacks.onCallHoldSuccess;
+                }
+                if (callbacks && typeof callbacks.onCallHoldFailed == "function") {
+                    _this.notifyFuncs[40] = callbacks.onCallHoldFailed;
+                }
+                if (callbacks && typeof callbacks.onCallBldTransferRecvSucRsp == "function") {
+                    _this.notifyFuncs[45] = callbacks.onCallBldTransferRecvSucRsp;
+                }
+                if (callbacks && typeof callbacks.onCallBldTransferFailed == "function") {
+                    _this.notifyFuncs[47] = callbacks.onCallBldTransferFailed;
+                }
+                if (callbacks && typeof callbacks.onCallBldTransferSuccess == "function") {
+                    _this.notifyFuncs[46] = callbacks.onCallBldTransferSuccess;
                 }
             };
             this.setVideoCallEvent = function (callbacks) {
@@ -18790,12 +20076,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.holdCall = function (call_id, callbacks) {
                 if (callbacks && typeof callbacks.response == "function") {
                     _this.rspFuncs[0x12] = callbacks.response;
-                }
-                if (callbacks && typeof callbacks.onCallHoldSuccess == "function") {
-                    _this.notifyFuncs[39] = callbacks.onCallHoldSuccess;
-                }
-                if (callbacks && typeof callbacks.onCallHoldFailed == "function") {
-                    _this.notifyFuncs[40] = callbacks.onCallHoldFailed;
                 }
                 var data = {
                     "cmd": 0x10012,
@@ -19081,28 +20361,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 };
                 _this.sendData(data);
             };
-            this.setIPTService = function (type, callbacks) {
-                if (callbacks && typeof callbacks.response == "function") {
-                    _this.rspFuncs[0x33] = callbacks.response;
-                }
-                var data = {
-                    "cmd": 0x10033,
-                    "description": "tup_call_set_IPTservice",
-                    "param": {
-                        "type": type
-                    }
-                };
-                _this.sendData(data);
-            };
             this.setForwardIPTService = function (type, forward_num, callbacks) {
                 if (callbacks && typeof callbacks.response == "function") {
                     _this.rspFuncs[0x33] = callbacks.response;
-                }
-                if (callbacks && typeof callbacks.onSetIptServiceSuccess == "function") {
-                    _this.notifyFuncs[50] = callbacks.onSetIptServiceSuccess;
-                }
-                if (callbacks && typeof callbacks.onSetIptServiceFailed == "function") {
-                    _this.notifyFuncs[51] = callbacks.onSetIptServiceFailed;
                 }
                 var data = {
                     "cmd": 0x10033,
@@ -19159,12 +20420,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     _this.rspFuncs[0x14A] = callbacks.response;
                 }
                 var data = {
-                    "cmd": 0x10149,
+                    "cmd": 0x1014A,
                     "description": "tup_call_set_video_window",
                     "param": {
                         "count": count,
-                        "window": call_window,
-                        "callid": callid
+                        "callid": callid,
+                        "win": call_window
                     }
                 };
                 _this.sendData(data);
@@ -19435,13 +20696,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(30), __webpack_require__(19), __webpack_require__(32), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, serverConfig_1, observer_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(17), __webpack_require__(12), __webpack_require__(32), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, serverConfig_1, observer_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPRender = (function () {
         function TUPRender(opts) {
             var _this = this;
-            var serviceAddr = opts.callSvrAddr || "localhost";
+            var serviceAddr = opts.svrAddr || "localhost";
             var serviceName = opts.serviceName || "tup_call_video_service_protocol";
             var pcol = "ws://";
             if (opts.ssl === 1) {
@@ -19460,6 +20721,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.wsocket.onclose = function () {
                 util_1.default.error("tupRender", "wsocket.onclose:" + opts.getUri);
                 observer_1.default.publish('VideoSocketResult', { result: false, info: { cmdId: 300000000, errorCode: 390000002, errorInfo: { canvasType: opts.getUri, description: " wsocket.onclose：your computer CPU performance can't catch with video,close the video of meeting" } } });
+                _this.channel_status = enum_1.CLOUDEC_CHANNEL_STATUS.CLOSED;
             };
             this.wsocket.onopen = function () {
                 util_1.default.info("tupRender", "wsocket.onopen" + opts.getUri);
@@ -19472,7 +20734,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 _this.channel_status = enum_1.CLOUDEC_CHANNEL_STATUS.CONNECTED;
                 _this.wsocket.send(sendStr);
                 _this.setDropFrame(serverConfig_1.CloudEC_SERVERCONFIG.DROP_FRAME_COUNT);
-                console.time("30frame");
             };
             this.wsocket.onmessage = function (msg) {
                 if (typeof msg.data === "string") {
@@ -19495,8 +20756,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     _this.frameCnt++;
                     if (_this.frameCnt % 30 == 0) {
                         _this.frameCnt = 0;
-                        console.timeEnd(_this.url);
-                        console.time(_this.url);
                     }
                     if (_this.is_enable) {
                         _this.drawImage(msg.data);
@@ -19546,15 +20805,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             this.viewW = width;
             this.viewH = height;
-            this.width = width;
-            this.height = height;
             if (this.yuvCanvas) {
                 this.yuvCanvas.changeCanvasSize(width, height);
             }
         };
         ;
         TUPRender.prototype.closeChannel = function () {
-            util_1.default.error("tupRender", "===websocket close");
+            util_1.default.error("tupRender", "websocket close");
             this.wsocket.close();
         };
         TUPRender.prototype.setRenderEnableFlag = function (is_enable) {
@@ -19633,7 +20890,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         function AudioCallService(data) {
             var _this = _super.call(this, data) || this;
             if (!data) {
-                util_1.default.debug("audioCallService", 'can not create AudioCallService object');
+                util_1.default.error("audioCallService", 'can not create AudioCallService object');
                 return _this;
             }
             return _this;
@@ -19649,7 +20906,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'accept call success');
+                                util_1.default.info("audioCallService", 'accept call success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'accept call failed, result = ' + res.result);
@@ -19670,7 +20927,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'hold call success');
+                                util_1.default.info("audioCallService", 'hold call success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'hold call failed, result = ' + res.result);
@@ -19691,7 +20948,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'unhold call success');
+                                util_1.default.info("audioCallService", 'unhold call success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'unhold call failed, result = ' + res.result);
@@ -19712,7 +20969,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'divert call success');
+                                util_1.default.info("audioCallService", 'divert call success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'divert call failed, result = ' + res.result);
@@ -19733,7 +20990,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'blind transfer call success');
+                                util_1.default.info("audioCallService", 'blind transfer call success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'blind transfer call failed, result = ' + res.result);
@@ -19754,7 +21011,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'consult transfer call success');
+                                util_1.default.info("audioCallService", 'consult transfer call success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'consult transfer call failed, result = ' + res.result);
@@ -19775,7 +21032,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'add video call success');
+                                util_1.default.info("audioCallService", 'add video call success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'add video call failed, result = ' + res.result);
@@ -19796,33 +21053,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             res = _a.sent();
                             if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'reply add video success');
+                                util_1.default.info("audioCallService", 'reply add video success');
                             }
                             else {
                                 util_1.default.debug("audioCallService", 'reply add video failed, result = ' + res.result);
                             }
                             return [2];
-                    }
-                });
-            });
-        };
-        AudioCallService.prototype.transferConfEx = function (confCallId) {
-            return __awaiter(this, void 0, void 0, function () {
-                var wrapper, res;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            wrapper = tupCallWrapper_1.default.getInstance();
-                            return [4, wrapper.transferConfEx(confCallId, this.callInfo.callId)];
-                        case 1:
-                            res = _a.sent();
-                            if (0 === res.result) {
-                                util_1.default.debug("audioCallService", 'transfer conference success');
-                            }
-                            else {
-                                util_1.default.debug("audioCallService", 'transfer conference failed, result = ' + res.result);
-                            }
-                            return [2, res];
                     }
                 });
             });
@@ -19959,7 +21195,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 util_1.default.info("videoCallService", 'delete video success');
                             }
                             else {
-                                util_1.default.info("videoCallService", 'delete video failed, result = ' + res.result);
+                                util_1.default.debug("videoCallService", 'delete video failed, result = ' + res.result);
                             }
                             return [2, res];
                     }
@@ -20041,7 +21277,502 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(362), __webpack_require__(19), __webpack_require__(50), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrl_1, serverConfig_1, tupLoginWrapper_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(362), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, pluginNativeWnd_1, serverConfig_1, util_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var tupNativeWndWrapper = (function () {
+        function tupNativeWndWrapper() {
+            if (tupNativeWndWrapper._instance) {
+                throw new Error("Error: Instantiation failed: Use tupNativeWndWrapper.getInstance() instead of new.");
+            }
+            tupNativeWndWrapper._instance = this;
+        }
+        tupNativeWndWrapper.getInstance = function () {
+            return tupNativeWndWrapper._instance;
+        };
+        tupNativeWndWrapper.prototype.build = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
+                var promise;
+                return __generator(this, function (_a) {
+                    util_1.default.info("tupNativeWndWrapper", "step in tupNativeWndWrapper to build");
+                    if (!tupNativeWndWrapper.pluginNativeWind) {
+                        promise = new Promise(function (resolve, reject) {
+                            _this.onNativeWndReady = function () {
+                                resolve();
+                            },
+                                _this.onNativeWndClose = function () {
+                                    reject();
+                                };
+                        });
+                        tupNativeWndWrapper.pluginNativeWind = new pluginNativeWnd_1.default({
+                            svrAddr: serverConfig_1.CloudEC_SERVERCONFIG.ENTERPRISE_DOMAIN,
+                            ready: this.onNativeWndReady,
+                            close: this.onNativeWndClose,
+                            ssl: serverConfig_1.CloudEC_SERVERCONFIG.IS_WSS,
+                        });
+                        return [2, promise];
+                    }
+                    return [2];
+                });
+            });
+        };
+        tupNativeWndWrapper.prototype.getPromise = function () {
+            var p = {};
+            p.promise = new Promise(function (resolve, reject) {
+                p.resolve = resolve;
+                p.reject = reject;
+            });
+            return p;
+        };
+        tupNativeWndWrapper.prototype.nativeWndInit = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var callbacks, promise, parentExeName, param;
+                return __generator(this, function (_a) {
+                    callbacks = { response: {} };
+                    promise = new Promise(function (resolve, reject) {
+                        callbacks.response = function (ret) {
+                            if (ret.result == 0) {
+                                util_1.default.debug("tupNativeWndWrapper", "init success");
+                                resolve(ret);
+                            }
+                            else {
+                                util_1.default.error("tupNativeWndWrapper", "init failed! result=" + ret.result);
+                                reject(ret);
+                            }
+                        };
+                    });
+                    parentExeName = this.getExplorerInfo();
+                    util_1.default.debug("tupNativeWndWrapper", "parent exe name is " + parentExeName);
+                    param = {
+                        "parent_info": {
+                            "need_attach": 1,
+                            "exe_name": parentExeName,
+                            "title": document.title
+                        },
+                        "x_offset": serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_X_OFFSET,
+                        "y_offset": serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_Y_OFFSET,
+                        "x_offset_rate": serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_X_OFFSET_RATE / 100,
+                        "y_offset_rate": serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_Y_OFFSET_RATE / 100,
+                        "frame_width": serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_WIDTH,
+                        "frame_height": serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_HEIGHT,
+                        "layout": 4,
+                        "version": 0
+                    };
+                    tupNativeWndWrapper.pluginNativeWind.init(param, callbacks);
+                    return [2, promise];
+                });
+            });
+        };
+        tupNativeWndWrapper.prototype.createWindow = function (count, frameHwnd) {
+            return __awaiter(this, void 0, void 0, function () {
+                var callbacks, promise;
+                return __generator(this, function (_a) {
+                    callbacks = { response: {} };
+                    promise = new Promise(function (resolve, reject) {
+                        callbacks.response = function (ret) {
+                            if (ret.result == 0) {
+                                util_1.default.debug("tupNativeWndWrapper", "create window success");
+                                resolve(ret);
+                            }
+                            else {
+                                util_1.default.error("tupNativeWndWrapper", "create window failed! result=" + ret.result);
+                                reject(ret);
+                            }
+                        };
+                    });
+                    tupNativeWndWrapper.pluginNativeWind.creatWindow(count, frameHwnd, 0, callbacks);
+                    return [2, promise];
+                });
+            });
+        };
+        tupNativeWndWrapper.prototype.destroyWindow = function (frameHwnd, frameHwndList) {
+            return __awaiter(this, void 0, void 0, function () {
+                var callbacks, promise, windowsList, i;
+                return __generator(this, function (_a) {
+                    callbacks = { response: {} };
+                    promise = new Promise(function (resolve, reject) {
+                        callbacks.response = function (ret) {
+                            if (ret.result == 0) {
+                                util_1.default.debug("tupNativeWndWrapper", "destroy window success");
+                                resolve(ret);
+                            }
+                            else {
+                                util_1.default.error("tupNativeWndWrapper", "destroy window failed! result=" + ret.result);
+                                reject(ret);
+                            }
+                        };
+                    });
+                    windowsList = new Array();
+                    if (frameHwndList) {
+                        for (i = 0; i < frameHwndList.length; i++) {
+                            windowsList[i] = frameHwndList[i].hwnd;
+                        }
+                    }
+                    tupNativeWndWrapper.pluginNativeWind.destroyWindow(frameHwnd, windowsList, callbacks);
+                    return [2, promise];
+                });
+            });
+        };
+        tupNativeWndWrapper.prototype.uninit = function (frameHwnd) {
+            return __awaiter(this, void 0, void 0, function () {
+                var callbacks, promise;
+                return __generator(this, function (_a) {
+                    callbacks = { response: {} };
+                    promise = new Promise(function (resolve, reject) {
+                        callbacks.response = function (ret) {
+                            if (ret.result == 0) {
+                                util_1.default.debug("tupNativeWndWrapper", "uninit success");
+                                resolve(ret);
+                            }
+                            else {
+                                util_1.default.error("tupNativeWndWrapper", "uninit failed! result=" + ret.result);
+                                reject(ret);
+                            }
+                        };
+                    });
+                    tupNativeWndWrapper.pluginNativeWind.uninit(frameHwnd, callbacks);
+                    return [2, promise];
+                });
+            });
+        };
+        tupNativeWndWrapper.prototype.attachByName = function (frameHwnd, nativeWndParam) {
+            return __awaiter(this, void 0, void 0, function () {
+                var callbacks, promise, xOffsetRate, yOffsetRate, relativaPosition, frameSize;
+                return __generator(this, function (_a) {
+                    callbacks = { response: {} };
+                    promise = new Promise(function (resolve, reject) {
+                        callbacks.response = function (ret) {
+                            if (ret.result == 0) {
+                                util_1.default.debug("tupNativeWndWrapper", "attachByName success");
+                                resolve(ret);
+                            }
+                            else {
+                                util_1.default.error("tupNativeWndWrapper", "attachByName failed! result=" + ret.result);
+                                reject(ret);
+                            }
+                        };
+                    });
+                    xOffsetRate = nativeWndParam.xOffsetRate ? nativeWndParam.xOffsetRate / 100 : null;
+                    yOffsetRate = nativeWndParam.yOffsetRate ? nativeWndParam.yOffsetRate / 100 : null;
+                    relativaPosition = {
+                        "x_offset_rate": xOffsetRate,
+                        "y_offset_rate": yOffsetRate,
+                    };
+                    frameSize = {
+                        "width": nativeWndParam.width,
+                        "height": nativeWndParam.height,
+                    };
+                    tupNativeWndWrapper.pluginNativeWind.attachByName(frameHwnd, relativaPosition, frameSize, callbacks);
+                    return [2, promise];
+                });
+            });
+        };
+        tupNativeWndWrapper.prototype.getExplorerInfo = function () {
+            var explorer = window.navigator.userAgent.toLowerCase();
+            var exeName = "";
+            if (explorer.indexOf("chrome") >= 0) {
+                exeName = "chrome.exe";
+            }
+            else if (explorer.indexOf("firefox") >= 0) {
+                exeName = "firefox.exe";
+            }
+            else if (explorer.indexOf("trident") >= 0 && explorer.indexOf("rv")) {
+                exeName = "iexplore.exe";
+            }
+            else if (explorer.indexOf("msie") >= 0) {
+                exeName = "iexplore.exe";
+            }
+            return exeName;
+        };
+        tupNativeWndWrapper._instance = new tupNativeWndWrapper();
+        return tupNativeWndWrapper;
+    }());
+    exports.default = tupNativeWndWrapper;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 362 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var PluginNativeWind = (function () {
+        function PluginNativeWind(opts) {
+            var _this = this;
+            this.rspFuncs = new Array();
+            this.notifyFuncs = new Array();
+            this.wsocket = {};
+            this.section_id = 0x00000;
+            this.name = "NativeWind";
+            this.notifyFuncs = new Array();
+            this.rspFuncs = new Array();
+            var serviceAddr = opts.svrAddr || "127.0.0.1";
+            var getUri = opts.getUri || "nativewnd_plugin";
+            if (opts.socket) {
+                this.uniSocket = opts.socket;
+                this.uniSocket.registerService(this);
+            }
+            else {
+                var pcol = "ws://";
+                if (opts.ssl === 1) {
+                    pcol = "wss://";
+                }
+                this.wsocket = new WebSocket(pcol + serviceAddr + ":7684/" + getUri, "tup_plugin_service_protocol");
+                this.wsocket.onopen = opts.ready;
+                this.wsocket.onclose = opts.close;
+                this.wsocket.onmessage = function (msg) {
+                    var data = JSON.parse(msg.data);
+                    util_1.default.debug("pluginNativeWind", msg.data);
+                    _this.msgProcessor(data);
+                };
+            }
+        }
+        ;
+        PluginNativeWind.prototype.msgProcessor = function (data) {
+            if (data.notify > 0) {
+                data.notify = data.notify & 0x7fff;
+                if (typeof this.notifyFuncs[data.notify] == "function") {
+                    this.notifyFuncs[data.notify](data);
+                }
+            }
+            if (data.rsp > 0) {
+                var rspIdx = data.rsp & 0x7fff;
+                if (typeof this.rspFuncs[rspIdx] == "function")
+                    this.rspFuncs[rspIdx](data);
+            }
+        };
+        PluginNativeWind.prototype.sendData = function (data) {
+            var sendStr = JSON.stringify(data);
+            util_1.default.debug("pluginNativeWind", "send data: " + sendStr);
+            if (this.uniSocket) {
+                this.uniSocket.sendData(sendStr);
+            }
+            else {
+                this.wsocket.send(sendStr);
+            }
+        };
+        ;
+        PluginNativeWind.prototype.attachByName = function (frame_hwnd, relative_position, frame_size, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[1] = callbacks.response;
+            }
+            var data = {
+                "cmd": 1,
+                "description": "nativewnd_attach_update",
+                "param": {
+                    "frame_hwnd": frame_hwnd,
+                    "relative_position": relative_position,
+                    "size": frame_size
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.detach = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[2] = callbacks.response;
+            }
+            var data = {
+                "cmd": 2,
+                "description": "nativewnd_detach"
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.init = function (init_params, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[3] = callbacks.response;
+            }
+            var data = {
+                "cmd": 3,
+                "description": "nativewnd_init",
+                "param": init_params
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.uninit = function (hwnd, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[4] = callbacks.response;
+            }
+            var data = {
+                "cmd": 4,
+                "description": "nativewnd_uninit",
+                "param": {
+                    "frameHwnd": hwnd
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.creatWindow = function (count, frameHwnd, insert_before, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[5] = callbacks.response;
+            }
+            var data = {
+                "cmd": 5,
+                "description": "nativewnd_creat_window",
+                "param": {
+                    "count": count,
+                    "frameHwnd": frameHwnd,
+                    "insert_before": insert_before
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.destroyWindow = function (frame_hwnd, windows_list, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[6] = callbacks.response;
+            }
+            var data = {
+                "cmd": 6,
+                "description": "nativewnd_destroy_window",
+                "param": {
+                    "frameHwnd": frame_hwnd,
+                    "hwndList": windows_list
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.setWindowText = function (info_list, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[7] = callbacks.response;
+            }
+            var data = {
+                "cmd": 7,
+                "description": "nativewnd_set_window_text",
+                "param": {
+                    "info_list": info_list
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.highlightWindow = function (window, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[8] = callbacks.response;
+            }
+            var data = {
+                "cmd": 8,
+                "description": "nativewnd_highlight_window",
+                "param": {
+                    "window": window
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.updateWindowPos = function (window, insert_before, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[9] = callbacks.response;
+            }
+            var data = {
+                "cmd": 9,
+                "description": "nativewnd_update_window_position",
+                "param": {
+                    "window": window,
+                    "insert_before": insert_before
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.setLayoutMode = function (layout, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[10] = callbacks.response;
+            }
+            var data = {
+                "cmd": 10,
+                "description": "nativewnd_set_layout_mode",
+                "param": {
+                    "layout": layout
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.pageSwitch = function (type, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[11] = callbacks.response;
+            }
+            var data = {
+                "cmd": 11,
+                "description": "nativewnd_page_switch",
+                "param": {
+                    "type": type
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        PluginNativeWind.prototype.enablePageSwtich = function (left_enable, right_enable, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[12] = callbacks.response;
+            }
+            var data = {
+                "cmd": 12,
+                "description": "nativewnd_enabel_page_swtich",
+                "param": {
+                    "left_enable": left_enable,
+                    "right_enable": right_enable
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        return PluginNativeWind;
+    }());
+    exports.default = PluginNativeWind;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 363 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(364), __webpack_require__(12), __webpack_require__(50), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrl_1, serverConfig_1, tupLoginWrapper_1, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupConfctrlWrapper = (function () {
@@ -20090,7 +21821,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tupConfctrl.init(log, init_param, {});
         };
         tupConfctrlWrapper.prototype.setConfEventType = function () {
-            this.tupConfctrl.setConfEnvType(3, {});
+            var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+            var loginInfo = JSON.parse(cloudEC_loginInfo);
+            var deployMode = loginInfo.deployMode;
+            if (deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
+                this.tupConfctrl.setConfEnvType(4, {});
+            }
+            else {
+                this.tupConfctrl.setConfEnvType(deployMode, {});
+            }
         };
         tupConfctrlWrapper.prototype.setServerParam = function () {
             var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
@@ -20511,6 +22250,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        tupConfctrlWrapper.prototype.setConfMixedPicture = function (confHandle, mode, imageType, attendee) {
+            var mixedPicturePromise = this.getPromise();
+            var callbacks = {
+                onSetConfMixedPictureResult: function (data) {
+                    if (data.param.result === 0) {
+                        mixedPicturePromise.resolve({ result: true, info: data });
+                    }
+                    else {
+                        mixedPicturePromise.reject({ result: false, info: data });
+                    }
+                }
+            };
+            this.tupConfctrl.setConfMixedPicture(confHandle, mode, imageType, attendee, callbacks);
+            return mixedPicturePromise.promise;
+        };
         tupConfctrlWrapper.prototype.broadcastAttendee = function (confHandle, isBroad, attendee) {
             return __awaiter(this, void 0, void 0, function () {
                 var broadcastPromise, callbacks, param;
@@ -20645,6 +22399,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             util_1.default.debug("tupConfctrlWrapper", "isTempUser = " + isTempUser);
             this.tupConfctrl.setTempUserFlag(isTempUser, {});
         };
+        tupConfctrlWrapper.prototype.p2pTransferToConf = function (confInfo, call_id) {
+            return __awaiter(this, void 0, void 0, function () {
+                var toConfPromise, callbacks;
+                return __generator(this, function (_a) {
+                    toConfPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                toConfPromise.resolve({ result: true, info: data });
+                            }
+                            else {
+                                toConfPromise.reject({ result: false, info: data });
+                            }
+                        }
+                    };
+                    util_1.default.debug("tupConfctrlWrapper", 'p2pTransferToConf= ' + JSON.stringify(confInfo));
+                    this.tupConfctrl.p2pTransferToConf(confInfo, call_id, callbacks);
+                    return [2, toConfPromise.promise];
+                });
+            });
+        };
         tupConfctrlWrapper.prototype.getPromise = function () {
             var p = {};
             p.promise = new Promise(function (resolve, reject) {
@@ -20662,7 +22437,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 362 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -20723,7 +22498,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 this.wsocket.onclose = opts.close;
                 this.wsocket.onmessage = function (msg) {
                     var data = JSON.parse(msg.data);
-                    util_1.default.debug("TtupConfctrl", msg.data);
+                    util_1.default.debug("TupConfctrl", msg.data);
                     _this.msgProcessor(data);
                 };
             }
@@ -20731,6 +22506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPConfctrl.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
+            util_1.default.debug("TupConfctrl", "send data:" + sendStr);
             if (this.uniSocket)
                 this.uniSocket.sendData(sendStr);
             else
@@ -21102,6 +22878,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "description": "tup_confctrl_set_conf_mode",
                 "param": {
                     "conf_handle": conf_handle, "mode": mode
+                }
+            };
+            this.sendData(data);
+        };
+        TUPConfctrl.prototype.setConfMixedPicture = function (conf_handle, mode, image_type, attendee, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[75] = callbacks.response;
+            }
+            if (callbacks && typeof callbacks.onSetConfMixedPictureResult == "function") {
+                this.notifyFuncs[76] = callbacks.onSetConfMixedPictureResult;
+            }
+            var data = {
+                "description": "tup_confctrl_set_mixed_picture",
+                "cmd": 0x7004B,
+                "param": {
+                    "conf_handle": conf_handle,
+                    "mixed_picture_params": {
+                        "conf_mode": mode,
+                        "image_type": image_type,
+                        "attendee": attendee
+                    }
                 }
             };
             this.sendData(data);
@@ -21505,7 +23302,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 363 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -21543,12 +23340,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(364), __webpack_require__(365), __webpack_require__(49), __webpack_require__(37), __webpack_require__(19), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupMeeting_1, tupDataRender_1, client_1, errorCode_1, serverConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(366), __webpack_require__(367), __webpack_require__(49), __webpack_require__(37), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupMeeting_1, tupDataRender_1, client_1, errorCode_1, serverConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupDataConfWrapper = (function () {
         function tupDataConfWrapper() {
-            this.count = 10;
+            this.count = 5;
             if (tupDataConfWrapper._instance) {
                 throw new Error("Error: Instantiation failed: Use tupDataConfWrapper.getInstance() instead of new.");
             }
@@ -21584,7 +23381,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                             ssl: serverConfig_1.CloudEC_SERVERCONFIG.IS_WSS,
                                         });
                                         tupDataConfWrapper._instance.count--;
-                                    }, 5 * 1000);
+                                    }, 10000);
                                 }
                                 else {
                                     client_1.default.notifyErr(errorCode_1.EC_SDK_ERROR.WEBSOCKET_IS_CLOSED("Meeting Module"));
@@ -21645,7 +23442,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                             else {
                                 util_1.default.error("tupDataConfWrapper", "join data conference failed, data= " + JSON.stringify(data));
-                                joinConfPromise.reject("Join data conference failed :" + JSON.stringify(data));
+                                joinConfPromise.reject(data);
                             }
                         }
                     };
@@ -21990,16 +23787,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         },
                         confTerminate: function (data) {
                             if (data.param.value1 === 0) {
-                                terminalPromise.resolve({ result: true, info: "" });
+                                terminalPromise.resolve({ result: true, info: "terminal success" });
                             }
                             else {
                                 terminalPromise.reject({ result: false, info: data });
                             }
                         }
                     };
-                    setTimeout(function () {
-                        terminalPromise.reject({ result: false, info: "terminal dataconf  timer out" });
-                    }, 5000);
                     tupDataConfWrapper.tupMeeting.terminate(confHandle, callbacks);
                     return [2, terminalPromise.promise];
                 });
@@ -22013,16 +23807,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     callbacks = {
                         response: function (data) {
                             if (data.param.result === 0) {
-                                releasePromise.resolve({ result: true, info: "" });
+                                releasePromise.resolve({ result: true, info: "release success" });
                             }
                             else {
                                 releasePromise.reject({ result: false, info: data });
                             }
                         }
                     };
-                    setTimeout(function () {
-                        releasePromise.reject({ result: false, info: "release dataconf timer out" });
-                    }, 5000);
                     tupDataConfWrapper.tupMeeting.release(confHandle, callbacks);
                     return [2, releasePromise.promise];
                 });
@@ -22037,7 +23828,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 364 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -22080,6 +23871,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPMeeting.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
+            util_1.default.debug("tupMeeting", sendStr);
             this.wsocket.send(sendStr);
         };
         ;
@@ -24840,10 +26632,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 365 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(30), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPDataRender = (function () {
@@ -24904,7 +26696,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 366 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -24956,6 +26748,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         TUPEaddr.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
+            util_1.default.debug("tupEaddr", "send data: " + sendStr);
             if (this.uniSocket) {
                 this.uniSocket.sendData(sendStr);
             }
@@ -25086,10 +26879,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 367 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(368), __webpack_require__(141), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, publicDB_1, indexDBConfig_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(370), __webpack_require__(141), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, publicDB_1, indexDBConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ConfAttendeeList = (function () {
@@ -25335,7 +27128,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 368 */
+/* 370 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(141)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, indexDBConfig_1) {
@@ -25390,7 +27183,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 369 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -25428,7 +27221,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(50), __webpack_require__(51), __webpack_require__(30), __webpack_require__(19), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, tupCallWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(50), __webpack_require__(51), __webpack_require__(17), __webpack_require__(12), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, tupCallWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var AnonyConf = (function () {
@@ -25438,7 +27231,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var siteInfo = ret.tempuser_info_result.site_info;
                 if (siteInfo && siteInfo[0]) {
                     var _a = siteInfo[0], num_of_server = _a.num_of_server, access_server = _a.access_server, tms_account = _a.tms_account, tms_password = _a.tms_password;
-                    var sipUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "";
+                    var sipUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "", maaUri = "";
                     var tmsServer = "", tmsAccount = "", tmsPwd = "";
                     for (var i = 0; i < num_of_server; i++) {
                         if (!access_server || !access_server[i]) {
@@ -25456,6 +27249,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         stgPassword = access_server[0].stg_info.password;
                         if (!eserverUri) {
                             eserverUri = access_server[i].eserver_uri;
+                        }
+                        if (!maaUri) {
+                            maaUri = access_server[i].maa_uri;
                         }
                         if (!tmsServer) {
                             tmsServer = access_server[i].tms_server;
@@ -25475,7 +27271,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             eserverStgUri += ';';
                         }
                     }
-                    var _b = ret.tempuser_info_result, access_code = _b.access_code, conf_id = _b.conf_id, conf_pwd = _b.conf_pwd, sip_account = _b.sip_account, sip_impi = _b.sip_impi, sip_password = _b.sip_password, password_type = _b.password_type, sip_domain = _b.sip_domain, uportal_uri = _b.uportal_uri;
+                    var _b = ret.tempuser_info_result, access_code = _b.access_code, conf_id = _b.conf_id, conf_pwd = _b.conf_pwd, sip_account = _b.sip_account, sip_impi = _b.sip_impi, sip_password = _b.sip_password, password_type = _b.password_type, sip_domain = _b.sip_domain, sip_short_num = _b.sip_short_num, uportal_uri = _b.uportal_uri, terminal_func_type = _b.terminal_func_type;
                     var _c = eserverUri.split(":"), eserver_address = _c[0], eserver_port = _c[1];
                     var sipUriList = sipUri.split(";");
                     var _d = uportal_uri.split(":"), server_uri = _d[0], server_port = _d[1];
@@ -25513,7 +27309,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         eserverStgUri: eserverStgUri,
                         tmsServer: tmsServer,
                         tmsAccount: tmsAccount,
-                        tmsPwd: tmsPwd
+                        tmsPwd: tmsPwd,
+                        shortNumber: sip_short_num,
+                        terminalFuncType: terminal_func_type,
+                        maaUri: maaUri
                     };
                     _this.updateLoginInfo(loginInfo);
                     return loginInfo;
@@ -25701,6 +27500,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     eabUri: "",
                     groupServer: "",
                     sipUri: "",
+                    isSiptls: 0,
+                    isSrtp: 0,
                     svnUri: "",
                     httpsProxy: "",
                     stgUri: "",
@@ -25735,7 +27536,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     tmsServer: "",
                     tmsAccount: "",
                     tmsPwd: "",
-                    isTempUser: 1
+                    isTempUser: 1,
+                    maaUri: "",
+                    terminalFuncType: 0
                 };
                 var cloudEC_loginInfo = JSON.stringify(loginInfo);
                 sessionStorage.cloudEC_loginInfo = cloudEC_loginInfo;
@@ -25873,7 +27676,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 370 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -25911,12 +27714,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Call = (function () {
         function Call() {
-            this.callID = "";
+            this.callID = 0;
             this.isVideo = 0;
         }
         Call.prototype.setCallID = function (call_id) {
@@ -25924,6 +27727,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         Call.prototype.setCallType = function (isVideo) {
             this.isVideo = isVideo;
+        };
+        Call.prototype.getCallType = function () {
+            return this.isVideo;
         };
         Call.prototype.setCallState = function (callState) {
             this.callState = callState;
@@ -25934,29 +27740,44 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         Call.prototype.setCallee = function (callee) {
             this.callee = callee;
         };
-        Call.prototype.rejectCall = function () {
+        Call.prototype.getCallee = function () {
+            return this.callee;
+        };
+        Call.prototype.makeCall = function (calleeNumber, callType, callback) {
             return __awaiter(this, void 0, void 0, function () {
-                var ret;
+                var _this = this;
+                var evt;
                 return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, dispatcher_1.default.fire("reject", this.callID)];
-                        case 1:
-                            ret = _a.sent();
-                            return [2];
-                    }
+                    evt = { result: false, info: "" };
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_CALL, calleeNumber, callType, function (data) {
+                        if (data) {
+                            evt.result = true;
+                            evt.info = "start call success";
+                            _this.callID = data.callId;
+                        }
+                        else {
+                            evt.result = false;
+                            evt.info = "start call failed";
+                        }
+                        callback(evt);
+                    });
+                    return [2];
                 });
             });
         };
-        Call.prototype.acceptCall = function () {
+        Call.prototype.rejectCall = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var ret;
                 return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, dispatcher_1.default.fire("acceptCall", this.callID)];
-                        case 1:
-                            ret = _a.sent();
-                            return [2];
-                    }
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REJECT_CALL, this.callID);
+                    return [2];
+                });
+            });
+        };
+        Call.prototype.acceptCall = function (isVideo) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ACCEPT_CALL, this.callID, isVideo);
+                    return [2];
                 });
             });
         };
@@ -25977,13 +27798,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         Call.prototype.dialDTMF = function (keyTone) {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SEND_DTMF, this.callID, keyTone);
                     return [2];
                 });
             });
         };
-        Call.prototype.tans2Video = function () { };
-        Call.prototype.tans2Audio = function () { };
+        Call.prototype.tans2Video = function () {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ADD_VIDEO, this.callID);
+        };
+        Call.prototype.tans2Audio = function () {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_DEL_VIDEO, this.callID);
+        };
+        Call.prototype.answerSwitch = function (isAccept) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REPLY_ADD_VIDEO, this.callID, isAccept);
+        };
         Call.prototype.toString = function () {
+        };
+        Call.prototype.videoMute = function (bMute, callID) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_VIDEO_SWITCH, callID, (bMute ? 1 : 0), function (ret) {
+                if (ret.result == true) {
+                    var localView = document.getElementById("CloudEC:localCanvas");
+                    var remoteView = document.getElementById("CloudEC:remoteCanvas");
+                    var localContext = localView.getContext('webgl');
+                    var remoteContext = remoteView.getContext('webgl');
+                    localContext.clearColor(0.7804, 0.7804, 0.7804, 1.0);
+                    localContext.clear(localContext.COLOR_BUFFER_BIT);
+                    remoteContext.clearColor(0.0, 0.0, 0.0, 1.0);
+                    remoteContext.clear(remoteContext.COLOR_BUFFER_BIT);
+                }
+            });
+        };
+        Call.prototype.micMute = function (bMute, callID) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_MIC_SWITCH, callID, bMute ? 1 : 0, function (ret) { });
+        };
+        Call.prototype.transfer2Conf = function (confParam, callID, callback) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_P2P_TRANSFER_TO_CONF, confParam, callID, callback);
         };
         return Call;
     }());
@@ -25993,10 +27842,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 371 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(23), __webpack_require__(31), __webpack_require__(37), __webpack_require__(1), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, util, client_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(1), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, util, client_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Conference = (function () {
@@ -26050,7 +27899,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             callback(evt);
         };
         Conference.prototype.getAttendeeListNumber = function () {
-            return (this.attendeeList == null) ? 0 : this.attendeeList.length;
+            var attendeeNum = 0;
+            for (var i = 0; i < this.attendeeList.length; i++) {
+                if (this.attendeeList[i].participantId != "") {
+                    attendeeNum = attendeeNum + 1;
+                }
+            }
+            return attendeeNum;
         };
         Conference.prototype.setCallId = function (callid) {
             this.callId = callid;
@@ -26067,7 +27922,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (this.attendeeList == null) {
                 this.attendeeList = new Array();
             }
-            this.attendeeList.push(attendee);
+            var flagData = this.attendeeList.find(function (value) {
+                return attendee.number == value.number;
+            });
+            if (flagData != undefined && flagData.participantId == "") {
+                var attendeeTemp = {
+                    participantId: attendee.participantId,
+                    name: attendee.name,
+                    number: attendee.number,
+                    isMute: attendee.isMute,
+                    isDeaf: attendee.isDeaf,
+                    raiseHandState: attendee.raiseHandState,
+                    role: attendee.role,
+                    joinState: attendee.joinState,
+                    isSelf: attendee.isSelf,
+                    isDataconfMember: flagData.isDataconfMember,
+                    dataconfUserId: flagData.dataconfUserId,
+                    dataconfMemberType: flagData.dataconfMemberType,
+                    sharingPermit: attendee.sharingPermit,
+                    isBroadcast: attendee.isBroadcast
+                };
+                this.updateAttendeeList(attendeeTemp);
+            }
+            else if (flagData != undefined && flagData.participantId != "") {
+                var attendeeTemp = {
+                    participantId: flagData.participantId,
+                    name: flagData.name,
+                    number: flagData.number,
+                    isMute: flagData.isMute,
+                    isDeaf: flagData.isDeaf,
+                    raiseHandState: flagData.raiseHandState,
+                    role: flagData.role,
+                    joinState: flagData.joinState,
+                    isSelf: flagData.isSelf,
+                    isDataconfMember: attendee.isDataconfMember,
+                    dataconfUserId: attendee.dataconfUserId,
+                    dataconfMemberType: attendee.dataconfMemberType,
+                    sharingPermit: flagData.sharingPermit,
+                    isBroadcast: flagData.isBroadcast
+                };
+                this.updateAttendeeList(attendeeTemp);
+            }
+            else {
+                this.attendeeList.push(attendee);
+            }
         };
         Conference.prototype.updateAttendeeList = function (attendee) {
             if (this.attendeeList == null) {
@@ -26671,29 +28569,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_CONFMODE, this.confHandle, mode);
         };
-        Conference.prototype.videoMute = function (bMute) {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_VIDEO_SWITCH, this.callId, (bMute ? 1 : 0), function (ret) {
-                if (ret.result == true) {
-                    var localView = document.getElementById("CloudEC:localCanvas");
-                    var remoteView = document.getElementById("CloudEC:remoteCanvas");
-                    var localContext = localView.getContext('webgl');
-                    var remoteContext = remoteView.getContext('webgl');
-                    localContext.clearColor(0.7804, 0.7804, 0.7804, 1.0);
-                    localContext.clear(localContext.COLOR_BUFFER_BIT);
-                    remoteContext.clearColor(0.0, 0.0, 0.0, 1.0);
-                    remoteContext.clear(remoteContext.COLOR_BUFFER_BIT);
-                }
-            });
-        };
-        Conference.prototype.micMute = function (bMute) {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_MIC_SWITCH, this.callId, bMute ? 1 : 0, function (ret) { });
+        Conference.prototype.setConfMixedPicture = function (mode, imageType, attendees) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_CONF_MIXED_PICTURE, this.confHandle, mode, imageType, attendees);
         };
         Conference.prototype.sendMessage = function (messageParam) {
-            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
+            var err = { cmdId: 400000000, errorCode: 490000001, errorInfo: "parameter error" };
             var evt = { result: false, info: err };
             if (util.isUndefined(messageParam.msgType) || util.isUndefined(messageParam.msgContent) || !util.isInteger(messageParam.receiveID)) {
                 var errorInfo = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("msgType ,msgContent or receiveID");
                 client_1.default.notifyErr(errorInfo);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SEND_MSG, this.dataConfHandle, messageParam);
         };
@@ -26780,10 +28665,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 372 */
+/* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(23), __webpack_require__(31), __webpack_require__(37), __webpack_require__(49), __webpack_require__(1), __webpack_require__(30), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util, enum_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(49), __webpack_require__(1), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Device = (function () {
@@ -26863,10 +28748,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 373 */
+/* 375 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(23), __webpack_require__(31), __webpack_require__(37), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Eaddr = (function () {
@@ -26936,7 +28821,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 374 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -26948,28 +28833,40 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.notifyFuncs = [];
             this.rspFuncs = [];
             this.wsocket = {};
-            this.notifyFuncs = new Array();
-            this.rspFuncs = new Array();
-            var serviceAddr = opts.svrAddr || "127.0.0.1";
-            this.wsocket = new WebSocket("ws://" + serviceAddr + ":7682", "protocol_ws_deamon_service");
-            this.wsocket.onopen = opts.ready;
-            this.wsocket.onclose = opts.close;
-            this.wsocket.onmessage = function (msg) {
-                var data = JSON.parse(msg.data);
-                util_1.default.debug("tupDeamon", msg.data);
-                data.notify = data.notify & 0x7fff;
+            this.msgProcessor = function (data) {
                 if (data.notify > 0) {
+                    data.notify = data.notify & 0x7fff;
                     if (typeof _this.notifyFuncs[data.notify] == "function") {
                         _this.notifyFuncs[data.notify](data);
                     }
                 }
                 if (data.rsp > 0) {
                     var rspIdx = data.rsp & 0x7fff;
-                    if (typeof _this.rspFuncs[rspIdx] == "function") {
+                    if (typeof _this.rspFuncs[rspIdx] == "function")
                         _this.rspFuncs[rspIdx](data);
-                    }
                 }
             };
+            this.notifyFuncs = new Array();
+            this.rspFuncs = new Array();
+            var serviceAddr = opts.svrAddr || "127.0.0.1";
+            var pcol = "ws://";
+            if (opts.ssl === 1) {
+                pcol = "wss://";
+            }
+            if (opts.socket) {
+                this.uniSocket = opts.socket;
+                this.uniSocket.registerService(this);
+            }
+            else {
+                this.wsocket = new WebSocket(pcol + serviceAddr + ":7682", "protocol_ws_deamon_service");
+                this.wsocket.onopen = opts.ready;
+                this.wsocket.onclose = opts.close;
+                this.wsocket.onmessage = function (msg) {
+                    var data = JSON.parse(msg.data);
+                    util_1.default.debug("TUPDeamon", msg.data);
+                    _this.msgProcessor(data);
+                };
+            }
         }
         TUPDeamon.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);

@@ -36,7 +36,7 @@
             if (ret.info) {
                 var data = ret.info
                 var confPsw = data.chairmanPasswd
-                if (confPsw == defaultPsw) {
+                if (confPsw == defaultPsw || confPsw == "") {
                     confPsw = data.generalPasswd
                 }
 
@@ -52,9 +52,9 @@
                 var media_type
                 switch (data.mediaType) {
                     case 1: media_type = "Audio"; break
-                    case 5: media_type = "video"; break
+                    case 3: media_type = "video"; break
                     case 17: media_type = "Audio+data"; break
-                    case 21: media_type = "video+data"; break
+                    case 19: media_type = "video+data"; break
                 }
                 var cloudec_confinfo_div = document.getElementById('cloudec_confinfo_div')
                 cloudec_confinfo_div.style.display = "block"

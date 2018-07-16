@@ -129,6 +129,20 @@
         client.setRemoteCtrl(1, 1, parseInt(value));
     }
 
+    var cloudecCancelRemoteCtrl = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }  
+
+        var useridSelect = document.getElementById("setUserid_select");
+        var index = useridSelect.selectedIndex;
+        var value = useridSelect[index].value;
+        client.setRemoteCtrl(1, 0, parseInt(value));
+    }
+
+
     var cloudecRequestRemoteCtrl = function () {
         var conference = client.getConfHandler();
         if (conference == null) {
@@ -474,6 +488,13 @@
             setRemoteCtrl_btn.innerHTML = "set remoteCtrl";
             setRemoteCtrl_btn.title = "set remoteCtrl";
             setRemoteCtrl_btn.addEventListener("mousedown", cloudecSetRemoteCtrl);
+
+            var cancelRemoteCtrl_btn = document.createElement('button');
+            cancelRemoteCtrl_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            cancelRemoteCtrl_btn.innerHTML = "cancel remoteCtrl";
+            cancelRemoteCtrl_btn.title = "cancel remoteCtrl";
+            cancelRemoteCtrl_btn.addEventListener("mousedown", cloudecCancelRemoteCtrl);
+    
             var requestRemoteCtrl_btn = document.createElement('button');
             requestRemoteCtrl_btn.style.cssText = "height: 24px;margin-left: 5px;";
             requestRemoteCtrl_btn.innerHTML = "request remoteCtrl";
@@ -494,6 +515,7 @@
             cloudec_attendeelist_title_div.appendChild(releaseChairman_btn);
             cloudec_attendeelist_title_div.appendChild(setUserid_select);
             cloudec_attendeelist_title_div.appendChild(setRemoteCtrl_btn);
+            cloudec_attendeelist_title_div.appendChild(cancelRemoteCtrl_btn);
             cloudec_attendeelist_title_div.appendChild(requestRemoteCtrl_btn);        
             cloudec_attendeelist_body_div.appendChild(cloudec_speaker_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist_title_div);

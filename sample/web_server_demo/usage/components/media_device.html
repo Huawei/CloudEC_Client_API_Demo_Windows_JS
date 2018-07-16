@@ -10,6 +10,7 @@
 		var speakertext = document.getElementById("SpeakerText");
 
 		var obj = document.getElementById("MICDevice");
+		obj.innerHTML="";
 		client.getMediaDevice(0, function (data) {
 			if (data.info != null) {
 				for (var i = 0; i < data.info.length; i++) {
@@ -26,6 +27,7 @@
 			}
 
 			var obj2 = document.getElementById("SpeackerDevice");
+			obj2.innerHTML="";
 			client.getMediaDevice(1, function (data)  {
 				if (data.info != null) {
 					for (var i = 0; i < data.info.length; i++) {
@@ -42,6 +44,7 @@
 				}
 
 				var obj3 = document.getElementById("CameraDevice");
+				obj3.innerHTML="";
 				client.getMediaDevice(2, function (data)  {
 					if (data.info != null) {
 						for (var i = 0; i < data.info.length; i++) {

@@ -100,9 +100,13 @@ var returnJson
  * [en]This function is used to connect channal between exception and service
  * [cn]连接异常描述与业务的通道
  */
-function ConnectExceptionChannal()
+function ConnectExceptionChannal(ssl)
 {
-    var wsocket = new WebSocket("ws://localhost:7684", "tup_exception_protocol");
+    var pcol = "ws://";
+    if (ssl === 1) {
+        pcol = "wss://";
+    }    
+    var wsocket = new WebSocket(pcol + "localhost:7684", "tup_exception_protocol");
     $.getJSON("json/server_exception.json",function(json){
         console.log("load server exceptions description success")
         serverJson = json

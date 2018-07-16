@@ -10,10 +10,11 @@
 ```
 
 <h2 align="center">目录结构</h2>
+
 ```bash
 │ index.html  首页，功能展示区域
 ├─daemon 后台tup守护进程，提供专业的实时音视频能力; 支持二次打包，参考相关文档.
-│─tool JSSDK日志分析工具，使用方法可参考开发指南相关章节
+├─tool JSSDK日志分析工具，使用方法可参考开发指南相关章节
 ├─sdk  核心库 cloudEC 能力开放 JSSDK  
 └─usage  JSSDK接口调用示例，含UI控件
     │  conference_usage.js  接口调用示例入口
