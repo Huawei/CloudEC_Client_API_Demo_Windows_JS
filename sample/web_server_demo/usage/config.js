@@ -3,6 +3,7 @@
     var options = {
         domain: "localhost.cloudec.huaweicloud.com",
         isWSS: 1,
+        confCtrlProtocol: 1,
         isTlsSupport: 0,
         isWithSBC: 1,
         dropFrame: 1,

@@ -11,20 +11,21 @@
             alert("Meeting has not yet started")
             return
         }
-        const joinConfParam = {
+        var joinConfParam = {
             'conferenceId': conf_id,
             'accessNumber': accessNumber,
             'confPasswd': confPasswd,
         }
         client.joinConference(joinConfParam, function (ret) {
             if (ret.result) {
-                console.info(JSON.stringify(ret))
+                console.info("joinConference success")
             }
             else {
-                alert("joinConference failed")
-                console.error(JSON.stringify(ret.info))
+                alert("joinConference failed")                
             }
         });
+        joinConfParam = "";
+        confPasswd = "";
         var cloudec_confinfo_div = document.getElementById('cloudec_confinfo_div')
         cloudec_confinfo_div.style.display = "none"
     }

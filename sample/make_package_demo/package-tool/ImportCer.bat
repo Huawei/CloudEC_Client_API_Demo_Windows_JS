@@ -31,7 +31,7 @@ if '%1'=='ELEV' (del "%vbsGetPrivileges%" 1>nul 2>nul  &  shift /1)
 
 REM "certmgr.exe" -add -c cert.pfx -s -r localMachine root
 REM "certmgr.exe" -add -c webdocs.huawei.com.cer -s -r localMachine root
-"certmgr.exe" -add -c server.crt -s -r localMachine root
+"certmgr.exe" -add -c root.crt -s -r localMachine root
 
 ECHO 
 ECHO.

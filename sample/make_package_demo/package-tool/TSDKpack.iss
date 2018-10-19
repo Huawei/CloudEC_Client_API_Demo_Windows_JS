@@ -332,12 +332,13 @@ Source: "D:\package\package-tool\TSDKDeamon.bat"; DestDir: "{app}";
 Source: "D:\package\package-tool\stopTSDKDeamon.bat"; DestDir: "{app}";
 Source: "D:\package\package-tool\importCer.bat"; DestDir: "{app}";
 Source: "D:\package\package-tool\cert.pfx"; DestDir: "{app}";
-Source: "D:\package\package-tool\server.crt"; DestDir: "{app}";
 Source: "D:\package\package-tool\root_cert.pem"; DestDir: "{app}";
 Source: "D:\package\package-tool\root_cert_huawei.pem"; DestDir: "{app}";
 Source: "D:\package\package-tool\server.pem"; DestDir: "{app}";
 Source: "D:\package\package-tool\server.key"; DestDir: "{app}";
 Source: "D:\package\package-tool\map_tree.xml"; DestDir: "{app}";
+Source: "D:\package\package-tool\root.crt"; DestDir: "{app}";
+Source: "D:\package\package-tool\CertMgr.exe"; DestDir: "{app}";
 
 [Icons]
 ;Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -349,8 +350,7 @@ Name: "{userstartup}\{#TSDKDeamon}"; Filename: "{app}\{#TSDKDeamon}";  Tasks: st
 [Run]
 Filename: "{app}\{#VcRunTimeExeName}"; Parameters: "/q /norestart"; WorkingDir: {app}; Flags: skipifdoesntexist; StatusMsg: "Install Microsoft Visual C++ 2012 Runtime ..."; Check: NeedInstallVCRunTime
 Filename:"{app}\{#StopTSDKDeamon}"; Parameters: "/q /norestart";  WorkingDir: {app};  Flags: runhidden;
-Filename:"{app}\{#TSDKDeamon}"; Parameters: "/q /norestart";  WorkingDir: {app};  Flags: runhidden;
-;Filename:"{app}\{#ImportCer}"; Parameters: "/q /norestart";  WorkingDir: {app};  Flags: runhidden;
+Filename:"{app}\{#TSDKDeamon}"; Parameters: "/q /norestart";  WorkingDir: {app};  Flags: runhidden;Filename:"{app}\{#ImportCer}"; Parameters: "/q /norestart";  WorkingDir: {app};  Flags: runhidden;
 ;Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [INI]  

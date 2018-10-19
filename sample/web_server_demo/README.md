@@ -13,12 +13,12 @@
 
 ```bash
 │ index.html  首页，功能展示区域
-├─daemon 后台tup守护进程，提供专业的实时音视频能力; 支持二次打包，参考相关文档.
-├─tool JSSDK日志分析工具，使用方法可参考开发指南相关章节
 ├─sdk  核心库 cloudEC 能力开放 JSSDK  
 └─usage  JSSDK接口调用示例，含UI控件
-    │  conference_usage.js  接口调用示例入口
-    │  event_process.js 接口回调事件监听处理模板
+    │  conference_usage.js  接口调用示例入口	
+    │  event_process.js 接口回调事件监听处理模板		
+    │  config.js 配置文件
+    │  im_usage.js 即时消息调用示例
     └─components  UI组件，按功能模块示例相关接口的调用方法
         │  attendee_list.html 与会者列表组件
         │  book_conf.html 预定会议组件
@@ -51,7 +51,7 @@ Apache
 **CloudEC环境**
 ```bash
 获取对应CloudEC环境的uPortal地址，例如：10.4.33.69:8443
-获取对应CloudEC环境的EC账号,例如：uctest110@huawei.com Aa123456
+获取对应CloudEC环境的EC账号,例如：uctest110@huawei.com 
 推荐：华为开发者社区远程实验室环境、华为公有云环境
 ```
 ### `快速开始`

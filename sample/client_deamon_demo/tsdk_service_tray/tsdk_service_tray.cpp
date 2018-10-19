@@ -54,7 +54,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY://[cn]窗口销毁时候的消息.  [en]Message when the window is destroyed
         Shell_NotifyIcon(NIM_DELETE, &nid);  
         PostQuitMessage(0);
-		xx = WinExec("taskkill /F /IM tup_service_s.exe", SW_HIDE);		
+		xx = WinExec("taskkill /F /IM tup_service_s.exe", SW_HIDE);		//lint !e713
         break;  
     default:  
         /* 
@@ -129,5 +129,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         TranslateMessage(&msg);  
         DispatchMessage(&msg);  
     }  
-    return msg.wParam;  
-}  
+    return msg.wParam;  //lint !e713
+}

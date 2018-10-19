@@ -38,6 +38,7 @@ function login() {
 				document.getElementById("userinfo").innerHTML = userInfo;
 
 				//change UI to login successful
+				document.getElementById("passwd").value = "";
 				document.getElementById("login").style.display = "none";
 				document.getElementById("call").style.display = "block";
 
@@ -49,6 +50,9 @@ function login() {
 			}
 
 		});
+	passwd = "";
+	proxyPassword = "";
+	proxyParam ="";
 }
 
 //call start
@@ -231,9 +235,10 @@ function accessReservedConf() {
 	}
 
 	client.joinConference(joinConfParam, function callback(evt) {
-		var conference = evt.info;
-		console.info(JSON.stringify(conference))
+		console.info("join conference callback")
 	});
+	confPasswd = "";
+	joinConfParam = "";
 }
 
 function joinAnonymousConf() {
@@ -256,9 +261,10 @@ function joinAnonymousConf() {
 	}
 
 	client.joinAnonymousConf(anonymousConfParam, serverInfo, function callback(evt) {
-		var conference = evt.info;
-		console.info(JSON.stringify(conference))
+		console.info("join anonymous conference callback")
 	});
+	anonyConfPasswd = "";
+	anonymousConfParam = "";
 }
 
 function setConfNativeWndSize() {

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 143);
+/******/ 	return __webpack_require__(__webpack_require__.s = 144);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,10 +68,10 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(3);
-var core = __webpack_require__(26);
-var hide = __webpack_require__(14);
-var redefine = __webpack_require__(15);
-var ctx = __webpack_require__(21);
+var core = __webpack_require__(29);
+var hide = __webpack_require__(17);
+var redefine = __webpack_require__(18);
+var ctx = __webpack_require__(25);
 var PROTOTYPE = 'prototype';
 
 var $export = function (type, name, source) {
@@ -157,6 +157,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     exports.isInteger = function (obj) {
         return typeof obj === 'number' && obj % 1 === 0;
     };
+    exports.isNumber = function (obj) {
+        return typeof obj === 'number';
+    };
     exports.isIntegerRange = function (obj, start, end) {
         if (!obj) {
             return true;
@@ -194,6 +197,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
     };
     exports.isValidAttendeeParam = function (param) {
+        if (exports.isUndefined(param)) {
+            return false;
+        }
         if ((!exports.isUndefined(param.autoInvite) && !exports.isBinaryNumber(param.autoInvite)) ||
             (!exports.isUndefined(param.role) && !exports.isBinaryNumber(param.role))) {
             return false;
@@ -210,10 +216,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         return (typeof param === 'number' && (param === 0 || param === 1));
     };
     exports.isUndefined = function (param) {
-        return param == undefined || param == null;
+        return param == undefined || param == null || param == NaN;
+    };
+    exports.isNull = function (param) {
+        return param === "";
     };
     exports.isArray = function (param) {
         return (param instanceof Array);
+    };
+    exports.isBoolean = function (param) {
+        return (typeof param === 'boolean');
+    };
+    exports.isFunction = function (param) {
+        return (typeof param === 'function');
     };
     exports.UTCTimeStr = function (time) {
         var year = time.getUTCFullYear();
@@ -246,10 +261,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         if (0x10000 < cmd_id && cmd_id < 0x20000) {
             return { cmdId: cmd_id, errorCode: err_id + offset_call };
         }
-        else if ((0x50000 & 0x2FFFF) < cmd_id && cmd_id < 0x60000) {
+        else if ((0x50000) < cmd_id && cmd_id < 0x60000) {
             return { cmdId: cmd_id, errorCode: err_id + offset_login };
         }
-        else if ((0x70000 & 0xFFFF) < cmd_id && cmd_id < 0x80000) {
+        else if ((0x70000) < cmd_id && cmd_id < 0x80000) {
             return { cmdId: cmd_id, errorCode: err_id + offset_conf };
         }
         else if (40000000 < cmd_id && cmd_id < 50000000) {
@@ -265,6 +280,89 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             console.error("it is out of the offset range");
             return { cmdId: cmd_id, errorCode: err_id };
         }
+    };
+    function replaceAll(s1, s2, s3) {
+        var reg = new RegExp(s2, "gm");
+        return s1.replace(reg, s3);
+    }
+    exports.hidePhone = function (phone) {
+        var phoneS;
+        if (phone.length >= 8) {
+            phoneS = replaceAll(phone, "(.\\d{2})\\d{1,4}(\\d{4})", "$1****$2");
+        }
+        else {
+            phoneS = replaceAll(phone, "(.\\d{1})\\d{0,4}(\\d{1})", "$1****$2");
+        }
+        return phoneS;
+    };
+    exports.hideName = function (name) {
+        var reg = /(.{2}).+/g;
+        var nameS;
+        if (name.length >= 2) {
+            nameS = name.replace(reg, "$1****");
+        }
+        else {
+            nameS = name.replace(name, "******");
+        }
+        return nameS;
+    };
+    exports.hideEmail = function (email) {
+        var reg = /(.{0,1}).+(.{1}@.+)/g;
+        var emailS = email.replace(reg, "$1****$2");
+        return emailS;
+    };
+    exports.hidePassword = function (password) {
+        var passwordS = password.replace(password, "******");
+        return passwordS;
+    };
+    exports.hideIPAddress = function (IPAddress) {
+        var pattern = /(\d+\.\d+\.\d+\.)\d+/;
+        var IPAddressS = IPAddress.replace(pattern, '$1\*');
+        return IPAddressS;
+    };
+    var emailArr = ["email", "real_user_account", "sip_account", "sip_impi", "account", "old_account"];
+    var nameArr = ["user_name", "ucaccount", "subject", "conf_subject", "conf_name", "short_conf_name", "short_user_name", "origin", "target", "name", "createor",
+        "domain_ip", "display_name", "display_name_tel", "history_num", "number", "group_name", "owner", "manifesto", "tel_number", "user_number",
+        "fwd_from_name", "scheduser_name", "condition", "acount_id", "fromUserName", "nFromUserid", "dept_name_cn", "dept_name_en",
+        "init_invite_account", "desc", "signature", "birthday", "sender"];
+    var passwordArr = ["auth_token", "left_days_of_pwd", "sip_password", "password", "tms_password", "tms_pwd", "ack", "token", "content", "acTmpToken", "conf_key", "data_random", "website",
+        "address", "q_pin_yin", "chairman_pwd", "general_pwd", "data_random", "host_key", "crypt_key", "part_secure_conf_num", "head-id", "image_id", "conf_pwd", "participant_id",
+        "proxyAccount", "proxyPassword", "session_id", "tms_account", "tms_pwd", "admin_account", "member_account", "lpMsg"];
+    var phoneArr = ["sip_impi", "tel_number", "tel_num", "tel_num_tel", "espacenumber", "homephone", "home_phone", "mobile", "sip_short_num", "shortnum", "user_uri", "user_alt_uri",
+        "call_forward_onbusy_num", "call_forward_uncondition_num", "call_foward_noreply_num", "call_foward_offline_num", "fwd_from_num", "scheduser_number", "bind_no"];
+    var IPAddressArr = ["local_ip", "local_ipv4", "local_addr", "last_login_ip"];
+    var PersonalInfArr = ["entry", "contact_list", "im_group_list", "user_group_list", "user_list", "at_user_list", "service_Param"];
+    function replacer(key, value) {
+        if (emailArr.indexOf(key) != -1 && !exports.isNull(value) && exports.isString(value)) {
+            var email = exports.hideEmail(value);
+            return email;
+        }
+        if (nameArr.indexOf(key) != -1 && !exports.isNull(value) && exports.isString(value)) {
+            var name_1 = exports.hideName(value);
+            return name_1;
+        }
+        if (passwordArr.indexOf(key) != -1 && !exports.isNull(value) && (exports.isString(value) || exports.isNumber(value))) {
+            var valueStr = value + "";
+            var password = exports.hidePassword(valueStr);
+            valueStr = "";
+            return password;
+        }
+        if (phoneArr.indexOf(key) != -1 && !exports.isNull(value) && exports.isString(value)) {
+            var phone = exports.hidePhone(value);
+            return phone;
+        }
+        if (IPAddressArr.indexOf(key) != -1 && !exports.isNull(value) && exports.isString(value)) {
+            var ipAddress = exports.hideIPAddress(value);
+            return ipAddress;
+        }
+        if (PersonalInfArr.indexOf(key) != -1 && !exports.isNull(value)) {
+            return "******";
+        }
+        return value;
+    }
+    exports.replaceLogInfo = function (dataInfo) {
+        var dataInfoEncryption = JSON.stringify(dataInfo, replacer, "   ");
+        return dataInfoEncryption;
     };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -320,7 +418,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var store = __webpack_require__(59)('wks');
-var uid = __webpack_require__(39);
+var uid = __webpack_require__(41);
 var Symbol = __webpack_require__(3).Symbol;
 var USE_SYMBOL = typeof Symbol == 'function';
 
@@ -348,7 +446,7 @@ module.exports = !__webpack_require__(4)(function () {
 
 var anObject = __webpack_require__(2);
 var IE8_DOM_DEFINE = __webpack_require__(101);
-var toPrimitive = __webpack_require__(27);
+var toPrimitive = __webpack_require__(30);
 var dP = Object.defineProperty;
 
 exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes) {
@@ -369,7 +467,7 @@ exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProp
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
-var toInteger = __webpack_require__(29);
+var toInteger = __webpack_require__(32);
 var min = Math.min;
 module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
@@ -381,7 +479,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
-var defined = __webpack_require__(28);
+var defined = __webpack_require__(31);
 module.exports = function (it) {
   return Object(defined(it));
 };
@@ -389,16 +487,317 @@ module.exports = function (it) {
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = function (it) {
-  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
-  return it;
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Dispatcher = (function () {
+        function Dispatcher() {
+        }
+        Dispatcher.register = function (name, callback, context) {
+            var observers = Dispatcher.listeners[name];
+            if (!observers) {
+                Dispatcher.listeners[name] = [];
+            }
+            Dispatcher.listeners[name].push(new Observer(callback, context));
+        };
+        Dispatcher.remove = function (name, callback, context) {
+            var observers = Dispatcher.listeners[name];
+            if (!observers)
+                return;
+            var length = observers.length;
+            for (var i = 0; i < length; i++) {
+                var observer = observers[i];
+                if (observer.compar(context)) {
+                    observers.splice(i, 1);
+                    break;
+                }
+            }
+            if (observers.length == 0) {
+                delete Dispatcher.listeners[name];
+            }
+        };
+        Dispatcher.removeAll = function () {
+            for (var m in Dispatcher.listeners) {
+                if (Dispatcher.listeners[m]) {
+                    for (var i = 0; i < Dispatcher.listeners[m].length; ++i) {
+                        Dispatcher.listeners[m].splice(i, 1);
+                    }
+                }
+            }
+        };
+        Dispatcher.fire = function (name) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            return __awaiter(this, void 0, void 0, function () {
+                var observers, length, i, observer;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            util_1.default.info("dispatcher", "fire a event=" + name);
+                            observers = Dispatcher.listeners[name];
+                            if (!observers)
+                                return [2];
+                            length = observers.length;
+                            i = 0;
+                            _a.label = 1;
+                        case 1:
+                            if (!(i < length)) return [3, 4];
+                            observer = observers[i];
+                            return [4, observer.notify.apply(observer, [name].concat(args))];
+                        case 2:
+                            _a.sent();
+                            _a.label = 3;
+                        case 3:
+                            i++;
+                            return [3, 1];
+                        case 4: return [2];
+                    }
+                });
+            });
+        };
+        Dispatcher.listeners = {};
+        return Dispatcher;
+    }());
+    exports.default = Dispatcher;
+    var Observer = (function () {
+        function Observer(callback, context) {
+            this.context = null;
+            var self = this;
+            self.callback = callback;
+            self.context = context;
+        }
+        Observer.prototype.notify = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return __awaiter(this, void 0, void 0, function () {
+                var self, _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            self = this;
+                            return [4, (_a = self.callback).call.apply(_a, [self.context].concat(args))];
+                        case 1:
+                            _b.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        Observer.prototype.compar = function (context) {
+            return context == this.context;
+        };
+        return Observer;
+    }());
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.USER_EVENT_ID = {
+        USER_LOGIN_RET_EVENT: "USER_LOGIN_RET_EVENT",
+    };
+    exports.SDK_EVENT_ID = {
+        SDK_LOGIN_REQ: "SDK_LOGIN_REQ",
+        SDK_LOGOUT_REQ: "SDK_LOGOUT_REQ",
+        SDK_SET_PROXY_REQ: "SDK_SET_PROXY_REQ",
+        SDK_SIP_DEREGISTER_ANONYCONF: "SDK_SIP_DEREGISTER_ANONYCONF",
+        SDK_CONF_BOOK_RESVCONF: "SDK_CONF_BOOK_RESVCONF",
+        SDK_CONF_JOIN_INSTCONF: "SDK_CONF_JOIN_INSTCONF",
+        SDK_CONF_REFRESH_TOKEN: "SDK_CONF_REFRESH_TOKEN",
+        SDK_CONF_GET_CONFLIST: "SDK_CONF_GET_CONFLIST",
+        SDK_CONF_GET_CONFINFO: "SDK_CONF_GET_CONFINFO",
+        SDK_CONF_ACCESS_RESVCONF: "SDK_CONF_ACCESS_RESVCONF",
+        SDK_CONF_ACCEPT_CONF: "SDK_CONF_ACCEPT_CONF",
+        SDK_CONF_REJECT_CONF: "SDK_CONF_REJECT_CONF",
+        SDK_CONF_ADD_ATTENDEE: "SDK_CONF_ADD_ATTENDEE",
+        SDK_CONF_DEL_ATTENDEE: "SDK_CONF_DEL_ATTENDEE",
+        SDK_CONF_MUTE_CONF: "SDK_CONF_MUTE_CONF",
+        SDK_CONF_MUTE_ATTENDEE: "SDK_CONF_MUTE_ATTENDEE",
+        SDK_CONF_JOIN_ANONYCONF: "SDK_CONF_JOIN_ANONYCONF",
+        SDK_CONF_AS_SET_OWNER: "SDK_CONF_AS_SET_OWNER",
+        SDK_CONF_AS_SET_SHARE_TYPE: "SDK_CONF_AS_SET_SHARE_TYPE",
+        SDK_CONF_AS_START: "SDK_CONF_AS_START",
+        SDK_CONF_AS_STOP: "SDK_CONF_AS_STOP",
+        SDK_CONF_WB_CREATE: "SDK_CONF_WB_CREATE",
+        SDK_CONF_WB_DELETE: "SDK_CONF_WB_DELETE",
+        SDK_CONF_WB_PAGE_CREATE: "SDK_CONF_WB_PAGE_CREATE",
+        SDK_CONF_WB_PAGE_DELETE: "SDK_CONF_WB_PAGE_DELETE",
+        SDK_CONF_WB_SET_CURR_PAGE: "SDK_CONF_WB_SET_CURR_PAGE",
+        SDK_CONF_AT_CREATE_START: "SDK_CONF_AT_CREATE_START",
+        SDK_CONF_AT_CUSTOMER_UPDATE: "SDK_CONF_AT_CUSTOMER_UPDATE",
+        SDK_CONF_AT_DRAWING_UPDATE: "SDK_CONF_AT_DRAWING_UPDATE",
+        SDK_CONF_AT_CREATE_DONE: "SDK_CONF_AT_CREATE_DONE",
+        SDK_CONF_AT_SET_SELECT: "SDK_CONF_AT_SET_SELECT",
+        SDK_CONF_AT_DELETE: "SDK_CONF_AT_DELETE",
+        SDK_CONF_AT_EDIT_START: "SDK_CONF_AT_EDIT_START",
+        SDK_CONF_AT_EDIT_UPDATE: "SDK_CONF_AT_EDIT_UPDATE",
+        SDK_CONF_AT_EDIT_DONE: "SDK_CONF_AT_EDIT_DONE",
+        SDK_CONF_AT_TEXT_CREATE: "SDK_CONF_AT_TEXTCREATE",
+        SDK_CONF_AT_TEXT_UPDATE: "SDK_CONF_AT_TEXT_UPDATE",
+        SDK_CONF_AT_TEXT_GETINFO: "SDK_CONF_AT_TEXT_GETINFO",
+        SDK_CONF_AT_HITTEST: "SDK_CONF_AT_HITTEST",
+        SDK_CONF_AT_HITTEST_RECT: "SDK_CONF_AT_HITTEST_RECT",
+        SDK_CONF_AT_LASERPOINTER_START: "SDK_CONF_AT_LASERPOINTER_START",
+        SDK_CONF_AT_LASERPOINTER_MOVETO: "SDK_CONF_AT_LASERPOINTER_MOVETO",
+        SDK_CONF_AT_LASERPOINTER_STOP: "SDK_CONF_AT_LASERPOINTER_STOP",
+        SDK_CONF_REQUEST_PRIVILEGE: "SDK_CONF_REQUEST_PRIVILEGE",
+        SDK_CONF_SET_PRIVILEGE: "SDK_CONF_SET_PRIVILEGE",
+        SDK_CONF_KEYBOARD_INPUT: "SDK_CONF_KEYBOARD_INPUT",
+        SDK_CONF_REQUEST_CHAIRMAN: "SDK_CONF_REQUEST_CHAIRMAN",
+        SDK_CONF_RELEASE_CHAIRMAN: "SDK_CONF_RELEASE_CHAIRMAN",
+        SDK_CONF_HAND_UP: "SDK_CONF_HAND_UP",
+        SDK_CONF_LEAVE_CONF: "SDK_CONF_LEAVE_CONF",
+        SDK_CONF_END_CONF: "SDK_CONF_END_CONF",
+        SDK_CONF_SET_CONFMODE: "SDK_CONF_SET_CONFMODE",
+        SDK_CONF_SET_CONF_MIXED_PICTURE: "SDK_CONF_SET_CONF_MIXED_PICTURE",
+        SDK_CONF_BROADCAST_ATTENDEE: "SDK_CONF_BROADCAST_ATTENDEE",
+        SDK_CONF_WATCH_ATTENDEE: "SDK_CONF_WATCH_ATTENDEE",
+        SDK_CONF_VIDEO_SWITCH: "SDK_CONF_VIDEO_SWITCH",
+        SDK_CONF_MIC_SWITCH: "SDK_CONF_MIC_SWITCH",
+        SDK_CONF_SEND_MSG: "SDK_CONF_SEND_MSG",
+        SDK_CONF_ENABLE_RENDER: "SDK_CONF_ENABLE_RENDER",
+        SDK_CONF_SET_DATA_RENDER: "SDK_CONF_SET_DATA_RENDER",
+        SDK_CONF_SET_WB_DATA_RENDER: "SDK_CONF_SET_WB_DATA_RENDER",
+        SDK_CONF_SET_CANVAS_SIZE: "SDK_CONF_SET_CANVAS_SIZE",
+        SDK_CONF_SET_DROP_FRAME: "SDK_CONF_SET_DROP_FRAME",
+        SDK_CONF_VIDEO_RECONNECT: "SDK_CONF_VIDEO_RECONNECT",
+        SDK_CONF_GET_ATTENDEELIST: "SDK_CONF_GET_ATTENDEELIST",
+        SDK_CONF_ADD_ATTENDEE_TB: "SDK_CONF_ADD_ATTENDEE_TB",
+        SDK_CONF_DEL_ATTENDEE_TB: "SDK_CONF_DEL_ATTENDEE_TB",
+        SDK_DATACONF_MEMBER_TB: "SDK_DATACONF_MEMBER_TB",
+        SDK_DATACONF_MEMBER_TYPE_TB: "SDK_DATACONF_MEMBER_TYPE_TB",
+        SDK_DATACONF_UPDATE_SHARING_SESSION_TB: "SDK_DATACONF_UPDATE_SHARING_SESSION_TB",
+        SDK_DATACONF_CLEAR_ATTENDEE_TB: "SDK_DATACONF_CLEAR_ATTENDEE_TB",
+        SDK_DATACONF_SELECT_ATTENDEE_TB: "SDK_DATACONF_SELECT_ATTENDEE_TB",
+        SDK_DEVC_GET_MEDIA_DEVICE: "SDK_DEVC_GET_MEDIA_DEVICE",
+        SDK_DEVC_SET_MEDIA_DEVICE: "SDK_DEVC_SET_MEDIA_DEVICE",
+        SDK_DEVC_GET_VOICE: "SDK_DEVC_GET_VOICE",
+        SDK_DEVC_SET_VOICE: "SDK_DEVC_SET_VOICE",
+        SDK_CMPT_GET_CPU_USAGE: "SDK_CMPT_GET_CPU_USAGE",
+        SDK_CMPT_GET_MEMORY_USAGE: "SDK_CMPT_GET_MEMORY_USAGE",
+        SDK_EADDR_SEARCH_USER: "SDK_EADDR_SEARCH_USER",
+        SDK_EADDR_SEARCH_DEPT: "SDK_EADDR_SEARCH_DEPT",
+        SDK_CALL_START_CALL: "SDK_CALL_START_CALL",
+        SDK_CALL_ACCEPT_CALL: "SDK_CALL_ACCEPT_CALL",
+        SDK_CALL_REJECT_CALL: "SDK_CALL_REJECT_CALL",
+        SDK_CALL_HOLD_CALL: "SDK_CALL_HOLD_CALL",
+        SDK_CALL_UNHOLD_CALL: "SDK_CALL_UNHOLD_CALL",
+        SDK_CALL_SEND_DTMF: "SDK_CALL_SEND_DTMF",
+        SDK_CALL_SET_VIDEO_RENDER: "SDK_CALL_SET_VIDEO_RENDER",
+        SDK_CALL_SET_LOCAL_VIDEOWH: "SDK_CALL_SET_LOCAL_VIDEOWH",
+        SDK_CALL_SET_REMOTE_VIDEOWH: "SDK_CALL_SET_REMOTE_VIDEOWH",
+        SDK_CONF_P2P_TRANSFER_TO_CONF: "SDK_CONF_P2P_TRANSFER_TO_CONF",
+        SDK_CALL_START_PLAY_MEDIA_FILE: "SDK_CALL_START_PLAY_MEDIA_FILE",
+        SDK_CALL_STOP_PLAY_MEDIA_FILE: "SDK_CALL_STOP_PLAY_MEDIA_FILE",
+        SDK_CALL_ADD_VIDEO: "SDK_CALL_ADD_VIDEO",
+        SDK_CALL_DEL_VIDEO: "SDK_CALL_DEL_VIDEO",
+        SDK_CALL_REPLY_ADD_VIDEO: "SDK_CALL_REPLY_ADD_VIDEO",
+        SDK_CALL_NATIVEWND_INIT: "SDK_CALL_NATIVEWND_INIT",
+        SDK_CALL_NATIVEWND_CREATE_WINDOW: "SDK_CALL_NATIVEWND_CREATE_WINDOW",
+        SDK_CALL_NATIVEWND_DESTROY_WINDOW: "SDK_CALL_NATIVEWND_DESTROY_WINDOW",
+        SDK_CALL_NATIVEWND_UNINIT: "SDK_CALL_NATIVEWND_UNINIT",
+        SDK_CALL_SET_VIDEO_WINDOW: "SDK_CALL_SET_VIDEO_WINDOW",
+        SDK_CALL_RESET_NATIVEWND_SIZE: "SDK_CALL_RESET_NATIVEWND_SIZE",
+        SDK_CALL_SET_IPT_SERVICE: "SDK_CALL_SET_IPT_SERVICE",
+        SDK_CALL_BLIND_TRANSFER: "SDK_CALL_BLIND_TRANSFER",
+        SDK_IM_LOGOUT: "SDK_IM_LOGOUT",
+        SDK_IM_GET_USER_INFO: "SDK_IM_GET_USER_INFO",
+        SDK_IM_SET_USER_INFO: "SDK_IM_SET_USER_INFO",
+        SDK_IM_GET_CONTACT_LIST: "SDK_IM_GET_CONTACT_LIST",
+        SDK_IM_ADD_CONTACT_GROUP: "SDK_IM_ADD_CONTACT_GROUP",
+        SDK_IM_MOD_CONTACT_GROUP: "SDK_IM_MOD_CONTACT_GROUP",
+        SDK_IM_DEL_CONTACT_GROUP: "SDK_IM_DEL_CONTACT_GROUP",
+        SDK_IM_UPDATE_GROUP_LIST_ORDER: "SDK_IM_UPDATE_GROUP_LIST_ORDER",
+        SDK_IM_MOVE_CONTACT: "SDK_IM_MOVE_CONTACT",
+        SDK_IM_ADD_CONTACT: "SDK_IM_ADD_CONTACT",
+        SDK_IM_MOD_CONTACT: "SDK_IM_MOD_CONTACT",
+        SDK_IM_DEL_CONTACT: "SDK_IM_DEL_CONTACT",
+        SDK_IM_ADD_FRIEND: "SDK_IM_ADD_FRIEND",
+        SDK_IM_ADD_FIXED_GROUP: "SDK_IM_ADD_FIXED_GROUP",
+        SDK_IM_MOD_FIXED_GROUP: "SDK_IM_MOD_FIXED_GROUP",
+        SDK_IM_DEL_FIXED_GROUP: "SDK_IM_DEL_FIXED_GROUP",
+        SDK_IM_ADD_DISCUSSION_GROUP: "SDK_IM_ADD_DISCUSSION_GROUP",
+        SDK_IM_MOD_DISCUSSION_GROUP: "SDK_IM_MOD_DISCUSSION_GROUP",
+        SDK_IM_DEL_DISCUSSION_GROUP: "SDK_IM_DEL_DISCUSSION_GROUP",
+        SDK_IM_SEARCH_GROUP: "SDK_IM_SEARCH_GROUP",
+        SDK_IM_GET_GROUP_DETAIL: "SDK_IM_GET_GROUP_DETAIL",
+        SDK_IM_ADD_FIXED_GROUP_MEMBER: "SDK_IM_ADD_FIXED_GROUP_MEMBER",
+        SDK_IM_JOIN_FIXED_GROUP: "SDK_IM_JOIN_FIXED_GROUP",
+        SDK_IM_ADD_DISCUSSION_GROUP_MEMBER: "SDK_IM_ADD_DISCUSSION_GROUP_MEMBER",
+        SDK_IM_DEL_FIXED_GROUP_MEMBER: "SDK_IM_DEL_FIXED_GROUP_MEMBER",
+        SDK_IM_LEAVE_FIXED_GROUP: "SDK_IM_LEAVE_FIXED_GROUP",
+        SDK_IM_DEL_DISCUSSION_GROUP_MEMBER: "SDK_IM_DEL_DISCUSSION_GROUP_MEMBER",
+        SDK_IM_LEAVE_DISCUSSION_GROUP: "SDK_IM_LEAVE_DISCUSSION_GROUP",
+        SDK_IM_GET_GROUP_MEMBERS: "SDK_IM_GET_GROUP_MEMBERS",
+        SDK_IM_CONFIRM_FIXED_GROUP_INVITE: "SDK_IM_CONFIRM_FIXED_GROUP_INVITE",
+        SDK_IM_CONFIRM_FIXED_GROUP_APPLY: "SDK_IM_CONFIRM_FIXED_GROUP_APPLY",
+        SDK_IM_TRANSFER_GROUP: "SDK_IM_TRANSFER_GROUP",
+        SDK_IM_SET_GROUP_MSG_PROMPT_POLICY: "SDK_IM_SET_GROUP_MSG_PROMPT_POLICY",
+        SDK_IM_SET_DISGROUP_POLICY: "SDK_IM_SET_DISGROUP_POLICY",
+        SDK_IM_PUBLISH_STATUS: "SDK_IM_PUBLISH_STATUS",
+        SDK_IM_DETECT_USER_STATUS: "SDK_IM_DETECT_USER_STATUS",
+        SDK_IM_SEND_MESSAGE: "SDK_IM_SEND_MESSAGE",
+        SDK_IM_NOTIFY_INPUTTING: "SDK_IM_NOTIFY_INPUTTING",
+        SDK_IM_WITH_DRAW_MESSAGE: "SDK_IM_WITH_DRAW_MESSAGE",
+        SDK_IM_SET_READ_MESSAGE: "SDK_IM_SET_READ_MESSAGE",
+        SDK_IM_GET_RECENT_CONVERSATION: "SDK_IM_GET_RECENT_CONVERSATION",
+        SDK_IM_DEL_RECENT_CONVERSATION: "SDK_IM_DEL_RECENT_CONVERSATION",
+        SDK_IM_DEL_MESSAGE: "SDK_IM_DEL_MESSAGE",
+        SDK_IM_QUERY_HISTORY_MESSAGE: "SDK_IM_QUERY_HISTORY_MESSAGE",
+    };
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
@@ -410,16 +809,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         CA_PATH: "./",
         LOG_PATH: "./js_sdk_log",
         LOG_LEVEL: 3,
+        LOG_IM_LEVEL: 0,
         LOG_FILE_COUNT: 5,
         LOG_FILE_SIZE: 10240,
+        IM_SERVER_VERSION: "v3.1.0.200",
         ENTERPRISE_DOMAIN: "127.0.0.1",
         IS_WITH_SBC: 1,
         IS_TLS_SUPPORT: 0,
         IS_WSS: 1,
+        CONF_CONTROL_PROTOCOL: 0,
         HWUC: 0,
         DROP_FRAME_COUNT: 2,
         IS_AUTO_ADAPT_FRAME: 0,
         VIDEO_DISPLAY_MODE: 1,
+        NATIVE_NEED_ATTACH: 1,
         NATIVE_WINDOW_X_OFFSET: 600,
         NATIVE_WINDOW_Y_OFFSET: 300,
         NATIVE_WINDOW_X_OFFSET_RATE: 50,
@@ -432,93 +835,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function (it, key) {
-  return hasOwnProperty.call(it, key);
-};
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var dP = __webpack_require__(8);
-var createDesc = __webpack_require__(38);
-module.exports = __webpack_require__(7) ? function (object, key, value) {
-  return dP.f(object, key, createDesc(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
+module.exports = function (it) {
+  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+  return it;
 };
 
 
 /***/ }),
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global = __webpack_require__(3);
-var hide = __webpack_require__(14);
-var has = __webpack_require__(13);
-var SRC = __webpack_require__(39)('src');
-var TO_STRING = 'toString';
-var $toString = Function[TO_STRING];
-var TPL = ('' + $toString).split(TO_STRING);
-
-__webpack_require__(26).inspectSource = function (it) {
-  return $toString.call(it);
-};
-
-(module.exports = function (O, key, val, safe) {
-  var isFunction = typeof val == 'function';
-  if (isFunction) has(val, 'name') || hide(val, 'name', key);
-  if (O[key] === val) return;
-  if (isFunction) has(val, SRC) || hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
-  if (O === global) {
-    O[key] = val;
-  } else if (!safe) {
-    delete O[key];
-    hide(O, key, val);
-  } else if (O[key]) {
-    O[key] = val;
-  } else {
-    hide(O, key, val);
-  }
-// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-})(Function.prototype, TO_STRING, function toString() {
-  return typeof this == 'function' && this[SRC] || $toString.call(this);
-});
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var $export = __webpack_require__(0);
-var fails = __webpack_require__(4);
-var defined = __webpack_require__(28);
-var quot = /"/g;
-// B.2.3.2.1 CreateHTML(string, tag, attribute, value)
-var createHTML = function (string, tag, attribute, value) {
-  var S = String(defined(string));
-  var p1 = '<' + tag;
-  if (attribute !== '') p1 += ' ' + attribute + '="' + String(value).replace(quot, '&quot;') + '"';
-  return p1 + '>' + S + '</' + tag + '>';
-};
-module.exports = function (NAME, exec) {
-  var O = {};
-  O[NAME] = exec(createHTML);
-  $export($export.P + $export.F * fails(function () {
-    var test = ''[NAME]('"');
-    return test !== test.toLowerCase() || test.split('"').length > 3;
-  }), 'String', O);
-};
-
-
-/***/ }),
-/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
@@ -975,8 +1302,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         WEB: 2
     };
     exports.CLIENT_DESC = {
-        PC: "WeLink Desktop",
-        MOBILE: "WeLink Mobile",
+        PC: "eSDK-Desktop",
+        MOBILE: "eSDK-Mobile",
     };
     exports.RESUME_EVENT = {
         IP_CHANGE: "ipchange",
@@ -986,9 +1313,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         SUSPEND: "suspend"
     };
     exports.CLOUDEC_SDK_INFO = {
-        version: "6.1.0",
-        name: "CloudEC JSSDK",
-        time: "2018.7.6"
+        version: "6.19.0.RC1",
+        name: "eSDK EC",
+        time: "2018.9.12"
     };
     exports.CLOUDEC_COMMON_RESULT = {
         SUCCESS: 0,
@@ -1028,31 +1355,128 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ENABLE_OFFLINE_FORWARD: 31,
         DISABLE_OFFLINE_FORWARD: 32,
     };
+    exports.IM_HISTORYMESSAGE_TYPE = {
+        SINGLECHAT: 0,
+        GROUPCHAT: 1,
+        BULLETIN: 3,
+    };
+    exports.CLOUDEC_SDK_LOG_LEVEL = {
+        LOG_ERROR: 0,
+        LOG_WARNING: 1,
+        LOG_INFO: 2,
+        LOG_DEBUG: 3,
+    };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP = __webpack_require__(8);
+var createDesc = __webpack_require__(40);
+module.exports = __webpack_require__(7) ? function (object, key, value) {
+  return dP.f(object, key, createDesc(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
 
 
 /***/ }),
 /* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(56);
-var defined = __webpack_require__(28);
-module.exports = function (it) {
-  return IObject(defined(it));
+var global = __webpack_require__(3);
+var hide = __webpack_require__(17);
+var has = __webpack_require__(16);
+var SRC = __webpack_require__(41)('src');
+var TO_STRING = 'toString';
+var $toString = Function[TO_STRING];
+var TPL = ('' + $toString).split(TO_STRING);
+
+__webpack_require__(29).inspectSource = function (it) {
+  return $toString.call(it);
 };
+
+(module.exports = function (O, key, val, safe) {
+  var isFunction = typeof val == 'function';
+  if (isFunction) has(val, 'name') || hide(val, 'name', key);
+  if (O[key] === val) return;
+  if (isFunction) has(val, SRC) || hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
+  if (O === global) {
+    O[key] = val;
+  } else if (!safe) {
+    delete O[key];
+    hide(O, key, val);
+  } else if (O[key]) {
+    O[key] = val;
+  } else {
+    hide(O, key, val);
+  }
+// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+})(Function.prototype, TO_STRING, function toString() {
+  return typeof this == 'function' && this[SRC] || $toString.call(this);
+});
 
 
 /***/ }),
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var $export = __webpack_require__(0);
+var fails = __webpack_require__(4);
+var defined = __webpack_require__(31);
+var quot = /"/g;
+// B.2.3.2.1 CreateHTML(string, tag, attribute, value)
+var createHTML = function (string, tag, attribute, value) {
+  var S = String(defined(string));
+  var p1 = '<' + tag;
+  if (attribute !== '') p1 += ' ' + attribute + '="' + String(value).replace(quot, '&quot;') + '"';
+  return p1 + '>' + S + '</' + tag + '>';
+};
+module.exports = function (NAME, exec) {
+  var O = {};
+  O[NAME] = exec(createHTML);
+  $export($export.P + $export.F * fails(function () {
+    var test = ''[NAME]('"');
+    return test !== test.toLowerCase() || test.split('"').length > 3;
+  }), 'String', O);
+};
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = __webpack_require__(56);
+var defined = __webpack_require__(31);
+module.exports = function (it) {
+  return IObject(defined(it));
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var pIE = __webpack_require__(57);
-var createDesc = __webpack_require__(38);
-var toIObject = __webpack_require__(18);
-var toPrimitive = __webpack_require__(27);
-var has = __webpack_require__(13);
+var createDesc = __webpack_require__(40);
+var toIObject = __webpack_require__(20);
+var toPrimitive = __webpack_require__(30);
+var has = __webpack_require__(16);
 var IE8_DOM_DEFINE = __webpack_require__(101);
 var gOPD = Object.getOwnPropertyDescriptor;
 
@@ -1067,11 +1491,11 @@ exports.f = __webpack_require__(7) ? gOPD : function getOwnPropertyDescriptor(O,
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has = __webpack_require__(13);
+var has = __webpack_require__(16);
 var toObject = __webpack_require__(10);
 var IE_PROTO = __webpack_require__(75)('IE_PROTO');
 var ObjectProto = Object.prototype;
@@ -1086,178 +1510,7 @@ module.exports = Object.getPrototypeOf || function (O) {
 
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// optional / simple context binding
-var aFunction = __webpack_require__(11);
-module.exports = function (fn, that, length) {
-  aFunction(fn);
-  if (that === undefined) return fn;
-  switch (length) {
-    case 1: return function (a) {
-      return fn.call(that, a);
-    };
-    case 2: return function (a, b) {
-      return fn.call(that, a, b);
-    };
-    case 3: return function (a, b, c) {
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function (/* ...args */) {
-    return fn.apply(that, arguments);
-  };
-};
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = function (it) {
-  return toString.call(it).slice(8, -1);
-};
-
-
-/***/ }),
 /* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var fails = __webpack_require__(4);
-
-module.exports = function (method, arg) {
-  return !!method && fails(function () {
-    // eslint-disable-next-line no-useless-call
-    arg ? method.call(null, function () { /* empty */ }, 1) : method.call(null);
-  });
-};
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.USER_EVENT_ID = {
-        USER_LOGIN_RET_EVENT: "USER_LOGIN_RET_EVENT",
-    };
-    exports.SDK_EVENT_ID = {
-        SDK_LOGIN_REQ: "SDK_LOGIN_REQ",
-        SDK_LOGOUT_REQ: "SDK_LOGOUT_REQ",
-        SDK_SET_PROXY_REQ: "SDK_SET_PROXY_REQ",
-        SDK_CONF_BOOK_RESVCONF: "SDK_CONF_BOOK_RESVCONF",
-        SDK_CONF_JOIN_INSTCONF: "SDK_CONF_JOIN_INSTCONF",
-        SDK_CONF_REFRESH_TOKEN: "SDK_CONF_REFRESH_TOKEN",
-        SDK_CONF_GET_CONFLIST: "SDK_CONF_GET_CONFLIST",
-        SDK_CONF_GET_CONFINFO: "SDK_CONF_GET_CONFINFO",
-        SDK_CONF_ACCESS_RESVCONF: "SDK_CONF_ACCESS_RESVCONF",
-        SDK_CONF_ACCEPT_CONF: "SDK_CONF_ACCEPT_CONF",
-        SDK_CONF_REJECT_CONF: "SDK_CONF_REJECT_CONF",
-        SDK_CONF_ADD_ATTENDEE: "SDK_CONF_ADD_ATTENDEE",
-        SDK_CONF_DEL_ATTENDEE: "SDK_CONF_DEL_ATTENDEE",
-        SDK_CONF_MUTE_CONF: "SDK_CONF_MUTE_CONF",
-        SDK_CONF_MUTE_ATTENDEE: "SDK_CONF_MUTE_ATTENDEE",
-        SDK_CONF_JOIN_ANONYCONF: "SDK_CONF_JOIN_ANONYCONF",
-        SDK_CONF_AS_SET_OWNER: "SDK_CONF_AS_SET_OWNER",
-        SDK_CONF_AS_SET_SHARE_TYPE: "SDK_CONF_AS_SET_SHARE_TYPE",
-        SDK_CONF_AS_START: "SDK_CONF_AS_START",
-        SDK_CONF_AS_STOP: "SDK_CONF_AS_STOP",
-        SDK_CONF_WB_CREATE: "SDK_CONF_WB_CREATE",
-        SDK_CONF_WB_DELETE: "SDK_CONF_WB_DELETE",
-        SDK_CONF_WB_PAGE_CREATE: "SDK_CONF_WB_PAGE_CREATE",
-        SDK_CONF_WB_PAGE_DELETE: "SDK_CONF_WB_PAGE_DELETE",
-        SDK_CONF_WB_SET_CURR_PAGE: "SDK_CONF_WB_SET_CURR_PAGE",
-        SDK_CONF_AT_CREATE_START: "SDK_CONF_AT_CREATE_START",
-        SDK_CONF_AT_CUSTOMER_UPDATE: "SDK_CONF_AT_CUSTOMER_UPDATE",
-        SDK_CONF_AT_DRAWING_UPDATE: "SDK_CONF_AT_DRAWING_UPDATE",
-        SDK_CONF_AT_CREATE_DONE: "SDK_CONF_AT_CREATE_DONE",
-        SDK_CONF_AT_SET_SELECT: "SDK_CONF_AT_SET_SELECT",
-        SDK_CONF_AT_DELETE: "SDK_CONF_AT_DELETE",
-        SDK_CONF_AT_EDIT_START: "SDK_CONF_AT_EDIT_START",
-        SDK_CONF_AT_EDIT_UPDATE: "SDK_CONF_AT_EDIT_UPDATE",
-        SDK_CONF_AT_EDIT_DONE: "SDK_CONF_AT_EDIT_DONE",
-        SDK_CONF_AT_TEXT_CREATE: "SDK_CONF_AT_TEXTCREATE",
-        SDK_CONF_AT_TEXT_UPDATE: "SDK_CONF_AT_TEXT_UPDATE",
-        SDK_CONF_AT_TEXT_GETINFO: "SDK_CONF_AT_TEXT_GETINFO",
-        SDK_CONF_AT_HITTEST: "SDK_CONF_AT_HITTEST",
-        SDK_CONF_AT_HITTEST_RECT: "SDK_CONF_AT_HITTEST_RECT",
-        SDK_CONF_AT_LASERPOINTER_START: "SDK_CONF_AT_LASERPOINTER_START",
-        SDK_CONF_AT_LASERPOINTER_MOVETO: "SDK_CONF_AT_LASERPOINTER_MOVETO",
-        SDK_CONF_AT_LASERPOINTER_STOP: "SDK_CONF_AT_LASERPOINTER_STOP",
-        SDK_CONF_REQUEST_PRIVILEGE: "SDK_CONF_REQUEST_PRIVILEGE",
-        SDK_CONF_SET_PRIVILEGE: "SDK_CONF_SET_PRIVILEGE",
-        SDK_CONF_KEYBOARD_INPUT: "SDK_CONF_KEYBOARD_INPUT",
-        SDK_CONF_REQUEST_CHAIRMAN: "SDK_CONF_REQUEST_CHAIRMAN",
-        SDK_CONF_RELEASE_CHAIRMAN: "SDK_CONF_RELEASE_CHAIRMAN",
-        SDK_CONF_HAND_UP: "SDK_CONF_HAND_UP",
-        SDK_CONF_LEAVE_CONF: "SDK_CONF_LEAVE_CONF",
-        SDK_CONF_END_CONF: "SDK_CONF_END_CONF",
-        SDK_CONF_SET_CONFMODE: "SDK_CONF_SET_CONFMODE",
-        SDK_CONF_SET_CONF_MIXED_PICTURE: "SDK_CONF_SET_CONF_MIXED_PICTURE",
-        SDK_CONF_BROADCAST_ATTENDEE: "SDK_CONF_BROADCAST_ATTENDEE",
-        SDK_CONF_WATCH_ATTENDEE: "SDK_CONF_WATCH_ATTENDEE",
-        SDK_CONF_VIDEO_SWITCH: "SDK_CONF_VIDEO_SWITCH",
-        SDK_CONF_MIC_SWITCH: "SDK_CONF_MIC_SWITCH",
-        SDK_CONF_SEND_MSG: "SDK_CONF_SEND_MSG",
-        SDK_CONF_ENABLE_RENDER: "SDK_CONF_ENABLE_RENDER",
-        SDK_CONF_SET_DATA_RENDER: "SDK_CONF_SET_DATA_RENDER",
-        SDK_CONF_SET_WB_DATA_RENDER: "SDK_CONF_SET_WB_DATA_RENDER",
-        SDK_CONF_SET_CANVAS_SIZE: "SDK_CONF_SET_CANVAS_SIZE",
-        SDK_CONF_SET_DROP_FRAME: "SDK_CONF_SET_DROP_FRAME",
-        SDK_CONF_VIDEO_RECONNECT: "SDK_CONF_VIDEO_RECONNECT",
-        SDK_CONF_GET_ATTENDEELIST: "SDK_CONF_GET_ATTENDEELIST",
-        SDK_CONF_ADD_ATTENDEE_TB: "SDK_CONF_ADD_ATTENDEE_TB",
-        SDK_CONF_DEL_ATTENDEE_TB: "SDK_CONF_DEL_ATTENDEE_TB",
-        SDK_DATACONF_MEMBER_TB: "SDK_DATACONF_MEMBER_TB",
-        SDK_DATACONF_MEMBER_TYPE_TB: "SDK_DATACONF_MEMBER_TYPE_TB",
-        SDK_DATACONF_UPDATE_SHARING_SESSION_TB: "SDK_DATACONF_UPDATE_SHARING_SESSION_TB",
-        SDK_DATACONF_CLEAR_ATTENDEE_TB: "SDK_DATACONF_CLEAR_ATTENDEE_TB",
-        SDK_DATACONF_SELECT_ATTENDEE_TB: "SDK_DATACONF_SELECT_ATTENDEE_TB",
-        SDK_DEVC_GET_MEDIA_DEVICE: "SDK_DEVC_GET_MEDIA_DEVICE",
-        SDK_DEVC_SET_MEDIA_DEVICE: "SDK_DEVC_SET_MEDIA_DEVICE",
-        SDK_DEVC_GET_VOICE: "SDK_DEVC_GET_VOICE",
-        SDK_DEVC_SET_VOICE: "SDK_DEVC_SET_VOICE",
-        SDK_CMPT_GET_CPU_USAGE: "SDK_CMPT_GET_CPU_USAGE",
-        SDK_CMPT_GET_MEMORY_USAGE: "SDK_CMPT_GET_MEMORY_USAGE",
-        SDK_EADDR_SEARCH_USER: "SDK_EADDR_SEARCH_USER",
-        SDK_EADDR_SEARCH_DEPT: "SDK_EADDR_SEARCH_DEPT",
-        SDK_CALL_START_CALL: "SDK_CALL_START_CALL",
-        SDK_CALL_ACCEPT_CALL: "SDK_CALL_ACCEPT_CALL",
-        SDK_CALL_REJECT_CALL: "SDK_CALL_REJECT_CALL",
-        SDK_CALL_HOLD_CALL: "SDK_CALL_HOLD_CALL",
-        SDK_CALL_UNHOLD_CALL: "SDK_CALL_UNHOLD_CALL",
-        SDK_CALL_SEND_DTMF: "SDK_CALL_SEND_DTMF",
-        SDK_CALL_SET_VIDEO_RENDER: "SDK_CALL_SET_VIDEO_RENDER",
-        SDK_CALL_SET_LOCAL_VIDEOWH: "SDK_CALL_SET_LOCAL_VIDEOWH",
-        SDK_CALL_SET_REMOTE_VIDEOWH: "SDK_CALL_SET_REMOTE_VIDEOWH",
-        SDK_CONF_P2P_TRANSFER_TO_CONF: "SDK_CONF_P2P_TRANSFER_TO_CONF",
-        SDK_CALL_START_PLAY_MEDIA_FILE: "SDK_CALL_START_PLAY_MEDIA_FILE",
-        SDK_CALL_STOP_PLAY_MEDIA_FILE: "SDK_CALL_STOP_PLAY_MEDIA_FILE",
-        SDK_CALL_ADD_VIDEO: "SDK_CALL_ADD_VIDEO",
-        SDK_CALL_DEL_VIDEO: "SDK_CALL_DEL_VIDEO",
-        SDK_CALL_REPLY_ADD_VIDEO: "SDK_CALL_REPLY_ADD_VIDEO",
-        SDK_CALL_NATIVEWND_INIT: "SDK_CALL_NATIVEWND_INIT",
-        SDK_CALL_NATIVEWND_CREATE_WINDOW: "SDK_CALL_NATIVEWND_CREATE_WINDOW",
-        SDK_CALL_NATIVEWND_DESTROY_WINDOW: "SDK_CALL_NATIVEWND_DESTROY_WINDOW",
-        SDK_CALL_NATIVEWND_UNINIT: "SDK_CALL_NATIVEWND_UNINIT",
-        SDK_CALL_SET_VIDEO_WINDOW: "SDK_CALL_SET_VIDEO_WINDOW",
-        SDK_CALL_RESET_NATIVEWND_SIZE: "SDK_CALL_RESET_NATIVEWND_SIZE",
-        SDK_CALL_SET_IPT_SERVICE: "SDK_CALL_SET_IPT_SERVICE",
-        SDK_CALL_BLIND_TRANSFER: "SDK_CALL_BLIND_TRANSFER",
-    };
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -1295,232 +1548,2623 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15), __webpack_require__(24), __webpack_require__(13), __webpack_require__(11), __webpack_require__(28), __webpack_require__(350), __webpack_require__(12), __webpack_require__(1), __webpack_require__(349), __webpack_require__(376), __webpack_require__(377), __webpack_require__(378), __webpack_require__(379), __webpack_require__(380), __webpack_require__(381), __webpack_require__(382), __webpack_require__(15), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, errorCode_1, serverConfig_1, dispatcher_1, observer_1, initialization_1, eventInfo_1, util, call_1, conference_1, device_1, eaddr_1, contact_1, group_1, presence_1, message_1, enum_2, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Dispatcher = (function () {
-        function Dispatcher() {
+    var Client = (function () {
+        function Client() {
+            this.timer = 0;
+            this.currentFrame = serverConfig_1.CloudEC_SERVERCONFIG.DROP_FRAME_COUNT || 2;
+            this.pcMemory = 0;
+            this.playHandle = -1;
+            this.parentFrameHwnd = 0;
+            this.frameHwndList = {};
+            this.isNativeWndExist = false;
+            initialization_1.default.init();
+            this._device = new device_1.default();
+            this._eaddr = new eaddr_1.default();
+            this._contact = new contact_1.default();
+            this._group = new group_1.default();
+            this._presence = new presence_1.default();
+            this._message = new message_1.default();
+            this._status = 0;
         }
-        Dispatcher.register = function (name, callback, context) {
-            var observers = Dispatcher.listeners[name];
-            if (!observers) {
-                Dispatcher.listeners[name] = [];
-            }
-            Dispatcher.listeners[name].push(new Observer(callback, context));
-        };
-        Dispatcher.remove = function (name, callback, context) {
-            var observers = Dispatcher.listeners[name];
-            if (!observers)
+        Client.prototype.login = function (authType, authParam, serverInfo, callback) {
+            var _this = this;
+            util_1.default.info("Login", "Client:enter login");
+            var err = { cmdId: 100000000, errorCode: 100000002, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err_1 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(100000000, 100000002, "callback");
+                Client.notifyErr(err_1);
                 return;
-            var length = observers.length;
-            for (var i = 0; i < length; i++) {
-                var observer = observers[i];
-                if (observer.compar(context)) {
-                    observers.splice(i, 1);
-                    break;
-                }
             }
-            if (observers.length == 0) {
-                delete Dispatcher.listeners[name];
+            if ((typeof authType) != 'number') {
+                err.errorInfo = "authType should be a number";
+                evt.info = err;
+                callback(evt);
+                return;
             }
-        };
-        Dispatcher.removeAll = function () {
-            for (var m in Dispatcher.listeners) {
-                if (Dispatcher.listeners[m]) {
-                    for (var i = 0; i < Dispatcher.listeners[m].length; ++i) {
-                        Dispatcher.listeners[m].splice(i, 1);
+            switch (authType) {
+                case enum_1.LOGIN_AUTH_TYPE.ACCOUNT_AUTH:
+                    if (!authParam.account || !authParam.passwd) {
+                        err.errorInfo = "login account or password is empty";
+                        evt.info = err;
+                        callback(evt);
+                        return;
                     }
+                    break;
+                case enum_1.LOGIN_AUTH_TYPE.TOKEN_AUTH:
+                    if (!authParam.token) {
+                        err.errorInfo = "login token is empty";
+                        evt.info = err;
+                        callback(evt);
+                        return;
+                    }
+                    break;
+                default:
+                    err.errorInfo = "authType should be in [0,1]";
+                    evt.info = err;
+                    callback(evt);
+                    return;
+            }
+            if ("" == serverInfo.serverAddress || (typeof serverInfo.serverPort) != 'number') {
+                err.errorInfo = "serverAddress or serverPort is incorrect";
+                evt.info = err;
+                callback(evt);
+                return;
+            }
+            sessionStorage.setItem("CLOUDEC_LOGIN_INPUT_PARAM", JSON.stringify({ authType: authType, authParam: authParam, serverInfo: serverInfo }));
+            authParam.token = "";
+            authParam.passwd = "";
+            serverInfo.extensions = "";
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_LOGIN_REQ, function (ret) {
+                if (!ret.result) {
+                    callback(ret);
+                    return;
                 }
+                var _a = ret.info, userAccount = _a.userAccount, sipAccount = _a.sipAccount, shortNumber = _a.shortNumber, deployMode = _a.deployMode;
+                var milltime = new Date().getTime();
+                var mydate = util.formatDateYYYYMMDDHHMM(milltime);
+                var loginTime = mydate.date + " " + mydate.time;
+                var userInfo = { userAccount: userAccount, sipAccount: sipAccount, shortNumber: shortNumber, loginTime: loginTime };
+                evt.result = true;
+                evt.info = userInfo;
+                _this._status = 1;
+                _this.registerCallEvent();
+                _this.registerConfEvent();
+                _this.registerDataEvent();
+                _this.registerImEvent();
+                callback(evt);
+            });
+        };
+        Client.prototype.logout = function () {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_LOGOUT_REQ);
+            delete this._call;
+            delete this._conf;
+            this._status = 0;
+        };
+        Client.prototype.bookConference = function (bookConferenceParam, callback) {
+            this.isLogin();
+            var ret = this.isValidBookConferenceParam(bookConferenceParam);
+            if (ret.result === false) {
+                Client.notifyErr(ret);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                Client.notifyErr(err);
+                return;
+            }
+            if (bookConferenceParam.topic.length === 0) {
+                bookConferenceParam.topic = "CloudEC_Meeting";
+                util_1.default.info("Login", "set default meeting topic");
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_BOOK_RESVCONF, bookConferenceParam, function (ret) {
+                if (ret.result == true) {
+                    var data = ret.info.param;
+                    var conf_list_info = data.conf_list_info;
+                    var date = new Date();
+                    var offset = date.getTimezoneOffset() * 60 * 1000;
+                    var sdate = new Date(conf_list_info.start_time.replace(" ", "T"));
+                    var l_sdate = new Date(sdate.valueOf() - offset);
+                    var l_start_time = l_sdate.toLocaleString();
+                    var edate = new Date(conf_list_info.end_time.replace(" ", "T"));
+                    var l_edate = new Date(edate.valueOf() - offset);
+                    var l_end_time = l_edate.toLocaleString();
+                    var conf_info = {
+                        conferenceID: conf_list_info.conf_id,
+                        accessNumber: conf_list_info.access_number,
+                        chairmanPasswd: conf_list_info.chairman_pwd,
+                        generalPasswd: conf_list_info.general_pwd,
+                        state: conf_list_info.conf_state,
+                        topic: conf_list_info.conf_subject,
+                        startTime: l_start_time,
+                        endTime: l_end_time,
+                        mediaType: conf_list_info.media_type,
+                        scheduserName: "",
+                        scheduerNumber: "",
+                        attendeeAmount: conf_list_info.size
+                    };
+                    ret.info = conf_info;
+                }
+                callback(ret);
+            });
+        };
+        Client.prototype.joinInstanceConf = function (instanceConfParam, callback) {
+            var _this = this;
+            this.isLogin();
+            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            var validret = this.isValideInstanceConfParam(instanceConfParam);
+            if (validret.result === false) {
+                Client.notifyErr(validret);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err_2 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                Client.notifyErr(err_2);
+                return;
+            }
+            if (!util.isUndefined(this._conf) || !util.isUndefined(this._call)) {
+                callback(errorCode_1.EC_SDK_ERROR.ALREADY_IN_CONF());
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_JOIN_INSTCONF, instanceConfParam, function (ret) {
+                if (ret.result == true) {
+                    _this._conf = new conference_1.default();
+                    _this._conf.setConfInfo(ret.info);
+                    evt.result = true;
+                    evt.info = _this._conf;
+                }
+                else {
+                    evt.result = false;
+                    evt.info = ret.info;
+                }
+                callback(evt);
+            });
+        };
+        Client.prototype.joinAnonymousConf = function (anonymousConfParam, serverInfo, callback) {
+            var _this = this;
+            util_1.default.info("Login", "Client:join anonymous conf begin");
+            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err_3 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                Client.notifyErr(err_3);
+                return;
+            }
+            if (util.isUndefined(serverInfo) || "" == serverInfo.serverAddress || (typeof serverInfo.serverPort) != 'number') {
+                err.errorInfo = "serverAddress or serverPort is incorrect";
+                evt.info = err;
+                callback(evt);
+                return;
+            }
+            if (util.isUndefined(anonymousConfParam) || "" == anonymousConfParam.confId || "" == anonymousConfParam.confPasswd || !util.isBinaryNumber(anonymousConfParam.callType)) {
+                err.errorInfo = "anonymous conf parameters can not be empty";
+                evt.result = false;
+                evt.info = err;
+                callback(evt);
+                return;
+            }
+            this.registerCallEvent();
+            this.registerConfEvent();
+            this.registerDataEvent();
+            this._status = 1;
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_JOIN_ANONYCONF, anonymousConfParam, serverInfo, function (ret) {
+                if (ret.result) {
+                    _this._conf = new conference_1.default();
+                    evt.info = _this._conf;
+                    callback(evt);
+                }
+                else {
+                    callback(ret);
+                }
+            });
+            anonymousConfParam.confPasswd = "";
+        };
+        Client.prototype.getMyConfList = function (page_index, page_size, callback) {
+            this.isLogin();
+            if (util.isUndefined(page_index) || !util.isInteger(page_index)) {
+                Client.notifyErr(errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("page_index"));
+                return;
+            }
+            if (util.isUndefined(page_size) || !util.isInteger(page_size)) {
+                Client.notifyErr(errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("page_size"));
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                Client.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_GET_CONFLIST, page_index, page_size, function (ret) {
+                var conf_list = [];
+                if (ret.result == true) {
+                    var conf_list_info = ret.info.param.conf_list_info;
+                    for (var m in conf_list_info) {
+                        var date = new Date();
+                        var offset = date.getTimezoneOffset() * 60 * 1000;
+                        var sdate = new Date(conf_list_info[m].start_time.replace(" ", "T"));
+                        var l_sdate = new Date(sdate.valueOf() - offset);
+                        var l_start_time = l_sdate.toLocaleString();
+                        var edate = new Date(conf_list_info[m].end_time.replace(" ", "T"));
+                        var l_edate = new Date(edate.valueOf() - offset);
+                        var l_end_time = l_edate.toLocaleString();
+                        var obj = {
+                            accessNumber: conf_list_info[m].access_number,
+                            chairmanPasswd: conf_list_info[m].chairman_pwd,
+                            generalPasswd: conf_list_info[m].general_pwd,
+                            conferenceID: conf_list_info[m].conf_id,
+                            state: conf_list_info[m].conf_state,
+                            topic: conf_list_info[m].conf_subject,
+                            startTime: l_start_time,
+                            endTime: l_end_time,
+                            mediaType: (conf_list_info[m].media_type == 1 || conf_list_info[m].media_type == 17 ? 0 : 1),
+                            scheduserName: conf_list_info[m].scheduser_name,
+                            scheduerNumber: conf_list_info[m].scheduser_number,
+                            attendeeAmount: conf_list_info[m].size
+                        };
+                        conf_list[m] = obj;
+                    }
+                    callback({ result: true, info: conf_list });
+                }
+                else {
+                    callback(ret);
+                }
+            });
+        };
+        Client.prototype.getMyConfInfo = function (conf_id, callback) {
+            this.isLogin();
+            if (util.isUndefined(conf_id) || !util.isString(conf_id)) {
+                Client.notifyErr(errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("conf_id"));
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                Client.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_GET_CONFINFO, conf_id, function (ret) {
+                if (ret.result == true) {
+                    var data = ret.info.param;
+                    var conf_list_info = data.get_conf_info_result.conf_list_info;
+                    var date = new Date();
+                    var offset = date.getTimezoneOffset() * 60 * 1000;
+                    var sdate = new Date(conf_list_info.start_time.replace(" ", "T"));
+                    var l_sdate = new Date(sdate.valueOf() - offset);
+                    var l_start_time = l_sdate.toLocaleString();
+                    var edate = new Date(conf_list_info.end_time.replace(" ", "T"));
+                    var l_edate = new Date(edate.valueOf() - offset);
+                    var l_end_time = l_edate.toLocaleString();
+                    var conf_info = {
+                        conferenceID: conf_list_info.conf_id,
+                        accessNumber: conf_list_info.access_number,
+                        chairmanPasswd: conf_list_info.chairman_pwd,
+                        generalPasswd: conf_list_info.general_pwd,
+                        state: conf_list_info.conf_state,
+                        topic: conf_list_info.conf_subject,
+                        startTime: l_start_time,
+                        endTime: l_end_time,
+                        mediaType: conf_list_info.media_type,
+                        scheduserName: conf_list_info.scheduser_name,
+                        scheduerNumber: conf_list_info.scheduser_number,
+                        attendeeAmount: data.get_conf_info_result.num_of_addendee
+                    };
+                    callback({ result: true, info: conf_info });
+                }
+                else {
+                    callback(ret);
+                }
+            });
+        };
+        Client.prototype.joinConference = function (joinConfParam, callback) {
+            var _this = this;
+            this.isLogin();
+            var err = { cmdId: 300000000, errorCode: 300000002, errorInfo: "parameter error" };
+            var evt = { result: true, info: "" };
+            var mediaType = 1;
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err_4 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                Client.notifyErr(err_4);
+                return;
+            }
+            if (util.isUndefined(joinConfParam) || "" == joinConfParam.conferenceId
+                || "" == joinConfParam.accessNumber || "" == joinConfParam.confPasswd) {
+                err.errorInfo = "Parameter can not be empty";
+                evt.result = false;
+                evt.info = err;
+                callback(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_ACCESS_RESVCONF, joinConfParam, mediaType, function (ret) {
+                if (ret.result) {
+                    _this._conf = new conference_1.default();
+                    evt.info = _this._conf;
+                    callback(evt);
+                }
+                else {
+                    callback(ret);
+                }
+            });
+            joinConfParam.confPasswd = "";
+        };
+        Client.prototype.setLoginProxy = function (proxyParam) {
+            util_1.default.info("Login", "setLoginProxy proxyAddress: " + JSON.stringify(proxyParam));
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_SET_PROXY_REQ, proxyParam, function (ret) {
+            });
+        };
+        Client.prototype.getCallHandler = function () {
+            this.isLogin();
+            if (this._call) {
+                return this._call;
+            }
+            else {
+                util_1.default.error("client", JSON.stringify(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("Call")));
+                Client.notifyErr(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("call"));
+                return null;
             }
         };
-        Dispatcher.fire = function (name) {
+        Client.prototype.getConfHandler = function () {
+            if (this._conf) {
+                return this._conf;
+            }
+            else {
+                var errinfo = "Conference object doesn't exists";
+                util_1.default.error("client", errinfo);
+                Client.notifyErr(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("Conference"));
+                return null;
+            }
+        };
+        Client.prototype.on = function (event, action) {
+            util_1.default.info("client", "register event = " + event);
+            var _listener = Client._listeners[event];
+            if (!_listener) {
+                Client._listeners[event] = [];
+            }
+            Client._listeners[event].push(action);
+        };
+        Client.prototype.onError = function (action) {
+            this.on("error", action);
+        };
+        Client.notifyErr = function (errorInfo) {
+            var _listener = Client._listeners["error"];
+            if (!_listener)
+                return;
+            var length = _listener.length;
+            for (var i = 0; i < length; i++) {
+                var callback = _listener[i];
+                callback(errorInfo);
+            }
+        };
+        Client.prototype.notify = function (event) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            return __awaiter(this, void 0, void 0, function () {
-                var observers, length, i, observer;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            util_1.default.info("dispatcher", "fire a event=" + name);
-                            observers = Dispatcher.listeners[name];
-                            if (!observers)
-                                return [2];
-                            length = observers.length;
-                            i = 0;
-                            _a.label = 1;
-                        case 1:
-                            if (!(i < length)) return [3, 4];
-                            observer = observers[i];
-                            return [4, observer.notify.apply(observer, [name].concat(args))];
-                        case 2:
-                            _a.sent();
-                            _a.label = 3;
-                        case 3:
-                            i++;
-                            return [3, 1];
-                        case 4: return [2];
+            var _listener = Client._listeners[event];
+            if (!_listener)
+                return;
+            var length = _listener.length;
+            for (var i = 0; i < length; i++) {
+                var callback = _listener[i];
+                callback.apply(void 0, args);
+            }
+        };
+        Client.prototype.isValideInstanceConfParam = function (param) {
+            if (util.isUndefined(param)) {
+                return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("instanceConfParam");
+            }
+            if (!util.isUndefined(param.isVideo) && !util.isInteger(param.isVideo) && (param.isVideo < 0 || param.isVideo > 3)) {
+                return errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("isVideo");
+            }
+            if (!util.isUndefined(param.attendees)) {
+                if (!util.isArray(param.attendees)) {
+                    return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("attendees");
+                }
+                for (var i = 0; i < param.attendees.length; i++) {
+                    if (!util.isValidAttendeeParam(param.attendees[i])) {
+                        return errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendees");
+                    }
+                }
+            }
+            return { result: true, info: "" };
+        };
+        Client.prototype.isValidBookConferenceParam = function (param) {
+            if (util.isUndefined(param)) {
+                return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("bookConferenceParam");
+            }
+            if (!util.isInteger(param.duration) ||
+                !util.isString(param.topic)) {
+                return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("duration or topic");
+            }
+            if (!util.isUndefined(param.autoRecord) && !util.isBinaryNumber(param.autoRecord)) {
+                return errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("auto_record");
+            }
+            if (!util.isUndefined(param.isVideo) && !util.isInteger(param.isVideo) && (param.isVideo < 0 || param.isVideo > 3)) {
+                return errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("isVideo");
+            }
+            var startTime = param.startTime;
+            if (startTime != null) {
+                if (!util.isInteger(startTime.year) ||
+                    !util.isInteger(startTime.month) ||
+                    !util.isInteger(startTime.date) ||
+                    !util.isInteger(startTime.hours) ||
+                    !util.isInteger(startTime.minutes)) {
+                    return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("startTime");
+                }
+                if (startTime.month < 1 || startTime.month > 12) {
+                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("month", "0", "12");
+                }
+                if (startTime.date < 1 || startTime.date > 31) {
+                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("date", "1", "31");
+                }
+                if (startTime.hours < 0 || startTime.hours > 24) {
+                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("hours", "0", "24");
+                }
+                if (startTime.minutes < 0 || startTime.minutes > 60) {
+                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("minutes", "0", "60");
+                }
+            }
+            if (util.isUndefined(param.attendees) || !util.isArray(param.attendees) || param.attendees.length === 0) {
+                return errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendees");
+            }
+            for (var i = 0; i < param.attendees.length; i++) {
+                if (!util.isValidAttendeeParam(param.attendees[i])) {
+                    return errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendees");
+                }
+            }
+            return { result: true, info: "" };
+        };
+        Client.prototype.registerCallEvent = function () {
+            var _this = this;
+            observer_1.default.subscribe('CallIncomming', function (ret) {
+                var evt = { result: true, info: "you have a incoming call" };
+                _this._call = new call_1.default();
+                _this._call.setCallID(ret.callId);
+                _this.callID = ret.callId;
+                _this._call.setCallStyle(0);
+                _this._call.setCallType(ret.isVideo);
+                _this._call.setCallee(ret.callNo);
+                evt.info = {
+                    callNo: ret.callNo,
+                    callType: ret.isVideo,
+                };
+                _this.notify('CallIncomming', evt);
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, 0, "./audio/In.wav", function (data) {
+                    if (data.result == 0) {
+                        _this.playHandle = data.param.play_handle;
                     }
                 });
             });
+            observer_1.default.subscribe('onForceUnReg', function (ret) {
+                _this.logout();
+                _this.notify("ForceUnReg", ret);
+            });
+            observer_1.default.subscribe('CallDestroy', function (ret) {
+                _this.notify("CallDestroy", ret);
+            });
+            observer_1.default.subscribe('CallEnded', function (ret) {
+                delete _this._call;
+                var evt;
+                if (ret) {
+                    evt = { result: ret, info: "end success" };
+                }
+                else {
+                    evt = { result: ret, info: "end failure" };
+                }
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                    _this.delVideo();
+                }
+                else {
+                    _this.closeVideo();
+                }
+                if (_this.playHandle >= 0) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, _this.playHandle, function (data) {
+                        if (data.result == 0) {
+                            _this.playHandle = -1;
+                        }
+                    });
+                }
+                _this.notify('CallEnded', evt);
+            });
+            observer_1.default.subscribe('CallConnected', function (ret) {
+                var evt = { result: true, info: "call connect!" };
+                _this.notify('CallConnected', evt);
+                _this.callID = ret.call_id;
+                if (_this.playHandle >= 0) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, _this.playHandle, function (data) {
+                        if (data.result == 0) {
+                            _this.playHandle = -1;
+                        }
+                    });
+                }
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && ret.call_type == 1) {
+                    _this.displayVideoEx(ret.call_id);
+                }
+                else if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && ret.call_type == 0 && _this.isNativeWndExist) {
+                    _this.closeVideo();
+                }
+            });
+            observer_1.default.subscribe('CallRingBack', function (ret) {
+                var evt = { result: true, info: "call ringBack!" };
+                if (_this.playHandle == -1) {
+                    _this.playHandle = -2;
+                    _this._call.setCallID(ret.call_id);
+                    _this.callID = ret.call_id;
+                    _this.notify('CallRingBack', evt);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, 0, "./audio/ringback.wav", function (data) {
+                        if (data.result == 0) {
+                            _this.playHandle = data.param.play_handle;
+                        }
+                    });
+                }
+            });
+            observer_1.default.subscribe('AddVideoRequest', function (ret) {
+                var evt = { result: true, info: "Add video request!" };
+                _this.notify('AddVideoRequest', evt);
+            });
+            observer_1.default.subscribe('DelVideoRequest', function (ret) {
+                var evt = { result: true, info: "Delete video request!" };
+                _this.notify('DelVideoRequest', evt);
+            });
+            observer_1.default.subscribe('CallModifyVideoResult', function (ret) {
+                var evt = { result: true, info: "Audio and video conversion succeed!" };
+                if (0 == ret.result) {
+                    if (1 == ret.is_video) {
+                        if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                            _this.showVideo();
+                        }
+                    }
+                    else {
+                        if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                            _this.closeVideo();
+                        }
+                    }
+                }
+                else {
+                    evt = { result: false, info: "Audio and video conversion failed!" };
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                        if (0 == ret.is_video) {
+                            _this.closeVideo();
+                        }
+                    }
+                }
+                _this.notify('CallModifyVideoResult', evt);
+            });
+            observer_1.default.subscribe('VideoSocketResult', function (ret) {
+                if (!ret.result) {
+                    Client.notifyErr(ret);
+                }
+            });
+            observer_1.default.subscribe('CallSessionModify', function (ret) {
+                _this.notify('CallSessionModify', ret);
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                    if (ret.nowIsVideoCall === 1) {
+                        _this.displayVideoEx(ret.call_id);
+                    }
+                    else {
+                        _this.closeVideo();
+                    }
+                }
+            });
+            observer_1.default.subscribe('NewServiceRight', function (ret) {
+                var evt = { result: true, info: ret };
+                _this.notify('NewServiceRight', evt);
+            });
+            observer_1.default.subscribe('SetIptServiceSuccess', function (ret) {
+                var evt = { result: true, info: "set ipt successful!" };
+                _this.notify('SetIptServiceResult', evt);
+            });
+            observer_1.default.subscribe('SetIptServiceFailed', function (ret) {
+                var evt = { result: false, info: "failed to set ipt!" };
+                _this.notify('SetIptServiceResult', evt);
+            });
+            observer_1.default.subscribe('CallBldTransferRecvSucRsp', function (ret) {
+                var evt = { result: true, info: "blind transfer request result!" };
+                _this.notify('CallBldTransferRecvSucRsp', evt);
+            });
+            observer_1.default.subscribe('CallBldTransferFailed', function (ret) {
+                var evt = { result: false, info: "blind transfer failed!" };
+                _this.notify('CallBldTransferResult', evt);
+            });
+            observer_1.default.subscribe('CallBldTransferSuccess', function (ret) {
+                var evt = { result: true, info: "blind transfer success!" };
+                _this.notify('CallBldTransferResult', evt);
+            });
         };
-        Dispatcher.listeners = {};
-        return Dispatcher;
-    }());
-    exports.default = Dispatcher;
-    var Observer = (function () {
-        function Observer(callback, context) {
-            this.context = null;
-            var self = this;
-            self.callback = callback;
-            self.context = context;
-        }
-        Observer.prototype.notify = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
+        Client.prototype.registerConfEvent = function () {
+            var _this = this;
+            observer_1.default.subscribe("BeTransToConfInd", function (ret) {
+                if (_this._call) {
+                    delete _this._call;
+                }
+                if (ret.info.conf_info.media_type != 17 && ret.info.conf_info.media_type != 1) {
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                    }
+                }
+            });
+            observer_1.default.subscribe("ConfConnected", function (ret) {
+                if (util.isUndefined(_this._call) && ret.connect_info.media_type != 17 && ret.connect_info.media_type != 1) {
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                        _this.showVideo();
+                    }
+                    else {
+                    }
+                }
+                if (util.isUndefined(_this._conf)) {
+                    _this._conf = new conference_1.default();
+                }
+                _this._conf.setCallId(ret.call_id);
+                _this.callID = ret.call_id;
+                _this.notify('ConfConnected', { result: true, info: "Access conference successful" });
+            });
+            observer_1.default.subscribe("ConfInfoInd", function (ret) {
+                var mediaType = ret.info.mediaType;
+                var loginInfo = JSON.parse(sessionStorage.cloudEC_loginInfo);
+                var deployMode = loginInfo.deployMode;
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && mediaType != 17 && mediaType != 1) {
+                    _this.displayVideoEx(_this.callID);
+                }
+                else if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && (mediaType == 17 || mediaType == 1)) {
+                    if (deployMode == enum_2.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
+                        _this.closeVideo();
+                    }
+                }
+                if (_this._conf != undefined) {
+                    _this._conf.setConfInfo(ret.info);
+                }
+                else {
+                    _this._conf = new conference_1.default();
+                    _this._conf.setCallId(ret.info.callid);
+                    _this.callID = ret.info.callid;
+                }
+            });
+            observer_1.default.subscribe("AttendeeListUpdate", function (ret) {
+                var attendeeList = ret.conf_status.participants;
+                var participantNum = ret.conf_status.num_of_participant;
+                var participantOriginNum = _this._conf.getAttendeeListNumber();
+                var attendeeListOrigin = new Array();
+                _this._conf.getAttendeeList(function (ret) {
+                    attendeeListOrigin = ret.info;
+                });
+                if (serverConfig_1.CloudEC_SERVERCONFIG.CONF_CONTROL_PROTOCOL == 0) {
+                    _this._conf.updateConfInfo({
+                        createor: ret.conf_status.createor,
+                        isAllMute: ret.conf_status.is_all_mute,
+                        lockState: ret.conf_status.lock_state,
+                    });
+                }
+                if (participantNum > 0 && participantNum < participantOriginNum) {
+                    var _loop_1 = function (i) {
+                        var flag = void 0;
+                        flag = attendeeList.find(function (value) {
+                            return value.number === attendeeListOrigin[i].number;
+                        });
+                        if (flag == undefined && attendeeListOrigin[i].joinState == 0) {
+                            _this._conf.deleteAttendeeList(attendeeListOrigin[i]);
+                        }
+                    };
+                    for (var i = 0; i < attendeeListOrigin.length; i++) {
+                        _loop_1(i);
+                    }
+                }
+                else if (participantNum > 0 && participantNum == participantOriginNum) {
+                    var _loop_2 = function (i) {
+                        var flag = void 0;
+                        flag = attendeeListOrigin.find(function (value) {
+                            return attendeeList[i].number === value.number;
+                        });
+                        if (flag != undefined) {
+                            var attendee = {
+                                participantId: attendeeList[i].participant_id,
+                                name: attendeeList[i].name,
+                                number: attendeeList[i].number,
+                                isMute: attendeeList[i].is_mute,
+                                isDeaf: attendeeList[i].is_deaf,
+                                raiseHandState: attendeeList[i].hand_state,
+                                role: attendeeList[i].role,
+                                joinState: attendeeList[i].state,
+                                isSelf: attendeeList[i].is_self,
+                                isDataconfMember: flag.isDataconfMember,
+                                dataconfUserId: flag.dataconfUserId,
+                                dataconfMemberType: flag.dataconfMemberType,
+                                sharingPermit: flag.sharingPermit,
+                                isBroadcast: attendeeList[i].is_broadcast
+                            };
+                            _this._conf.updateAttendeeList(attendee);
+                        }
+                    };
+                    for (var i = 0; i < attendeeList.length; i++) {
+                        _loop_2(i);
+                    }
+                }
+                else if (participantNum > 0 && participantNum > participantOriginNum) {
+                    var _loop_3 = function (i) {
+                        var flag = void 0;
+                        flag = attendeeListOrigin.find(function (value) {
+                            return attendeeList[i].name === value.name;
+                        });
+                        if (flag == undefined) {
+                            var attendee = {
+                                participantId: attendeeList[i].participant_id,
+                                name: attendeeList[i].name,
+                                number: attendeeList[i].number,
+                                isMute: attendeeList[i].is_mute,
+                                isDeaf: attendeeList[i].is_deaf,
+                                raiseHandState: attendeeList[i].hand_state,
+                                role: attendeeList[i].role,
+                                joinState: attendeeList[i].state,
+                                isSelf: attendeeList[i].is_self,
+                                isDataconfMember: 0,
+                                dataconfUserId: 0,
+                                dataconfMemberType: 0,
+                                sharingPermit: 0,
+                                isBroadcast: attendeeList[i].is_broadcast
+                            };
+                            _this._conf.addAttendeeList(attendee);
+                        }
+                    };
+                    for (var i = 0; i < attendeeList.length; i++) {
+                        _loop_3(i);
+                    }
+                }
+                var evt = { result: true, info: ret.conf_status.subject };
+                _this.notify('UpdateAttendeeList', evt);
+            });
+            observer_1.default.subscribe("UpdateConfinfo", function (data) {
+                if (!util.isUndefined(_this._conf)) {
+                    _this._conf.setConfInfo(data);
+                }
+            });
+            observer_1.default.subscribe("ConfIncoming", function (ret) {
+                var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
+                var evt = { result: false, info: err };
+                _this._conf = new conference_1.default();
+                var confInfo = {
+                    mediaType: ret.conf_incoming_ind.media_type,
+                    confHandle: ret.handle
+                };
+                _this._conf.setConfInfo(confInfo);
+                evt.result = true;
+                evt.info = "You have a incoming conference";
+                _this.notify('ConfIncoming', evt);
+            });
+            observer_1.default.subscribe("confFinished", function (data) {
+                var evt = { result: true, info: "The meeting has already left!" };
+                var objConfHandle = _this._conf.getConfHandle();
+                var objDataConfHandle = _this._conf.getDataConfHandle();
+                if (objConfHandle === data.confHandle && objDataConfHandle === data.dataConfHandle) {
+                    delete _this._conf;
+                }
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                    _this.closeVideo();
+                }
+                if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
+                    _this.delInterval();
+                }
+                _this.sipDeregisterAnonyConf();
+                _this.notify('LeaveConference', evt);
+            });
+            observer_1.default.subscribe("ConfEnd", function (data) {
+                if (!util.isUndefined(_this._conf)) {
+                    var evt = { result: true, info: "The meeting ended successfully!" };
+                    var objConfHandle = _this._conf.getConfHandle();
+                    if (objConfHandle === data.info.param.handle) {
+                        delete _this._conf;
+                    }
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                        _this.closeVideo();
+                    }
+                    if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
+                        _this.delInterval();
+                    }
+                    _this.sipDeregisterAnonyConf();
+                    _this.notify('EndConference', evt);
+                }
+            });
+            observer_1.default.subscribe("FloorAttendeeInd", function (data) {
+                var evt = { result: false, info: "No speaker" };
+                if (data.num_of_speaker != 0) {
+                    var speakerArr = new Array();
+                    var speakerTemp = data.speaker;
+                    for (var i = 0; i < speakerTemp.length; i++) {
+                        var speaker = {
+                            number: speakerTemp[i].number,
+                            isSpeaking: speakerTemp[i].is_speaking,
+                            speakingVolume: speakerTemp[i].speaking_volume != undefined ? speakerTemp[i].speaking_volume : 0
+                        };
+                        speakerArr.push(speaker);
+                    }
+                    speakerArr.sort(function (x, y) {
+                        return y.speakingVolume - x.speakingVolume;
+                    });
+                    evt.result = true;
+                    evt.info = speakerArr;
+                }
+                _this.notify('SpeakerIdentify', evt);
+            });
+        };
+        Client.prototype.registerDataEvent = function () {
+            var _this = this;
+            observer_1.default.subscribe('UserEnterInd', function (data) {
+                var number = data.user_alt_uri;
+                var isDataconfMember = 1;
+                var dataconfUserId = data.user_alt_id;
+                var dataconfMemberType = data.value2;
+                var flag;
+                var attendeeListOrigin = new Array();
+                _this._conf.getAttendeeList(function (ret) {
+                    attendeeListOrigin = ret.info;
+                });
+                flag = attendeeListOrigin.find(function (value) {
+                    return number === value.number;
+                });
+                if (flag != undefined) {
+                    var attendee = {
+                        participantId: flag.participantId,
+                        name: flag.name,
+                        number: flag.number,
+                        isMute: flag.isMute,
+                        isDeaf: flag.isDeaf,
+                        raiseHandState: flag.raiseHandState,
+                        role: flag.role,
+                        joinState: flag.joinState,
+                        isSelf: flag.isSelf,
+                        isDataconfMember: 1,
+                        dataconfUserId: dataconfUserId,
+                        dataconfMemberType: dataconfMemberType,
+                        sharingPermit: flag.sharingPermit,
+                        isBroadcast: flag.isBroadcast
+                    };
+                    _this._conf.updateAttendeeList(attendee);
+                }
+                else {
+                    var attendee = {
+                        participantId: "",
+                        name: "",
+                        number: number,
+                        isMute: 0,
+                        isDeaf: 0,
+                        raiseHandState: 0,
+                        role: 0,
+                        joinState: 0,
+                        isSelf: 0,
+                        isDataconfMember: 1,
+                        dataconfUserId: dataconfUserId,
+                        dataconfMemberType: dataconfMemberType,
+                        sharingPermit: 0,
+                        isBroadcast: 0
+                    };
+                    _this._conf.addAttendeeList(attendee);
+                }
+                var evt = { result: true, info: "Participant status changes, please update the list of attendees" };
+                _this.notify('UpdateAttendeeList', evt);
+            });
+            observer_1.default.subscribe('PresenterChangeInd', function (data) {
+                var dataconfUserId = data.value2;
+                var attendeeListOrigin = new Array();
+                var flag;
+                _this._conf.getAttendeeList(function (ret) {
+                    attendeeListOrigin = ret.info;
+                });
+                flag = attendeeListOrigin.find(function (value) {
+                    return dataconfUserId === value.dataconfUserId;
+                });
+                if (flag != undefined) {
+                    var attendee = {
+                        participantId: flag.participantId,
+                        name: flag.name,
+                        number: flag.number,
+                        isMute: flag.isMute,
+                        isDeaf: flag.isDeaf,
+                        raiseHandState: flag.raiseHandState,
+                        role: flag.role,
+                        joinState: flag.joinState,
+                        isSelf: flag.isSelf,
+                        isDataconfMember: 1,
+                        dataconfUserId: flag.dataconfUserId,
+                        dataconfMemberType: 2,
+                        sharingPermit: flag.sharingPermit,
+                        isBroadcast: flag.isBroadcast
+                    };
+                    _this._conf.updateAttendeeList(attendee);
+                }
+                var evt = { result: true, info: "Participant status changes, please update the list of attendees" };
+                _this.notify('UpdateAttendeeList', evt);
+            });
+            observer_1.default.subscribe('ConfTerminal', function (data) {
+                _this.notify('ConfTerminal', data);
+            });
+            observer_1.default.subscribe('dataUserleave', function (data) {
+                var flag;
+                var attendeeListOrigin = new Array();
+                _this._conf.getAttendeeList(function (ret) {
+                    attendeeListOrigin = ret.info;
+                });
+                flag = attendeeListOrigin.find(function (value) {
+                    return 1 === value.sharingPermit;
+                });
+                if (flag == undefined) {
+                    var evt = { result: true, info: "" };
+                    evt.info = {
+                        state: 0,
+                        description: "The screen sharing has ended"
+                    };
+                    _this.notify('AsOnSharingState', evt);
+                }
+            });
+            observer_1.default.subscribe('AnnoHittest', function (data) {
+                var annoidType = _this._conf.getAnnoidType();
+                var wbInfoList = _this._conf.getWbInfoList();
+                if (data.annoid != 0) {
+                    if (annoidType.operationIndex == 2) {
+                        var annoidArr = new Array();
+                        annoidArr = [data.annoid];
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_DELETE, data.confHandle, annoidType.ciid, annoidArr, wbInfoList[0].currentPage, wbInfoList[0].docid);
+                    }
+                    else if (annoidType.operationIndex == 4) {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_TEXT_GETINFO, data.confHandle, annoidType.ciid, wbInfoList[0].docid, wbInfoList[0].currentPage, data.annoid);
+                    }
+                    else if (annoidType.operationIndex == 3) {
+                        var annoidArr = new Array();
+                        annoidArr = [data.annoid];
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_SET_SELECT, data.confHandle, 1, annoidType.ciid, annoidArr, wbInfoList[0].docid, wbInfoList[0].currentPage);
+                        _this._conf.annotationSwitch(20);
+                        _this._conf.setAnnoid(data.annoid);
+                    }
+                }
+            });
+            observer_1.default.subscribe('AnnoTextGetInfo', function (data) {
+                var point = _this._conf.getPoint();
+                var annoidType = _this._conf.getAnnoidType();
+                var wbInfoList = _this._conf.getWbInfoList();
+                var pString = _this._conf.diag("");
+                var pInfo = {
+                    "bounds": {
+                        "left": point.x,
+                        "top": point.y,
+                        "right": point.x + 1500,
+                        "bottom": point.y + 300
+                    },
+                    "pString": pString,
+                    "pFont": "宋体",
+                    "color": 255,
+                    "size": 240,
+                    "reserve": 0
+                };
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_TEXT_UPDATE, data.confHandle, true, pInfo, wbInfoList[0].docid, wbInfoList[0].currentPage, annoidType.ciid, data.annoid);
+            });
+            observer_1.default.subscribe('AsOnPrivilege', function (data) {
+                var evt = { result: true, info: "" };
+                var remoteCtrl;
+                var dataconfUserId = data.user_id;
+                var attendeeListOrigin = new Array();
+                var attendee;
+                _this._conf.getAttendeeList(function (ret) {
+                    attendeeListOrigin = ret.info;
+                });
+                attendee = attendeeListOrigin.find(function (value) {
+                    return dataconfUserId === value.dataconfUserId;
+                });
+                if (data.value2 == 1 && attendee.isSelf == 1) {
+                    _this._conf.removeCtrlMsg(1);
+                }
+                else if (data.value2 == 0 && attendee.isSelf == 1) {
+                    _this._conf.removeCtrlMsg(0);
+                }
+                remoteCtrl = {
+                    userid: data.user_id,
+                    name: attendee.name,
+                    isSelf: attendee.isSelf,
+                    sharePrivilege: data.value1,
+                    shareAction: data.value2,
+                };
+                evt.info = remoteCtrl;
+                _this.notify('AsOnPrivilege', evt);
+            });
+            observer_1.default.subscribe('WbDocNew', function (data) {
+                var evt = { result: true, info: "This is a new whiteboard document!" };
+                util_1.default.info("client", "===WbDocNew" + JSON.stringify(data));
+                if (data.value2 == 0) {
+                    var wbInfo = {
+                        number: "",
+                        userid: data.value2,
+                        docid: data.value1,
+                        pageSize: 0,
+                        currentPage: 0
+                    };
+                    _this._conf.addWbInfoList(wbInfo);
+                }
+                if (data.value1 != 0 && data.value2 != 0) {
+                    var dataWBCanvas = document.getElementById("CloudEC:dataWBCanvas");
+                    if (typeof dataWBCanvas === "undefined") {
+                        util_1.default.error("client", "can't find CloudEC:dataWBCanvas");
+                    }
+                    else {
+                        var height = dataWBCanvas.height;
+                        var width = dataWBCanvas.width;
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_WB_DATA_RENDER, { type: "canvas", info: { canvas: dataWBCanvas, confHandle: data.confHandle, width: width, height: height } });
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WB_PAGE_CREATE, data.confHandle, data.value1, height, width);
+                    }
+                }
+                _this.notify('WbDocNew', evt);
+            });
+            observer_1.default.subscribe('WbDocDel', function (data) {
+                var evt = { result: true, info: "Close the whiteboard document" };
+                var flag;
+                var wbInfo;
+                var wbInfoList = _this._conf.getWbInfoList();
+                flag = wbInfoList.find(function (value) {
+                    return data.value1 === value.docid;
+                });
+                if (flag != undefined) {
+                    wbInfo = {
+                        number: flag.number,
+                        userid: flag.userid,
+                        docid: data.value1,
+                        pageSize: 0,
+                        currentPage: 0
+                    };
+                    _this._conf.deleteWbInfoList(wbInfo);
+                }
+                util_1.default.info("client", "===WbDocDel" + JSON.stringify(data));
+                _this.notify('WbDocDel', evt);
+            });
+            observer_1.default.subscribe('WbPageNew', function (data) {
+                var evt = { result: true, info: "This is a new whiteboard document page!" };
+                var flag;
+                var wbInfo;
+                var wbInfoList = _this._conf.getWbInfoList();
+                flag = wbInfoList.find(function (value) {
+                    return data.value1 === value.docid;
+                });
+                if (flag != undefined && data.value2 != 0) {
+                    wbInfo = {
+                        number: flag.number,
+                        userid: flag.userid,
+                        docid: data.value1,
+                        pageSize: (flag.pageSize + 1),
+                        currentPage: data.value2
+                    };
+                    _this._conf.updateWbInfoList(wbInfo);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WB_SET_CURR_PAGE, data.confHandle, data.value1, data.value2);
+                }
+                util_1.default.info("client", "===WbPageNew" + JSON.stringify(data));
+                _this.notify('WbPageNew', evt);
+            });
+            observer_1.default.subscribe('WbPageDel', function (data) {
+                var evt = { result: true, info: { state: 0, description: "" } };
+                var flag;
+                var wbInfo;
+                var wbInfoList = _this._conf.getWbInfoList();
+                flag = wbInfoList.find(function (value) {
+                    return data.value1 === value.docid;
+                });
+                if (flag != undefined) {
+                    wbInfo = {
+                        number: flag.number,
+                        userid: flag.userid,
+                        docid: data.value1,
+                        pageSize: (flag.pageSize - 1),
+                        currentPage: data.value2
+                    };
+                    _this._conf.updateWbInfoList(wbInfo);
+                }
+                if (data.value2 - 1 > 0) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WB_SET_CURR_PAGE, data.confHandle, data.value1, data.value2 - 1);
+                }
+                util_1.default.info("client", "===WbPageDel" + JSON.stringify(data));
+                _this.notify('WbPageNew', evt);
+            });
+            observer_1.default.subscribe("AsOnSharingSession", function (data) {
+                var dataConfHandle = _this._conf.getDataConfHandle();
+                var evt = { result: true, info: "Participant status changes, please update the list of attendees" };
+                var dataconfUserId = data.user_id;
+                var attendeeListOrigin = new Array();
+                var attendee;
+                _this._conf.getAttendeeList(function (ret) {
+                    attendeeListOrigin = ret.info;
+                });
+                attendee = attendeeListOrigin.find(function (value) {
+                    return dataconfUserId === value.dataconfUserId;
+                });
+                if (dataconfUserId != null && attendee != undefined) {
+                    if (1 == data.value1 && dataconfUserId != 0) {
+                        if (1 == attendee.isSelf) {
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AS_SET_SHARE_TYPE, dataConfHandle, 0);
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AS_START, dataConfHandle);
+                        }
+                        attendee.sharingPermit = 1;
+                    }
+                    _this._conf.updateAttendeeList(attendee);
+                }
+                else if (dataconfUserId == 0) {
+                    for (var i = 0; i < attendeeListOrigin.length; i++) {
+                        attendeeListOrigin[i].sharingPermit = 0;
+                        _this._conf.updateAttendeeList(attendeeListOrigin[i]);
+                    }
+                }
+                _this.notify('UpdateAttendeeList', evt);
+            });
+            observer_1.default.subscribe("AsOnSharingState", function (data) {
+                var evt = { result: true, info: "" };
+                if (data.value2 == 2) {
+                    evt.info = {
+                        state: data.value2,
+                        description: "The shared side starts sharing"
+                    };
+                }
+                else if (data.value2 == 0) {
+                    evt.info = {
+                        state: data.value2,
+                        description: "The screen sharing has ended"
+                    };
+                }
+                else if (data.value2 == 1) {
+                    evt.info = {
+                        state: data.value2,
+                        description: "Watch the viewing side"
+                    };
+                    var dataCanvas = document.getElementById("CloudEC:dataCanvas");
+                    if (typeof dataCanvas === "undefined") {
+                        util_1.default.error("client", "can't find CloudEC:dataCanvas");
+                    }
+                    else {
+                        var height = dataCanvas.offsetHeight;
+                        var width = dataCanvas.offsetWidth;
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DATA_RENDER, { type: "canvas", info: { canvas: dataCanvas, confHandle: data.confHandle, width: width, height: height } });
+                    }
+                }
+                _this.notify('AsOnSharingState', evt);
+            });
+            observer_1.default.subscribe("AsOnScreenData", function (data) {
+                if (data.yuv == "") {
+                    return;
+                }
+                var byteCharacters = atob(data.yuv);
+                var byteArrays = [];
+                for (var offset = 0; offset < byteCharacters.length; offset++) {
+                    byteArrays[offset] = byteCharacters.charCodeAt(offset);
+                }
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DATA_RENDER, { type: "data", info: { confHandle: data.confHandle, width: data.width, height: data.height, yuv: byteArrays } });
+            });
+            observer_1.default.subscribe("WbdrawDataNotify", function (data) {
+                if (data.yuv == "") {
+                    return;
+                }
+                var byteCharacters = atob(data.yuv);
+                var byteArrays = [];
+                for (var offset = 0; offset < byteCharacters.length; offset++) {
+                    byteArrays[offset] = byteCharacters.charCodeAt(offset);
+                }
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_WB_DATA_RENDER, { type: "data", info: { confHandle: data.confHandle, width: data.width, height: data.height, yuv: byteArrays } });
+            });
+            observer_1.default.subscribe("ChatRecvMsg", function (data) {
+                var evt = { result: true, info: "Received new message" };
+                var time = util.formatDate(data.time);
+                var chatMsg = {
+                    fromUserName: data.fromUserName,
+                    msgContent: data.lpMsg,
+                    msgType: data.nMsgType,
+                    sequenceNmuber: data.nSequenceNmuber,
+                    time: time
+                };
+                evt.info = chatMsg;
+                var attendeeListOrigin = new Array();
+                var attendee;
+                _this._conf.getAttendeeList(function (ret) {
+                    attendeeListOrigin = ret.info;
+                });
+                for (var i = 0; i < attendeeListOrigin.length; i++) {
+                    if (1 == attendeeListOrigin[i].isSelf) {
+                        attendee = attendeeListOrigin[i];
+                    }
+                }
+                if ("CloudEC_OpenShareScreen" == data.lpMsg) {
+                    evt.info = "You have a sharing invitation";
+                    _this.notify('SharedInComing', evt);
+                }
+                else if ("CloudEC_CloseShareScreen" == data.lpMsg) {
+                    _this._conf.stopScreenSharing(attendee.dataconfUserId);
+                }
+                else {
+                    _this.notify('ChatRecvMsg', evt);
+                }
+            });
+        };
+        Client.prototype.registerImEvent = function () {
+            var _this = this;
+            observer_1.default.subscribe("UserInfoChange", function (ret) {
+                var retUserList = ret.info.user_list;
+                var userInfo;
+                var userList = new Array();
+                if (!util.isUndefined(retUserList)) {
+                    for (var i = 0; i < retUserList.length; i++) {
+                        userInfo = {
+                            staffID: retUserList[i].staff_id,
+                            account: retUserList[i].account,
+                            staffNO: retUserList[i].staff_no,
+                            name: retUserList[i].name,
+                            nativeName: retUserList[i].native_name,
+                            qPinYin: retUserList[i].q_pin_yin,
+                            gender: retUserList[i].gender,
+                            birthday: retUserList[i].birthday,
+                            age: retUserList[i].age,
+                            bindNO: retUserList[i].bind_no,
+                            mobile: retUserList[i].mobile,
+                            homePhone: retUserList[i].home_phone,
+                            officePhone: retUserList[i].office_phone,
+                            shortPhone: retUserList[i].short_phone,
+                            otherPhone: retUserList[i].other_phone,
+                            voip: retUserList[i].voip,
+                            ipPhone: retUserList[i].ip_phone,
+                            fax: retUserList[i].fax,
+                            email: retUserList[i].email,
+                            webSite: retUserList[i].website,
+                            signature: retUserList[i].signature,
+                            desc: retUserList[i].desc,
+                            address: retUserList[i].address,
+                            imageID: retUserList[i].image_id,
+                            postalcode: retUserList[i].postcode,
+                            isSecrecy: retUserList[i].is_security,
+                            title: retUserList[i].title,
+                            deptID: retUserList[i].dept_id,
+                            deptNameEn: retUserList[i].dept_name_en,
+                            deptNameCn: retUserList[i].dept_name_cn,
+                            imageSyncTime: retUserList[i].image_sync_time,
+                            oldAccount: retUserList[i].old_account,
+                            state: retUserList[i].state,
+                            modifyTime: retUserList[i].modify_time,
+                            contactID: 0,
+                            extensions: ""
+                        };
+                        userList.push(userInfo);
+                    }
+                    var evt = { result: true, info: userList };
+                    _this.notify('UserInfoChange', evt);
+                }
+            });
+            observer_1.default.subscribe("AddFriend", function (ret) {
+                var evt = { result: true, info: "" };
+                var addFriendInfo = ret.info;
+                var addFriendResult = {
+                    account: addFriendInfo.account,
+                    displayName: addFriendInfo.display_name,
+                    serverMsgID: addFriendInfo.server_msg_id_str,
+                };
+                evt.info = addFriendResult;
+                _this.notify('AddFriend', evt);
+            });
+            observer_1.default.subscribe("MsgSendAck", function (ret) {
+                var evt = { result: true, info: "" };
+                if (ret.info.server_chat_id == 0 || ret.info.server_chat_id_str == "0") {
+                    evt = { result: false, info: "sending message failed!" };
+                }
+                else {
+                    var msgSendAckInfo = ret.info;
+                    var msgSendAckResult = {
+                        origin: msgSendAckInfo.origin,
+                        target: msgSendAckInfo.target,
+                        utcStamp: msgSendAckInfo.utc_stamp,
+                        chatID: msgSendAckInfo.chat_id,
+                        serverChatID: msgSendAckInfo.server_chat_id_str,
+                    };
+                    evt.info = msgSendAckResult;
+                }
+                _this.notify('MsgSendAck', evt);
+            });
+            observer_1.default.subscribe("UnDeliver", function (ret) {
+                var evt = { result: true, info: ret.info };
+                _this.notify('UnDeliver', evt);
+            });
+            observer_1.default.subscribe("WithdrawResult", function (ret) {
+                var evt = { result: true, info: "" };
+                if (ret.info.timeout >= 120) {
+                    evt = {
+                        result: false,
+                        info: "Information cannot be withdrawn for more than two minutes!"
+                    };
+                }
+                else {
+                    var withDrawInfo = ret.info;
+                    var msgListArr = withDrawInfo.msg_list;
+                    var msgList = new Array();
+                    for (var key in msgListArr) {
+                        if (msgListArr.hasOwnProperty(key)) {
+                            var element = msgListArr[key];
+                            msgList.push(element.str_msgid);
+                        }
+                    }
+                    var withDrawResult = {
+                        origin: withDrawInfo.origin,
+                        target: withDrawInfo.target,
+                        msgType: withDrawInfo.msgtype,
+                        msgIdList: msgList,
+                        timeout: withDrawInfo.timeout,
+                        result: withDrawInfo.result,
+                    };
+                    evt.info = withDrawResult;
+                }
+                _this.notify('WithdrawResult', evt);
+            });
+            observer_1.default.subscribe("WithdrawNotify", function (ret) {
+                var evt = { result: true, info: ret.info };
+                var withDrawInfo = ret.info;
+                var msgListArr = withDrawInfo.msg_list;
+                var msgList = new Array();
+                for (var key in msgListArr) {
+                    if (msgListArr.hasOwnProperty(key)) {
+                        var element = msgListArr[key];
+                        msgList.push(element.str_msgid);
+                    }
+                }
+                var withDrawNotify = {
+                    origin: withDrawInfo.origin,
+                    target: withDrawInfo.target,
+                    msgType: withDrawInfo.msgtype,
+                    serverChatID: withDrawInfo.str_unread_msg ? withDrawInfo.str_unread_msg : "0",
+                    msgIdList: msgList,
+                };
+                evt.info = withDrawNotify;
+                _this.notify('WithdrawNotify', evt);
+            });
+            observer_1.default.subscribe("CodeChat", function (ret) {
+                var evt = { result: true, info: "" };
+                var codeChatInfo = ret.info;
+                var chatInfo = {
+                    chatType: codeChatInfo.chat_type,
+                    sourceFlag: codeChatInfo.source_flag,
+                    contentType: codeChatInfo.content_type,
+                    utcStamp: codeChatInfo.utc_stamp,
+                    origin: codeChatInfo.origin,
+                    target: codeChatInfo.target,
+                    groupID: codeChatInfo.group_id,
+                    content: codeChatInfo.content,
+                    name: codeChatInfo.name,
+                    regionID: codeChatInfo.region_id,
+                    clientChatID: codeChatInfo.client_chat_id,
+                    serverChatID: codeChatInfo.server_chat_id_str,
+                    groupName: codeChatInfo.group_name,
+                    mediaType: codeChatInfo.media_type,
+                    deliverTime: codeChatInfo.deliver_time,
+                    atUserInfoList: codeChatInfo.at_user_list,
+                };
+                evt.info = chatInfo;
+                _this.notify('ChatNotify', evt);
+            });
+            observer_1.default.subscribe("ChatList", function (ret) {
+                var evt = { result: true, info: "" };
+                var chatListInfo = ret.info;
+                var chatList;
+                var chatInfoArr = new Array();
+                for (var index = 0; chatListInfo.chat_list != null && index < chatListInfo.chat_list.length; index++) {
+                    var element = chatListInfo.chat_list[index];
+                    var chatInfo = {
+                        chatType: element.chat_type,
+                        sourceFlag: element.source_flag,
+                        contentType: element.content_type,
+                        utcStamp: element.utc_stamp,
+                        origin: element.origin,
+                        target: element.target,
+                        groupID: element.group_id,
+                        content: element.content,
+                        name: element.name,
+                        regionID: element.region_id,
+                        clientChatID: element.client_chat_id,
+                        serverChatID: element.server_chat_id_str,
+                        groupName: element.group_name,
+                        mediaType: element.media_type,
+                        deliverTime: element.deliver_time,
+                        atUserInfoList: new Array(),
+                    };
+                    chatInfoArr.push(chatInfo);
+                }
+                chatList = {
+                    chatList: chatInfoArr,
+                    total: chatListInfo.total,
+                    maxMsgId: chatListInfo.max_msg_id_str,
+                    minMsgId: chatListInfo.min_msg_id_str,
+                    isAt: chatListInfo.is_at,
+                };
+                evt.info = chatList;
+                _this.notify('ChatListNotify', evt);
+            });
+            observer_1.default.subscribe("SystemBulletin", function (ret) {
+                var evt = { result: true, info: "" };
+                var systemInfo = ret.info;
+                var chatInfo = {
+                    chatType: systemInfo.chat_type,
+                    sourceFlag: systemInfo.source_flag,
+                    contentType: systemInfo.content_type,
+                    utcStamp: systemInfo.utc_stamp,
+                    origin: systemInfo.origin,
+                    target: systemInfo.target,
+                    groupID: systemInfo.group_id,
+                    content: systemInfo.content,
+                    name: systemInfo.name,
+                    regionID: systemInfo.region_id,
+                    clientChatID: systemInfo.client_chat_id,
+                    serverChatID: systemInfo.server_chat_id_str,
+                    groupName: systemInfo.group_name,
+                    mediaType: systemInfo.media_type,
+                    deliverTime: systemInfo.deliver_time,
+                    atUserInfoList: new Array(),
+                };
+                evt.info = chatInfo;
+                _this.notify('SystemBulletin', evt);
+            });
+            observer_1.default.subscribe("SendImInput", function (ret) {
+                var evt = { result: true, info: "" };
+                var sendImInputInfo = ret.info;
+                var EC_IMSendInputResult = {
+                    account: sendImInputInfo.account,
+                    status: sendImInputInfo.status,
+                };
+                evt.info = EC_IMSendInputResult;
+                _this.notify('SendImInput', evt);
+            });
+            observer_1.default.subscribe("UserStatusList", function (ret) {
+                var evt = { result: true, info: "" };
+                var userStatusList = new Array();
+                var userstatus_list = ret.info.userstatus_list;
+                for (var index = 0; index < userstatus_list.length; index++) {
+                    var userStatus = {
+                        clientDesc: userstatus_list[index].client_desc,
+                        clientType: userstatus_list[index].client_type,
+                        desc: userstatus_list[index].desc,
+                        origin: userstatus_list[index].origin,
+                        status: userstatus_list[index].status,
+                        extensions: ""
+                    };
+                    userStatusList.push(userStatus);
+                }
+                evt.info = { "userStatusList": userStatusList };
+                _this.notify('UserStatusList', evt);
+            });
+            observer_1.default.subscribe("GroupDismiss", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var phonelist = new Array();
+                for (var index = 0; data.phone_list && index < data.phone_list.length; index++) {
+                    var element = data.phone_list[index];
+                    phonelist.push(element.phone);
+                }
+                var groupInfoChangeResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    adminAccount: data.admin_account,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                    serverMsgID: data.server_msg_id_str ? data.server_msg_id_str : "",
+                    isInitGroupName: data.is_init_group_name,
+                    phonelist: phonelist,
+                    initInviteAccount: data.init_invite_account ? data.init_invite_account : "",
+                };
+                evt.info = groupInfoChangeResult;
+                _this.notify('GroupDismiss', evt);
+            });
+            observer_1.default.subscribe("GroupInfoChange", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var phonelist = new Array();
+                for (var index = 0; data.phone_list && index < data.phone_list.length; index++) {
+                    var element = data.phone_list[index];
+                    phonelist.push(element.phone);
+                }
+                var groupInfoChangeResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    adminAccount: data.admin_account,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                    serverMsgID: data.server_msg_id_str ? data.server_msg_id_str : "",
+                    isInitGroupName: data.is_init_group_name,
+                    phonelist: phonelist,
+                    initInviteAccount: data.init_invite_account ? data.init_invite_account : "",
+                };
+                evt.info = groupInfoChangeResult;
+                _this.notify('GroupInfoChange', evt);
+            });
+            observer_1.default.subscribe("GroupOwnerChange", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var phonelist = new Array();
+                for (var index = 0; data.phone_list && index < data.phone_list.length; index++) {
+                    var element = data.phone_list[index];
+                    phonelist.push(element.phone);
+                }
+                var groupInfoChangeResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    adminAccount: data.admin_account,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                    serverMsgID: data.server_msg_id_str ? data.server_msg_id_str : "",
+                    isInitGroupName: data.is_init_group_name,
+                    phonelist: phonelist,
+                    initInviteAccount: data.init_invite_account ? data.init_invite_account : "",
+                };
+                evt.info = groupInfoChangeResult;
+                _this.notify('GroupOwnerChange', evt);
+            });
+            observer_1.default.subscribe("GroupMemberAdd", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var phonelist = new Array();
+                for (var index = 0; data.phone_list && index < data.phone_list.length; index++) {
+                    var element = data.phone_list[index];
+                    phonelist.push(element.phone);
+                }
+                var groupInfoChangeResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    adminAccount: data.admin_account,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                    serverMsgID: data.server_msg_id_str ? data.server_msg_id_str : "",
+                    isInitGroupName: data.is_init_group_name,
+                    phonelist: phonelist,
+                    initInviteAccount: data.init_invite_account ? data.init_invite_account : "",
+                };
+                evt.info = groupInfoChangeResult;
+                _this.notify('GroupMemberAdd', evt);
+            });
+            observer_1.default.subscribe("GroupMemberDel", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var phonelist = new Array();
+                for (var index = 0; data.phone_list && index < data.phone_list.length; index++) {
+                    var element = data.phone_list[index];
+                    phonelist.push(element.phone);
+                }
+                var groupInfoChangeResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    adminAccount: data.admin_account,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                    serverMsgID: data.server_msg_id_str ? data.server_msg_id_str : "",
+                    isInitGroupName: data.is_init_group_name,
+                    phonelist: phonelist,
+                    initInviteAccount: data.init_invite_account ? data.init_invite_account : "",
+                };
+                evt.info = groupInfoChangeResult;
+                _this.notify('GroupMemberDel', evt);
+            });
+            observer_1.default.subscribe("WasAddToGroup", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var phonelist = new Array();
+                for (var index = 0; data.phone_list && index < data.phone_list.length; index++) {
+                    var element = data.phone_list[index];
+                    phonelist.push(element.phone);
+                }
+                var groupInfoChangeResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    adminAccount: data.admin_account,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                    serverMsgID: data.server_msg_id_str ? data.server_msg_id_str : "",
+                    isInitGroupName: data.is_init_group_name,
+                    phonelist: phonelist,
+                    initInviteAccount: data.init_invite_account ? data.init_invite_account : "",
+                };
+                evt.info = groupInfoChangeResult;
+                _this.notify('WasAddToGroup', evt);
+            });
+            observer_1.default.subscribe("ReceiveInviteJoinGroup", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var receiveInvateGroupResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    adminAccount: data.admin_account,
+                    adminName: data.admin_name,
+                    serverMsgID: data.server_msg_id_str,
+                };
+                evt.info = receiveInvateGroupResult;
+                _this.notify('ReceiveInviteJoinGroup', evt);
+            });
+            observer_1.default.subscribe("ReceiveInviteToGroup", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var receiveJoinGroupResult = {
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                    serverMsgID: data.server_msg_id_str,
+                };
+                evt.info = receiveJoinGroupResult;
+                _this.notify('ReceiveInviteToGroup', evt);
+            });
+            observer_1.default.subscribe("GroupOwnerInviteResult", function (ret) {
+                var evt = { result: true, info: "" };
+                var data = ret.info;
+                var groupOwnerInviteResult = {
+                    agreeInvite: data.agree_invite,
+                    groupID: data.group_id,
+                    groupName: data.group_name,
+                    memberAccount: data.member_account,
+                    memberName: data.member_name,
+                };
+                evt.info = groupOwnerInviteResult;
+                _this.notify('GroupOwnerInviteResult', evt);
+            });
+            observer_1.default.subscribe("GroupKickout", function (ret) {
+                var evt = { result: true, info: "" };
+                var resultCode = ret.info.result_code;
+                switch (resultCode) {
+                    case 0:
+                        evt = {
+                            result: true,
+                            info: "Exiting the fixed group successfully!"
+                        };
+                        break;
+                    case 1:
+                        evt = {
+                            result: false,
+                            info: "Failed to exit fixed group!"
+                        };
+                        break;
+                    case 3:
+                        evt = {
+                            result: false,
+                            info: "Account not exist!"
+                        };
+                        break;
+                }
+                _this.notify('GroupKickout', evt);
+            });
+            observer_1.default.subscribe("GroupLeaveResult", function (ret) {
+                var evt = { result: true, info: "" };
+                var resultCode = ret.info.result_code;
+                switch (resultCode) {
+                    case 0:
+                        evt = {
+                            result: true,
+                            info: "Exiting the fixed group successfully!"
+                        };
+                        break;
+                    case 1:
+                        evt = {
+                            result: false,
+                            info: "Failed to exit fixed group!"
+                        };
+                        break;
+                    case 3:
+                        evt = {
+                            result: false,
+                            info: "Account not exist!"
+                        };
+                        break;
+                }
+                _this.notify('GroupLeaveResult', evt);
+            });
+        };
+        Client.prototype.isLogin = function () {
+            if (this._status === 1) {
+                return;
             }
+            else {
+                Client.notifyErr(errorCode_1.EC_SDK_ERROR.LOGIN_STATUS_ERROR());
+                throw "login status error,please login at first";
+            }
+        };
+        Client.prototype.showVideo = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var self, _a;
+                var _this = this;
+                var localView, remoteView;
+                return __generator(this, function (_a) {
+                    localView = document.getElementById("CloudEC:localCanvas");
+                    remoteView = document.getElementById("CloudEC:remoteCanvas");
+                    if ((typeof localView === "undefined") || (typeof remoteView === "undefined")) {
+                        util_1.default.error("client", "can't find CloudEC:remoteCanvas and CloudEC:localCanvas");
+                    }
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_RENDER, localView, remoteView);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_LOCAL_VIDEOWH, localView.clientWidth, localView.clientHeight);
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_REMOTE_VIDEOWH, remoteView.clientWidth, remoteView.clientHeight);
+                    localView.style.display = "block";
+                    remoteView.style.display = "block";
+                    if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CMPT_GET_MEMORY_USAGE, 3, function (data) {
+                            if (0 == data.result) {
+                                _this.preMemoryUsage = data.memory_usage;
+                                _this.pcMemory = data.total_memory;
+                                util_1.default.info("client", "initiation memory usage:" + _this.preMemoryUsage + "  machine memory:" + data.total_memory);
+                                if (_this.preMemoryUsage > 80) {
+                                    Client.notifyErr({ result: false, info: { cmdId: 300000000, errorCode: 390000003, errorInfo: "Memory usage over 80%, please close the unrelated program!" } });
+                                }
+                                _this.delInterval();
+                                _this.getInterval(10, 30000, _this.pcMemory);
+                            }
+                        });
+                    }
+                    return [2];
+                });
+            });
+        };
+        Client.prototype.displayVideo = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
+                var count_1;
+                return __generator(this, function (_a) {
+                    if (this.parentFrameHwnd == 0 && !this.isNativeWndExist) {
+                        this.isNativeWndExist = true;
+                        count_1 = 2;
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_INIT, function (data) {
+                            if (0 == data.result) {
+                                _this.parentFrameHwnd = data.param.frameHwnd;
+                                util_1.default.info("client", "displayVideo parentFrameHwnd:" + _this.parentFrameHwnd);
+                                if (_this.parentFrameHwnd != 0) {
+                                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_CREATE_WINDOW, count_1, _this.parentFrameHwnd, function (data) {
+                                        if (0 == data.result) {
+                                            _this.frameHwndList = data.param.hwndList;
+                                            util_1.default.info("client", "displayVideo frameHwndList:" + JSON.stringify(_this.frameHwndList));
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    return [2];
+                });
+            });
+        };
+        Client.prototype.setVideoWindow = function (callId) {
+            util_1.default.info("client", "setVideoWindow frameHwndList:" + JSON.stringify(this.frameHwndList));
+            if (this.frameHwndList != null && this.frameHwndList.length > 0) {
+                util_1.default.info("client", "setVideoWindow callID:" + callId);
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_WINDOW, callId, this.frameHwndList);
+            }
+        };
+        Client.prototype.displayVideoEx = function (callId) {
+            return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
+                var count_2;
+                return __generator(this, function (_a) {
+                    if (this.parentFrameHwnd == 0 && !this.isNativeWndExist) {
+                        this.isNativeWndExist = true;
+                        count_2 = 2;
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_INIT, function (data) {
+                            if (0 == data.result) {
+                                _this.parentFrameHwnd = data.param.frameHwnd;
+                                util_1.default.info("client", "displayVideo parentFrameHwnd:" + _this.parentFrameHwnd);
+                                if (_this.parentFrameHwnd != 0) {
+                                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_CREATE_WINDOW, count_2, _this.parentFrameHwnd, function (data) {
+                                        if (0 == data.result) {
+                                            _this.frameHwndList = data.param.hwndList;
+                                            util_1.default.info("client", "displayVideo frameHwndList:" + JSON.stringify(_this.frameHwndList));
+                                            if (_this.frameHwndList != null && _this.frameHwndList.length > 0) {
+                                                util_1.default.info("client", "setVideoWindow callID:" + callId);
+                                                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_WINDOW, callId, _this.frameHwndList);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    return [2];
+                });
+            });
+        };
+        Client.prototype.closeVideo = function () {
+            util_1.default.info("client", "closeVideo parentFrameHwnd:" + this.parentFrameHwnd);
+            if (this.parentFrameHwnd != 0 && this.isNativeWndExist) {
+                this.isNativeWndExist = false;
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_DESTROY_WINDOW, this.parentFrameHwnd, this.frameHwndList);
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_UNINIT, this.parentFrameHwnd);
+                this.parentFrameHwnd = 0;
+                delete this.frameHwndList;
+            }
+        };
+        Client.prototype.delVideo = function () {
+            var localView = document.getElementById("CloudEC:localCanvas");
+            var remoteView = document.getElementById("CloudEC:remoteCanvas");
+            if ((typeof localView === "undefined") || (typeof remoteView === "undefined")) {
+                util_1.default.error("client", "can't find CloudEC:remoteCanvas and CloudEC:localCanvas");
+            }
+            localView.style.cssText = "position: absolute;left: 0px;top: 0px;width: 120px;height: 80px; z-index: 999;background: #c7c7c7;";
+            remoteView.style.cssText = "position: absolute;left: 0px;top: 0px;width: 720px;height: 480px; z-index: 1;background: black;";
+        };
+        Client.prototype.resetVideoSize = function (videoSize) {
+            return __awaiter(this, void 0, void 0, function () {
+                var err, evt, _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            self = this;
-                            return [4, (_a = self.callback).call.apply(_a, [self.context].concat(args))];
-                        case 1:
+                            err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+                            evt = { result: false, info: err };
+                            this.isLogin();
+                            if (util.isUndefined(videoSize.target) || !util.isBinaryNumber(videoSize.target)) {
+                                Client.notifyErr(evt);
+                                return [2];
+                            }
+                            if (util.isUndefined(videoSize.width) || util.isUndefined(videoSize.height)) {
+                                Client.notifyErr(evt);
+                                return [2];
+                            }
+                            if (!util.isInteger(videoSize.width) || !util.isInteger(videoSize.height)) {
+                                Client.notifyErr(evt);
+                                return [2];
+                            }
+                            _a = videoSize.target;
+                            switch (_a) {
+                                case 0: return [3, 1];
+                                case 1: return [3, 3];
+                            }
+                            return [3, 5];
+                        case 1: return [4, dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_LOCAL_VIDEOWH, videoSize.width, videoSize.height)];
+                        case 2:
                             _b.sent();
-                            return [2];
+                            return [3, 5];
+                        case 3: return [4, dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_REMOTE_VIDEOWH, videoSize.width, videoSize.height)];
+                        case 4:
+                            _b.sent();
+                            return [3, 5];
+                        case 5: return [2];
                     }
                 });
             });
         };
-        Observer.prototype.compar = function (context) {
-            return context == this.context;
+        Client.prototype.resetNativeWndSize = function (nativeWndParam) {
+            return __awaiter(this, void 0, void 0, function () {
+                var err;
+                return __generator(this, function (_a) {
+                    if (util.isUndefined(nativeWndParam) || !util.isIntegerRange(nativeWndParam.width, 0, 4096)
+                        || !util.isIntegerRange(nativeWndParam.height, 0, 2048) || !util.isIntegerRange(nativeWndParam.xOffsetRate, 0, 100)
+                        || !util.isIntegerRange(nativeWndParam.yOffsetRate, 0, 100)) {
+                        err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("nativeWndParam");
+                        Client.notifyErr(err);
+                        return [2];
+                    }
+                    if (this.parentFrameHwnd) {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_RESET_NATIVEWND_SIZE, this.parentFrameHwnd, nativeWndParam);
+                    }
+                    return [2];
+                });
+            });
         };
-        return Observer;
+        Client.prototype.searchUserInfo = function (queryParam, callback) {
+            this._eaddr.searchUserInfo(queryParam, callback);
+        };
+        Client.prototype.searchDeptInfo = function (deptId, callback) {
+            this._eaddr.searchDeptInfo(deptId, callback);
+        };
+        Client.prototype.getMediaDevice = function (deviceType, callback) {
+            this._device.getMediaDevice(deviceType, callback);
+        };
+        Client.prototype.setMediaDevice = function (deviceType, index) {
+            this._device.setMediaDevice(deviceType, index);
+        };
+        Client.prototype.setVoiceVol = function (deviceType, value) {
+            this._device.setVoiceVol(deviceType, value);
+        };
+        Client.prototype.getVoiceVol = function (deviceType, callback) {
+            this._device.getVoiceVol(deviceType, callback);
+        };
+        Client.prototype.addAttendee = function (attendees) {
+            this._conf.addAttendee(attendees);
+        };
+        Client.prototype.delAttendee = function (attendee) {
+            this._conf.delAttendee(attendee);
+        };
+        Client.prototype.muteConference = function (mute) {
+            this._conf.muteConference(mute);
+        };
+        Client.prototype.muteAttendee = function (attendee, mute) {
+            this._conf.muteAttendee(attendee, mute);
+        };
+        Client.prototype.requestChairman = function (chairmanPwd) {
+            this._conf.requestChairman(chairmanPwd);
+        };
+        Client.prototype.releaseChairman = function () {
+            this._conf.releaseChairman();
+        };
+        Client.prototype.handup = function (attendee) {
+            this._conf.handup(attendee);
+        };
+        Client.prototype.setConfMode = function (mode) {
+            this._conf.setConfMode(mode);
+        };
+        Client.prototype.setConfMixedPicture = function (imageType, attendees) {
+            this._conf.setConfMixedPicture(imageType, attendees);
+        };
+        Client.prototype.broadcastAttendee = function (isBroad, attendee) {
+            this._conf.broadcastAttendee(isBroad, attendee);
+        };
+        Client.prototype.watchAttendee = function (attendee) {
+            this._conf.watchAttendee(attendee);
+        };
+        Client.prototype.leaveConf = function () {
+            this._conf.leaveConf();
+        };
+        Client.prototype.endConf = function () {
+            this._conf.endConf();
+        };
+        Client.prototype.getAttendeeList = function (callback) {
+            this._conf.getAttendeeList(callback);
+        };
+        Client.prototype.getConfInfo = function (callback) {
+            this._conf.getConfInfo(callback);
+        };
+        Client.prototype.startScreenSharing = function (userid, extensions) {
+            this._conf.startScreenSharing(userid, extensions);
+        };
+        Client.prototype.stopScreenSharing = function (userid) {
+            this._conf.stopScreenSharing(userid);
+        };
+        Client.prototype.requestRemoteCtrl = function (privilege) {
+            this._conf.requestRemoteCtrl(privilege);
+        };
+        Client.prototype.setRemoteCtrl = function (privilege, action, userid) {
+            this._conf.setRemoteCtrl(privilege, action, userid);
+        };
+        Client.prototype.answerRemoteCtrl = function (userid, accept) {
+            this._conf.answerRemoteCtrl(userid, accept);
+        };
+        Client.prototype.sendMessage = function (messageParam) {
+            this._conf.sendMessage(messageParam);
+        };
+        Client.prototype.answerConference = function (accept) {
+            this._conf.answerConference(accept);
+        };
+        Client.prototype.answerScreenSharing = function (accept) {
+            this._conf.answerScreenSharing(accept);
+        };
+        Client.prototype.videoMute = function (bMute) {
+            if (!this._call) {
+                this._call = new call_1.default();
+            }
+            this._call.videoMute(bMute, this.callID);
+        };
+        Client.prototype.micMute = function (bMute) {
+            if (!this._call) {
+                this._call = new call_1.default();
+            }
+            this._call.micMute(bMute, this.callID);
+        };
+        Client.prototype.transfer2Conf = function (confParam) {
+            var attendees = new Array();
+            var confParamTemp;
+            var callType = this._call.getCallType();
+            if (util.isUndefined(confParam)) {
+                var member = { number: "", name: "", smsPhone: "", email: "", autoInvite: 0, role: 0, extensions: "" };
+                attendees.push(member);
+                confParamTemp = {
+                    topic: "",
+                    isVideo: callType,
+                    attendees: attendees,
+                    language: 1,
+                    extensions: "",
+                };
+            }
+            else {
+                confParamTemp = {
+                    topic: confParam.topic ? confParam.topic : "",
+                    isVideo: confParam.isVideo ? confParam.isVideo : callType,
+                    attendees: confParam.attendees,
+                    language: confParam.language ? confParam.language : 1,
+                    extensions: confParam.extensions ? confParam.extensions : "",
+                };
+            }
+            var err = { cmdId: 400000000, errorCode: 400000002, errorInfo: "general error" };
+            var evt = { result: false, info: err };
+            var callback = function (data) {
+                if (!data.result) {
+                    Client.notifyErr(evt);
+                }
+            };
+            this._call.transfer2Conf(confParamTemp, this.callID, callback);
+        };
+        Client.prototype.makeCall = function (calleeNumber, isVideo, callback) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (util.isUndefined(calleeNumber) || util.isUndefined(isVideo)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            var call = new call_1.default();
+            call.setCallee(calleeNumber);
+            call.setCallStyle(1);
+            var callType = isVideo ? 1 : 0;
+            call.setCallType(callType);
+            this._call = call;
+            this._call.makeCall(calleeNumber, callType, callback);
+            if (isVideo) {
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                    this.showVideo();
+                }
+                else {
+                }
+            }
+        };
+        Client.prototype.answerCall = function (accept, isVideo) {
+            var _this = this;
+            this.isLogin();
+            if (util.isUndefined(accept)) {
+                var err = errorCode_1.EC_SDK_ERROR.CALL_PARAM_INVALID_ERROR("accept");
+                Client.notifyErr(err);
+                return;
+            }
+            if (this.playHandle >= 0) {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, this.playHandle, function (data) {
+                    if (data.result == 0) {
+                        _this.playHandle = -1;
+                    }
+                });
+            }
+            var isVideoCall = this._call.getCallType();
+            if (this._call && accept) {
+                if (isVideo && (isVideoCall == 1)) {
+                    this._call.acceptCall(isVideo);
+                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                        this.showVideo();
+                    }
+                    else {
+                    }
+                }
+                else {
+                    this._call.acceptCall(false);
+                }
+            }
+            else {
+                this._call.rejectCall();
+            }
+        };
+        Client.prototype.hangup = function () {
+            var _this = this;
+            if (this.playHandle >= 0) {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, this.playHandle, function (data) {
+                    if (data.result == 0) {
+                        _this.playHandle = -1;
+                    }
+                });
+            }
+            if (this._call) {
+                this._call.rejectCall();
+            }
+        };
+        Client.prototype.sendDTMF = function (dmtfNo) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (!dmtfNo || /[^0-9*#]/.test(dmtfNo)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            this._call.dialDTMF(dmtfNo);
+        };
+        Client.prototype.switchAudioCall = function (toAudioCall) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (util.isUndefined(toAudioCall)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            if (toAudioCall) {
+                this._call.tans2Audio();
+            }
+            else {
+                this._call.tans2Video();
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
+                }
+            }
+        };
+        Client.prototype.answerSwitch = function (accept) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            this.isLogin();
+            if (util.isUndefined(accept)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            this._call.answerSwitch(accept);
+            if (accept) {
+                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
+                    this.showVideo();
+                }
+                else {
+                }
+            }
+        };
+        Client.prototype.setIPTService = function (type, number) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(number) || util.isUndefined(type) || !util.isInteger(type)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            if (type < 1 || (type > 4 && type < 25) || type > 32) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_IPT_SERVICE, type, number);
+        };
+        Client.prototype.blindTransfer = function (transToNumber) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(transToNumber)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_BLIND_TRANSFER, this.callID, transToNumber, function (data) {
+                if (!data.result) {
+                    err = { cmdId: 200000000, errorCode: 290000005, errorInfo: "video call without this feature, please convert to audio call" };
+                    evt.info = err;
+                    Client.notifyErr(evt);
+                }
+            });
+        };
+        Client.prototype.startPlayMedia = function (loops, playFile, callback) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(loops) || util.isUndefined(playFile) || !util.isInteger(loops)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, loops, playFile, function (data) {
+                if (data.result == 0) {
+                    evt.result = true;
+                    evt.info = {
+                        playHandle: data.param.play_handle,
+                    };
+                    callback(evt);
+                }
+                else {
+                    evt.info = { cmdId: 200000000, errorCode: 290000003, errorInfo: "failed to start playing the file" };
+                    Client.notifyErr(evt);
+                }
+            });
+        };
+        Client.prototype.stopPlayMedia = function (handle) {
+            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (util.isUndefined(handle)) {
+                Client.notifyErr(evt);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, handle, function (data) {
+                if (data.result == 0) {
+                    evt.result = true;
+                    evt.info = "Stop playing the file successfully";
+                }
+                else {
+                    evt.info = { cmdId: 200000000, errorCode: 290000004, errorInfo: "stopped playing file does not exist" };
+                    Client.notifyErr(evt);
+                }
+            });
+        };
+        Client.prototype.getUserInfo = function (account, callback) {
+            this.isLogin();
+            this._contact.getUserInfo(account, callback);
+        };
+        Client.prototype.setUserInfo = function (userInfo, callback) {
+            this.isLogin();
+            this._contact.setUserInfo(userInfo, callback);
+        };
+        Client.prototype.getContactlist = function (isSyncAll, timestamp, callback) {
+            this.isLogin();
+            this._contact.getContactlist(isSyncAll, timestamp, callback);
+        };
+        Client.prototype.addFriend = function (account, groupID, displayName, callback) {
+            this.isLogin();
+            this._contact.addFriend(account, groupID, displayName, callback);
+        };
+        Client.prototype.addContact = function (contactInfo, groupID, callback) {
+            this.isLogin();
+            this._contact.addContact(contactInfo, groupID, callback);
+        };
+        Client.prototype.modContact = function (contactInfo, callback) {
+            this.isLogin();
+            this._contact.modContact(contactInfo, callback);
+        };
+        Client.prototype.delContact = function (contactID, groupID, callback) {
+            this.isLogin();
+            this._contact.delContact(contactID, groupID, callback);
+        };
+        Client.prototype.addContactGroup = function (name, index, callback) {
+            this.isLogin();
+            this._contact.addContactGroup(index, name, callback);
+        };
+        Client.prototype.modContactGroup = function (groupID, name, index, callback) {
+            this.isLogin();
+            this._contact.modContactGroup(groupID, index, name, callback);
+        };
+        Client.prototype.delContactGroup = function (groupID, callback) {
+            this.isLogin();
+            this._contact.delContactGroup(groupID, callback);
+        };
+        Client.prototype.moveContact = function (contactID, oldGroupID, newGroupID, type, callback) {
+            this.isLogin();
+            this._contact.moveContact(contactID, oldGroupID, newGroupID, type, callback);
+        };
+        Client.prototype.updateGroupListOrder = function (groupIDList, callback) {
+            this.isLogin();
+            this._contact.updateGroupListOrder(groupIDList, callback);
+        };
+        Client.prototype.addGroup = function (groupInfo, callback) {
+            this.isLogin();
+            this._group.addGroup(groupInfo, callback);
+        };
+        Client.prototype.modGroup = function (groupInfo, callback) {
+            this.isLogin();
+            this._group.modGroup(groupInfo, callback);
+        };
+        Client.prototype.delGroup = function (groupId, callback) {
+            this.isLogin();
+            this._group.delGroup(groupId, callback);
+        };
+        Client.prototype.joinGroup = function (joinGroupParam, callback) {
+            this.isLogin();
+            this._group.joinGroup(joinGroupParam, callback);
+        };
+        Client.prototype.leaveGroup = function (groupId, account, flag, callback) {
+            this.isLogin();
+            this._group.leaveGroup(groupId, account, flag, callback);
+        };
+        Client.prototype.approvalGroup = function (approvalGroupParam, callback) {
+            this.isLogin();
+            this._group.approvalGroup(approvalGroupParam, callback);
+        };
+        Client.prototype.searchGroup = function (searchGroupParam, callback) {
+            this.isLogin();
+            this._group.searchGroup(searchGroupParam, callback);
+        };
+        Client.prototype.getGroupDetail = function (groupId, callback) {
+            this.isLogin();
+            this._group.getGroupDetail(groupId, callback);
+        };
+        Client.prototype.getGroupMembers = function (groupId, isSyncAll, timestamp, callback) {
+            this.isLogin();
+            this._group.getGroupMembers(groupId, isSyncAll, timestamp, callback);
+        };
+        Client.prototype.transferGroup = function (groupId, account, callback) {
+            this.isLogin();
+            this._group.transferGroup(groupId, account, callback);
+        };
+        Client.prototype.setGroupMsgPromptPolicy = function (groupId, msgpolicyType, callback) {
+            this.isLogin();
+            this._group.setGroupMsgPromptPolicy(groupId, msgpolicyType, callback);
+        };
+        Client.prototype.setDisgroupPolicy = function (groupId, opType, callback) {
+            this.isLogin();
+            this._group.setDisgroupPolicy(groupId, opType, callback);
+        };
+        Client.prototype.publishStatus = function (status, callback) {
+            this.isLogin();
+            this._presence.publishStatus(status, callback);
+        };
+        Client.prototype.detectUserStatus = function (accountList, callback) {
+            this.isLogin();
+            this._presence.detectUserStatus(accountList, callback);
+        };
+        Client.prototype.sendIMMessage = function (messageSendParam, callback) {
+            this.isLogin();
+            this._message.sendIMMessage(messageSendParam, callback);
+        };
+        Client.prototype.notifyImInputting = function (account, type) {
+            this.isLogin();
+            this._message.notifyImInputting(account, type);
+        };
+        Client.prototype.withDrawMessage = function (messageWithDrawParam, callback) {
+            this.isLogin();
+            this._message.withDrawMessage(messageWithDrawParam, callback);
+        };
+        Client.prototype.setReadMessage = function (messageReadList, callback) {
+            this.isLogin();
+            this._message.setReadMessage(messageReadList, callback);
+        };
+        Client.prototype.deleteMessage = function (deleteMessageParam, callback) {
+            this.isLogin();
+            this._message.deleteMessage(deleteMessageParam, callback);
+        };
+        Client.prototype.queryHistoryMessage = function (queryHistoryMessageParam, callback) {
+            this.isLogin();
+            this._message.queryHistoryMessage(queryHistoryMessageParam, callback);
+        };
+        Client.prototype.getInterval = function (timeInterval, checkInterval, pcMemory) {
+            var _this = this;
+            var cpuUsage = 0;
+            var memoryUsage = 0;
+            var memoryUsageMax = 90;
+            var memoryUsageMin = 55;
+            var memoryPercentage = 2;
+            if (pcMemory == 0) {
+                util_1.default.error("client", "memory error,Please check the memory");
+                return;
+            }
+            switch (pcMemory) {
+                case 4:
+                    memoryUsageMax = 90;
+                    memoryUsageMin = 55;
+                    memoryPercentage = 3;
+                    break;
+                case 8:
+                    memoryUsageMax = 93;
+                    memoryUsageMin = 65;
+                    memoryPercentage = 2;
+                    break;
+                case 16:
+                    memoryUsageMax = 95;
+                    memoryUsageMin = 75;
+                    memoryPercentage = 1;
+                    break;
+                case 32:
+                    memoryUsageMax = 97;
+                    memoryUsageMin = 80;
+                    memoryPercentage = 0.5;
+                    break;
+                default:
+                    memoryUsageMax = 90;
+                    memoryUsageMin = 55;
+                    memoryPercentage = 3;
+            }
+            util_1.default.info("client", " memoryUsageMax:" + memoryUsageMax + "  memoryUsageMin:" + memoryUsageMin + "  memoryPercentage:" + memoryPercentage);
+            this.timer = setInterval(function () {
+                _this.isLogin();
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CMPT_GET_MEMORY_USAGE, timeInterval, function (data) {
+                    util_1.default.info("client", "current cpu data:" + JSON.stringify(data));
+                    if (0 == data.result) {
+                        memoryUsage = data.memory_usage;
+                        util_1.default.info("client", "current memory usage:" + memoryUsage);
+                        if (memoryUsage > memoryUsageMax && (memoryUsage - _this.preMemoryUsage) > memoryPercentage) {
+                            if (_this.currentFrame <= 5) {
+                                _this.currentFrame = _this.currentFrame + 1;
+                                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DROP_FRAME, _this.currentFrame);
+                                util_1.default.info("client", "start dropping frame current frame rate:" + _this.currentFrame);
+                            }
+                            else {
+                                util_1.default.warn("client", "poor machine performance, it is recommended to close the video!");
+                                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DROP_FRAME, 999999999);
+                            }
+                        }
+                        if (memoryUsage < memoryUsageMin && _this.currentFrame >= serverConfig_1.CloudEC_SERVERCONFIG.DROP_FRAME_COUNT) {
+                            _this.currentFrame = (_this.currentFrame > 5 ? 5 : _this.currentFrame) - 1;
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DROP_FRAME, _this.currentFrame);
+                            util_1.default.info("client", "start frame current frame rate:" + _this.currentFrame);
+                        }
+                        _this.preMemoryUsage = data.memory_usage;
+                    }
+                });
+            }, checkInterval);
+            util_1.default.info("client", "Start timer:" + this.timer);
+        };
+        Client.prototype.delInterval = function () {
+            if (this.timer != 0) {
+                util_1.default.info("client", "Turn off the timer:" + this.timer);
+                clearInterval(this.timer);
+                this.timer = 0;
+            }
+        };
+        Client.prototype.sipDeregisterAnonyConf = function () {
+            var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+            var loginInfo = JSON.parse(cloudEC_loginInfo);
+            var isTempUser = loginInfo.isTempUser;
+            if (isTempUser == 1) {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_SIP_DEREGISTER_ANONYCONF);
+                delete this._call;
+                delete this._conf;
+                this._status = 0;
+            }
+        };
+        Client._listeners = {};
+        return Client;
     }());
+    exports.default = Client;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.SDK_ERROR_CODE = {
+        LOGIN_ERR_NO_INPUT: {
+            ERROR_ID: "",
+            DISCRIPTION: "auth parameter is null",
+            ACTION: "please input auth info"
+        },
+        LOGIN_ERR_GENERAL: {
+            ERROR_ID: 1,
+            DISCRIPTION: "LOGIN_ERR_BEGIN",
+            ACTION: "How to fix it"
+        }
+    };
+    exports.UPORTAL_LOGIN_ERROR = {
+        LOGIN_ERR_BEGIN: 0,
+        LOGIN_ERR_GENERAL: 1,
+        LOGIN_ERR_PARAM_ERROR: 2,
+        LOGIN_ERR_TIMEOUT: 3,
+        LOGIN_ERR_MEM_ERROR: 4,
+        LOGIN_ERR_XML_ERROR: 5,
+        LOGIN_ERR_PARSE_PTKT_ERROR: 6,
+        LOGIN_ERR_DNS_ERROR: 7,
+        LOGIN_ERR_REQUEST_FAILED: 8,
+        LOGIN_ERR_AUTH_FAILED: 9,
+        LOGIN_ERR_SN_FAILED: 10,
+        LOGIN_ERR_SERVICE_ERROR: 11,
+        LOGIN_ERR_ACCOUNT_LOCKED: 12,
+        LOGIN_ERR_TIMER_ERROR: 13,
+        LOGIN_ERR_WRONG_SERVERTYPE: 14,
+        LOGIN_ERR_WRONG_SERVERVERSION: 15,
+        LOGIN_ERR_INVALID_URL: 16,
+        LOGIN_ERR_SEARCH_SERVER_FAIL: 17,
+        LOGIN_ERR_START_REFRESH_FAIL: 18
+    };
+    exports.EADDR_ERROR = {
+        EADDR_TOKEN_INVALIED: 7
+    };
+    exports.ESERVER_LOGIN_ERROR = {
+        IM_E_LOGING_RESULT_TIMEOUT: -100,
+        IM_E_LOGING_RESULT_SERVERNOTALLOW: -2,
+        IM_E_LOGING_RESULT_INTERNAL_ERROR: -1,
+        IM_E_LOGING_RESULT_SUCCESS: 0,
+        IM_E_LOGING_RESULT_FAILED: 1,
+        IM_E_LOGING_RESULT_PASSWORD_ERROR: 2,
+        IM_E_LOGING_RESULT_ACCOUNT_NOT_EXIST: 3,
+        IM_E_LOGING_RESULT_ALREADY_LOGIN: 4,
+        IM_E_LOGING_RESULT_ACCOUNT_LOCKED: 5,
+        IM_E_LOGING_RESULT_NEED_NEW_VERSION: 6,
+        IM_E_LOGING_RESULT_NOT_ACTIVE: 7,
+        IM_E_LOGING_RESULT_ACCOUNT_SUSPEND: 8,
+        IM_E_LOGING_RESULT_ACCOUNT_EXPIRE: 9,
+        IM_E_LOGING_RESULT_DECRYPT_FAILED: 10,
+        IM_E_LOGING_RESULT_CERT_DOWNLOAD_FAILED: 11,
+        IM_E_LOGING_RESULT_CERT_VALIDATE_FAILED: 12,
+        IM_E_LOGING_RESULT_DNS_ERROR: 13,
+        IM_E_LOGING_RESULT_SYSTEM_ERROR: 14,
+        IM_E_LOGING_RESULT_TICKET_EXPIRE: 15,
+        IM_E_LOGING_RESULT_TICKET_NOT_EXIST: 16,
+        IM_E_LOGING_RESULT_TICKET_SUSPEND: 17,
+        IM_E_LOGING_RESULT_TICKET_ERROR: 18,
+        IM_E_LOGING_RESULT_TICKET_FLUID_EXCEED: 19,
+        IM_E_LOGING_RESULT_TICKET_FLUID_ERROR: 20,
+        IM_E_LOGING_RESULT_TICKET_REDIRECT_ERROR: 21
+    };
+    exports.CONFERENCE_BOOK_ERROR = {};
+    exports.CONFERENCE_JOIN_ERROR = {
+        CONF_JOIN_ACCESSNUM_ERROR: 90000001,
+    };
+    exports.CONFERENCE_CTRL_ERROR = {};
+    exports.DATACONF_BOOK_ERROR = {};
+    exports.DATACONF_JOIN_ERROR = {};
+    exports.DATACONF_CTRL_ERROR = {};
+    exports.EC_SDK_ERROR = {
+        WEBSOCKET_IS_CLOSED: function (name) {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000001, errorInfo: name + " websocket has been closed, please reopen" } };
+        },
+        OBJECT_INIT_FAILED: function (name) {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000002, errorInfo: name + " initialize failed" } };
+        },
+        PARAM_TYPE_ERROR: function (name) {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000003, errorInfo: "param " + name + " type error" } };
+        },
+        PARAM_INVALID_ERROR: function (name) {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000004, errorInfo: "param " + name + " is invalid" } };
+        },
+        LOGIN_STATUS_ERROR: function () {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000005, errorInfo: "login status error, please login first" } };
+        },
+        OBJECT_NOT_EXISTS: function (name) {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000006, errorInfo: name + " object does not exists" } };
+        },
+        PARAM_RANGE_ERROR: function (name, minValue, maxValue) {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000007, errorInfo: name + " less than " + minValue + " or bigger than " + maxValue } };
+        },
+        ALREADY_IN_CONF: function () {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000008, errorInfo: "already in conference or call" } };
+        },
+        USER_ROLE_ERROR: function (name) {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000009, errorInfo: "cannot operate \'name\' to user, due to his role." } };
+        },
+        CONF_STATE_ERROR: function () {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000010, errorInfo: "conference state error" } };
+        },
+        CONF_SOCKET_ERROR: function (info) {
+            return { result: false, info: { cmdId: 300000000, errorCode: 390000002, errorInfo: info } };
+        },
+        CONF_CHAT_ERROR_INVALIDUSERID: function () {
+            return { result: false, info: { cmdId: 400000000, errorCode: 400001002, errorInfo: "Invalid user" } };
+        },
+        DATACONF_PARAM_INVALID_ERROR: function (name) {
+            return { result: false, info: { cmdId: 400000000, errorCode: 490000001, errorInfo: "param " + name + " is invalid" } };
+        },
+        DATACONF_PARAM_TYPE_ERROR: function (name) {
+            return { result: false, info: { cmdId: 400000000, errorCode: 490000002, errorInfo: "param " + name + " type error" } };
+        },
+        CALL_PARAM_INVALID_ERROR: function (name) {
+            return { result: false, info: { cmdId: 200000000, errorCode: 200000003, errorInfo: "param " + name + " is invalid" } };
+        },
+        CONF_PARAM_INVALID_ERROR: function (name) {
+            return { result: false, info: { cmdId: 300000000, errorCode: 300000002, errorInfo: "param " + name + " is invalid" } };
+        },
+        EADDR_PARAM_INVALID_ERROR: function (name) {
+            return { result: false, info: { cmdId: 600000000, errorCode: 600000002, errorInfo: "param " + name + " is invalid" } };
+        },
+        IM_LOGIN_ERROR: function (cmdid, errorCode) {
+            return { result: false, info: { cmdId: cmdid, errorCode: errorCode, errorInfo: "im login failed" } };
+        },
+        IM_PARAM_INVALID_ERROR: function (cmdid, errorCode, name) {
+            return { result: false, info: { cmdId: cmdid, errorCode: errorCode, errorInfo: "param " + name + " is invalid" } };
+        },
+    };
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// optional / simple context binding
+var aFunction = __webpack_require__(14);
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
 
 
 /***/ }),
 /* 26 */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.5.1' };
-if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+var toString = {}.toString;
+
+module.exports = function (it) {
+  return toString.call(it).slice(8, -1);
+};
 
 
 /***/ }),
 /* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = __webpack_require__(5);
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function (it, S) {
-  if (!isObject(it)) return it;
-  var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  throw TypeError("Can't convert object to primitive value");
+"use strict";
+
+var fails = __webpack_require__(4);
+
+module.exports = function (method, arg) {
+  return !!method && fails(function () {
+    // eslint-disable-next-line no-useless-call
+    arg ? method.call(null, function () { /* empty */ }, 1) : method.call(null);
+  });
 };
 
 
 /***/ }),
 /* 28 */
-/***/ (function(module, exports) {
-
-// 7.2.1 RequireObjectCoercible(argument)
-module.exports = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
-  return it;
-};
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-// 7.1.4 ToInteger
-var ceil = Math.ceil;
-var floor = Math.floor;
-module.exports = function (it) {
-  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-};
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// most Object methods by ES6 should accept primitives
-var $export = __webpack_require__(0);
-var core = __webpack_require__(26);
-var fails = __webpack_require__(4);
-module.exports = function (KEY, exec) {
-  var fn = (core.Object || {})[KEY] || Object[KEY];
-  var exp = {};
-  exp[KEY] = exec(fn);
-  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
-};
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 0 -> Array#forEach
-// 1 -> Array#map
-// 2 -> Array#filter
-// 3 -> Array#some
-// 4 -> Array#every
-// 5 -> Array#find
-// 6 -> Array#findIndex
-var ctx = __webpack_require__(21);
-var IObject = __webpack_require__(56);
-var toObject = __webpack_require__(10);
-var toLength = __webpack_require__(9);
-var asc = __webpack_require__(92);
-module.exports = function (TYPE, $create) {
-  var IS_MAP = TYPE == 1;
-  var IS_FILTER = TYPE == 2;
-  var IS_SOME = TYPE == 3;
-  var IS_EVERY = TYPE == 4;
-  var IS_FIND_INDEX = TYPE == 6;
-  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
-  var create = $create || asc;
-  return function ($this, callbackfn, that) {
-    var O = toObject($this);
-    var self = IObject(O);
-    var f = ctx(callbackfn, that, 3);
-    var length = toLength(self.length);
-    var index = 0;
-    var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
-    var val, res;
-    for (;length > index; index++) if (NO_HOLES || index in self) {
-      val = self[index];
-      res = f(val, index, O);
-      if (TYPE) {
-        if (IS_MAP) result[index] = res;   // map
-        else if (res) switch (TYPE) {
-          case 3: return true;             // some
-          case 5: return val;              // find
-          case 6: return index;            // findIndex
-          case 2: result.push(val);        // filter
-        } else if (IS_EVERY) return false; // every
-      }
-    }
-    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
-  };
-};
-
-
-/***/ }),
-/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -1584,50 +4228,165 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+var core = module.exports = { version: '2.5.1' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = __webpack_require__(5);
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (it, S) {
+  if (!isObject(it)) return it;
+  var fn, val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+// 7.1.4 ToInteger
+var ceil = Math.ceil;
+var floor = Math.floor;
+module.exports = function (it) {
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+
+
+/***/ }),
 /* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// most Object methods by ES6 should accept primitives
+var $export = __webpack_require__(0);
+var core = __webpack_require__(29);
+var fails = __webpack_require__(4);
+module.exports = function (KEY, exec) {
+  var fn = (core.Object || {})[KEY] || Object[KEY];
+  var exp = {};
+  exp[KEY] = exec(fn);
+  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
+};
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 0 -> Array#forEach
+// 1 -> Array#map
+// 2 -> Array#filter
+// 3 -> Array#some
+// 4 -> Array#every
+// 5 -> Array#find
+// 6 -> Array#findIndex
+var ctx = __webpack_require__(25);
+var IObject = __webpack_require__(56);
+var toObject = __webpack_require__(10);
+var toLength = __webpack_require__(9);
+var asc = __webpack_require__(92);
+module.exports = function (TYPE, $create) {
+  var IS_MAP = TYPE == 1;
+  var IS_FILTER = TYPE == 2;
+  var IS_SOME = TYPE == 3;
+  var IS_EVERY = TYPE == 4;
+  var IS_FIND_INDEX = TYPE == 6;
+  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+  var create = $create || asc;
+  return function ($this, callbackfn, that) {
+    var O = toObject($this);
+    var self = IObject(O);
+    var f = ctx(callbackfn, that, 3);
+    var length = toLength(self.length);
+    var index = 0;
+    var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
+    var val, res;
+    for (;length > index; index++) if (NO_HOLES || index in self) {
+      val = self[index];
+      res = f(val, index, O);
+      if (TYPE) {
+        if (IS_MAP) result[index] = res;   // map
+        else if (res) switch (TYPE) {
+          case 3: return true;             // some
+          case 5: return val;              // find
+          case 6: return index;            // findIndex
+          case 2: result.push(val);        // filter
+        } else if (IS_EVERY) return false; // every
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+  };
+};
+
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 if (__webpack_require__(7)) {
-  var LIBRARY = __webpack_require__(40);
+  var LIBRARY = __webpack_require__(42);
   var global = __webpack_require__(3);
   var fails = __webpack_require__(4);
   var $export = __webpack_require__(0);
   var $typed = __webpack_require__(69);
   var $buffer = __webpack_require__(98);
-  var ctx = __webpack_require__(21);
-  var anInstance = __webpack_require__(46);
-  var propertyDesc = __webpack_require__(38);
-  var hide = __webpack_require__(14);
-  var redefineAll = __webpack_require__(48);
-  var toInteger = __webpack_require__(29);
+  var ctx = __webpack_require__(25);
+  var anInstance = __webpack_require__(48);
+  var propertyDesc = __webpack_require__(40);
+  var hide = __webpack_require__(17);
+  var redefineAll = __webpack_require__(50);
+  var toInteger = __webpack_require__(32);
   var toLength = __webpack_require__(9);
   var toIndex = __webpack_require__(127);
-  var toAbsoluteIndex = __webpack_require__(42);
-  var toPrimitive = __webpack_require__(27);
-  var has = __webpack_require__(13);
+  var toAbsoluteIndex = __webpack_require__(44);
+  var toPrimitive = __webpack_require__(30);
+  var has = __webpack_require__(16);
   var classof = __webpack_require__(58);
   var isObject = __webpack_require__(5);
   var toObject = __webpack_require__(10);
   var isArrayIter = __webpack_require__(89);
-  var create = __webpack_require__(43);
-  var getPrototypeOf = __webpack_require__(20);
-  var gOPN = __webpack_require__(44).f;
+  var create = __webpack_require__(45);
+  var getPrototypeOf = __webpack_require__(22);
+  var gOPN = __webpack_require__(46).f;
   var getIterFn = __webpack_require__(91);
-  var uid = __webpack_require__(39);
+  var uid = __webpack_require__(41);
   var wks = __webpack_require__(6);
-  var createArrayMethod = __webpack_require__(31);
+  var createArrayMethod = __webpack_require__(34);
   var createArrayIncludes = __webpack_require__(60);
   var speciesConstructor = __webpack_require__(67);
   var ArrayIterators = __webpack_require__(94);
   var Iterators = __webpack_require__(54);
   var $iterDetect = __webpack_require__(64);
-  var setSpecies = __webpack_require__(45);
+  var setSpecies = __webpack_require__(47);
   var arrayFill = __webpack_require__(93);
   var arrayCopyWithin = __webpack_require__(117);
   var $DP = __webpack_require__(8);
-  var $GOPD = __webpack_require__(19);
+  var $GOPD = __webpack_require__(21);
   var dP = $DP.f;
   var gOPD = $GOPD.f;
   var RangeError = global.RangeError;
@@ -2071,7 +4830,7 @@ if (__webpack_require__(7)) {
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Map = __webpack_require__(122);
@@ -2128,12 +4887,12 @@ module.exports = {
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var META = __webpack_require__(39)('meta');
+var META = __webpack_require__(41)('meta');
 var isObject = __webpack_require__(5);
-var has = __webpack_require__(13);
+var has = __webpack_require__(16);
 var setDesc = __webpack_require__(8).f;
 var id = 0;
 var isExtensible = Object.isExtensible || function () {
@@ -2187,337 +4946,20 @@ var meta = module.exports = {
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.31 Array.prototype[@@unscopables]
 var UNSCOPABLES = __webpack_require__(6)('unscopables');
 var ArrayProto = Array.prototype;
-if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(14)(ArrayProto, UNSCOPABLES, {});
+if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(17)(ArrayProto, UNSCOPABLES, {});
 module.exports = function (key) {
   ArrayProto[UNSCOPABLES][key] = true;
 };
 
 
 /***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.SDK_ERROR_CODE = {
-        LOGIN_ERR_NO_INPUT: {
-            ERROR_ID: "",
-            DISCRIPTION: "auth parameter is null",
-            ACTION: "please input auth info"
-        },
-        LOGIN_ERR_GENERAL: {
-            ERROR_ID: 1,
-            DISCRIPTION: "LOGIN_ERR_BEGIN",
-            ACTION: "How to fix it"
-        }
-    };
-    exports.UPORTAL_LOGIN_ERROR = {
-        LOGIN_ERR_BEGIN: 0,
-        LOGIN_ERR_GENERAL: 1,
-        LOGIN_ERR_PARAM_ERROR: 2,
-        LOGIN_ERR_TIMEOUT: 3,
-        LOGIN_ERR_MEM_ERROR: 4,
-        LOGIN_ERR_XML_ERROR: 5,
-        LOGIN_ERR_PARSE_PTKT_ERROR: 6,
-        LOGIN_ERR_DNS_ERROR: 7,
-        LOGIN_ERR_REQUEST_FAILED: 8,
-        LOGIN_ERR_AUTH_FAILED: 9,
-        LOGIN_ERR_SN_FAILED: 10,
-        LOGIN_ERR_SERVICE_ERROR: 11,
-        LOGIN_ERR_ACCOUNT_LOCKED: 12,
-        LOGIN_ERR_TIMER_ERROR: 13,
-        LOGIN_ERR_WRONG_SERVERTYPE: 14,
-        LOGIN_ERR_WRONG_SERVERVERSION: 15,
-        LOGIN_ERR_INVALID_URL: 16,
-        LOGIN_ERR_SEARCH_SERVER_FAIL: 17,
-        LOGIN_ERR_START_REFRESH_FAIL: 18
-    };
-    exports.EADDR_ERROR = {
-        EADDR_TOKEN_INVALIED: 7
-    };
-    exports.ESERVER_LOGIN_ERROR = {
-        IM_E_LOGING_RESULT_TIMEOUT: -100,
-        IM_E_LOGING_RESULT_SERVERNOTALLOW: -2,
-        IM_E_LOGING_RESULT_INTERNAL_ERROR: -1,
-        IM_E_LOGING_RESULT_SUCCESS: 0,
-        IM_E_LOGING_RESULT_FAILED: 1,
-        IM_E_LOGING_RESULT_PASSWORD_ERROR: 2,
-        IM_E_LOGING_RESULT_ACCOUNT_NOT_EXIST: 3,
-        IM_E_LOGING_RESULT_ALREADY_LOGIN: 4,
-        IM_E_LOGING_RESULT_ACCOUNT_LOCKED: 5,
-        IM_E_LOGING_RESULT_NEED_NEW_VERSION: 6,
-        IM_E_LOGING_RESULT_NOT_ACTIVE: 7,
-        IM_E_LOGING_RESULT_ACCOUNT_SUSPEND: 8,
-        IM_E_LOGING_RESULT_ACCOUNT_EXPIRE: 9,
-        IM_E_LOGING_RESULT_DECRYPT_FAILED: 10,
-        IM_E_LOGING_RESULT_CERT_DOWNLOAD_FAILED: 11,
-        IM_E_LOGING_RESULT_CERT_VALIDATE_FAILED: 12,
-        IM_E_LOGING_RESULT_DNS_ERROR: 13,
-        IM_E_LOGING_RESULT_SYSTEM_ERROR: 14,
-        IM_E_LOGING_RESULT_TICKET_EXPIRE: 15,
-        IM_E_LOGING_RESULT_TICKET_NOT_EXIST: 16,
-        IM_E_LOGING_RESULT_TICKET_SUSPEND: 17,
-        IM_E_LOGING_RESULT_TICKET_ERROR: 18,
-        IM_E_LOGING_RESULT_TICKET_FLUID_EXCEED: 19,
-        IM_E_LOGING_RESULT_TICKET_FLUID_ERROR: 20,
-        IM_E_LOGING_RESULT_TICKET_REDIRECT_ERROR: 21
-    };
-    exports.CONFERENCE_BOOK_ERROR = {};
-    exports.CONFERENCE_JOIN_ERROR = {
-        CONF_JOIN_ACCESSNUM_ERROR: 90000001,
-    };
-    exports.CONFERENCE_CTRL_ERROR = {};
-    exports.DATACONF_BOOK_ERROR = {};
-    exports.DATACONF_JOIN_ERROR = {};
-    exports.DATACONF_CTRL_ERROR = {};
-    exports.EC_SDK_ERROR = {
-        WEBSOCKET_IS_CLOSED: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000001, errorInfo: name + " websocket has been closed, please reopen" } };
-        },
-        OBJECT_INIT_FAILED: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000002, errorInfo: name + " initialize failed" } };
-        },
-        PARAM_TYPE_ERROR: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000003, errorInfo: "param " + name + " type error" } };
-        },
-        PARAM_INVALID_ERROR: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000004, errorInfo: "param " + name + " is invalid" } };
-        },
-        LOGIN_STATUS_ERROR: function () {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000005, errorInfo: "login status error, please login first" } };
-        },
-        OBJECT_NOT_EXISTS: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000006, errorInfo: name + " object does not exists" } };
-        },
-        PARAM_RANGE_ERROR: function (name, minValue, maxValue) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000007, errorInfo: name + " less than " + minValue + " or bigger than " + maxValue } };
-        },
-        ALREADY_IN_CONF: function () {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000008, errorInfo: "already in conference or call" } };
-        },
-        USER_ROLE_ERROR: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000009, errorInfo: "cannot operate \'name\' to user, due to his role." } };
-        },
-        CONF_STATE_ERROR: function () {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000010, errorInfo: "conference state error" } };
-        },
-        CONF_SOCKET_ERROR: function (info) {
-            return { result: false, info: { cmdId: 300000000, errorCode: 390000002, errorInfo: info } };
-        },
-        CONF_CHAT_ERROR_INVALIDUSERID: function () {
-            return { result: false, info: { cmdId: 400000000, errorCode: 400001002, errorInfo: "Invalid user" } };
-        },
-        DATACONF_PARAM_INVALID_ERROR: function (name) {
-            return { result: false, info: { cmdId: 400000000, errorCode: 490000001, errorInfo: "param " + name + " is invalid" } };
-        },
-        DATACONF_PARAM_TYPE_ERROR: function (name) {
-            return { result: false, info: { cmdId: 400000000, errorCode: 490000002, errorInfo: "param " + name + " type error" } };
-        },
-    };
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports) {
-
-module.exports = function (bitmap, value) {
-  return {
-    enumerable: !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
-  };
-};
-
-
-/***/ }),
 /* 39 */
-/***/ (function(module, exports) {
-
-var id = 0;
-var px = Math.random();
-module.exports = function (key) {
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-};
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-module.exports = false;
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys = __webpack_require__(103);
-var enumBugKeys = __webpack_require__(76);
-
-module.exports = Object.keys || function keys(O) {
-  return $keys(O, enumBugKeys);
-};
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var toInteger = __webpack_require__(29);
-var max = Math.max;
-var min = Math.min;
-module.exports = function (index, length) {
-  index = toInteger(index);
-  return index < 0 ? max(index + length, 0) : min(index, length);
-};
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject = __webpack_require__(2);
-var dPs = __webpack_require__(104);
-var enumBugKeys = __webpack_require__(76);
-var IE_PROTO = __webpack_require__(75)('IE_PROTO');
-var Empty = function () { /* empty */ };
-var PROTOTYPE = 'prototype';
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function () {
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = __webpack_require__(73)('iframe');
-  var i = enumBugKeys.length;
-  var lt = '<';
-  var gt = '>';
-  var iframeDocument;
-  iframe.style.display = 'none';
-  __webpack_require__(77).appendChild(iframe);
-  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-  // createDict = iframe.contentWindow.Object;
-  // html.removeChild(iframe);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-  iframeDocument.close();
-  createDict = iframeDocument.F;
-  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
-  return createDict();
-};
-
-module.exports = Object.create || function create(O, Properties) {
-  var result;
-  if (O !== null) {
-    Empty[PROTOTYPE] = anObject(O);
-    result = new Empty();
-    Empty[PROTOTYPE] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO] = O;
-  } else result = createDict();
-  return Properties === undefined ? result : dPs(result, Properties);
-};
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys = __webpack_require__(103);
-var hiddenKeys = __webpack_require__(76).concat('length', 'prototype');
-
-exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-  return $keys(O, hiddenKeys);
-};
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var global = __webpack_require__(3);
-var dP = __webpack_require__(8);
-var DESCRIPTORS = __webpack_require__(7);
-var SPECIES = __webpack_require__(6)('species');
-
-module.exports = function (KEY) {
-  var C = global[KEY];
-  if (DESCRIPTORS && C && !C[SPECIES]) dP.f(C, SPECIES, {
-    configurable: true,
-    get: function () { return this; }
-  });
-};
-
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports) {
-
-module.exports = function (it, Constructor, name, forbiddenField) {
-  if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
-    throw TypeError(name + ': incorrect invocation!');
-  } return it;
-};
-
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var ctx = __webpack_require__(21);
-var call = __webpack_require__(115);
-var isArrayIter = __webpack_require__(89);
-var anObject = __webpack_require__(2);
-var toLength = __webpack_require__(9);
-var getIterFn = __webpack_require__(91);
-var BREAK = {};
-var RETURN = {};
-var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
-  var iterFn = ITERATOR ? function () { return iterable; } : getIterFn(iterable);
-  var f = ctx(fn, that, entries ? 2 : 1);
-  var index = 0;
-  var length, step, iterator, result;
-  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
-  // fast case for arrays with default iterator
-  if (isArrayIter(iterFn)) for (length = toLength(iterable.length); length > index; index++) {
-    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
-    if (result === BREAK || result === RETURN) return result;
-  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
-    result = call(iterator, f, step.value, entries);
-    if (result === BREAK || result === RETURN) return result;
-  }
-};
-exports.BREAK = BREAK;
-exports.RETURN = RETURN;
-
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var redefine = __webpack_require__(15);
-module.exports = function (target, src, safe) {
-  for (var key in src) redefine(target, key, src[key], safe);
-  return target;
-};
-
-
-/***/ }),
-/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -2555,1794 +4997,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(37), __webpack_require__(12), __webpack_require__(25), __webpack_require__(32), __webpack_require__(348), __webpack_require__(24), __webpack_require__(1), __webpack_require__(372), __webpack_require__(373), __webpack_require__(374), __webpack_require__(375), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, errorCode_1, serverConfig_1, dispatcher_1, observer_1, initialization_1, eventInfo_1, util, call_1, conference_1, device_1, eaddr_1, enum_2, util_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Client = (function () {
-        function Client() {
-            this.timer = 0;
-            this.currentFrame = serverConfig_1.CloudEC_SERVERCONFIG.DROP_FRAME_COUNT || 2;
-            this.pcMemory = 0;
-            this.playHandle = -1;
-            this.parentFrameHwnd = 0;
-            this.frameHwndList = {};
-            this.isNativeWndExist = false;
-            initialization_1.default.init();
-            this._device = new device_1.default();
-            this._eaddr = new eaddr_1.default();
-            this._status = 0;
-        }
-        Client.prototype.login = function (authType, authParam, serverInfo, callback) {
-            var _this = this;
-            util_1.default.info("Login", "Client:enter login");
-            var err = { cmdId: 100000000, errorCode: 100000002, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            if ((typeof authType) != 'number') {
-                err.errorInfo = "authType should be a number";
-                evt.info = err;
-                callback(evt);
-                return;
-            }
-            switch (authType) {
-                case enum_1.LOGIN_AUTH_TYPE.ACCOUNT_AUTH:
-                    if (!authParam.account || !authParam.passwd) {
-                        err.errorInfo = "login account or password is empty";
-                        evt.info = err;
-                        callback(evt);
-                        return;
-                    }
-                    break;
-                case enum_1.LOGIN_AUTH_TYPE.TOKEN_AUTH:
-                    if (!authParam.token) {
-                        err.errorInfo = "login token is empty";
-                        evt.info = err;
-                        callback(evt);
-                        return;
-                    }
-                    break;
-                default:
-                    err.errorInfo = "authType should be in [0,1]";
-                    evt.info = err;
-                    callback(evt);
-                    return;
-            }
-            if ("" == serverInfo.serverAddress || (typeof serverInfo.serverPort) != 'number') {
-                err.errorInfo = "serverAddress or serverPort is incorrect";
-                evt.info = err;
-                callback(evt);
-                return;
-            }
-            sessionStorage.setItem("CLOUDEC_LOGIN_INPUT_PARAM", JSON.stringify({ authType: authType, authParam: authParam, serverInfo: serverInfo }));
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_LOGIN_REQ, function (ret) {
-                if (!ret.result) {
-                    callback(ret);
-                    return;
-                }
-                var _a = ret.info, userAccount = _a.userAccount, sipAccount = _a.sipAccount, shortNumber = _a.shortNumber, deployMode = _a.deployMode;
-                var milltime = new Date().getTime();
-                var mydate = util.formatDateYYYYMMDDHHMM(milltime);
-                var loginTime = mydate.date + " " + mydate.time;
-                var userInfo = { userAccount: userAccount, sipAccount: sipAccount, shortNumber: shortNumber, loginTime: loginTime };
-                evt.result = true;
-                evt.info = userInfo;
-                _this._status = 1;
-                _this.registerCallEvent();
-                _this.registerConfEvent();
-                _this.registerDataEvent();
-                callback(evt);
-            });
-        };
-        Client.prototype.logout = function () {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_LOGOUT_REQ);
-            delete this._call;
-            delete this._conf;
-            this._status = 0;
-        };
-        Client.prototype.bookConference = function (bookConferenceParam, callback) {
-            this.isLogin();
-            var ret = this.isValidBookConferenceParam(bookConferenceParam);
-            if (ret.result === false) {
-                Client.notifyErr(ret);
-            }
-            if (bookConferenceParam.topic.length === 0) {
-                bookConferenceParam.topic = "CloudEC_Meeting";
-                util_1.default.info("Login", "set default meeting topic");
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_BOOK_RESVCONF, bookConferenceParam, function (ret) {
-                if (ret.result == true) {
-                    var data = ret.info.param;
-                    var conf_list_info = data.conf_list_info;
-                    var date = new Date();
-                    var offset = date.getTimezoneOffset() * 60 * 1000;
-                    var sdate = new Date(conf_list_info.start_time.replace(" ", "T"));
-                    var l_sdate = new Date(sdate.valueOf() - offset);
-                    var l_start_time = l_sdate.toLocaleString();
-                    var edate = new Date(conf_list_info.end_time.replace(" ", "T"));
-                    var l_edate = new Date(edate.valueOf() - offset);
-                    var l_end_time = l_edate.toLocaleString();
-                    var conf_info = {
-                        conferenceID: conf_list_info.conf_id,
-                        accessNumber: conf_list_info.access_number,
-                        chairmanPasswd: conf_list_info.chairman_pwd,
-                        generalPasswd: conf_list_info.general_pwd,
-                        state: conf_list_info.conf_state,
-                        topic: conf_list_info.conf_subject,
-                        startTime: l_start_time,
-                        endTime: l_end_time,
-                        mediaType: conf_list_info.media_type,
-                        scheduserName: "",
-                        scheduerNumber: "",
-                        attendeeAmount: conf_list_info.size
-                    };
-                    ret.info = conf_info;
-                }
-                callback(ret);
-            });
-        };
-        Client.prototype.joinInstanceConf = function (instanceConfParam, callback) {
-            var _this = this;
-            this.isLogin();
-            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            var validret = this.isValideInstanceConfParam(instanceConfParam);
-            if (validret.result === false) {
-                Client.notifyErr(validret);
-            }
-            if (!util.isUndefined(this._conf) || !util.isUndefined(this._call)) {
-                callback(errorCode_1.EC_SDK_ERROR.ALREADY_IN_CONF());
-                return;
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_JOIN_INSTCONF, instanceConfParam, function (ret) {
-                if (ret.result == true) {
-                    _this._conf = new conference_1.default();
-                    _this._conf.setConfInfo(ret.info);
-                    evt.result = true;
-                    evt.info = _this._conf;
-                }
-                else {
-                    evt.result = false;
-                    evt.info = ret.info;
-                }
-                callback(evt);
-            });
-        };
-        Client.prototype.joinAnonymousConf = function (anonymousConfParam, serverInfo, callBack) {
-            var _this = this;
-            util_1.default.info("Login", "Client:join anonymous conf begin");
-            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            if ("" == serverInfo.serverAddress || (typeof serverInfo.serverPort) != 'number') {
-                err.errorInfo = "serverAddress or serverPort is incorrect";
-                evt.info = err;
-                callBack(evt);
-                return;
-            }
-            if ("" == anonymousConfParam.confId || "" == anonymousConfParam.confPasswd || !util.isBinaryNumber(anonymousConfParam.callType)) {
-                err.errorInfo = "Parameter can not be empty";
-                evt.result = false;
-                evt.info = err;
-                callBack(evt);
-                return;
-            }
-            this.registerCallEvent();
-            this.registerConfEvent();
-            this.registerDataEvent();
-            this._status = 1;
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_JOIN_ANONYCONF, anonymousConfParam, serverInfo, function (ret) {
-                if (ret.result) {
-                    _this._conf = new conference_1.default();
-                    evt.info = _this._conf;
-                    callBack(evt);
-                }
-                else {
-                    callBack(ret);
-                }
-            });
-        };
-        Client.prototype.getMyConfList = function (page_index, page_size, callback) {
-            this.isLogin();
-            if (util.isUndefined(page_index) || !util.isInteger(page_index)) {
-                this.notify('error', "page_index type is incorrect");
-                Client.notifyErr(errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("page_index"));
-            }
-            if (util.isUndefined(page_size) || !util.isInteger(page_size)) {
-                Client.notifyErr(errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("page_size"));
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_GET_CONFLIST, page_index, page_size, function (ret) {
-                var conf_list = [];
-                if (ret.result == true) {
-                    var conf_list_info = ret.info.param.conf_list_info;
-                    for (var m in conf_list_info) {
-                        var date = new Date();
-                        var offset = date.getTimezoneOffset() * 60 * 1000;
-                        var sdate = new Date(conf_list_info[m].start_time.replace(" ", "T"));
-                        var l_sdate = new Date(sdate.valueOf() - offset);
-                        var l_start_time = l_sdate.toLocaleString();
-                        var edate = new Date(conf_list_info[m].end_time.replace(" ", "T"));
-                        var l_edate = new Date(edate.valueOf() - offset);
-                        var l_end_time = l_edate.toLocaleString();
-                        var obj = {
-                            accessNumber: conf_list_info[m].access_number,
-                            chairmanPasswd: conf_list_info[m].chairman_pwd,
-                            generalPasswd: conf_list_info[m].general_pwd,
-                            conferenceID: conf_list_info[m].conf_id,
-                            state: conf_list_info[m].conf_state,
-                            topic: conf_list_info[m].conf_subject,
-                            startTime: l_start_time,
-                            endTime: l_end_time,
-                            mediaType: (conf_list_info[m].media_type == 1 || conf_list_info[m].media_type == 17 ? 0 : 1),
-                            scheduserName: conf_list_info[m].scheduser_name,
-                            scheduerNumber: conf_list_info[m].scheduser_number,
-                            attendeeAmount: conf_list_info[m].size
-                        };
-                        conf_list[m] = obj;
-                    }
-                    callback({ result: true, info: conf_list });
-                }
-                else {
-                    callback(ret);
-                }
-            });
-        };
-        Client.prototype.getMyConfInfo = function (conf_id, callback) {
-            this.isLogin();
-            if (util.isUndefined(conf_id) || !util.isString(conf_id)) {
-                Client.notifyErr(errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("conf_id"));
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_GET_CONFINFO, conf_id, function (ret) {
-                if (ret.result == true) {
-                    var data = ret.info.param;
-                    var conf_list_info = data.get_conf_info_result.conf_list_info;
-                    var date = new Date();
-                    var offset = date.getTimezoneOffset() * 60 * 1000;
-                    var sdate = new Date(conf_list_info.start_time.replace(" ", "T"));
-                    var l_sdate = new Date(sdate.valueOf() - offset);
-                    var l_start_time = l_sdate.toLocaleString();
-                    var edate = new Date(conf_list_info.end_time.replace(" ", "T"));
-                    var l_edate = new Date(edate.valueOf() - offset);
-                    var l_end_time = l_edate.toLocaleString();
-                    var conf_info = {
-                        conferenceID: conf_list_info.conf_id,
-                        accessNumber: conf_list_info.access_number,
-                        chairmanPasswd: conf_list_info.chairman_pwd,
-                        generalPasswd: conf_list_info.general_pwd,
-                        state: conf_list_info.conf_state,
-                        topic: conf_list_info.conf_subject,
-                        startTime: l_start_time,
-                        endTime: l_end_time,
-                        mediaType: conf_list_info.media_type,
-                        scheduserName: conf_list_info.scheduser_name,
-                        scheduerNumber: conf_list_info.scheduser_number,
-                        attendeeAmount: data.get_conf_info_result.num_of_addendee
-                    };
-                    callback({ result: true, info: conf_info });
-                }
-                else {
-                    callback(ret);
-                }
-            });
-        };
-        Client.prototype.joinConference = function (joinConfParam, callback) {
-            var _this = this;
-            this.isLogin();
-            var err = { cmdId: 300000002, errorCode: 300000002, errorInfo: "parameter error" };
-            var evt = { result: true, info: "" };
-            var mediaType;
-            if ("" == joinConfParam.conferenceId || "" == joinConfParam.accessNumber || "" == joinConfParam.confPasswd) {
-                err.errorInfo = "Parameter can not be empty";
-                evt.result = false;
-                evt.info = err;
-                callback(evt);
-                return;
-            }
-            this.getMyConfInfo(joinConfParam.conferenceId, function (ret) {
-                if (ret.result == true) {
-                    if (ret.info.mediaType == 5 || ret.info.mediaType == 21 || ret.info.mediaType == 19 || ret.info.mediaType == 3) {
-                        mediaType = 1;
-                    }
-                    else {
-                        mediaType = 0;
-                    }
-                    if (ret.info.state != 2) {
-                        Client.notifyErr(errorCode_1.EC_SDK_ERROR.CONF_STATE_ERROR());
-                        return;
-                    }
-                }
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_ACCESS_RESVCONF, joinConfParam, mediaType, function (ret) {
-                    if (ret.result) {
-                        _this._conf = new conference_1.default();
-                        evt.info = _this._conf;
-                        callback(evt);
-                    }
-                    else {
-                        callback(ret);
-                    }
-                });
-            });
-        };
-        Client.prototype.setLoginProxy = function (proxyParam) {
-            util_1.default.info("Login", "setLoginProxy proxyAddress: " + JSON.stringify(proxyParam));
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_SET_PROXY_REQ, proxyParam, function (ret) {
-            });
-        };
-        Client.prototype.getCallHandler = function () {
-            this.isLogin();
-            if (this._call) {
-                return this._call;
-            }
-            else {
-                util_1.default.error("client", JSON.stringify(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("Call")));
-                Client.notifyErr(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("call"));
-                return null;
-            }
-        };
-        Client.prototype.getConfHandler = function () {
-            if (this._conf) {
-                return this._conf;
-            }
-            else {
-                var errinfo = "Conference object doesn't exists";
-                util_1.default.error("client", errinfo);
-                Client.notifyErr(errorCode_1.EC_SDK_ERROR.OBJECT_NOT_EXISTS("Conference"));
-                return null;
-            }
-        };
-        Client.prototype.on = function (event, action) {
-            util_1.default.info("client", "register event = " + event);
-            var _listener = Client._listeners[event];
-            if (!_listener) {
-                Client._listeners[event] = [];
-            }
-            Client._listeners[event].push(action);
-        };
-        Client.prototype.onError = function (action) {
-            this.on("error", action);
-        };
-        Client.notifyErr = function (errorInfo) {
-            var _listener = Client._listeners["error"];
-            if (!_listener)
-                return;
-            var length = _listener.length;
-            for (var i = 0; i < length; i++) {
-                var callback = _listener[i];
-                callback(errorInfo);
-            }
-        };
-        Client.prototype.notify = function (event) {
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            var _listener = Client._listeners[event];
-            if (!_listener)
-                return;
-            var length = _listener.length;
-            for (var i = 0; i < length; i++) {
-                var callback = _listener[i];
-                callback.apply(void 0, args);
-            }
-        };
-        Client.prototype.isValideInstanceConfParam = function (param) {
-            if (!util.isUndefined(param.isVideo) && !util.isInteger(param.isVideo) && (param.isVideo < 0 || param.isVideo > 3)) {
-                return errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("isVideo");
-            }
-            if (!util.isUndefined(param.attendees)) {
-                if (!util.isArray(param.attendees)) {
-                    return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("attendees");
-                }
-                for (var i = 0; i < param.attendees.length; i++) {
-                    if (!util.isValidAttendeeParam(param.attendees[i])) {
-                        return errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
-                    }
-                }
-            }
-            return { result: true, info: "" };
-        };
-        Client.prototype.isValidBookConferenceParam = function (param) {
-            if (!util.isInteger(param.duration) ||
-                !util.isString(param.topic)) {
-                return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("duration or topic");
-            }
-            if (!util.isUndefined(param.autoRecord) && !util.isBinaryNumber(param.autoRecord)) {
-                return errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("auto_record");
-            }
-            if (!util.isUndefined(param.isVideo) && !util.isInteger(param.isVideo) && (param.isVideo < 0 || param.isVideo > 3)) {
-                return errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("isVideo");
-            }
-            var startTime = param.startTime;
-            if (startTime != null) {
-                if (!util.isInteger(startTime.year) ||
-                    !util.isInteger(startTime.month) ||
-                    !util.isInteger(startTime.date) ||
-                    !util.isInteger(startTime.hours) ||
-                    !util.isInteger(startTime.minutes)) {
-                    return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("startTime");
-                }
-                if (startTime.month < 1 || startTime.month > 12) {
-                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("month", "0", "12");
-                }
-                if (startTime.date < 1 || startTime.date > 31) {
-                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("date", "1", "31");
-                }
-                if (startTime.hours < 0 || startTime.hours > 24) {
-                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("hours", "0", "24");
-                }
-                if (startTime.minutes < 0 || startTime.minutes > 60) {
-                    return errorCode_1.EC_SDK_ERROR.PARAM_RANGE_ERROR("minutes", "0", "60");
-                }
-            }
-            if (util.isUndefined(param.attendees) || !util.isArray(param.attendees) || param.attendees.length === 0) {
-                return errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
-            }
-            for (var i = 0; i < param.attendees.length; i++) {
-                if (!util.isValidAttendeeParam(param.attendees[i])) {
-                    return errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
-                }
-            }
-            return { result: true, info: "" };
-        };
-        Client.prototype.registerCallEvent = function () {
-            var _this = this;
-            observer_1.default.subscribe('CallIncomming', function (ret) {
-                var evt = { result: true, info: "you have a incoming call" };
-                _this._call = new call_1.default();
-                _this._call.setCallID(ret.callId);
-                _this.callID = ret.callId;
-                _this._call.setCallStyle(0);
-                _this._call.setCallType(ret.isVideo);
-                _this._call.setCallee(ret.callNo);
-                evt.info = {
-                    callNo: ret.callNo,
-                    callType: ret.isVideo,
-                };
-                _this.notify('CallIncomming', evt);
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, 0, "./audio/In.wav", function (data) {
-                    if (data.result == 0) {
-                        _this.playHandle = data.param.play_handle;
-                    }
-                });
-            });
-            observer_1.default.subscribe('onForceUnReg', function (ret) {
-                _this.logout();
-                _this.notify("ForceUnReg", ret);
-            });
-            observer_1.default.subscribe('CallDestroy', function (ret) {
-                _this.notify("CallDestroy", ret);
-            });
-            observer_1.default.subscribe('CallEnded', function (ret) {
-                delete _this._call;
-                var evt;
-                if (ret) {
-                    evt = { result: ret, info: "end success" };
-                }
-                else {
-                    evt = { result: ret, info: "end failure" };
-                }
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
-                    _this.delVideo();
-                }
-                else {
-                    _this.closeVideo();
-                }
-                if (_this.playHandle >= 0) {
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, _this.playHandle, function (data) {
-                        if (data.result == 0) {
-                            _this.playHandle = -1;
-                        }
-                    });
-                }
-                _this.notify('CallEnded', evt);
-            });
-            observer_1.default.subscribe('CallConnected', function (ret) {
-                var evt = { result: true, info: "call connect!" };
-                _this.notify('CallConnected', evt);
-                _this.callID = ret.call_id;
-                if (_this.playHandle >= 0) {
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, _this.playHandle, function (data) {
-                        if (data.result == 0) {
-                            _this.playHandle = -1;
-                        }
-                    });
-                }
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && ret.call_type == 1) {
-                    _this.displayVideoEx(ret.call_id);
-                }
-                else if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && ret.call_type == 0 && _this.isNativeWndExist) {
-                    _this.closeVideo();
-                }
-            });
-            observer_1.default.subscribe('CallRingBack', function (ret) {
-                var evt = { result: true, info: "call ringBack!" };
-                if (_this.playHandle == -1) {
-                    _this.playHandle = -2;
-                    _this._call.setCallID(ret.call_id);
-                    _this.callID = ret.call_id;
-                    _this.notify('CallRingBack', evt);
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, 0, "./audio/ringback.wav", function (data) {
-                        if (data.result == 0) {
-                            _this.playHandle = data.param.play_handle;
-                        }
-                    });
-                }
-            });
-            observer_1.default.subscribe('AddVideoRequest', function (ret) {
-                var evt = { result: true, info: "Add video request!" };
-                _this.notify('AddVideoRequest', evt);
-            });
-            observer_1.default.subscribe('DelVideoRequest', function (ret) {
-                var evt = { result: true, info: "Delete video request!" };
-                _this.notify('DelVideoRequest', evt);
-            });
-            observer_1.default.subscribe('CallModifyVideoResult', function (ret) {
-                var evt = { result: true, info: "Audio and video conversion succeed!" };
-                if (0 == ret.result) {
-                    if (1 == ret.is_video) {
-                        if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
-                            _this.showVideo();
-                        }
-                    }
-                    else {
-                        if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
-                            _this.closeVideo();
-                        }
-                    }
-                }
-                else {
-                    evt = { result: false, info: "Audio and video conversion failed!" };
-                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
-                        if (0 == ret.is_video) {
-                            _this.closeVideo();
-                        }
-                    }
-                }
-                _this.notify('CallModifyVideoResult', evt);
-            });
-            observer_1.default.subscribe('VideoSocketResult', function (ret) {
-                if (!ret.result) {
-                    Client.notifyErr(ret);
-                }
-            });
-            observer_1.default.subscribe('CallSessionModify', function (ret) {
-                _this.notify('CallSessionModify', ret);
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
-                    if (ret.nowIsVideoCall === 1) {
-                        _this.displayVideoEx(ret.call_id);
-                    }
-                    else {
-                        _this.closeVideo();
-                    }
-                }
-            });
-            observer_1.default.subscribe('NewServiceRight', function (ret) {
-                var evt = { result: true, info: ret };
-                _this.notify('NewServiceRight', evt);
-            });
-            observer_1.default.subscribe('SetIptServiceSuccess', function (ret) {
-                var evt = { result: true, info: "set ipt successful!" };
-                _this.notify('SetIptServiceResult', evt);
-            });
-            observer_1.default.subscribe('SetIptServiceFailed', function (ret) {
-                var evt = { result: false, info: "failed to set ipt!" };
-                _this.notify('SetIptServiceResult', evt);
-            });
-            observer_1.default.subscribe('CallBldTransferRecvSucRsp', function (ret) {
-                var evt = { result: true, info: "blind transfer request result!" };
-                _this.notify('CallBldTransferRecvSucRsp', evt);
-            });
-            observer_1.default.subscribe('CallBldTransferFailed', function (ret) {
-                var evt = { result: false, info: "blind transfer failed!" };
-                _this.notify('CallBldTransferResult', evt);
-            });
-            observer_1.default.subscribe('CallBldTransferSuccess', function (ret) {
-                var evt = { result: true, info: "blind transfer success!" };
-                _this.notify('CallBldTransferResult', evt);
-            });
-        };
-        Client.prototype.registerConfEvent = function () {
-            var _this = this;
-            observer_1.default.subscribe("BeTransToConfInd", function (ret) {
-                if (_this._call) {
-                    delete _this._call;
-                }
-                if (ret.info.conf_info.media_type != 17 && ret.info.conf_info.media_type != 1) {
-                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
-                    }
-                }
-            });
-            observer_1.default.subscribe("ConfConnected", function (ret) {
-                if (util.isUndefined(_this._call) && ret.connect_info.media_type != 17 && ret.connect_info.media_type != 1) {
-                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
-                        _this.showVideo();
-                    }
-                    else {
-                    }
-                }
-                if (util.isUndefined(_this._conf)) {
-                    _this._conf = new conference_1.default();
-                }
-                _this._conf.setCallId(ret.call_id);
-                _this.callID = ret.call_id;
-                _this.notify('ConfConnected', { result: true, info: "Access conference successful" });
-            });
-            observer_1.default.subscribe("ConfInfoInd", function (ret) {
-                var mediaType = ret.info.mediaType;
-                var loginInfo = JSON.parse(sessionStorage.cloudEC_loginInfo);
-                var deployMode = loginInfo.deployMode;
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && mediaType != 17 && mediaType != 1) {
-                    _this.displayVideoEx(_this.callID);
-                }
-                else if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1 && (mediaType == 17 || mediaType == 1)) {
-                    if (deployMode == enum_2.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
-                        _this.closeVideo();
-                    }
-                }
-                if (_this._conf != undefined) {
-                    _this._conf.setConfInfo(ret.info);
-                }
-                else {
-                    _this._conf = new conference_1.default();
-                    _this._conf.setCallId(ret.info.callid);
-                    _this.callID = ret.info.callid;
-                }
-            });
-            observer_1.default.subscribe("AttendeeListUpdate", function (ret) {
-                var attendeeList = ret.conf_status.participants;
-                var participantNum = ret.conf_status.num_of_participant;
-                var participantOriginNum = _this._conf.getAttendeeListNumber();
-                var attendeeListOrigin = new Array();
-                _this._conf.getAttendeeList(function (ret) {
-                    attendeeListOrigin = ret.info;
-                });
-                _this._conf.updateConfInfo({
-                    createor: ret.conf_status.createor,
-                    isAllMute: ret.conf_status.is_all_mute,
-                    lockState: ret.conf_status.lock_state,
-                });
-                if (participantNum > 0 && participantNum < participantOriginNum) {
-                    var _loop_1 = function (i) {
-                        var flag = void 0;
-                        flag = attendeeList.find(function (value) {
-                            return value.number === attendeeListOrigin[i].number;
-                        });
-                        if (flag == undefined && attendeeListOrigin[i].joinState == 0) {
-                            _this._conf.deleteAttendeeList(attendeeListOrigin[i]);
-                        }
-                    };
-                    for (var i = 0; i < attendeeListOrigin.length; i++) {
-                        _loop_1(i);
-                    }
-                }
-                else if (participantNum > 0 && participantNum == participantOriginNum) {
-                    var _loop_2 = function (i) {
-                        var flag = void 0;
-                        flag = attendeeListOrigin.find(function (value) {
-                            return attendeeList[i].number === value.number;
-                        });
-                        if (flag != undefined) {
-                            var attendee = {
-                                participantId: attendeeList[i].participant_id,
-                                name: attendeeList[i].name,
-                                number: attendeeList[i].number,
-                                isMute: attendeeList[i].is_mute,
-                                isDeaf: attendeeList[i].is_deaf,
-                                raiseHandState: attendeeList[i].hand_state,
-                                role: attendeeList[i].role,
-                                joinState: attendeeList[i].state,
-                                isSelf: attendeeList[i].is_self,
-                                isDataconfMember: flag.isDataconfMember,
-                                dataconfUserId: flag.dataconfUserId,
-                                dataconfMemberType: flag.dataconfMemberType,
-                                sharingPermit: flag.sharingPermit,
-                                isBroadcast: attendeeList[i].is_broadcast
-                            };
-                            _this._conf.updateAttendeeList(attendee);
-                        }
-                    };
-                    for (var i = 0; i < attendeeList.length; i++) {
-                        _loop_2(i);
-                    }
-                }
-                else if (participantNum > 0 && participantNum > participantOriginNum) {
-                    var _loop_3 = function (i) {
-                        var flag = void 0;
-                        flag = attendeeListOrigin.find(function (value) {
-                            return attendeeList[i].participant_id === value.participantId;
-                        });
-                        if (flag == undefined) {
-                            var attendee = {
-                                participantId: attendeeList[i].participant_id,
-                                name: attendeeList[i].name,
-                                number: attendeeList[i].number,
-                                isMute: attendeeList[i].is_mute,
-                                isDeaf: attendeeList[i].is_deaf,
-                                raiseHandState: attendeeList[i].hand_state,
-                                role: attendeeList[i].role,
-                                joinState: attendeeList[i].state,
-                                isSelf: attendeeList[i].is_self,
-                                isDataconfMember: 0,
-                                dataconfUserId: 0,
-                                dataconfMemberType: 0,
-                                sharingPermit: 0,
-                                isBroadcast: attendeeList[i].is_broadcast
-                            };
-                            _this._conf.addAttendeeList(attendee);
-                        }
-                    };
-                    for (var i = 0; i < attendeeList.length; i++) {
-                        _loop_3(i);
-                    }
-                }
-                var evt = { result: true, info: ret.conf_status.subject };
-                _this.notify('UpdateAttendeeList', evt);
-            });
-            observer_1.default.subscribe("UpdateConfinfo", function (data) {
-                if (!util.isUndefined(_this._conf)) {
-                    _this._conf.setConfInfo(data);
-                }
-            });
-            observer_1.default.subscribe("ConfIncoming", function (ret) {
-                var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
-                var evt = { result: false, info: err };
-                _this._conf = new conference_1.default();
-                var confInfo = {
-                    mediaType: ret.conf_incoming_ind.media_type,
-                    confHandle: ret.handle
-                };
-                _this._conf.setConfInfo(confInfo);
-                evt.result = true;
-                evt.info = "You have a incoming conference";
-                _this.notify('ConfIncoming', evt);
-            });
-            observer_1.default.subscribe("confFinished", function (data) {
-                var evt = { result: true, info: "The meeting has already left!" };
-                var objConfHandle = _this._conf.getConfHandle();
-                var objDataConfHandle = _this._conf.getDataConfHandle();
-                if (objConfHandle === data.confHandle && objDataConfHandle === data.dataConfHandle) {
-                    delete _this._conf;
-                }
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
-                    _this.closeVideo();
-                }
-                if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
-                    _this.delInterval();
-                }
-                _this.notify('LeaveConference', evt);
-            });
-            observer_1.default.subscribe("ConfEnd", function (data) {
-                if (!util.isUndefined(_this._conf)) {
-                    var evt = { result: true, info: "The meeting ended successfully!" };
-                    var objConfHandle = _this._conf.getConfHandle();
-                    if (objConfHandle === data.info.param.handle) {
-                        delete _this._conf;
-                    }
-                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
-                        _this.closeVideo();
-                    }
-                    if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
-                        _this.delInterval();
-                    }
-                    _this.notify('EndConference', evt);
-                }
-            });
-            observer_1.default.subscribe("FloorAttendeeInd", function (data) {
-                var evt = { result: false, info: "No speaker" };
-                if (data.num_of_speaker != 0) {
-                    var speakerArr = new Array();
-                    var speakerTemp = data.speaker;
-                    for (var i = 0; i < speakerTemp.length; i++) {
-                        var speaker = {
-                            number: speakerTemp[i].number,
-                            isSpeaking: speakerTemp[i].is_speaking,
-                            speakingVolume: speakerTemp[i].speaking_volume != undefined ? speakerTemp[i].speaking_volume : 0
-                        };
-                        speakerArr.push(speaker);
-                    }
-                    speakerArr.sort(function (x, y) {
-                        return y.speakingVolume - x.speakingVolume;
-                    });
-                    evt.result = true;
-                    evt.info = speakerArr;
-                }
-                _this.notify('SpeakerIdentify', evt);
-            });
-        };
-        Client.prototype.registerDataEvent = function () {
-            var _this = this;
-            observer_1.default.subscribe('UserEnterInd', function (data) {
-                var number = data.user_alt_uri;
-                var isDataconfMember = 1;
-                var dataconfUserId = data.user_alt_id;
-                var dataconfMemberType = data.value2;
-                var flag;
-                var attendeeListOrigin = new Array();
-                _this._conf.getAttendeeList(function (ret) {
-                    attendeeListOrigin = ret.info;
-                });
-                flag = attendeeListOrigin.find(function (value) {
-                    return number === value.number;
-                });
-                if (flag != undefined) {
-                    var attendee = {
-                        participantId: flag.participantId,
-                        name: flag.name,
-                        number: flag.number,
-                        isMute: flag.isMute,
-                        isDeaf: flag.isDeaf,
-                        raiseHandState: flag.raiseHandState,
-                        role: flag.role,
-                        joinState: flag.joinState,
-                        isSelf: flag.isSelf,
-                        isDataconfMember: 1,
-                        dataconfUserId: dataconfUserId,
-                        dataconfMemberType: dataconfMemberType,
-                        sharingPermit: flag.sharingPermit,
-                        isBroadcast: flag.isBroadcast
-                    };
-                    _this._conf.updateAttendeeList(attendee);
-                }
-                else {
-                    var attendee = {
-                        participantId: "",
-                        name: "",
-                        number: number,
-                        isMute: 0,
-                        isDeaf: 0,
-                        raiseHandState: 0,
-                        role: 0,
-                        joinState: 0,
-                        isSelf: 0,
-                        isDataconfMember: 1,
-                        dataconfUserId: dataconfUserId,
-                        dataconfMemberType: dataconfMemberType,
-                        sharingPermit: 0,
-                        isBroadcast: 0
-                    };
-                    _this._conf.addAttendeeList(attendee);
-                }
-                var evt = { result: true, info: "Participant status changes, please update the list of attendees" };
-                _this.notify('UpdateAttendeeList', evt);
-            });
-            observer_1.default.subscribe('PresenterChangeInd', function (data) {
-                var dataconfUserId = data.value2;
-                var attendeeListOrigin = new Array();
-                var flag;
-                _this._conf.getAttendeeList(function (ret) {
-                    attendeeListOrigin = ret.info;
-                });
-                flag = attendeeListOrigin.find(function (value) {
-                    return dataconfUserId === value.dataconfUserId;
-                });
-                if (flag != undefined) {
-                    var attendee = {
-                        participantId: flag.participantId,
-                        name: flag.name,
-                        number: flag.number,
-                        isMute: flag.isMute,
-                        isDeaf: flag.isDeaf,
-                        raiseHandState: flag.raiseHandState,
-                        role: flag.role,
-                        joinState: flag.joinState,
-                        isSelf: flag.isSelf,
-                        isDataconfMember: 1,
-                        dataconfUserId: flag.dataconfUserId,
-                        dataconfMemberType: 2,
-                        sharingPermit: flag.sharingPermit,
-                        isBroadcast: flag.isBroadcast
-                    };
-                    _this._conf.updateAttendeeList(attendee);
-                }
-                var evt = { result: true, info: "Participant status changes, please update the list of attendees" };
-                _this.notify('UpdateAttendeeList', evt);
-            });
-            observer_1.default.subscribe('ConfTerminal', function (data) {
-                _this.notify('ConfTerminal', data);
-            });
-            observer_1.default.subscribe('dataUserleave', function (data) {
-                var flag;
-                var attendeeListOrigin = new Array();
-                _this._conf.getAttendeeList(function (ret) {
-                    attendeeListOrigin = ret.info;
-                });
-                flag = attendeeListOrigin.find(function (value) {
-                    return 1 === value.sharingPermit;
-                });
-                if (flag == undefined) {
-                    var evt = { result: true, info: "" };
-                    evt.info = {
-                        state: 0,
-                        description: "The screen sharing has ended"
-                    };
-                    _this.notify('AsOnSharingState', evt);
-                }
-            });
-            observer_1.default.subscribe('AnnoHittest', function (data) {
-                var annoidType = _this._conf.getAnnoidType();
-                var wbInfoList = _this._conf.getWbInfoList();
-                if (data.annoid != 0) {
-                    if (annoidType.operationIndex == 2) {
-                        var annoidArr = new Array();
-                        annoidArr = [data.annoid];
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_DELETE, data.confHandle, annoidType.ciid, annoidArr, wbInfoList[0].currentPage, wbInfoList[0].docid);
-                    }
-                    else if (annoidType.operationIndex == 4) {
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_TEXT_GETINFO, data.confHandle, annoidType.ciid, wbInfoList[0].docid, wbInfoList[0].currentPage, data.annoid);
-                    }
-                    else if (annoidType.operationIndex == 3) {
-                        var annoidArr = new Array();
-                        annoidArr = [data.annoid];
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_SET_SELECT, data.confHandle, 1, annoidType.ciid, annoidArr, wbInfoList[0].docid, wbInfoList[0].currentPage);
-                        _this._conf.annotationSwitch(20);
-                        _this._conf.setAnnoid(data.annoid);
-                    }
-                }
-            });
-            observer_1.default.subscribe('AnnoTextGetInfo', function (data) {
-                var point = _this._conf.getPoint();
-                var annoidType = _this._conf.getAnnoidType();
-                var wbInfoList = _this._conf.getWbInfoList();
-                var pString = _this._conf.diag("");
-                var pInfo = {
-                    "bounds": {
-                        "left": point.x,
-                        "top": point.y,
-                        "right": point.x + 1500,
-                        "bottom": point.y + 300
-                    },
-                    "pString": pString,
-                    "pFont": "宋体",
-                    "color": 255,
-                    "size": 240,
-                    "reserve": 0
-                };
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AT_TEXT_UPDATE, data.confHandle, true, pInfo, wbInfoList[0].docid, wbInfoList[0].currentPage, annoidType.ciid, data.annoid);
-            });
-            observer_1.default.subscribe('AsOnPrivilege', function (data) {
-                var evt = { result: true, info: "" };
-                var remoteCtrl;
-                var dataconfUserId = data.user_id;
-                var attendeeListOrigin = new Array();
-                var attendee;
-                _this._conf.getAttendeeList(function (ret) {
-                    attendeeListOrigin = ret.info;
-                });
-                attendee = attendeeListOrigin.find(function (value) {
-                    return dataconfUserId === value.dataconfUserId;
-                });
-                if (data.value2 == 1 && attendee.isSelf == 1) {
-                    _this._conf.removeCtrlMsg(1);
-                }
-                else if (data.value2 == 0 && attendee.isSelf == 1) {
-                    _this._conf.removeCtrlMsg(0);
-                }
-                remoteCtrl = {
-                    userid: data.user_id,
-                    name: attendee.name,
-                    isSelf: attendee.isSelf,
-                    sharePrivilege: data.value1,
-                    shareAction: data.value2,
-                };
-                evt.info = remoteCtrl;
-                _this.notify('AsOnPrivilege', evt);
-            });
-            observer_1.default.subscribe('WbDocNew', function (data) {
-                var evt = { result: true, info: "This is a new whiteboard document!" };
-                util_1.default.info("client", "===WbDocNew" + JSON.stringify(data));
-                if (data.value2 == 0) {
-                    var wbInfo = {
-                        number: "",
-                        userid: data.value2,
-                        docid: data.value1,
-                        pageSize: 0,
-                        currentPage: 0
-                    };
-                    _this._conf.addWbInfoList(wbInfo);
-                }
-                if (data.value1 != 0 && data.value2 != 0) {
-                    var dataWBCanvas = document.getElementById("CloudEC:dataWBCanvas");
-                    if (typeof dataWBCanvas === "undefined") {
-                        util_1.default.error("client", "can't find CloudEC:dataWBCanvas");
-                    }
-                    else {
-                        var height = dataWBCanvas.height;
-                        var width = dataWBCanvas.width;
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_WB_DATA_RENDER, { type: "canvas", info: { canvas: dataWBCanvas, confHandle: data.confHandle, width: width, height: height } });
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WB_PAGE_CREATE, data.confHandle, data.value1, height, width);
-                    }
-                }
-                _this.notify('WbDocNew', evt);
-            });
-            observer_1.default.subscribe('WbDocDel', function (data) {
-                var evt = { result: true, info: "Close the whiteboard document" };
-                var flag;
-                var wbInfo;
-                var wbInfoList = _this._conf.getWbInfoList();
-                flag = wbInfoList.find(function (value) {
-                    return data.value1 === value.docid;
-                });
-                if (flag != undefined) {
-                    wbInfo = {
-                        number: flag.number,
-                        userid: flag.userid,
-                        docid: data.value1,
-                        pageSize: 0,
-                        currentPage: 0
-                    };
-                    _this._conf.deleteWbInfoList(wbInfo);
-                }
-                util_1.default.info("client", "===WbDocDel" + JSON.stringify(data));
-                _this.notify('WbDocDel', evt);
-            });
-            observer_1.default.subscribe('WbPageNew', function (data) {
-                var evt = { result: true, info: "This is a new whiteboard document page!" };
-                var flag;
-                var wbInfo;
-                var wbInfoList = _this._conf.getWbInfoList();
-                flag = wbInfoList.find(function (value) {
-                    return data.value1 === value.docid;
-                });
-                if (flag != undefined && data.value2 != 0) {
-                    wbInfo = {
-                        number: flag.number,
-                        userid: flag.userid,
-                        docid: data.value1,
-                        pageSize: (flag.pageSize + 1),
-                        currentPage: data.value2
-                    };
-                    _this._conf.updateWbInfoList(wbInfo);
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WB_SET_CURR_PAGE, data.confHandle, data.value1, data.value2);
-                }
-                util_1.default.info("client", "===WbPageNew" + JSON.stringify(data));
-                _this.notify('WbPageNew', evt);
-            });
-            observer_1.default.subscribe('WbPageDel', function (data) {
-                var evt = { result: true, info: { state: 0, description: "" } };
-                var flag;
-                var wbInfo;
-                var wbInfoList = _this._conf.getWbInfoList();
-                flag = wbInfoList.find(function (value) {
-                    return data.value1 === value.docid;
-                });
-                if (flag != undefined) {
-                    wbInfo = {
-                        number: flag.number,
-                        userid: flag.userid,
-                        docid: data.value1,
-                        pageSize: (flag.pageSize - 1),
-                        currentPage: data.value2
-                    };
-                    _this._conf.updateWbInfoList(wbInfo);
-                }
-                if (data.value2 - 1 > 0) {
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WB_SET_CURR_PAGE, data.confHandle, data.value1, data.value2 - 1);
-                }
-                util_1.default.info("client", "===WbPageDel" + JSON.stringify(data));
-                _this.notify('WbPageNew', evt);
-            });
-            observer_1.default.subscribe("AsOnSharingSession", function (data) {
-                var dataConfHandle = _this._conf.getDataConfHandle();
-                var evt = { result: true, info: "Participant status changes, please update the list of attendees" };
-                var dataconfUserId = data.user_id;
-                var attendeeListOrigin = new Array();
-                var attendee;
-                _this._conf.getAttendeeList(function (ret) {
-                    attendeeListOrigin = ret.info;
-                });
-                attendee = attendeeListOrigin.find(function (value) {
-                    return dataconfUserId === value.dataconfUserId;
-                });
-                if (dataconfUserId != null && attendee != undefined) {
-                    if (1 == data.value1 && dataconfUserId != 0) {
-                        if (1 == attendee.isSelf) {
-                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AS_SET_SHARE_TYPE, dataConfHandle, 0);
-                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AS_START, dataConfHandle);
-                        }
-                        attendee.sharingPermit = 1;
-                    }
-                    _this._conf.updateAttendeeList(attendee);
-                }
-                else if (dataconfUserId == 0) {
-                    for (var i = 0; i < attendeeListOrigin.length; i++) {
-                        attendeeListOrigin[i].sharingPermit = 0;
-                        _this._conf.updateAttendeeList(attendeeListOrigin[i]);
-                    }
-                }
-                _this.notify('UpdateAttendeeList', evt);
-            });
-            observer_1.default.subscribe("AsOnSharingState", function (data) {
-                var evt = { result: true, info: "" };
-                if (data.value2 == 2) {
-                    evt.info = {
-                        state: data.value2,
-                        description: "The shared side starts sharing"
-                    };
-                }
-                else if (data.value2 == 0) {
-                    evt.info = {
-                        state: data.value2,
-                        description: "The screen sharing has ended"
-                    };
-                }
-                else if (data.value2 == 1) {
-                    evt.info = {
-                        state: data.value2,
-                        description: "Watch the viewing side"
-                    };
-                    var dataCanvas = document.getElementById("CloudEC:dataCanvas");
-                    if (typeof dataCanvas === "undefined") {
-                        util_1.default.error("client", "can't find CloudEC:dataCanvas");
-                    }
-                    else {
-                        var height = dataCanvas.offsetHeight;
-                        var width = dataCanvas.offsetWidth;
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DATA_RENDER, { type: "canvas", info: { canvas: dataCanvas, confHandle: data.confHandle, width: width, height: height } });
-                    }
-                }
-                _this.notify('AsOnSharingState', evt);
-            });
-            observer_1.default.subscribe("AsOnScreenData", function (data) {
-                if (data.yuv == "") {
-                    return;
-                }
-                var byteCharacters = atob(data.yuv);
-                var byteArrays = [];
-                for (var offset = 0; offset < byteCharacters.length; offset++) {
-                    byteArrays[offset] = byteCharacters.charCodeAt(offset);
-                }
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DATA_RENDER, { type: "data", info: { confHandle: data.confHandle, width: data.width, height: data.height, yuv: byteArrays } });
-            });
-            observer_1.default.subscribe("WbdrawDataNotify", function (data) {
-                if (data.yuv == "") {
-                    return;
-                }
-                var byteCharacters = atob(data.yuv);
-                var byteArrays = [];
-                for (var offset = 0; offset < byteCharacters.length; offset++) {
-                    byteArrays[offset] = byteCharacters.charCodeAt(offset);
-                }
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_WB_DATA_RENDER, { type: "data", info: { confHandle: data.confHandle, width: data.width, height: data.height, yuv: byteArrays } });
-            });
-            observer_1.default.subscribe("ChatRecvMsg", function (data) {
-                var evt = { result: true, info: "Received new message" };
-                var time = util.formatDate(data.time);
-                var chatMsg = {
-                    fromUserName: data.fromUserName,
-                    msgContent: data.lpMsg,
-                    msgType: data.nMsgType,
-                    sequenceNmuber: data.nSequenceNmuber,
-                    time: time
-                };
-                evt.info = chatMsg;
-                var attendeeListOrigin = new Array();
-                var attendee;
-                _this._conf.getAttendeeList(function (ret) {
-                    attendeeListOrigin = ret.info;
-                });
-                for (var i = 0; i < attendeeListOrigin.length; i++) {
-                    if (1 == attendeeListOrigin[i].isSelf) {
-                        attendee = attendeeListOrigin[i];
-                    }
-                }
-                if ("CloudEC_OpenShareScreen" == data.lpMsg) {
-                    evt.info = "You have a sharing invitation";
-                    _this.notify('SharedInComing', evt);
-                }
-                else if ("CloudEC_CloseShareScreen" == data.lpMsg) {
-                    _this._conf.stopScreenSharing(attendee.dataconfUserId);
-                }
-                else {
-                    _this.notify('ChatRecvMsg', evt);
-                }
-            });
-        };
-        Client.prototype.isLogin = function () {
-            if (this._status === 1) {
-                return;
-            }
-            else {
-                Client.notifyErr(errorCode_1.EC_SDK_ERROR.LOGIN_STATUS_ERROR());
-                throw "login status error,please login at first";
-            }
-        };
-        Client.prototype.showVideo = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                var _this = this;
-                var localView, remoteView;
-                return __generator(this, function (_a) {
-                    localView = document.getElementById("CloudEC:localCanvas");
-                    remoteView = document.getElementById("CloudEC:remoteCanvas");
-                    if ((typeof localView === "undefined") || (typeof remoteView === "undefined")) {
-                        util_1.default.error("client", "can't find CloudEC:remoteCanvas and CloudEC:localCanvas");
-                    }
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_RENDER, localView, remoteView);
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_LOCAL_VIDEOWH, localView.clientWidth, localView.clientHeight);
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_REMOTE_VIDEOWH, remoteView.clientWidth, remoteView.clientHeight);
-                    localView.style.display = "block";
-                    remoteView.style.display = "block";
-                    if (1 == serverConfig_1.CloudEC_SERVERCONFIG.IS_AUTO_ADAPT_FRAME) {
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CMPT_GET_MEMORY_USAGE, 3, function (data) {
-                            if (0 == data.result) {
-                                _this.preMemoryUsage = data.memory_usage;
-                                _this.pcMemory = data.total_memory;
-                                util_1.default.info("client", "initiation memory usage:" + _this.preMemoryUsage + "  machine memory:" + data.total_memory);
-                                if (_this.preMemoryUsage > 80) {
-                                    Client.notifyErr({ result: false, info: { cmdId: 300000000, errorCode: 390000003, errorInfo: "Memory usage over 80%, please close the unrelated program!" } });
-                                }
-                                _this.delInterval();
-                                _this.getInterval(10, 30000, _this.pcMemory);
-                            }
-                        });
-                    }
-                    return [2];
-                });
-            });
-        };
-        Client.prototype.displayVideo = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                var _this = this;
-                var count_1;
-                return __generator(this, function (_a) {
-                    if (this.parentFrameHwnd == 0 && !this.isNativeWndExist) {
-                        this.isNativeWndExist = true;
-                        count_1 = 2;
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_INIT, function (data) {
-                            if (0 == data.result) {
-                                _this.parentFrameHwnd = data.param.frameHwnd;
-                                util_1.default.info("client", "displayVideo parentFrameHwnd:" + _this.parentFrameHwnd);
-                                if (_this.parentFrameHwnd != 0) {
-                                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_CREATE_WINDOW, count_1, _this.parentFrameHwnd, function (data) {
-                                        if (0 == data.result) {
-                                            _this.frameHwndList = data.param.hwndList;
-                                            util_1.default.info("client", "displayVideo frameHwndList:" + JSON.stringify(_this.frameHwndList));
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
-                    return [2];
-                });
-            });
-        };
-        Client.prototype.setVideoWindow = function (callId) {
-            util_1.default.info("client", "setVideoWindow frameHwndList:" + JSON.stringify(this.frameHwndList));
-            if (this.frameHwndList != null && this.frameHwndList.length > 0) {
-                util_1.default.info("client", "setVideoWindow callID:" + callId);
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_WINDOW, callId, this.frameHwndList);
-            }
-        };
-        Client.prototype.displayVideoEx = function (callId) {
-            return __awaiter(this, void 0, void 0, function () {
-                var _this = this;
-                var count_2;
-                return __generator(this, function (_a) {
-                    if (this.parentFrameHwnd == 0 && !this.isNativeWndExist) {
-                        this.isNativeWndExist = true;
-                        count_2 = 2;
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_INIT, function (data) {
-                            if (0 == data.result) {
-                                _this.parentFrameHwnd = data.param.frameHwnd;
-                                util_1.default.info("client", "displayVideo parentFrameHwnd:" + _this.parentFrameHwnd);
-                                if (_this.parentFrameHwnd != 0) {
-                                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_CREATE_WINDOW, count_2, _this.parentFrameHwnd, function (data) {
-                                        if (0 == data.result) {
-                                            _this.frameHwndList = data.param.hwndList;
-                                            util_1.default.info("client", "displayVideo frameHwndList:" + JSON.stringify(_this.frameHwndList));
-                                            if (_this.frameHwndList != null && _this.frameHwndList.length > 0) {
-                                                util_1.default.info("client", "setVideoWindow callID:" + callId);
-                                                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_VIDEO_WINDOW, callId, _this.frameHwndList);
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
-                    return [2];
-                });
-            });
-        };
-        Client.prototype.closeVideo = function () {
-            util_1.default.info("client", "closeVideo parentFrameHwnd:" + this.parentFrameHwnd);
-            if (this.parentFrameHwnd != 0 && this.isNativeWndExist) {
-                this.isNativeWndExist = false;
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_DESTROY_WINDOW, this.parentFrameHwnd, this.frameHwndList);
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_NATIVEWND_UNINIT, this.parentFrameHwnd);
-                this.parentFrameHwnd = 0;
-                delete this.frameHwndList;
-            }
-        };
-        Client.prototype.delVideo = function () {
-            var localView = document.getElementById("CloudEC:localCanvas");
-            var remoteView = document.getElementById("CloudEC:remoteCanvas");
-            if ((typeof localView === "undefined") || (typeof remoteView === "undefined")) {
-                util_1.default.error("client", "can't find CloudEC:remoteCanvas and CloudEC:localCanvas");
-            }
-            localView.style.cssText = "position: absolute;left: 0px;top: 0px;width: 120px;height: 80px; z-index: 999;background: #c7c7c7;";
-            remoteView.style.cssText = "position: absolute;left: 0px;top: 0px;width: 720px;height: 480px; z-index: 1;background: black;";
-        };
-        Client.prototype.resetVideoSize = function (videoSize) {
-            return __awaiter(this, void 0, void 0, function () {
-                var err, evt, _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
-                            evt = { result: false, info: err };
-                            this.isLogin();
-                            if (util.isUndefined(videoSize.target) || !util.isBinaryNumber(videoSize.target)) {
-                                Client.notifyErr(evt);
-                                return [2];
-                            }
-                            if (util.isUndefined(videoSize.width) || util.isUndefined(videoSize.height)) {
-                                Client.notifyErr(evt);
-                                return [2];
-                            }
-                            if (!util.isInteger(videoSize.width) || !util.isInteger(videoSize.height)) {
-                                Client.notifyErr(evt);
-                                return [2];
-                            }
-                            _a = videoSize.target;
-                            switch (_a) {
-                                case 0: return [3, 1];
-                                case 1: return [3, 3];
-                            }
-                            return [3, 5];
-                        case 1: return [4, dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_LOCAL_VIDEOWH, videoSize.width, videoSize.height)];
-                        case 2:
-                            _b.sent();
-                            return [3, 5];
-                        case 3: return [4, dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_REMOTE_VIDEOWH, videoSize.width, videoSize.height)];
-                        case 4:
-                            _b.sent();
-                            return [3, 5];
-                        case 5: return [2];
-                    }
-                });
-            });
-        };
-        Client.prototype.resetNativeWndSize = function (nativeWndParam) {
-            return __awaiter(this, void 0, void 0, function () {
-                var err;
-                return __generator(this, function (_a) {
-                    if (util.isUndefined(nativeWndParam) || !util.isIntegerRange(nativeWndParam.width, 0, 4096)
-                        || !util.isIntegerRange(nativeWndParam.height, 0, 2048) || !util.isIntegerRange(nativeWndParam.xOffsetRate, 0, 100)
-                        || !util.isIntegerRange(nativeWndParam.yOffsetRate, 0, 100)) {
-                        err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("nativeWndParam");
-                        Client.notifyErr(err);
-                        return [2];
-                    }
-                    if (this.parentFrameHwnd) {
-                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_RESET_NATIVEWND_SIZE, this.parentFrameHwnd, nativeWndParam);
-                    }
-                    return [2];
-                });
-            });
-        };
-        Client.prototype.searchUserInfo = function (queryParam, callback) {
-            this._eaddr.searchUserInfo(queryParam, callback);
-        };
-        Client.prototype.searchDeptInfo = function (deptId, callback) {
-            this._eaddr.searchDeptInfo(deptId, callback);
-        };
-        Client.prototype.getMediaDevice = function (deviceType, callback) {
-            this._device.getMediaDevice(deviceType, callback);
-        };
-        Client.prototype.setMediaDevice = function (deviceType, index) {
-            this._device.setMediaDevice(deviceType, index);
-        };
-        Client.prototype.setVoiceVol = function (deviceType, value) {
-            this._device.setVoiceVol(deviceType, value);
-        };
-        Client.prototype.getVoiceVol = function (deviceType, callback) {
-            this._device.getVoiceVol(deviceType, callback);
-        };
-        Client.prototype.addAttendee = function (attendees) {
-            this._conf.addAttendee(attendees);
-        };
-        Client.prototype.delAttendee = function (attendee) {
-            this._conf.delAttendee(attendee);
-        };
-        Client.prototype.muteConference = function (mute) {
-            this._conf.muteConference(mute);
-        };
-        Client.prototype.muteAttendee = function (attendee, mute) {
-            this._conf.muteAttendee(attendee, mute);
-        };
-        Client.prototype.requestChairman = function (chairmanPwd) {
-            this._conf.requestChairman(chairmanPwd);
-        };
-        Client.prototype.releaseChairman = function () {
-            this._conf.releaseChairman();
-        };
-        Client.prototype.handup = function (attendee) {
-            this._conf.handup(attendee);
-        };
-        Client.prototype.setConfMode = function (mode) {
-            this._conf.setConfMode(mode);
-        };
-        Client.prototype.setConfMixedPicture = function (mode, imageType, attendees) {
-            this._conf.setConfMixedPicture(mode, imageType, attendees);
-        };
-        Client.prototype.broadcastAttendee = function (isBroad, attendee) {
-            this._conf.broadcastAttendee(isBroad, attendee);
-        };
-        Client.prototype.watchAttendee = function (attendee) {
-            this._conf.watchAttendee(attendee);
-        };
-        Client.prototype.leaveConf = function () {
-            this._conf.leaveConf();
-        };
-        Client.prototype.endConf = function () {
-            this._conf.endConf();
-        };
-        Client.prototype.getAttendeeList = function (callback) {
-            this._conf.getAttendeeList(callback);
-        };
-        Client.prototype.getConfInfo = function (callback) {
-            this._conf.getConfInfo(callback);
-        };
-        Client.prototype.startScreenSharing = function (userid, extensions) {
-            this._conf.startScreenSharing(userid, extensions);
-        };
-        Client.prototype.stopScreenSharing = function (userid) {
-            this._conf.stopScreenSharing(userid);
-        };
-        Client.prototype.requestRemoteCtrl = function (privilege) {
-            this._conf.requestRemoteCtrl(privilege);
-        };
-        Client.prototype.setRemoteCtrl = function (privilege, action, userid) {
-            this._conf.setRemoteCtrl(privilege, action, userid);
-        };
-        Client.prototype.answerRemoteCtrl = function (userid, accept) {
-            this._conf.answerRemoteCtrl(userid, accept);
-        };
-        Client.prototype.sendMessage = function (messageParam) {
-            this._conf.sendMessage(messageParam);
-        };
-        Client.prototype.answerConference = function (accept) {
-            this._conf.answerConference(accept);
-        };
-        Client.prototype.answerScreenSharing = function (accept) {
-            this._conf.answerScreenSharing(accept);
-        };
-        Client.prototype.videoMute = function (bMute) {
-            if (!this._call) {
-                this._call = new call_1.default();
-            }
-            this._call.videoMute(bMute, this.callID);
-        };
-        Client.prototype.micMute = function (bMute) {
-            if (!this._call) {
-                this._call = new call_1.default();
-            }
-            this._call.micMute(bMute, this.callID);
-        };
-        Client.prototype.transfer2Conf = function (confParam) {
-            var attendees = new Array();
-            var confParamTemp;
-            var callType = this._call.getCallType();
-            if (util.isUndefined(confParam)) {
-                var member = { number: "", name: "", smsPhone: "", email: "", autoInvite: 0, role: 0, extensions: "" };
-                attendees.push(member);
-                confParamTemp = {
-                    topic: "",
-                    isVideo: callType,
-                    attendees: attendees,
-                    language: 1,
-                    extensions: "",
-                };
-            }
-            else {
-                confParamTemp = {
-                    topic: confParam.topic ? confParam.topic : "",
-                    isVideo: confParam.isVideo ? confParam.isVideo : callType,
-                    attendees: confParam.attendees,
-                    language: confParam.language ? confParam.language : 1,
-                    extensions: confParam.extensions ? confParam.extensions : "",
-                };
-            }
-            var err = { cmdId: 400000000, errorCode: 400000002, errorInfo: "general error" };
-            var evt = { result: false, info: err };
-            var callback = function (data) {
-                if (!data.result) {
-                    Client.notifyErr(evt);
-                }
-            };
-            this._call.transfer2Conf(confParamTemp, this.callID, callback);
-        };
-        Client.prototype.makeCall = function (calleeNumber, isVideo, callback) {
-            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            this.isLogin();
-            if (util.isUndefined(calleeNumber) || util.isUndefined(isVideo)) {
-                Client.notifyErr(evt);
-                return;
-            }
-            var call = new call_1.default();
-            call.setCallee(calleeNumber);
-            call.setCallStyle(1);
-            var callType = isVideo ? 1 : 0;
-            call.setCallType(callType);
-            this._call = call;
-            this._call.makeCall(calleeNumber, callType, callback);
-            if (isVideo) {
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
-                    this.showVideo();
-                }
-                else {
-                }
-            }
-        };
-        Client.prototype.answerCall = function (accept, isVideo) {
-            var _this = this;
-            this.isLogin();
-            if (this.playHandle >= 0) {
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, this.playHandle, function (data) {
-                    if (data.result == 0) {
-                        _this.playHandle = -1;
-                    }
-                });
-            }
-            var isVideoCall = this._call.getCallType();
-            if (this._call && accept) {
-                if (isVideo && (isVideoCall == 1)) {
-                    this._call.acceptCall(isVideo);
-                    if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
-                        this.showVideo();
-                    }
-                    else {
-                    }
-                }
-                else {
-                    this._call.acceptCall(false);
-                }
-            }
-            else {
-                this._call.rejectCall();
-            }
-        };
-        Client.prototype.hangup = function () {
-            var _this = this;
-            if (this.playHandle >= 0) {
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, this.playHandle, function (data) {
-                    if (data.result == 0) {
-                        _this.playHandle = -1;
-                    }
-                });
-            }
-            if (this._call) {
-                this._call.rejectCall();
-            }
-        };
-        Client.prototype.sendDTMF = function (dmtfNo) {
-            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            this.isLogin();
-            if (!dmtfNo || /[^0-9*#]/.test(dmtfNo)) {
-                Client.notifyErr(evt);
-                return;
-            }
-            this._call.dialDTMF(dmtfNo);
-        };
-        Client.prototype.switchAudioCall = function (toAudioCall) {
-            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            this.isLogin();
-            if (toAudioCall == null) {
-                Client.notifyErr(evt);
-                return;
-            }
-            if (toAudioCall) {
-                this._call.tans2Audio();
-            }
-            else {
-                this._call.tans2Video();
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 1) {
-                }
-            }
-        };
-        Client.prototype.answerSwitch = function (accept) {
-            var err = { cmdId: 200000000, errorCode: 200000002, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            this.isLogin();
-            if (accept == null) {
-                Client.notifyErr(evt);
-                return;
-            }
-            this._call.answerSwitch(accept);
-            if (accept) {
-                if (serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE == 0) {
-                    this.showVideo();
-                }
-                else {
-                }
-            }
-        };
-        Client.prototype.setIPTService = function (type, number) {
-            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            if (util.isUndefined(number) || util.isUndefined(type) || !util.isInteger(type)) {
-                Client.notifyErr(evt);
-                return;
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SET_IPT_SERVICE, type, number);
-        };
-        Client.prototype.blindTransfer = function (transToNumber) {
-            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            if (util.isUndefined(transToNumber)) {
-                Client.notifyErr(evt);
-                return;
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_BLIND_TRANSFER, this.callID, transToNumber, function (data) {
-                if (!data.result) {
-                    err = { cmdId: 200000000, errorCode: 290000005, errorInfo: "video call without this feature, please convert to audio call" };
-                    evt.info = err;
-                    Client.notifyErr(evt);
-                }
-            });
-        };
-        Client.prototype.startPlayMedia = function (loops, playFile, callback) {
-            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            if (util.isUndefined(loops) || util.isUndefined(playFile) || !util.isInteger(loops)) {
-                Client.notifyErr(evt);
-                return;
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_PLAY_MEDIA_FILE, loops, playFile, function (data) {
-                if (data.result == 0) {
-                    evt.result = true;
-                    evt.info = {
-                        playHandle: data.param.play_handle,
-                    };
-                    callback(evt);
-                }
-                else {
-                    evt.info = { cmdId: 200000000, errorCode: 290000003, errorInfo: "failed to start playing the file" };
-                    Client.notifyErr(evt);
-                }
-            });
-        };
-        Client.prototype.stopPlayMedia = function (handle) {
-            var err = { cmdId: 200000000, errorCode: 200000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            if (util.isUndefined(handle)) {
-                Client.notifyErr(evt);
-                return;
-            }
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_STOP_PLAY_MEDIA_FILE, handle, function (data) {
-                if (data.result == 0) {
-                    evt.result = true;
-                    evt.info = "Stop playing the file successfully";
-                }
-                else {
-                    evt.info = { cmdId: 200000000, errorCode: 290000004, errorInfo: "stopped playing file does not exist" };
-                    Client.notifyErr(evt);
-                }
-            });
-        };
-        Client.prototype.getInterval = function (timeInterval, checkInterval, pcMemory) {
-            var _this = this;
-            var cpuUsage = 0;
-            var memoryUsage = 0;
-            var memoryUsageMax = 90;
-            var memoryUsageMin = 55;
-            var memoryPercentage = 2;
-            if (pcMemory == 0) {
-                util_1.default.error("client", "memory error,Please check the memory");
-                return;
-            }
-            switch (pcMemory) {
-                case 4:
-                    memoryUsageMax = 90;
-                    memoryUsageMin = 55;
-                    memoryPercentage = 3;
-                    break;
-                case 8:
-                    memoryUsageMax = 93;
-                    memoryUsageMin = 65;
-                    memoryPercentage = 2;
-                    break;
-                case 16:
-                    memoryUsageMax = 95;
-                    memoryUsageMin = 75;
-                    memoryPercentage = 1;
-                    break;
-                case 32:
-                    memoryUsageMax = 97;
-                    memoryUsageMin = 80;
-                    memoryPercentage = 0.5;
-                    break;
-                default:
-                    memoryUsageMax = 90;
-                    memoryUsageMin = 55;
-                    memoryPercentage = 3;
-            }
-            util_1.default.info("client", " memoryUsageMax:" + memoryUsageMax + "  memoryUsageMin:" + memoryUsageMin + "  memoryPercentage:" + memoryPercentage);
-            this.timer = setInterval(function () {
-                _this.isLogin();
-                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CMPT_GET_MEMORY_USAGE, timeInterval, function (data) {
-                    util_1.default.info("client", "current cpu data:" + JSON.stringify(data));
-                    if (0 == data.result) {
-                        memoryUsage = data.memory_usage;
-                        util_1.default.info("client", "current memory usage:" + memoryUsage);
-                        if (memoryUsage > memoryUsageMax && (memoryUsage - _this.preMemoryUsage) > memoryPercentage) {
-                            if (_this.currentFrame <= 5) {
-                                _this.currentFrame = _this.currentFrame + 1;
-                                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DROP_FRAME, _this.currentFrame);
-                                util_1.default.info("client", "start dropping frame current frame rate:" + _this.currentFrame);
-                            }
-                            else {
-                                util_1.default.warn("client", "poor machine performance, it is recommended to close the video!");
-                                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DROP_FRAME, 999999999);
-                            }
-                        }
-                        if (memoryUsage < memoryUsageMin && _this.currentFrame >= serverConfig_1.CloudEC_SERVERCONFIG.DROP_FRAME_COUNT) {
-                            _this.currentFrame = (_this.currentFrame > 5 ? 5 : _this.currentFrame) - 1;
-                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DROP_FRAME, _this.currentFrame);
-                            util_1.default.info("client", "start frame current frame rate:" + _this.currentFrame);
-                        }
-                        _this.preMemoryUsage = data.memory_usage;
-                    }
-                });
-            }, checkInterval);
-            util_1.default.info("client", "Start timer:" + this.timer);
-        };
-        Client.prototype.delInterval = function () {
-            if (this.timer != 0) {
-                util_1.default.info("client", "Turn off the timer:" + this.timer);
-                clearInterval(this.timer);
-                this.timer = 0;
-            }
-        };
-        Client._listeners = {};
-        return Client;
-    }());
-    exports.default = Client;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(352), __webpack_require__(353), __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(12), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLogin_1, tupUniCmdSocket_1, dispatcher_1, eventInfo_1, errorCode_1, serverConfig_1, client_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(354), __webpack_require__(355), __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(13), __webpack_require__(23), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLogin_1, tupUniCmdSocket_1, dispatcher_1, eventInfo_1, errorCode_1, serverConfig_1, client_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupLoginWrapper = (function () {
@@ -4444,7 +5099,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var _this = this;
             var auth_data = {
                 "auth_type": authType,
-                "user_agent": "WeLink-Desktop",
+                "user_agent": "eSDK-Desktop",
                 "user_tiket": authParam.token,
                 "auth_info": {
                     "user_name": authParam.account,
@@ -4470,11 +5125,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(ret);
                 };
             });
-            util_1.default.debug("tupLoginWrapper", "auth_data: " + JSON.stringify(auth_data));
             tupLoginWrapper.tupLogin.authorize(auth_data, {
                 onUportalAuthResult: this.onLoginAuthResult,
                 onRefreshTokenResult: this.onRefreshTokenResult
             });
+            authParam.token = "";
+            authParam.passwd = "";
+            proxyParam.proxyPassword = "";
+            auth_data.auth_info.password = "";
             return promise;
         };
         tupLoginWrapper.prototype.onRefreshTokenResult = function (ret) {
@@ -4484,10 +5142,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var cloudEC_loginInfo = JSON.stringify(loginInfo);
                 sessionStorage.cloudEC_loginInfo = cloudEC_loginInfo;
                 dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_REFRESH_TOKEN);
+                loginInfo.authToken = "";
                 util_1.default.debug("tupLoginWrapper", "refreshToken update stg info");
                 var account = ret.param.refresh_token_result.stg_account;
                 var password = ret.param.refresh_token_result.stg_pwd;
                 tupLoginWrapper.tupLogin.updatestgauthinfo({ account: account, password: password }, null);
+                password = "";
             }
             else {
                 var callback = { response: {} };
@@ -4511,6 +5171,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             tupLoginWrapper.tupLogin.buildStgTunnel(server, {
                 onStgBuildTunnelResult: this.onStgBuildTunnelResult
             });
+            stgPassword = "";
+            server.password = "";
             return promise;
         };
         tupLoginWrapper.prototype.fireWallDetect = function (serverNum, serverList) {
@@ -4553,8 +5215,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            util_1.default.debug("tupLoginWrapper", "proxy_param: " + JSON.stringify(proxy_param));
             tupLoginWrapper.tupLogin.setProxy(proxy_param, callback);
+            proxyParam.proxyPassword = "";
+            proxy_param.password = "";
             return promise;
         };
         tupLoginWrapper.prototype.getTempUserInfo = function (anonymousConfParam, serverInfo) {
@@ -4578,8 +5241,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(ret);
                 };
             });
-            util_1.default.debug("tupLoginWrapper", "getTempUserInfoParam= " + JSON.stringify(confinfo_param));
+            util_1.default.debug("tupLoginWrapper", "getTempUserInfoParam");
             tupLoginWrapper.tupLogin.getTempUserInfo(confinfo_param, { onGetTempUserResult: this.onGetTempUserResult });
+            anonymousConfParam.confPasswd = "";
+            confinfo_param.conf_pwd = "";
             return promise;
         };
         tupLoginWrapper._instance = new tupLoginWrapper();
@@ -4588,6 +5253,197 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     exports.default = tupLoginWrapper;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports) {
+
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports) {
+
+var id = 0;
+var px = Math.random();
+module.exports = function (key) {
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+module.exports = false;
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys = __webpack_require__(103);
+var enumBugKeys = __webpack_require__(76);
+
+module.exports = Object.keys || function keys(O) {
+  return $keys(O, enumBugKeys);
+};
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(32);
+var max = Math.max;
+var min = Math.min;
+module.exports = function (index, length) {
+  index = toInteger(index);
+  return index < 0 ? max(index + length, 0) : min(index, length);
+};
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var anObject = __webpack_require__(2);
+var dPs = __webpack_require__(104);
+var enumBugKeys = __webpack_require__(76);
+var IE_PROTO = __webpack_require__(75)('IE_PROTO');
+var Empty = function () { /* empty */ };
+var PROTOTYPE = 'prototype';
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function () {
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = __webpack_require__(73)('iframe');
+  var i = enumBugKeys.length;
+  var lt = '<';
+  var gt = '>';
+  var iframeDocument;
+  iframe.style.display = 'none';
+  __webpack_require__(77).appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
+  return createDict();
+};
+
+module.exports = Object.create || function create(O, Properties) {
+  var result;
+  if (O !== null) {
+    Empty[PROTOTYPE] = anObject(O);
+    result = new Empty();
+    Empty[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : dPs(result, Properties);
+};
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
+var $keys = __webpack_require__(103);
+var hiddenKeys = __webpack_require__(76).concat('length', 'prototype');
+
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+  return $keys(O, hiddenKeys);
+};
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var global = __webpack_require__(3);
+var dP = __webpack_require__(8);
+var DESCRIPTORS = __webpack_require__(7);
+var SPECIES = __webpack_require__(6)('species');
+
+module.exports = function (KEY) {
+  var C = global[KEY];
+  if (DESCRIPTORS && C && !C[SPECIES]) dP.f(C, SPECIES, {
+    configurable: true,
+    get: function () { return this; }
+  });
+};
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports) {
+
+module.exports = function (it, Constructor, name, forbiddenField) {
+  if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
+    throw TypeError(name + ': incorrect invocation!');
+  } return it;
+};
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var ctx = __webpack_require__(25);
+var call = __webpack_require__(115);
+var isArrayIter = __webpack_require__(89);
+var anObject = __webpack_require__(2);
+var toLength = __webpack_require__(9);
+var getIterFn = __webpack_require__(91);
+var BREAK = {};
+var RETURN = {};
+var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
+  var iterFn = ITERATOR ? function () { return iterable; } : getIterFn(iterable);
+  var f = ctx(fn, that, entries ? 2 : 1);
+  var index = 0;
+  var length, step, iterator, result;
+  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
+  // fast case for arrays with default iterator
+  if (isArrayIter(iterFn)) for (length = toLength(iterable.length); length > index; index++) {
+    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+    if (result === BREAK || result === RETURN) return result;
+  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
+    result = call(iterator, f, step.value, entries);
+    if (result === BREAK || result === RETURN) return result;
+  }
+};
+exports.BREAK = BREAK;
+exports.RETURN = RETURN;
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var redefine = __webpack_require__(18);
+module.exports = function (target, src, safe) {
+  for (var key in src) redefine(target, key, src[key], safe);
+  return target;
+};
 
 
 /***/ }),
@@ -4629,7 +5485,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(357), __webpack_require__(50), __webpack_require__(37), __webpack_require__(32), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCall_1, tupLoginWrapper_1, errorCode_1, observer_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(359), __webpack_require__(39), __webpack_require__(24), __webpack_require__(28), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCall_1, tupLoginWrapper_1, errorCode_1, observer_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupCallWrapper = (function () {
@@ -4686,7 +5542,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                     var currentState = state[ret.param.register_state];
                     util_1.default.debug("tupCallWrapper", "step in onRegStatusUpdate,state =" + currentState);
-                    util_1.default.debug("tupCallWrapper", "register reason =" + reason + ",userNum=" + userNumber);
+                    util_1.default.debug("tupCallWrapper", "register reason =" + reason);
                     var data = { result: reason, notify: 0x10002 };
                     if (reason == 0) {
                         if (currentState == "registered") {
@@ -4711,6 +5567,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 onRegStatusUpdate: this.onRegStatusUpdate,
                 onForceUnReg: this.onForceUnReg
             });
+            sipPassword = "";
             return promise;
         };
         tupCallWrapper.prototype.deRegister = function (sipImpi) {
@@ -5331,7 +6188,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var def = __webpack_require__(8).f;
-var has = __webpack_require__(13);
+var has = __webpack_require__(16);
 var TAG = __webpack_require__(6)('toStringTag');
 
 module.exports = function (it, tag, stat) {
@@ -5344,7 +6201,7 @@ module.exports = function (it, tag, stat) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
-var defined = __webpack_require__(28);
+var defined = __webpack_require__(31);
 var fails = __webpack_require__(4);
 var spaces = __webpack_require__(79);
 var space = '[' + spaces + ']';
@@ -5398,7 +6255,7 @@ module.exports = function (it, TYPE) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = __webpack_require__(22);
+var cof = __webpack_require__(26);
 // eslint-disable-next-line no-prototype-builtins
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return cof(it) == 'String' ? it.split('') : Object(it);
@@ -5417,7 +6274,7 @@ exports.f = {}.propertyIsEnumerable;
 /***/ (function(module, exports, __webpack_require__) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = __webpack_require__(22);
+var cof = __webpack_require__(26);
 var TAG = __webpack_require__(6)('toStringTag');
 // ES3 wrong here
 var ARG = cof(function () { return arguments; }()) == 'Arguments';
@@ -5459,9 +6316,9 @@ module.exports = function (key) {
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = __webpack_require__(18);
+var toIObject = __webpack_require__(20);
 var toLength = __webpack_require__(9);
-var toAbsoluteIndex = __webpack_require__(42);
+var toAbsoluteIndex = __webpack_require__(44);
 module.exports = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIObject($this);
@@ -5494,7 +6351,7 @@ exports.f = Object.getOwnPropertySymbols;
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.2.2 IsArray(argument)
-var cof = __webpack_require__(22);
+var cof = __webpack_require__(26);
 module.exports = Array.isArray || function isArray(arg) {
   return cof(arg) == 'Array';
 };
@@ -5506,7 +6363,7 @@ module.exports = Array.isArray || function isArray(arg) {
 
 // 7.2.8 IsRegExp(argument)
 var isObject = __webpack_require__(5);
-var cof = __webpack_require__(22);
+var cof = __webpack_require__(26);
 var MATCH = __webpack_require__(6)('match');
 module.exports = function (it) {
   var isRegExp;
@@ -5568,10 +6425,10 @@ module.exports = function () {
 
 "use strict";
 
-var hide = __webpack_require__(14);
-var redefine = __webpack_require__(15);
+var hide = __webpack_require__(17);
+var redefine = __webpack_require__(18);
 var fails = __webpack_require__(4);
-var defined = __webpack_require__(28);
+var defined = __webpack_require__(31);
 var wks = __webpack_require__(6);
 
 module.exports = function (KEY, length, exec) {
@@ -5603,7 +6460,7 @@ module.exports = function (KEY, length, exec) {
 
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject = __webpack_require__(2);
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var SPECIES = __webpack_require__(6)('species');
 module.exports = function (O, D) {
   var C = anObject(O).constructor;
@@ -5620,11 +6477,11 @@ module.exports = function (O, D) {
 
 var global = __webpack_require__(3);
 var $export = __webpack_require__(0);
-var redefine = __webpack_require__(15);
-var redefineAll = __webpack_require__(48);
-var meta = __webpack_require__(35);
-var forOf = __webpack_require__(47);
-var anInstance = __webpack_require__(46);
+var redefine = __webpack_require__(18);
+var redefineAll = __webpack_require__(50);
+var meta = __webpack_require__(37);
+var forOf = __webpack_require__(49);
+var anInstance = __webpack_require__(48);
 var isObject = __webpack_require__(5);
 var fails = __webpack_require__(4);
 var $iterDetect = __webpack_require__(64);
@@ -5709,8 +6566,8 @@ module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(3);
-var hide = __webpack_require__(14);
-var uid = __webpack_require__(39);
+var hide = __webpack_require__(17);
+var uid = __webpack_require__(41);
 var TYPED = uid('typed_array');
 var VIEW = uid('view');
 var ABV = !!(global.ArrayBuffer && global.DataView);
@@ -5745,7 +6602,7 @@ module.exports = {
 "use strict";
 
 // Forced replacement prototype accessors methods
-module.exports = __webpack_require__(40) || !__webpack_require__(4)(function () {
+module.exports = __webpack_require__(42) || !__webpack_require__(4)(function () {
   var K = Math.random();
   // In FF throws only define methods
   // eslint-disable-next-line no-undef, no-useless-call
@@ -5781,9 +6638,9 @@ module.exports = function (COLLECTION) {
 
 // https://tc39.github.io/proposal-setmap-offrom/
 var $export = __webpack_require__(0);
-var aFunction = __webpack_require__(11);
-var ctx = __webpack_require__(21);
-var forOf = __webpack_require__(47);
+var aFunction = __webpack_require__(14);
+var ctx = __webpack_require__(25);
+var forOf = __webpack_require__(49);
 
 module.exports = function (COLLECTION) {
   $export($export.S, COLLECTION, { from: function from(source /* , mapFn, thisArg */) {
@@ -5826,8 +6683,8 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(3);
-var core = __webpack_require__(26);
-var LIBRARY = __webpack_require__(40);
+var core = __webpack_require__(29);
+var LIBRARY = __webpack_require__(42);
 var wksExt = __webpack_require__(102);
 var defineProperty = __webpack_require__(8).f;
 module.exports = function (name) {
@@ -5841,7 +6698,7 @@ module.exports = function (name) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var shared = __webpack_require__(59)('keys');
-var uid = __webpack_require__(39);
+var uid = __webpack_require__(41);
 module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
 };
@@ -5881,7 +6738,7 @@ module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
     function (test, buggy, set) {
       try {
-        set = __webpack_require__(21)(Function.call, __webpack_require__(19).f(Object.prototype, '__proto__').set, 2);
+        set = __webpack_require__(25)(Function.call, __webpack_require__(21).f(Object.prototype, '__proto__').set, 2);
         set(test, []);
         buggy = !(test instanceof Array);
       } catch (e) { buggy = true; }
@@ -5925,8 +6782,8 @@ module.exports = function (that, target, C) {
 
 "use strict";
 
-var toInteger = __webpack_require__(29);
-var defined = __webpack_require__(28);
+var toInteger = __webpack_require__(32);
+var defined = __webpack_require__(31);
 
 module.exports = function repeat(count) {
   var str = String(defined(this));
@@ -5969,8 +6826,8 @@ module.exports = (!$expm1
 /* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(29);
-var defined = __webpack_require__(28);
+var toInteger = __webpack_require__(32);
+var defined = __webpack_require__(31);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function (TO_STRING) {
@@ -5994,15 +6851,15 @@ module.exports = function (TO_STRING) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(40);
+var LIBRARY = __webpack_require__(42);
 var $export = __webpack_require__(0);
-var redefine = __webpack_require__(15);
-var hide = __webpack_require__(14);
-var has = __webpack_require__(13);
+var redefine = __webpack_require__(18);
+var hide = __webpack_require__(17);
+var has = __webpack_require__(16);
 var Iterators = __webpack_require__(54);
 var $iterCreate = __webpack_require__(86);
 var setToStringTag = __webpack_require__(52);
-var getPrototypeOf = __webpack_require__(20);
+var getPrototypeOf = __webpack_require__(22);
 var ITERATOR = __webpack_require__(6)('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
 var FF_ITERATOR = '@@iterator';
@@ -6071,13 +6928,13 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
 
 "use strict";
 
-var create = __webpack_require__(43);
-var descriptor = __webpack_require__(38);
+var create = __webpack_require__(45);
+var descriptor = __webpack_require__(40);
 var setToStringTag = __webpack_require__(52);
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(14)(IteratorPrototype, __webpack_require__(6)('iterator'), function () { return this; });
+__webpack_require__(17)(IteratorPrototype, __webpack_require__(6)('iterator'), function () { return this; });
 
 module.exports = function (Constructor, NAME, next) {
   Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
@@ -6091,7 +6948,7 @@ module.exports = function (Constructor, NAME, next) {
 
 // helper for String#{startsWith, endsWith, includes}
 var isRegExp = __webpack_require__(63);
-var defined = __webpack_require__(28);
+var defined = __webpack_require__(31);
 
 module.exports = function (that, searchString, NAME) {
   if (isRegExp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
@@ -6138,7 +6995,7 @@ module.exports = function (it) {
 "use strict";
 
 var $defineProperty = __webpack_require__(8);
-var createDesc = __webpack_require__(38);
+var createDesc = __webpack_require__(40);
 
 module.exports = function (object, index, value) {
   if (index in object) $defineProperty.f(object, index, createDesc(0, value));
@@ -6153,7 +7010,7 @@ module.exports = function (object, index, value) {
 var classof = __webpack_require__(58);
 var ITERATOR = __webpack_require__(6)('iterator');
 var Iterators = __webpack_require__(54);
-module.exports = __webpack_require__(26).getIteratorMethod = function (it) {
+module.exports = __webpack_require__(29).getIteratorMethod = function (it) {
   if (it != undefined) return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
@@ -6165,7 +7022,7 @@ module.exports = __webpack_require__(26).getIteratorMethod = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
-var speciesConstructor = __webpack_require__(236);
+var speciesConstructor = __webpack_require__(237);
 
 module.exports = function (original, length) {
   return new (speciesConstructor(original))(length);
@@ -6180,7 +7037,7 @@ module.exports = function (original, length) {
 // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
 
 var toObject = __webpack_require__(10);
-var toAbsoluteIndex = __webpack_require__(42);
+var toAbsoluteIndex = __webpack_require__(44);
 var toLength = __webpack_require__(9);
 module.exports = function fill(value /* , start = 0, end = @length */) {
   var O = toObject(this);
@@ -6200,10 +7057,10 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(36);
+var addToUnscopables = __webpack_require__(38);
 var step = __webpack_require__(118);
 var Iterators = __webpack_require__(54);
-var toIObject = __webpack_require__(18);
+var toIObject = __webpack_require__(20);
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
@@ -6239,7 +7096,7 @@ addToUnscopables('entries');
 /* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ctx = __webpack_require__(21);
+var ctx = __webpack_require__(25);
 var invoke = __webpack_require__(108);
 var html = __webpack_require__(77);
 var cel = __webpack_require__(73);
@@ -6282,7 +7139,7 @@ if (!setTask || !clearTask) {
     delete queue[id];
   };
   // Node.js 0.8-
-  if (__webpack_require__(22)(process) == 'process') {
+  if (__webpack_require__(26)(process) == 'process') {
     defer = function (id) {
       process.nextTick(ctx(run, id, 1));
     };
@@ -6334,7 +7191,7 @@ var macrotask = __webpack_require__(95).set;
 var Observer = global.MutationObserver || global.WebKitMutationObserver;
 var process = global.process;
 var Promise = global.Promise;
-var isNode = __webpack_require__(22)(process) == 'process';
+var isNode = __webpack_require__(26)(process) == 'process';
 
 module.exports = function () {
   var head, last, notify;
@@ -6406,7 +7263,7 @@ module.exports = function () {
 "use strict";
 
 // 25.4.1.5 NewPromiseCapability(C)
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 
 function PromiseCapability(C) {
   var resolve, reject;
@@ -6432,16 +7289,16 @@ module.exports.f = function (C) {
 
 var global = __webpack_require__(3);
 var DESCRIPTORS = __webpack_require__(7);
-var LIBRARY = __webpack_require__(40);
+var LIBRARY = __webpack_require__(42);
 var $typed = __webpack_require__(69);
-var hide = __webpack_require__(14);
-var redefineAll = __webpack_require__(48);
+var hide = __webpack_require__(17);
+var redefineAll = __webpack_require__(50);
 var fails = __webpack_require__(4);
-var anInstance = __webpack_require__(46);
-var toInteger = __webpack_require__(29);
+var anInstance = __webpack_require__(48);
+var toInteger = __webpack_require__(32);
 var toLength = __webpack_require__(9);
 var toIndex = __webpack_require__(127);
-var gOPN = __webpack_require__(44).f;
+var gOPN = __webpack_require__(46).f;
 var dP = __webpack_require__(8).f;
 var arrayFill = __webpack_require__(93);
 var setToStringTag = __webpack_require__(52);
@@ -6955,8 +7812,8 @@ exports.f = __webpack_require__(6);
 /* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var has = __webpack_require__(13);
-var toIObject = __webpack_require__(18);
+var has = __webpack_require__(16);
+var toIObject = __webpack_require__(20);
 var arrayIndexOf = __webpack_require__(60)(false);
 var IE_PROTO = __webpack_require__(75)('IE_PROTO');
 
@@ -6980,7 +7837,7 @@ module.exports = function (object, names) {
 
 var dP = __webpack_require__(8);
 var anObject = __webpack_require__(2);
-var getKeys = __webpack_require__(41);
+var getKeys = __webpack_require__(43);
 
 module.exports = __webpack_require__(7) ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
@@ -6998,8 +7855,8 @@ module.exports = __webpack_require__(7) ? Object.defineProperties : function def
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject = __webpack_require__(18);
-var gOPN = __webpack_require__(44).f;
+var toIObject = __webpack_require__(20);
+var gOPN = __webpack_require__(46).f;
 var toString = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
@@ -7025,7 +7882,7 @@ module.exports.f = function getOwnPropertyNames(it) {
 "use strict";
 
 // 19.1.2.1 Object.assign(target, source, ...)
-var getKeys = __webpack_require__(41);
+var getKeys = __webpack_require__(43);
 var gOPS = __webpack_require__(61);
 var pIE = __webpack_require__(57);
 var toObject = __webpack_require__(10);
@@ -7065,7 +7922,7 @@ module.exports = !$assign || __webpack_require__(4)(function () {
 
 "use strict";
 
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var isObject = __webpack_require__(5);
 var invoke = __webpack_require__(108);
 var arraySlice = [].slice;
@@ -7146,7 +8003,7 @@ module.exports = 1 / $parseFloat(__webpack_require__(79) + '-0') !== -Infinity ?
 /* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var cof = __webpack_require__(22);
+var cof = __webpack_require__(26);
 module.exports = function (it, msg) {
   if (typeof it != 'number' && cof(it) != 'Number') throw TypeError(msg);
   return +it;
@@ -7226,7 +8083,7 @@ module.exports = function (iterator, fn, value, entries) {
 /* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var toObject = __webpack_require__(10);
 var IObject = __webpack_require__(56);
 var toLength = __webpack_require__(9);
@@ -7264,7 +8121,7 @@ module.exports = function (that, callbackfn, aLen, memo, isRight) {
 // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
 
 var toObject = __webpack_require__(10);
-var toAbsoluteIndex = __webpack_require__(42);
+var toAbsoluteIndex = __webpack_require__(44);
 var toLength = __webpack_require__(9);
 
 module.exports = [].copyWithin || function copyWithin(target /* = 0 */, start /* = 0, end = @length */) {
@@ -7373,16 +8230,16 @@ module.exports = __webpack_require__(68)(MAP, function (get) {
 "use strict";
 
 var dP = __webpack_require__(8).f;
-var create = __webpack_require__(43);
-var redefineAll = __webpack_require__(48);
-var ctx = __webpack_require__(21);
-var anInstance = __webpack_require__(46);
-var forOf = __webpack_require__(47);
+var create = __webpack_require__(45);
+var redefineAll = __webpack_require__(50);
+var ctx = __webpack_require__(25);
+var anInstance = __webpack_require__(48);
+var forOf = __webpack_require__(49);
 var $iterDefine = __webpack_require__(85);
 var step = __webpack_require__(118);
-var setSpecies = __webpack_require__(45);
+var setSpecies = __webpack_require__(47);
 var DESCRIPTORS = __webpack_require__(7);
-var fastKey = __webpack_require__(35).fastKey;
+var fastKey = __webpack_require__(37).fastKey;
 var validate = __webpack_require__(55);
 var SIZE = DESCRIPTORS ? '_s' : 'size';
 
@@ -7544,9 +8401,9 @@ module.exports = __webpack_require__(68)(SET, function (get) {
 
 "use strict";
 
-var each = __webpack_require__(31)(0);
-var redefine = __webpack_require__(15);
-var meta = __webpack_require__(35);
+var each = __webpack_require__(34)(0);
+var redefine = __webpack_require__(18);
+var meta = __webpack_require__(37);
 var assign = __webpack_require__(106);
 var weak = __webpack_require__(126);
 var isObject = __webpack_require__(5);
@@ -7610,14 +8467,14 @@ if (fails(function () { return new $WeakMap().set((Object.freeze || Object)(tmp)
 
 "use strict";
 
-var redefineAll = __webpack_require__(48);
-var getWeak = __webpack_require__(35).getWeak;
+var redefineAll = __webpack_require__(50);
+var getWeak = __webpack_require__(37).getWeak;
 var anObject = __webpack_require__(2);
 var isObject = __webpack_require__(5);
-var anInstance = __webpack_require__(46);
-var forOf = __webpack_require__(47);
-var createArrayMethod = __webpack_require__(31);
-var $has = __webpack_require__(13);
+var anInstance = __webpack_require__(48);
+var forOf = __webpack_require__(49);
+var createArrayMethod = __webpack_require__(34);
+var $has = __webpack_require__(16);
 var validate = __webpack_require__(55);
 var arrayFind = createArrayMethod(5);
 var arrayFindIndex = createArrayMethod(6);
@@ -7701,7 +8558,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/ecma262/#sec-toindex
-var toInteger = __webpack_require__(29);
+var toInteger = __webpack_require__(32);
 var toLength = __webpack_require__(9);
 module.exports = function (it) {
   if (it === undefined) return 0;
@@ -7717,7 +8574,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // all object keys, includes non-enumerable and symbols
-var gOPN = __webpack_require__(44);
+var gOPN = __webpack_require__(46);
 var gOPS = __webpack_require__(61);
 var anObject = __webpack_require__(2);
 var Reflect = __webpack_require__(3).Reflect;
@@ -7738,7 +8595,7 @@ module.exports = Reflect && Reflect.ownKeys || function ownKeys(it) {
 var isArray = __webpack_require__(62);
 var isObject = __webpack_require__(5);
 var toLength = __webpack_require__(9);
-var ctx = __webpack_require__(21);
+var ctx = __webpack_require__(25);
 var IS_CONCAT_SPREADABLE = __webpack_require__(6)('isConcatSpreadable');
 
 function flattenIntoArray(target, original, source, sourceLen, start, depth, mapper, thisArg) {
@@ -7781,7 +8638,7 @@ module.exports = flattenIntoArray;
 // https://github.com/tc39/proposal-string-pad-start-end
 var toLength = __webpack_require__(9);
 var repeat = __webpack_require__(81);
-var defined = __webpack_require__(28);
+var defined = __webpack_require__(31);
 
 module.exports = function (that, maxLength, fillString, left) {
   var S = String(defined(that));
@@ -7800,8 +8657,8 @@ module.exports = function (that, maxLength, fillString, left) {
 /* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getKeys = __webpack_require__(41);
-var toIObject = __webpack_require__(18);
+var getKeys = __webpack_require__(43);
+var toIObject = __webpack_require__(20);
 var isEnum = __webpack_require__(57).f;
 module.exports = function (isEntries) {
   return function (it) {
@@ -7837,7 +8694,7 @@ module.exports = function (NAME) {
 /* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var forOf = __webpack_require__(47);
+var forOf = __webpack_require__(49);
 
 module.exports = function (iter, ITERATOR) {
   var result = [];
@@ -7909,7 +8766,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(350), __webpack_require__(25), __webpack_require__(24)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmptWrapper_1, dispatcher_1, eventInfo_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(352), __webpack_require__(11), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmptWrapper_1, dispatcher_1, eventInfo_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CmptManager = (function () {
@@ -8416,7 +9273,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(359), __webpack_require__(360), __webpack_require__(51), __webpack_require__(361), __webpack_require__(32), __webpack_require__(25), __webpack_require__(24), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, audioCallService_1, videoCallService_1, tupCallWrapper_1, tupNativeWndWrapper_1, observer_1, dispatcher_1, eventInfo_1, enum_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(361), __webpack_require__(362), __webpack_require__(51), __webpack_require__(363), __webpack_require__(28), __webpack_require__(11), __webpack_require__(12), __webpack_require__(15), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, audioCallService_1, videoCallService_1, tupCallWrapper_1, tupNativeWndWrapper_1, observer_1, dispatcher_1, eventInfo_1, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CallManager = (function () {
@@ -8922,7 +9779,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             call.handleCallIncomming(callInfo);
             var wrapper = tupCallWrapper_1.default.getInstance();
             var ret = wrapper.alertingCall(callInfo.param.call_id);
-            util_1.default.debug("callManager", 'handleCallIncomming, callInfo= ' + JSON.stringify(callInfo));
+            util_1.default.debug("callManager", 'handleCallIncomming, call_id= ' + callInfo.param.call_id);
         };
         CallManager.handleCallConnected = function (callInfo) {
             var call = CallManager.CallList[callInfo.param.call_id];
@@ -9037,7 +9894,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 CallManager.CallList[newCall.callInfo.callId] = newCall;
                 result.param.nowIsVideoCall = nowIsVideoCall;
                 newCall.handleCallSessionModify(result);
-                util_1.default.debug("callManager", 'handleCallSessionModify found call by call_id = ' + result.param.call_id + ",oldCall=" + JSON.stringify(oldCall));
+                util_1.default.debug("callManager", 'handleCallSessionModify found call by call_id = ' + result.param.call_id + ",oldCall=" + JSON.stringify(oldCall.callInfo.callId));
             }
             else {
                 util_1.default.debug("callManager", 'handleCallSessionModify no found call by call_id = ' + result.param.call_id);
@@ -9058,19 +9915,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallManager.handSetIptServiceSuccess = function (result) {
             observer_1.default.publish('SetIptServiceSuccess', result);
-            util_1.default.debug("callManager", 'handSetIptServiceSuccess, SetIptServiceSuccess = ' + result);
         };
         CallManager.handSetIptServiceFailed = function (result) {
             observer_1.default.publish('SetIptServiceFailed', result);
-            util_1.default.debug("callManager", 'handSetIptServiceFailed, SetIptServiceFailed = ' + result);
         };
         CallManager.handCallBldTransferRecvSucRsp = function (result) {
             observer_1.default.publish('CallBldTransferRecvSucRsp', result);
-            util_1.default.debug("callManager", 'handCallBldTransferRecvSucRsp, CallBldTransferRecvSucRsp = ' + result);
         };
         CallManager.handCallBldTransferFailed = function (result) {
             observer_1.default.publish('CallBldTransferFailed', result);
-            util_1.default.debug("callManager", 'handCallBldTransferFailed, CallBldTransferFailed = ' + result);
+            util_1.default.debug("callManager", 'handCallBldTransferFailed');
             if (result.param.call_id != "") {
                 var call = CallManager.CallList[result.param.call_id];
                 util_1.default.debug("callManager", 'unHoldCall  callId= ' + result.param.call_id);
@@ -9079,15 +9933,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallManager.handCallBldTransferSuccess = function (result) {
             observer_1.default.publish('CallBldTransferSuccess', result);
-            util_1.default.debug("callManager", 'handCallBldTransferSuccess, CallBldTransferSuccess = ' + result);
         };
         CallManager.handleMicVolChange = function (result) {
             observer_1.default.publish('CallMicVolChange', result);
-            util_1.default.debug("callManager", 'handleMicVolChange, CallMicVolChange = ' + result);
         };
         CallManager.handleSpkVolChange = function (result) {
             observer_1.default.publish('CallSpkVolChange', result);
-            util_1.default.debug("callManager", 'handleSpkVolChange, CallSpkVolChange = ' + result);
         };
         CallManager.handleCallAddVideo = function (callInfo) {
             var call = CallManager.CallList[callInfo.param.call_id];
@@ -9128,7 +9979,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
         };
         CallManager.handleVideoRefreshView = function (data) {
-            util_1.default.debug("callManager", "<video> handleVideoRefreshView,data.param= " + JSON.stringify(data.param));
+            util_1.default.debug("callManager", "<video> handleVideoRefreshView");
             observer_1.default.publish('VideoRefreshView', data.param);
         };
         CallManager.handleVideoDecodeSuccess = function (data) {
@@ -9148,15 +9999,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallManager.handleMobileRouteChange = function (data) {
             observer_1.default.publish('MobileRouteChange', data.param);
-            util_1.default.debug("callManager", 'handleMobileRouteChange MobileRouteChange,data.param =' + JSON.stringify(data.param));
         };
         CallManager.handleCallAtdTransferSuccess = function (data) {
             observer_1.default.publish('CallAtdTransferSuccess', data.param);
-            util_1.default.debug("callManager", 'handleCallAtdTransferSuccess CallAtdTransferSuccess,data.param = ' + JSON.stringify(data.param));
         };
         CallManager.handleCallAtdTransferFailed = function (data) {
             observer_1.default.publish('CallAtdTransferFailed', data.param);
-            util_1.default.debug("callManager", 'handleCallAtdTransferFailed CallAtdTransferFailed,data.param = ' + JSON.stringify(data.param));
         };
         CallManager.getCallObject = function (callInfo, isVideo) {
             if (isVideo) {
@@ -9207,7 +10055,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     switch (_a.label) {
                         case 0:
                             call = CallManager.CallList[callId];
-                            util_1.default.debug("callManager", 'divertCall = ' + divertNumber);
                             return [4, call.divertCall(divertNumber)];
                         case 1:
                             _a.sent();
@@ -9227,7 +10074,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 callback({ result: false, info: "call is video" });
                                 return [2];
                             }
-                            util_1.default.debug("callManager", 'blindTransfer = ' + transtoNumber);
                             return [4, call.blindTransfer(transtoNumber)];
                         case 1:
                             _a.sent();
@@ -9327,7 +10173,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(51), __webpack_require__(32), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCallWrapper_1, observer_1, util, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(51), __webpack_require__(28), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCallWrapper_1, observer_1, util, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CallService = (function () {
@@ -9336,7 +10182,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.handleCallIncomming = function (callInfo) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     observer_1.default.publish('CallIncomming', this.callInfo);
-                    util_1.default.debug("callService", 'CallIncomming callInfo=' + JSON.stringify(this.callInfo));
                     return [2];
                 });
             }); };
@@ -9359,7 +10204,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             };
         }
         CallService.prototype.getCallee = function (callNo, ucaccount) {
-            util_1.default.debug("callService", "call service ,account = " + ucaccount);
+            util_1.default.debug("callService", "call service");
             return {
                 name: callNo,
                 mobile: callNo,
@@ -9373,7 +10218,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            util_1.default.debug("callService", 'begin tup start call, callInfo =  ' + JSON.stringify(callInfo));
+                            util_1.default.debug("callService", 'begin tup start call');
                             wrapper = tupCallWrapper_1.default.getInstance();
                             outGoingPromise = CallService.getPromise();
                             callback = { onCallOutGoing: function (data) {
@@ -9383,7 +10228,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, wrapper.startCall(callInfo.tel_num, isVideo)];
                         case 1:
                             res = _a.sent();
-                            util_1.default.debug("callService", JSON.stringify(res));
                             if (0 === res.result) {
                                 this.callInfo.callId = res.param.call_id;
                             }
@@ -9494,37 +10338,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         CallService.prototype.handleCallEnded = function (callInfo) {
             this.callInfo.callState = callInfo.param.call_state;
             observer_1.default.publish('CallEnded', this.callInfo);
-            util_1.default.debug("callService", 'CallEnded  callInfo=' + JSON.stringify(this.callInfo));
         };
         CallService.prototype.handleCallRingBack = function (callInfo) {
             this.callInfo.callState = callInfo.param.call_state;
             observer_1.default.publish('CallRingBack', callInfo.param);
-            util_1.default.debug("callService", 'CallRingBack callInfo=' + JSON.stringify(callInfo.param));
         };
         CallService.prototype.handleCallConnected = function (callInfo) {
             this.callInfo.callState = callInfo.param.call_state;
-            util_1.default.debug("callService", 'no found call by callInfo.param = ' + JSON.stringify(callInfo.param));
             observer_1.default.publish('CallConnected', callInfo.param);
         };
         CallService.prototype.handleCallAddVideo = function (callInfo) {
-            util_1.default.debug("callService", 'AddVideoRequest callInfo=' + JSON.stringify(this.callInfo));
             observer_1.default.publish('AddVideoRequest', callInfo.param);
         };
         CallService.prototype.handleCallDelVideo = function (callInfo) {
-            util_1.default.debug("callService", 'DelVideoRequest callInfo=' + JSON.stringify(this.callInfo));
             observer_1.default.publish('DelVideoRequest', callInfo.param);
         };
         CallService.prototype.handleCallRTPCreated = function (callInfo) {
             observer_1.default.publish('CallRTPCreated', callInfo.param);
-            util_1.default.debug("callService", 'CallRTPCreated result=' + JSON.stringify(callInfo.param));
         };
         CallService.prototype.handleCallModifyVideoResult = function (result) {
             observer_1.default.publish('CallModifyVideoResult', result.param);
-            util_1.default.debug("callService", 'CallModifyVideoResult result=' + JSON.stringify(result.param));
         };
         CallService.prototype.handleCallSessionModify = function (result) {
             observer_1.default.publish('CallSessionModify', result.param);
-            util_1.default.debug("callService", 'CallSessionModify result=' + JSON.stringify(result.param));
         };
         CallService.getPromise = function () {
             var p = {};
@@ -9580,7 +10416,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(363), __webpack_require__(365), __webpack_require__(140), __webpack_require__(25), __webpack_require__(32), __webpack_require__(24), __webpack_require__(37), __webpack_require__(369), __webpack_require__(51), __webpack_require__(1), __webpack_require__(49), __webpack_require__(12), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrlWrapper_1, tupDataConfWrapper_1, tupEaddrWrapper_1, dispatcher_1, observer_1, eventInfo_1, errorCode_1, confAttendeeList_1, tupCallWrapper_1, util, client_1, serverConfig_1, enum_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(365), __webpack_require__(367), __webpack_require__(140), __webpack_require__(11), __webpack_require__(28), __webpack_require__(12), __webpack_require__(24), __webpack_require__(371), __webpack_require__(51), __webpack_require__(1), __webpack_require__(23), __webpack_require__(13), __webpack_require__(15), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrlWrapper_1, tupDataConfWrapper_1, tupEaddrWrapper_1, dispatcher_1, observer_1, eventInfo_1, errorCode_1, confAttendeeList_1, tupCallWrapper_1, util, client_1, serverConfig_1, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var confInfo = {
@@ -9858,19 +10694,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             i++;
                             return [3, 1];
                         case 4:
-                            if (deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
-                                attendeeTemp = {
-                                    acount_id: "",
-                                    number: phoneNumber,
-                                    name: userAccount,
-                                    sms: "",
-                                    email: "",
-                                    role: 1,
-                                    is_auto_invite: 0,
-                                    display_name: userAccount,
-                                };
-                                configedAttendees.unshift(attendeeTemp);
-                            }
+                            attendeeTemp = {
+                                acount_id: "",
+                                number: phoneNumber,
+                                name: userAccount,
+                                sms: "",
+                                email: "",
+                                role: 1,
+                                is_auto_invite: 0,
+                                display_name: userAccount,
+                            };
+                            configedAttendees.unshift(attendeeTemp);
                             confCtrlWrap.createConf(confSubject, mediaType, configedAttendees, assMedia, language)
                                 .then(function (ret) {
                                 var evt = { result: true, info: confInfo };
@@ -9912,7 +10746,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return __generator(this, function (_a) {
                     confCtrlWrapper = tupConfctrlWrapper_1.default.getInstance();
                     if (util.isUndefined(confId) || confId === "") {
-                        client_1.default.notifyErr(errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("confId"));
+                        client_1.default.notifyErr(errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("confId"));
                         return [2];
                     }
                     confCtrlWrapper.getConfInfo(confId)
@@ -9997,6 +10831,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, wrapper.startCall(callNum, mediaType)];
                         case 1:
                             ret = _a.sent();
+                            callNum = "";
                             if (ret) {
                                 callback({ result: true, info: "access reserved conference succeed" });
                             }
@@ -10019,7 +10854,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 callback({ result: false, info: err });
                             }
                             _a.label = 4;
-                        case 4: return [2];
+                        case 4:
+                            joinConfParam.confPasswd = "";
+                            return [2];
                     }
                 });
             });
@@ -10113,7 +10950,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfManager.prototype.removeAttendee = function (event, attendeeNum, confHandle, attendeeList) {
             return __awaiter(this, void 0, void 0, function () {
-                var confCtrlWrapper, dataConfWrapper, role, dataconfUserId, i;
+                var confCtrlWrapper, dataConfWrapper, role, dataconfUserId, i, logInfo;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -10125,7 +10962,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 if (attendeeList[i].number === attendeeNum) {
                                     role = attendeeList[i].role;
                                     if (util.isUndefined(attendeeList[i].dataconfUserId)) {
-                                        util_1.default.debug("confManager", "user " + attendeeNum + " not in dataconf.");
+                                        logInfo = util.hidePhone(attendeeNum);
+                                        util_1.default.debug("confManager", "user " + logInfo + " not in dataconf.");
                                         break;
                                     }
                                     dataconfUserId = attendeeList[i].dataconfUserId;
@@ -10154,7 +10992,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             if (!(dataconfUserId != null)) return [3, 4];
                             return [4, dataConfWrapper.kickOutUser(confInfo.dataConfHandle, dataconfUserId)
                                     .catch(function (ret) {
-                                    util_1.default.error("confManager", "removeAttendee, ret = " + ret);
+                                    var logInfo = util.replaceLogInfo(ret);
+                                    util_1.default.error("confManager", "removeAttendee, ret = " + logInfo);
                                 })];
                         case 3:
                             _a.sent();
@@ -10210,7 +11049,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             me = _a.sent();
                             return [4, confCtrlWrapper.releaseChairman(confHandle, me.number).catch(function (ret) {
-                                    util_1.default.error("confManager", "releaseChairman failed, ret =  " + JSON.stringify(ret));
+                                    util_1.default.error("confManager", "releaseChairman failed");
                                     client_1.default.notifyErr(util.getErrResult(ret.info.notify, ret.info.param.ret, ret.info.description));
                                     return;
                                 })];
@@ -10218,7 +11057,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             _a.sent();
                             if (!(!util.isUndefined(me.dataconfUserId) && me.dataconfUserId != 0)) return [3, 4];
                             return [4, dataConfWrapper.userSetRole(2, dataConfHandle, 0).catch(function (ret) {
-                                    util_1.default.error("confManager", "userSetRole failed, ret =  " + JSON.stringify(ret));
+                                    util_1.default.error("confManager", "userSetRole failed");
                                     client_1.default.notifyErr(util.getErrResult(ret.info.rsp, ret.info.param.result, ret.info.description));
                                 })];
                         case 3:
@@ -10245,12 +11084,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 if (!util.isUndefined(me.dataconfUserId) && me.dataconfUserId != 0) {
                                     dataConfWrapper.userRequestRole(dataConfHandle, 2, "")
                                         .catch(function (ret) {
-                                        util_1.default.error("confManager", "userRequestRole failed, ret = " + JSON.stringify(ret));
+                                        util_1.default.error("confManager", "userRequestRole failed ");
                                         client_1.default.notifyErr(util.getErrResult(ret.info.rsp, ret.info.param.result, ret.info.description));
                                     });
                                 }
                             }).catch(function (ret) {
-                                util_1.default.error("confManager", "requestChairman failed,ret =  " + JSON.stringify(ret));
+                                util_1.default.error("confManager", "requestChairman failed ");
                                 client_1.default.notifyErr(util.getErrResult(ret.info.notify, ret.info.param.ret, ret.info.description));
                             });
                             return [2];
@@ -10311,7 +11150,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                         .then(function (ret) {
                                         return dataConfWrapper.release(dataConfHandle);
                                     }).catch(function (ret) {
-                                        util_1.default.error("confManager", "leaveConf,ret =  " + ret);
                                         client_1.default.notifyErr(util.getErrResult(ret.info.rsp, ret.info.param.result, ret.info.description));
                                     }).then(function (ret) {
                                         observer_1.default.publish("confFinished", { "confHandle": confHandle, "dataConfHandle": dataConfHandle });
@@ -10402,31 +11240,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfManager.prototype.setConfMixedPicture = function (event, confHandle, mode, imageType, attendees) {
             return __awaiter(this, void 0, void 0, function () {
-                var confCtrlWrapper, eaddrWrapper, configedAttendees, i, data, attendeeParam;
+                var confCtrlWrapper, configedAttendees, i;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             confCtrlWrapper = tupConfctrlWrapper_1.default.getInstance();
-                            eaddrWrapper = tupEaddrWrapper_1.default.getInstance();
                             configedAttendees = new Array();
-                            i = 0;
-                            _a.label = 1;
-                        case 1:
-                            if (!(i < attendees.length)) return [3, 4];
-                            return [4, eaddrWrapper.searchUserInfo(i + 1, { condition: attendees[i].number, pageIndex: 1, searchType: 0 })];
-                        case 2:
-                            data = _a.sent();
-                            if (0 == data.param.result && 1 == data.param.TotalNum) {
-                                attendeeParam = data.param.entry[0];
-                                configedAttendees[i] = {
-                                    acount_id: attendeeParam.ucaccount,
-                                    number: attendeeParam.espacenumber,
-                                    name: attendeeParam.name,
-                                    sms: attendeeParam.mobile,
-                                    email: attendeeParam.email,
-                                };
-                            }
-                            else {
+                            for (i = 0; i < attendees.length; i++) {
                                 configedAttendees[i] = {
                                     acount_id: "",
                                     number: attendees[i].number,
@@ -10435,14 +11255,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                     email: attendees[i].email,
                                 };
                             }
-                            _a.label = 3;
-                        case 3:
-                            i++;
-                            return [3, 1];
-                        case 4: return [4, confCtrlWrapper.setConfMixedPicture(confHandle, mode, imageType, configedAttendees).catch(function (data) {
-                                client_1.default.notifyErr(util.getErrResult(data.info.notify, data.info.param.result, data.info.description));
-                            })];
-                        case 5:
+                            return [4, confCtrlWrapper.setConfMixedPicture(confHandle, mode, imageType, configedAttendees).catch(function (data) {
+                                    client_1.default.notifyErr(util.getErrResult(data.info.notify, data.info.param.result, data.info.description));
+                                })];
+                        case 1:
                             _a.sent();
                             return [2];
                     }
@@ -10456,10 +11272,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     switch (_a.label) {
                         case 0:
                             confCtrlWrapper = tupConfctrlWrapper_1.default.getInstance();
-                            return [4, confCtrlWrapper.broadcastAttendee(confHandle, isBroad, attendee)];
+                            return [4, confCtrlWrapper.broadcastAttendee(confHandle, isBroad, attendee).then(function (successCallback) {
+                                    callbacks(successCallback);
+                                }, function (failureCallback) {
+                                    client_1.default.notifyErr(util.getErrResult(failureCallback.info.description.notify, failureCallback.info.description.param.operation_rsp_reason, "operation failed"));
+                                })];
                         case 1:
                             data = _a.sent();
-                            callbacks(data);
                             return [2];
                     }
                 });
@@ -10467,24 +11286,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfManager.prototype.watchAttendee = function (event, confHandle, attendee, callbacks) {
             return __awaiter(this, void 0, void 0, function () {
-                var confCtrlWrapper, eaddrWrapper, data;
+                var confCtrlWrapper;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             confCtrlWrapper = tupConfctrlWrapper_1.default.getInstance();
-                            eaddrWrapper = tupEaddrWrapper_1.default.getInstance();
-                            return [4, eaddrWrapper.searchUserInfo(1, { condition: attendee.number, pageIndex: 1, searchType: 0 })];
-                        case 1:
-                            data = _a.sent();
-                            if (0 == data.param.result) {
-                                if (data.param.TotalNum == 1) {
-                                    attendee.number = data.param.entry[0].espacenumber;
-                                }
-                            }
                             return [4, confCtrlWrapper.watchAttendee(confHandle, attendee).catch(function (data) {
                                     client_1.default.notifyErr(util.getErrResult(data.info.notify, data.info.param.operation_rsp_reason, data.info.description));
                                 })];
-                        case 2:
+                        case 1:
                             _a.sent();
                             return [2];
                     }
@@ -10517,6 +11327,87 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var loginInfo = JSON.parse(cloudEC_loginInfo);
             var sipAccount = loginInfo.sipAccount;
             return sipAccount;
+        };
+        ConfManager.prototype.getDataconfParamsForConfInfoInd = function (confParams, userAccount) {
+            var confCtrlWrap = tupConfctrlWrapper_1.default.getInstance();
+            var dataConfWrap = tupDataConfWrapper_1.default.getInstance();
+            confCtrlWrap.getDataconfParams(confParams).then(function (bigparam) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var hostKey, title, userId, option, siteId, userTypeTemp, userType, siteUrl, serverIp, serverInterip, sbcServerAddress, encryptionKey, confId, userCapability, userName, logUrl, userM, userT;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                hostKey = bigparam.param.conf_params.host_key;
+                                confInfo.hostKey = hostKey;
+                                title = "subject";
+                                userId = parseInt(bigparam.param.conf_params.user_id);
+                                option = 4096;
+                                siteId = bigparam.param.conf_params.site_id;
+                                userTypeTemp = parseInt(bigparam.param.conf_params.user_role);
+                                if (userTypeTemp < 8) {
+                                    userType = 3;
+                                }
+                                else {
+                                    userType = 8;
+                                }
+                                siteUrl = bigparam.param.conf_params.site_url;
+                                sbcServerAddress = bigparam.param.conf_params.sbc_server_address;
+                                if ((serverConfig_1.CloudEC_SERVERCONFIG.IS_WITH_SBC == 1) && !(sbcServerAddress == undefined || sbcServerAddress == "" || sbcServerAddress.toLowerCase() == "null")) {
+                                    serverIp = bigparam.param.conf_params.sbc_server_address;
+                                    serverInterip = bigparam.param.conf_params.server_ip;
+                                }
+                                else {
+                                    serverIp = bigparam.param.conf_params.server_ip;
+                                    serverInterip = "";
+                                }
+                                encryptionKey = bigparam.param.conf_params.crypt_key;
+                                confId = parseInt(bigparam.param.conf_params.conf_id);
+                                userCapability = 2046;
+                                userName = userAccount;
+                                logUrl = bigparam.param.conf_params.user_uri;
+                                userM = bigparam.param.conf_params.M;
+                                userT = bigparam.param.conf_params.T;
+                                return [4, dataConfWrap.createConference(title, option, userType, userId, userName, hostKey, confId, encryptionKey, siteId, siteUrl, serverIp, serverInterip, userCapability, 0, logUrl, userM, userT)];
+                            case 1: return [2, _a.sent()];
+                        }
+                    });
+                });
+            }).then(function (confResponse) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                confInfo.dataConfHandle = confResponse.param.confHandle;
+                                return [4, dataConfWrap.joinConference(confResponse.param.confHandle)];
+                            case 1: return [2, _a.sent()];
+                        }
+                    });
+                });
+            }).then(function (joinResponse) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, dataConfWrap.loadComponent(joinResponse.param.confHandle, 546)];
+                            case 1: return [2, _a.sent()];
+                        }
+                    });
+                });
+            }).then(function (loadCompResponse) {
+                util_1.default.debug("confManager", "into conf");
+                var evt = { result: true, info: confInfo };
+                observer_1.default.publish('ConfInfoInd', evt);
+            }).catch(function (data) {
+                if (data.description === "CONFCTRL_E_EVT_CREATE_CONF_RESULT") {
+                    var err = util.getErrResult(data.notify, data.param.ret, data.description);
+                    client_1.default.notifyErr(err);
+                }
+                else {
+                    var err = util.getErrResult(40000100, data.param.value1, data.description);
+                    client_1.default.notifyErr(err);
+                    var evt = { result: false, info: confInfo };
+                    observer_1.default.publish('ConfInfoInd', evt);
+                }
+            });
         };
         ConfManager.prototype.updateDataconfMemberTb = function (eventType, participantId, isDataconfMember, dataconfUserId, callback) {
             return __awaiter(this, void 0, void 0, function () {
@@ -11037,121 +11928,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         ConfManager.onAttendeeListUpdate = function (data) {
             observer_1.default.publish('AttendeeListUpdate', data.param);
             observer_1.default.publish("UpdateConfinfo", confInfo);
-            if (ConfManager.isFirstUpdateAttendees && data.param.conf_status.media_type > 16) {
-                ConfManager.isFirstUpdateAttendees = false;
-                var confCtrlWrap = tupConfctrlWrapper_1.default.getInstance();
-                var dataConfWrap_1 = tupDataConfWrapper_1.default.getInstance();
-                var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
-                var loginInfo = JSON.parse(cloudEC_loginInfo);
-                var deployMode = loginInfo.deployMode;
-                var dataUrl = loginInfo.dataUrl;
-                var passcode = data.param.conf_status.conf_key;
-                var confParams = void 0;
-                var userAccount_1 = loginInfo.userAccount, sipImpi = loginInfo.sipImpi;
-                var phoneNumber_1 = sipImpi.split("@")[0];
-                if (deployMode != enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
-                    return;
-                }
-                confParams = {
-                    conf_url: dataUrl,
-                    mcu_addr: { server_addr: "", server_port: 0 },
-                    random: "",
-                    passcode: passcode,
-                    sip_num: "",
-                    conf_id: "",
-                    password: "",
-                    type: 1
-                };
-                confCtrlWrap.getDataconfParams(confParams).then(function (bigparam) {
-                    return __awaiter(this, void 0, void 0, function () {
-                        var hostKey, title, userId, option, siteId, userTypeTemp, userType, siteUrl, serverIp, serverInterip, encryptionKey, confId, userCapability, userName, logUrl, userM, userT;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    hostKey = bigparam.param.conf_params.host_key;
-                                    confInfo.hostKey = hostKey;
-                                    title = "subject";
-                                    userId = parseInt(bigparam.param.conf_params.user_id);
-                                    option = 4096;
-                                    siteId = bigparam.param.conf_params.site_id;
-                                    userTypeTemp = parseInt(bigparam.param.conf_params.user_role);
-                                    if (userTypeTemp < 8) {
-                                        userType = 3;
-                                    }
-                                    else {
-                                        userType = 8;
-                                    }
-                                    siteUrl = bigparam.param.conf_params.cm_address;
-                                    serverIp = bigparam.param.conf_params.server_ip;
-                                    serverInterip = "";
-                                    encryptionKey = bigparam.param.conf_params.crypt_key;
-                                    confId = parseInt(bigparam.param.conf_params.conf_id);
-                                    userCapability = 2046;
-                                    userName = userAccount_1;
-                                    logUrl = phoneNumber_1;
-                                    userM = bigparam.param.conf_params.M;
-                                    userT = bigparam.param.conf_params.T;
-                                    return [4, dataConfWrap_1.createConference(title, option, userType, userId, userName, hostKey, confId, encryptionKey, siteId, siteUrl, serverIp, serverInterip, userCapability, 0, logUrl, userM, userT)];
-                                case 1: return [2, _a.sent()];
-                            }
-                        });
-                    });
-                }).then(function (confResponse) {
-                    return __awaiter(this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    confInfo.dataConfHandle = confResponse.param.confHandle;
-                                    return [4, dataConfWrap_1.joinConference(confResponse.param.confHandle)];
-                                case 1: return [2, _a.sent()];
-                            }
-                        });
-                    });
-                }).then(function (joinResponse) {
-                    return __awaiter(this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, dataConfWrap_1.loadComponent(joinResponse.param.confHandle, 546)];
-                                case 1: return [2, _a.sent()];
-                            }
-                        });
-                    });
-                }).then(function (loadCompResponse) {
-                    util_1.default.debug("confManager", "into conf good");
-                    var evt = { result: true, info: confInfo };
-                    observer_1.default.publish('ConfInfoInd', evt);
-                }).catch(function (data) {
-                    if (data.description === "CONFCTRL_E_EVT_CREATE_CONF_RESULT") {
-                    }
-                    else {
-                        var err = util.getErrResult(40000100, data.param.value1, data.description);
-                        client_1.default.notifyErr(err);
-                        var evt = { result: false, info: confInfo };
-                        observer_1.default.publish('ConfInfoInd', evt);
-                    }
-                });
-            }
         };
         ConfManager.onFloorAttendeeInd = function (data) {
             observer_1.default.publish("FloorAttendeeInd", data.param.floor_attendee_info);
         };
         ConfManager.onConfIncomingInd = function (data) {
             observer_1.default.publish('ConfIncoming', data.param);
-            util_1.default.debug("confManager", 'onConfIncomingInd, data=' + JSON.stringify(data));
         };
         ConfManager.onConfConnectedInd = function (data) {
             observer_1.default.publish('ConfConnected', data.param);
             sessionStorage.confHandle = data.param.handle;
-            util_1.default.debug("confManager", 'onConfConnectedInd, data=' + JSON.stringify(data));
         };
         ConfManager.onConfInfoInd = function (confinfodata) {
             var confCtrlWrap = tupConfctrlWrapper_1.default.getInstance();
             var dataConfWrap = tupDataConfWrapper_1.default.getInstance();
+            var confManager = ConfManager.getInstance();
             var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
             var loginInfo = JSON.parse(cloudEC_loginInfo);
             var deployMode = loginInfo.deployMode;
             var dataUrl = loginInfo.dataUrl;
-            var passcode = "";
             var userAccount = loginInfo.userAccount, sipImpi = loginInfo.sipImpi;
             var phoneNumber = sipImpi.split("@")[0];
             var _a = confinfodata.param.conf_info, conf_id = _a.conf_id, conf_uri = _a.conf_uri, data_random = _a.data_random, password = _a.password, media_type = _a.media_type;
@@ -11160,6 +11955,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             confInfo.confHandle = handle;
             confInfo.callid = confinfodata.param.call_id;
             confInfo.mediaType = confinfodata.param.conf_info.media_type;
+            if ((media_type - 16) < 0) {
+                var evt = { result: true, info: confInfo };
+                observer_1.default.publish('ConfInfoInd', evt);
+                return;
+            }
             var confParams;
             if (deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_SPHOSTED_CC) {
                 confParams = {
@@ -11172,95 +11972,36 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     password: password,
                     type: 3
                 };
-                if ((media_type - 16) < 0) {
-                    var evt = { result: true, info: confInfo };
-                    observer_1.default.publish('ConfInfoInd', evt);
-                    return;
-                }
+                confManager.getDataconfParamsForConfInfoInd(confParams, userAccount);
             }
             else if (deployMode == enum_1.CLOUDEC_LOGIN_E_DEPLOY_MODE.LOGIN_E_DEPLOY_ENTERPRISE_CC) {
-                util_1.default.debug("confManager", "into conf good");
-                var evt = { result: true, info: confInfo };
-                observer_1.default.publish('ConfInfoInd', evt);
-                return;
-            }
-            confCtrlWrap.getDataconfParams(confParams).then(function (bigparam) {
-                return __awaiter(this, void 0, void 0, function () {
-                    var hostKey, title, userId, option, siteId, userTypeTemp, userType, siteUrl, serverIp, serverInterip, encryptionKey, confId, userCapability, userName, logUrl, userM, userT;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                hostKey = bigparam.param.conf_params.host_key;
-                                confInfo.hostKey = hostKey;
-                                title = "subject";
-                                userId = parseInt(bigparam.param.conf_params.user_id);
-                                option = 4096;
-                                siteId = bigparam.param.conf_params.site_id;
-                                userTypeTemp = parseInt(bigparam.param.conf_params.user_role);
-                                if (userTypeTemp < 8) {
-                                    userType = 3;
-                                }
-                                else {
-                                    userType = 8;
-                                }
-                                siteUrl = bigparam.param.conf_params.site_url;
-                                if ((serverConfig_1.CloudEC_SERVERCONFIG.IS_WITH_SBC == 1) && bigparam.param.conf_params.sbc_server_address != undefined && bigparam.param.conf_params.sbc_server_address != "") {
-                                    serverIp = bigparam.param.conf_params.sbc_server_address;
-                                    serverInterip = bigparam.param.conf_params.server_ip;
-                                }
-                                else {
-                                    serverIp = bigparam.param.conf_params.server_ip;
-                                    serverInterip = "";
-                                }
-                                encryptionKey = bigparam.param.conf_params.crypt_key;
-                                confId = parseInt(bigparam.param.conf_params.conf_id);
-                                userCapability = 2046;
-                                userName = userAccount;
-                                logUrl = bigparam.param.conf_params.user_uri;
-                                userM = bigparam.param.conf_params.M;
-                                userT = bigparam.param.conf_params.T;
-                                return [4, dataConfWrap.createConference(title, option, userType, userId, userName, hostKey, confId, encryptionKey, siteId, siteUrl, serverIp, serverInterip, userCapability, 0, logUrl, userM, userT)];
-                            case 1: return [2, _a.sent()];
-                        }
-                    });
-                });
-            }).then(function (confResponse) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                confInfo.dataConfHandle = confResponse.param.confHandle;
-                                return [4, dataConfWrap.joinConference(confResponse.param.confHandle)];
-                            case 1: return [2, _a.sent()];
-                        }
-                    });
-                });
-            }).then(function (joinResponse) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, dataConfWrap.loadComponent(joinResponse.param.confHandle, 546)];
-                            case 1: return [2, _a.sent()];
-                        }
-                    });
-                });
-            }).then(function (loadCompResponse) {
-                util_1.default.debug("confManager", "into conf good");
-                var evt = { result: true, info: confInfo };
-                observer_1.default.publish('ConfInfoInd', evt);
-            }).catch(function (data) {
-                if (data.description === "CONFCTRL_E_EVT_CREATE_CONF_RESULT") {
-                    var err = util.getErrResult(data.notify, data.param.ret, data.description);
-                    client_1.default.notifyErr(err);
-                    util_1.default.error("confManager", "getDataconfParams, ret = " + JSON.stringify(err));
-                }
-                else {
-                    var err = util.getErrResult(40000100, data.param.value1, data.description);
-                    client_1.default.notifyErr(err);
+                confCtrlWrap.getConfInfo(conf_id)
+                    .then(function (data) {
+                    if (data.result) {
+                        var smcPasswd = data.info.param.get_conf_info_result.conf_list_info.general_pwd;
+                        confParams = {
+                            conf_url: dataUrl,
+                            mcu_addr: { server_addr: "", server_port: 0 },
+                            random: "",
+                            passcode: smcPasswd,
+                            sip_num: sipImpi,
+                            conf_id: "",
+                            password: "",
+                            type: 1
+                        };
+                        confManager.getDataconfParamsForConfInfoInd(confParams, userAccount);
+                        smcPasswd = "";
+                    }
+                }).catch(function (data) {
+                    util_1.default.error("confManager", "get conf password failed.");
                     var evt = { result: false, info: confInfo };
                     observer_1.default.publish('ConfInfoInd', evt);
-                }
-            });
+                    return;
+                });
+            }
+            password = "";
+            confParams = "";
+            confinfodata.param.conf_info = "";
         };
         ConfManager.onuserLeaveKickout = function (data) {
             ConfManager.isFirstUpdateAttendees = true;
@@ -11270,13 +12011,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfManager.onConfLeave = function (data) {
             ConfManager.isFirstUpdateAttendees = true;
-            util_1.default.info("confManager", "Leave the data meeting" + data.param.user_alt_uri);
+            util_1.default.info("confManager", "Leave the data meeting");
             observer_1.default.publish('dataUserleave', { result: true, info: data.param });
         };
         ConfManager.onEndConfInd = function (data) {
             ConfManager.isFirstUpdateAttendees = true;
             observer_1.default.publish('ConfEnd', { result: true, info: data });
-            util_1.default.debug("confManager", 'ConfEnd data=' + JSON.stringify(data));
+            util_1.default.debug("confManager", 'ConfEnd');
         };
         ConfManager.onBeTransToConfInd = function (data) {
             observer_1.default.publish('BeTransToConfInd', { result: true, info: data.param });
@@ -11382,7 +12123,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(368), __webpack_require__(12), __webpack_require__(50), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddr_1, serverConfig_1, tupLoginWrapper_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(370), __webpack_require__(13), __webpack_require__(39), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddr_1, serverConfig_1, tupLoginWrapper_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupEaddrWrapper = (function () {
@@ -11404,7 +12145,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             socket: tupLoginWrapper_1.default.tupUniSock
                         });
                         tupEaddrWrapper.tupEaddr.eaddrInit();
-                        setTimeout(function () { tupEaddrWrapper._instance.eaddrInit(); }, 10000);
+                        setTimeout(function () { tupEaddrWrapper._instance.eaddrInit(); }, 2000);
                     }
                     else {
                         this.eaddrInit();
@@ -11418,7 +12159,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var authorize_result = sessionStorage.cloudEC_loginInfo;
             authorize_result = JSON.parse(authorize_result);
             var param2 = {
-                "LogLevel": serverConfig_1.CloudEC_SERVERCONFIG.LOG_LEVEL,
+                "LogLevel": serverConfig_1.CloudEC_SERVERCONFIG.LOG_IM_LEVEL,
                 "LogFileSize": serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_SIZE,
                 "LogPath": serverConfig_1.CloudEC_SERVERCONFIG.LOG_PATH,
                 "LogFileCount": serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_COUNT
@@ -11450,6 +12191,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 "ProxyAuthPassword": proxy_result.proxyPassword
             };
             tupEaddrWrapper.tupEaddr.eaddrConfig(param);
+            proxy_result.proxyPassword = "";
+            authorize_result.authToken = "";
         };
         tupEaddrWrapper.prototype.getPromise = function () {
             var p = {};
@@ -11580,7 +12323,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(140), __webpack_require__(25), __webpack_require__(24), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddrWrapper_1, dispatcher_1, eventInfo_1, util) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(140), __webpack_require__(11), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupEaddrWrapper_1, dispatcher_1, eventInfo_1, util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var EaddrManager = (function () {
@@ -11666,22 +12409,1030 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(144);
-module.exports = __webpack_require__(346);
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(373), __webpack_require__(28), __webpack_require__(11), __webpack_require__(12), __webpack_require__(1), __webpack_require__(1), __webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupImWrapper_1, observer_1, dispatcher_1, eventInfo_1, util, util_1, client_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ImManager = (function () {
+        function ImManager() {
+            if (ImManager._instance) {
+                throw new Error("Error: Instantiation failed: Use ImManager.getInstance() instead of new.");
+            }
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_LOGOUT, this.logout, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_USER_INFO, this.getUserInfo, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_USER_INFO, this.setUserInfo, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_CONTACT_LIST, this.getContactList, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_CONTACT_GROUP, this.addContactGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_CONTACT_GROUP, this.modContactGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_CONTACT_GROUP, this.delContactGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_UPDATE_GROUP_LIST_ORDER, this.updateGroupListOrder, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOVE_CONTACT, this.moveContact, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_CONTACT, this.addContact, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_CONTACT, this.modContact, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_CONTACT, this.delContact, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_FRIEND, this.addFriend, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_FIXED_GROUP, this.addFixedGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_DISCUSSION_GROUP, this.addDiscussionGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_FIXED_GROUP, this.modFixedGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_DISCUSSION_GROUP, this.modDiscussionGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_FIXED_GROUP, this.delFixedGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_DISCUSSION_GROUP, this.delDiscussionGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_SEARCH_GROUP, this.searchGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_DETAIL, this.getGroupDetail, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_FIXED_GROUP_MEMBER, this.addFixedGroupMember, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_DISCUSSION_GROUP_MEMBER, this.addDiscussionGroupMember, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_JOIN_FIXED_GROUP, this.joinFixedGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_FIXED_GROUP_MEMBER, this.delFixedGroupMember, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_DISCUSSION_GROUP_MEMBER, this.delDiscussionGroupMember, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_LEAVE_FIXED_GROUP, this.leaveFixedGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_LEAVE_DISCUSSION_GROUP, this.leaveDiscussionGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_CONFIRM_FIXED_GROUP_APPLY, this.confirmFixedGroupApply, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_CONFIRM_FIXED_GROUP_INVITE, this.confirmFixedGroupInvite, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_MEMBERS, this.getGroupMembers, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_TRANSFER_GROUP, this.transferGroup, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_GROUP_MSG_PROMPT_POLICY, this.setGroupMsgPromptPolicy, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_DISGROUP_POLICY, this.setDisgroupPolicy, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_PUBLISH_STATUS, this.publishStatus, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DETECT_USER_STATUS, this.detectUserStatus, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_SEND_MESSAGE, this.sendIMMessage, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_NOTIFY_INPUTTING, this.notifyImInputting, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_WITH_DRAW_MESSAGE, this.withDrawMessage, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_READ_MESSAGE, this.setReadMessage, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_RECENT_CONVERSATION, this.getRecentConversation, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_RECENT_CONVERSATION, this.delRecentConversation, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_MESSAGE, this.deleteMessage, this);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_IM_QUERY_HISTORY_MESSAGE, this.queryHistoryMessage, this);
+        }
+        ImManager.getInstance = function () {
+            return ImManager._instance;
+        };
+        ImManager.prototype.do_action = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var cloudEC_loginInfo, loginInfo, serverAddr, buildret, result;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                            loginInfo = JSON.parse(cloudEC_loginInfo);
+                            serverAddr = loginInfo.eServerAddress;
+                            if (!serverAddr) return [3, 4];
+                            this.tupImWrapper = tupImWrapper_1.default.getInstance();
+                            return [4, this.tupImWrapper.build()];
+                        case 1:
+                            buildret = _a.sent();
+                            return [4, this.tupImWrapper.init()];
+                        case 2:
+                            _a.sent();
+                            return [4, this.tupImWrapper.login()];
+                        case 3:
+                            result = _a.sent();
+                            if (buildret) {
+                                ImManager.registerImEvent();
+                            }
+                            if (result.result) {
+                                this.IMloginFlag = true;
+                                return [2, result];
+                            }
+                            else {
+                                this.IMloginFlag = false;
+                                result.result = true;
+                                return [2, result];
+                            }
+                            return [3, 5];
+                        case 4:
+                            util_1.default.error("imManager", "IM login has been skipped");
+                            this.IMloginFlag = false;
+                            return [2, { result: true }];
+                        case 5: return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.logout = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (!this.IMloginFlag) return [3, 2];
+                            return [4, this.tupImWrapper.logout()];
+                        case 1:
+                            data = _a.sent();
+                            _a.label = 2;
+                        case 2: return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.getUserInfo = function (eventType, account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.getUserInfo(account, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.setUserInfo = function (eventType, userInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.setUserInfo(userInfo, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.getContactList = function (eventType, isSyncAll, timestamp, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.getContactList(isSyncAll, timestamp, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.addContactGroup = function (eventType, index, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.addContactGroup(index, groupName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.modContactGroup = function (eventType, groupID, index, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.modContactGroup(groupID, index, groupName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.delContactGroup = function (eventType, groupID, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.delContactGroup(groupID, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.updateGroupListOrder = function (eventType, groupIDs, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.updateGroupListOrder(groupIDs, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.moveContact = function (eventType, contactID, oldGroupID, newGroupID, type, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.moveContact(contactID, oldGroupID, newGroupID, type, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.addContact = function (eventType, contact, groupID, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.addContact(contact, groupID, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.modContact = function (eventType, contact, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.modContact(contact, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.delContact = function (eventType, contactID, groupID, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.delContact(contactID, groupID, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.addFriend = function (eventType, account, groupID, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.addFriend(account, groupID, displayName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.addFixedGroup = function (eventType, groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.addFixedGroup(groupInfo, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.addDiscussionGroup = function (eventType, groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.addDiscussionGroup(groupInfo, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.modFixedGroup = function (eventType, groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.modFixedGroup(groupInfo, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.modDiscussionGroup = function (eventType, groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.modDiscussionGroup(groupInfo, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.delFixedGroup = function (eventType, groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.delFixedGroup(groupId, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.delDiscussionGroup = function (eventType, groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.delDiscussionGroup(groupId, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.searchGroup = function (eventType, searchGroupParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.searchGroup(searchGroupParam, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.getGroupDetail = function (eventType, groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.getGroupDetail(groupId, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.addFixedGroupMember = function (eventType, groupId, account, groupName, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.addFixedGroupMember(groupId, account, groupName, displayName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.joinFixedGroup = function (eventType, groupId, groupName, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.joinFixedGroup(groupId, groupName, displayName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.addDiscussionGroupMember = function (eventType, groupId, account, groupName, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.addDiscussionGroupMember(groupId, account, groupName, displayName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.delFixedGroupMember = function (eventType, groupId, account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.delFixedGroupMember(groupId, account, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.leaveFixedGroup = function (eventType, groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.leaveFixedGroup(groupId, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.delDiscussionGroupMember = function (eventType, groupId, account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.delDiscussionGroupMember(groupId, account, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.leaveDiscussionGroup = function (eventType, groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.leaveDiscussionGroup(groupId, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.confirmFixedGroupInvite = function (eventType, approvalGroupParam, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.confirmFixedGroupInvite(approvalGroupParam, groupName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.confirmFixedGroupApply = function (eventType, approvalGroupParam, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.confirmFixedGroupApply(approvalGroupParam, groupName, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.getGroupMembers = function (eventType, groupId, isSyncAll, timestamp, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.getGroupMembers(groupId, isSyncAll, timestamp, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.setGroupMsgPromptPolicy = function (eventType, groupId, msgpolicyType, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.setGroupMsgPromptPolicy(groupId, msgpolicyType, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.setDisgroupPolicy = function (eventType, groupId, opType, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.modifyGroupType(groupId, opType, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.transferGroup = function (eventType, groupId, account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.transferGroup(groupId, account, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.publishStatus = function (eventType, status, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.publishStatus(status, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.detectUserStatus = function (eventType, accountList, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.detectUserStatus(accountList, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.sendIMMessage = function (eventType, messageSendParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.sendIMMessage(messageSendParam, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.notifyImInputting = function (eventType, account, type) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.notifyImInputting(account, type).then(function (successCallback) {
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.withDrawMessage = function (eventType, messageWithDrawParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.withDrawMessage(messageWithDrawParam, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.setReadMessage = function (eventType, messageReadList, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.setReadMessage(messageReadList, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.getRecentConversation = function (eventType, timestamp, count, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.getRecentConversation(timestamp, count, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.delRecentConversation = function (eventType, isDelAll, conversationId, type, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.delRecentConversation(isDelAll, conversationId, type, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.deleteMessage = function (eventType, deleteMessageParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.deleteMessage(deleteMessageParam, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.prototype.queryHistoryMessage = function (eventType, queryHistoryMessageParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.tupImWrapper.queryHistoryMessage(queryHistoryMessageParam, callback).then(function (successCallback) {
+                                callback(successCallback);
+                            }, function (failureCallback) {
+                                client_1.default.notifyErr(util.getErrResult(failureCallback.rsp, 90000002, "operation failed"));
+                            })];
+                        case 1:
+                            data = _a.sent();
+                            return [2];
+                    }
+                });
+            });
+        };
+        ImManager.registerImEvent = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var wrapper;
+                return __generator(this, function (_a) {
+                    wrapper = tupImWrapper_1.default.getInstance();
+                    util_1.default.debug("IMManager", "registerImEvent");
+                    wrapper.setBasicImEvent({
+                        onAddFriend: ImManager.onAddFriend,
+                        onUserStatusList: ImManager.onUserStatusList,
+                        onSendImInput: ImManager.onSendImInput,
+                        onCodeChat: ImManager.onCodeChat,
+                        onMsgSendAck: ImManager.onMsgSendAck,
+                        onChatList: ImManager.onChatList,
+                        onUserInfoChange: ImManager.onUserInfoChange,
+                        onUnDeliver: ImManager.onUnDeliver,
+                        onWithdrawAck: ImManager.onWithdrawResult,
+                        onWithdrawNotify: ImManager.onWithdrawNotify,
+                        onSystemBulletin: ImManager.onSystemBulletin,
+                    });
+                    wrapper.setGroupImEvent({
+                        onFixedGroupDismiss: ImManager.onFixedGroupDismiss,
+                        onDiscussGroupDismiss: ImManager.onDiscussGroupDismiss,
+                        onFixedGroupInfoChg: ImManager.onFixedGroupInfoChg,
+                        onDiscussGroupInfoChange: ImManager.onDiscussGroupInfoChange,
+                        onDiscussGroupOwnerChange: ImManager.onDiscussGroupOwnerChange,
+                        onFixedGroupOwnerChange: ImManager.onFixedGroupOwnerChange,
+                        onFixedGroupMemberAdd: ImManager.onGroupMemberAdd,
+                        onDiscussGroupMemListAddMember: ImManager.onGroupMemberAdd,
+                        onFixedGroupMemberDel: ImManager.onGroupMemberDel,
+                        onDiscussGroupMemListDelMember: ImManager.onGroupMemberDel,
+                        onFixedGroupWasAddedToGroup: ImManager.onWasAddToGroup,
+                        onDiscussGroupWasAddToGroup: ImManager.onWasAddToGroup,
+                        onReceiveInviteToFixedGroup: ImManager.onReceiveInviteToGroup,
+                        onReceiveInviteJoinFixedGroup: ImManager.onReceiveInviteJoinGroup,
+                        onFixedGroupOwnerInviteResult: ImManager.onGroupOwnerInviteResult,
+                        onFixedGroupKickout: ImManager.onGroupKickout,
+                        onFixedGroupLeaveResult: ImManager.onGroupLeaveResult,
+                    });
+                    return [2];
+                });
+            });
+        };
+        ImManager._instance = new ImManager();
+        ImManager.onAddFriend = function (data) {
+            observer_1.default.publish('AddFriend', { result: true, info: data.param });
+        };
+        ImManager.onUserStatusList = function (data) {
+            observer_1.default.publish('UserStatusList', { result: true, info: data.param });
+        };
+        ImManager.onSendImInput = function (data) {
+            observer_1.default.publish('SendImInput', { result: true, info: data.param });
+        };
+        ImManager.onCodeChat = function (data) {
+            observer_1.default.publish('CodeChat', { result: true, info: data.param });
+        };
+        ImManager.onMsgSendAck = function (data) {
+            observer_1.default.publish('MsgSendAck', { result: true, info: data.param });
+        };
+        ImManager.onUnDeliver = function (data) {
+            observer_1.default.publish('UnDeliver', { result: true, info: data.param });
+        };
+        ImManager.onChatList = function (data) {
+            observer_1.default.publish('ChatList', { result: true, info: data.param });
+        };
+        ImManager.onUserInfoChange = function (data) {
+            observer_1.default.publish('UserInfoChange', { result: true, info: data.param });
+        };
+        ImManager.onFixedGroupDismiss = function (data) {
+            observer_1.default.publish('GroupDismiss', { result: true, info: data.param });
+        };
+        ImManager.onDiscussGroupDismiss = function (data) {
+            observer_1.default.publish('GroupDismiss', { result: true, info: data.param });
+        };
+        ImManager.onFixedGroupInfoChg = function (data) {
+            observer_1.default.publish('GroupInfoChange', { result: true, info: data.param });
+        };
+        ImManager.onDiscussGroupInfoChange = function (data) {
+            observer_1.default.publish('GroupInfoChange', { result: true, info: data.param });
+        };
+        ImManager.onDiscussGroupOwnerChange = function (data) {
+            observer_1.default.publish('GroupOwnerChange', { result: true, info: data.param });
+        };
+        ImManager.onFixedGroupOwnerChange = function (data) {
+            observer_1.default.publish('GroupOwnerChange', { result: true, info: data.param });
+        };
+        ImManager.onGroupMemberAdd = function (data) {
+            observer_1.default.publish('GroupMemberAdd', { result: true, info: data.param });
+        };
+        ImManager.onGroupMemberDel = function (data) {
+            observer_1.default.publish('GroupMemberDel', { result: true, info: data.param });
+        };
+        ImManager.onWasAddToGroup = function (data) {
+            observer_1.default.publish('WasAddToGroup', { result: true, info: data.param });
+        };
+        ImManager.onReceiveInviteJoinGroup = function (data) {
+            observer_1.default.publish('ReceiveInviteJoinGroup', { result: true, info: data.param });
+        };
+        ImManager.onReceiveInviteToGroup = function (data) {
+            observer_1.default.publish('ReceiveInviteToGroup', { result: true, info: data.param });
+        };
+        ImManager.onGroupOwnerInviteResult = function (data) {
+            observer_1.default.publish('GroupOwnerInviteResult', { result: true, info: data.param });
+        };
+        ImManager.onGroupKickout = function (data) {
+            observer_1.default.publish('GroupKickout', { result: true, info: data.param });
+        };
+        ImManager.onGroupLeaveResult = function (data) {
+            observer_1.default.publish('GroupLeaveResult', { result: true, info: data.param });
+        };
+        ImManager.onWithdrawResult = function (data) {
+            observer_1.default.publish('WithdrawResult', { result: true, info: data.param });
+        };
+        ImManager.onWithdrawNotify = function (data) {
+            observer_1.default.publish('WithdrawNotify', { result: true, info: data.param });
+        };
+        ImManager.onSystemBulletin = function (data) {
+            observer_1.default.publish('SystemBulletin', { result: true, info: data.param });
+        };
+        return ImManager;
+    }());
+    exports.default = ImManager;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
 /* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(145);
+module.exports = __webpack_require__(347);
+
+
+/***/ }),
+/* 145 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-__webpack_require__(145);
-
-__webpack_require__(342);
+__webpack_require__(146);
 
 __webpack_require__(343);
+
+__webpack_require__(344);
 
 if (global._babelPolyfill) {
   throw new Error("only one instance of babel-polyfill is allowed");
@@ -11706,11 +13457,10 @@ define(String.prototype, "padRight", "".padEnd);
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(100)))
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(146);
-__webpack_require__(148);
+__webpack_require__(147);
 __webpack_require__(149);
 __webpack_require__(150);
 __webpack_require__(151);
@@ -11725,7 +13475,7 @@ __webpack_require__(159);
 __webpack_require__(160);
 __webpack_require__(161);
 __webpack_require__(162);
-__webpack_require__(164);
+__webpack_require__(163);
 __webpack_require__(165);
 __webpack_require__(166);
 __webpack_require__(167);
@@ -11786,16 +13536,16 @@ __webpack_require__(221);
 __webpack_require__(222);
 __webpack_require__(223);
 __webpack_require__(224);
-__webpack_require__(226);
+__webpack_require__(225);
 __webpack_require__(227);
-__webpack_require__(229);
+__webpack_require__(228);
 __webpack_require__(230);
 __webpack_require__(231);
 __webpack_require__(232);
 __webpack_require__(233);
 __webpack_require__(234);
 __webpack_require__(235);
-__webpack_require__(237);
+__webpack_require__(236);
 __webpack_require__(238);
 __webpack_require__(239);
 __webpack_require__(240);
@@ -11808,19 +13558,19 @@ __webpack_require__(246);
 __webpack_require__(247);
 __webpack_require__(248);
 __webpack_require__(249);
-__webpack_require__(94);
 __webpack_require__(250);
+__webpack_require__(94);
 __webpack_require__(251);
-__webpack_require__(119);
 __webpack_require__(252);
+__webpack_require__(119);
 __webpack_require__(253);
 __webpack_require__(254);
 __webpack_require__(255);
 __webpack_require__(256);
+__webpack_require__(257);
 __webpack_require__(122);
 __webpack_require__(124);
 __webpack_require__(125);
-__webpack_require__(257);
 __webpack_require__(258);
 __webpack_require__(259);
 __webpack_require__(260);
@@ -11905,40 +13655,41 @@ __webpack_require__(338);
 __webpack_require__(339);
 __webpack_require__(340);
 __webpack_require__(341);
-module.exports = __webpack_require__(26);
+__webpack_require__(342);
+module.exports = __webpack_require__(29);
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // ECMAScript 6 symbols shim
 var global = __webpack_require__(3);
-var has = __webpack_require__(13);
+var has = __webpack_require__(16);
 var DESCRIPTORS = __webpack_require__(7);
 var $export = __webpack_require__(0);
-var redefine = __webpack_require__(15);
-var META = __webpack_require__(35).KEY;
+var redefine = __webpack_require__(18);
+var META = __webpack_require__(37).KEY;
 var $fails = __webpack_require__(4);
 var shared = __webpack_require__(59);
 var setToStringTag = __webpack_require__(52);
-var uid = __webpack_require__(39);
+var uid = __webpack_require__(41);
 var wks = __webpack_require__(6);
 var wksExt = __webpack_require__(102);
 var wksDefine = __webpack_require__(74);
-var enumKeys = __webpack_require__(147);
+var enumKeys = __webpack_require__(148);
 var isArray = __webpack_require__(62);
 var anObject = __webpack_require__(2);
-var toIObject = __webpack_require__(18);
-var toPrimitive = __webpack_require__(27);
-var createDesc = __webpack_require__(38);
-var _create = __webpack_require__(43);
+var toIObject = __webpack_require__(20);
+var toPrimitive = __webpack_require__(30);
+var createDesc = __webpack_require__(40);
+var _create = __webpack_require__(45);
 var gOPNExt = __webpack_require__(105);
-var $GOPD = __webpack_require__(19);
+var $GOPD = __webpack_require__(21);
 var $DP = __webpack_require__(8);
-var $keys = __webpack_require__(41);
+var $keys = __webpack_require__(43);
 var gOPD = $GOPD.f;
 var dP = $DP.f;
 var gOPN = gOPNExt.f;
@@ -12061,11 +13812,11 @@ if (!USE_NATIVE) {
 
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f = $defineProperty;
-  __webpack_require__(44).f = gOPNExt.f = $getOwnPropertyNames;
+  __webpack_require__(46).f = gOPNExt.f = $getOwnPropertyNames;
   __webpack_require__(57).f = $propertyIsEnumerable;
   __webpack_require__(61).f = $getOwnPropertySymbols;
 
-  if (DESCRIPTORS && !__webpack_require__(40)) {
+  if (DESCRIPTORS && !__webpack_require__(42)) {
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -12140,7 +13891,7 @@ $JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function () {
 });
 
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(14)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(17)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
 setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
@@ -12150,11 +13901,11 @@ setToStringTag(global.JSON, 'JSON', true);
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // all enumerable object keys, includes symbols
-var getKeys = __webpack_require__(41);
+var getKeys = __webpack_require__(43);
 var gOPS = __webpack_require__(61);
 var pIE = __webpack_require__(57);
 module.exports = function (it) {
@@ -12171,16 +13922,16 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', { create: __webpack_require__(43) });
+$export($export.S, 'Object', { create: __webpack_require__(45) });
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -12189,7 +13940,7 @@ $export($export.S + $export.F * !__webpack_require__(7), 'Object', { definePrope
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -12198,31 +13949,16 @@ $export($export.S + $export.F * !__webpack_require__(7), 'Object', { definePrope
 
 
 /***/ }),
-/* 151 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-var toIObject = __webpack_require__(18);
-var $getOwnPropertyDescriptor = __webpack_require__(19).f;
-
-__webpack_require__(30)('getOwnPropertyDescriptor', function () {
-  return function getOwnPropertyDescriptor(it, key) {
-    return $getOwnPropertyDescriptor(toIObject(it), key);
-  };
-});
-
-
-/***/ }),
 /* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.9 Object.getPrototypeOf(O)
-var toObject = __webpack_require__(10);
-var $getPrototypeOf = __webpack_require__(20);
+// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+var toIObject = __webpack_require__(20);
+var $getOwnPropertyDescriptor = __webpack_require__(21).f;
 
-__webpack_require__(30)('getPrototypeOf', function () {
-  return function getPrototypeOf(it) {
-    return $getPrototypeOf(toObject(it));
+__webpack_require__(33)('getOwnPropertyDescriptor', function () {
+  return function getOwnPropertyDescriptor(it, key) {
+    return $getOwnPropertyDescriptor(toIObject(it), key);
   };
 });
 
@@ -12231,13 +13967,13 @@ __webpack_require__(30)('getPrototypeOf', function () {
 /* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.14 Object.keys(O)
+// 19.1.2.9 Object.getPrototypeOf(O)
 var toObject = __webpack_require__(10);
-var $keys = __webpack_require__(41);
+var $getPrototypeOf = __webpack_require__(22);
 
-__webpack_require__(30)('keys', function () {
-  return function keys(it) {
-    return $keys(toObject(it));
+__webpack_require__(33)('getPrototypeOf', function () {
+  return function getPrototypeOf(it) {
+    return $getPrototypeOf(toObject(it));
   };
 });
 
@@ -12246,9 +13982,14 @@ __webpack_require__(30)('keys', function () {
 /* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.7 Object.getOwnPropertyNames(O)
-__webpack_require__(30)('getOwnPropertyNames', function () {
-  return __webpack_require__(105).f;
+// 19.1.2.14 Object.keys(O)
+var toObject = __webpack_require__(10);
+var $keys = __webpack_require__(43);
+
+__webpack_require__(33)('keys', function () {
+  return function keys(it) {
+    return $keys(toObject(it));
+  };
 });
 
 
@@ -12256,14 +13997,9 @@ __webpack_require__(30)('getOwnPropertyNames', function () {
 /* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.5 Object.freeze(O)
-var isObject = __webpack_require__(5);
-var meta = __webpack_require__(35).onFreeze;
-
-__webpack_require__(30)('freeze', function ($freeze) {
-  return function freeze(it) {
-    return $freeze && isObject(it) ? $freeze(meta(it)) : it;
-  };
+// 19.1.2.7 Object.getOwnPropertyNames(O)
+__webpack_require__(33)('getOwnPropertyNames', function () {
+  return __webpack_require__(105).f;
 });
 
 
@@ -12271,13 +14007,13 @@ __webpack_require__(30)('freeze', function ($freeze) {
 /* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.17 Object.seal(O)
+// 19.1.2.5 Object.freeze(O)
 var isObject = __webpack_require__(5);
-var meta = __webpack_require__(35).onFreeze;
+var meta = __webpack_require__(37).onFreeze;
 
-__webpack_require__(30)('seal', function ($seal) {
-  return function seal(it) {
-    return $seal && isObject(it) ? $seal(meta(it)) : it;
+__webpack_require__(33)('freeze', function ($freeze) {
+  return function freeze(it) {
+    return $freeze && isObject(it) ? $freeze(meta(it)) : it;
   };
 });
 
@@ -12286,13 +14022,13 @@ __webpack_require__(30)('seal', function ($seal) {
 /* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.15 Object.preventExtensions(O)
+// 19.1.2.17 Object.seal(O)
 var isObject = __webpack_require__(5);
-var meta = __webpack_require__(35).onFreeze;
+var meta = __webpack_require__(37).onFreeze;
 
-__webpack_require__(30)('preventExtensions', function ($preventExtensions) {
-  return function preventExtensions(it) {
-    return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
+__webpack_require__(33)('seal', function ($seal) {
+  return function seal(it) {
+    return $seal && isObject(it) ? $seal(meta(it)) : it;
   };
 });
 
@@ -12301,12 +14037,13 @@ __webpack_require__(30)('preventExtensions', function ($preventExtensions) {
 /* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.12 Object.isFrozen(O)
+// 19.1.2.15 Object.preventExtensions(O)
 var isObject = __webpack_require__(5);
+var meta = __webpack_require__(37).onFreeze;
 
-__webpack_require__(30)('isFrozen', function ($isFrozen) {
-  return function isFrozen(it) {
-    return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
+__webpack_require__(33)('preventExtensions', function ($preventExtensions) {
+  return function preventExtensions(it) {
+    return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
   };
 });
 
@@ -12315,12 +14052,12 @@ __webpack_require__(30)('isFrozen', function ($isFrozen) {
 /* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.13 Object.isSealed(O)
+// 19.1.2.12 Object.isFrozen(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(30)('isSealed', function ($isSealed) {
-  return function isSealed(it) {
-    return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
+__webpack_require__(33)('isFrozen', function ($isFrozen) {
+  return function isFrozen(it) {
+    return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
   };
 });
 
@@ -12329,10 +14066,24 @@ __webpack_require__(30)('isSealed', function ($isSealed) {
 /* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
+// 19.1.2.13 Object.isSealed(O)
+var isObject = __webpack_require__(5);
+
+__webpack_require__(33)('isSealed', function ($isSealed) {
+  return function isSealed(it) {
+    return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
+  };
+});
+
+
+/***/ }),
+/* 161 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // 19.1.2.11 Object.isExtensible(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(30)('isExtensible', function ($isExtensible) {
+__webpack_require__(33)('isExtensible', function ($isExtensible) {
   return function isExtensible(it) {
     return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
   };
@@ -12340,7 +14091,7 @@ __webpack_require__(30)('isExtensible', function ($isExtensible) {
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.1 Object.assign(target, source)
@@ -12350,16 +14101,16 @@ $export($export.S + $export.F, 'Object', { assign: __webpack_require__(106) });
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.10 Object.is(value1, value2)
 var $export = __webpack_require__(0);
-$export($export.S, 'Object', { is: __webpack_require__(163) });
+$export($export.S, 'Object', { is: __webpack_require__(164) });
 
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports) {
 
 // 7.2.9 SameValue(x, y)
@@ -12370,7 +14121,7 @@ module.exports = Object.is || function is(x, y) {
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
@@ -12379,7 +14130,7 @@ $export($export.S, 'Object', { setPrototypeOf: __webpack_require__(78).set });
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12389,14 +14140,14 @@ var classof = __webpack_require__(58);
 var test = {};
 test[__webpack_require__(6)('toStringTag')] = 'z';
 if (test + '' != '[object z]') {
-  __webpack_require__(15)(Object.prototype, 'toString', function toString() {
+  __webpack_require__(18)(Object.prototype, 'toString', function toString() {
     return '[object ' + classof(this) + ']';
   }, true);
 }
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
@@ -12406,7 +14157,7 @@ $export($export.P, 'Function', { bind: __webpack_require__(107) });
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(8).f;
@@ -12428,13 +14179,13 @@ NAME in FProto || __webpack_require__(7) && dP(FProto, NAME, {
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var isObject = __webpack_require__(5);
-var getPrototypeOf = __webpack_require__(20);
+var getPrototypeOf = __webpack_require__(22);
 var HAS_INSTANCE = __webpack_require__(6)('hasInstance');
 var FunctionProto = Function.prototype;
 // 19.2.3.6 Function.prototype[@@hasInstance](V)
@@ -12448,7 +14199,7 @@ if (!(HAS_INSTANCE in FunctionProto)) __webpack_require__(8).f(FunctionProto, HA
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -12458,7 +14209,7 @@ $export($export.G + $export.F * (parseInt != $parseInt), { parseInt: $parseInt }
 
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -12468,19 +14219,19 @@ $export($export.G + $export.F * (parseFloat != $parseFloat), { parseFloat: $pars
 
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var global = __webpack_require__(3);
-var has = __webpack_require__(13);
-var cof = __webpack_require__(22);
+var has = __webpack_require__(16);
+var cof = __webpack_require__(26);
 var inheritIfRequired = __webpack_require__(80);
-var toPrimitive = __webpack_require__(27);
+var toPrimitive = __webpack_require__(30);
 var fails = __webpack_require__(4);
-var gOPN = __webpack_require__(44).f;
-var gOPD = __webpack_require__(19).f;
+var gOPN = __webpack_require__(46).f;
+var gOPD = __webpack_require__(21).f;
 var dP = __webpack_require__(8).f;
 var $trim = __webpack_require__(53).trim;
 var NUMBER = 'Number';
@@ -12488,7 +14239,7 @@ var $Number = global[NUMBER];
 var Base = $Number;
 var proto = $Number.prototype;
 // Opera ~12 has broken Object#toString
-var BROKEN_COF = cof(__webpack_require__(43)(proto)) == NUMBER;
+var BROKEN_COF = cof(__webpack_require__(45)(proto)) == NUMBER;
 var TRIM = 'trim' in String.prototype;
 
 // 7.1.3 ToNumber(argument)
@@ -12539,18 +14290,18 @@ if (!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')) {
   }
   $Number.prototype = proto;
   proto.constructor = $Number;
-  __webpack_require__(15)(global, NUMBER, $Number);
+  __webpack_require__(18)(global, NUMBER, $Number);
 }
 
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $export = __webpack_require__(0);
-var toInteger = __webpack_require__(29);
+var toInteger = __webpack_require__(32);
 var aNumberValue = __webpack_require__(111);
 var repeat = __webpack_require__(81);
 var $toFixed = 1.0.toFixed;
@@ -12665,7 +14416,7 @@ $export($export.P + $export.F * (!!$toFixed && (
 
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12690,7 +14441,7 @@ $export($export.P + $export.F * ($fails(function () {
 
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.1 Number.EPSILON
@@ -12700,7 +14451,7 @@ $export($export.S, 'Number', { EPSILON: Math.pow(2, -52) });
 
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.2 Number.isFinite(number)
@@ -12715,7 +14466,7 @@ $export($export.S, 'Number', {
 
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.3 Number.isInteger(number)
@@ -12725,7 +14476,7 @@ $export($export.S, 'Number', { isInteger: __webpack_require__(112) });
 
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.4 Number.isNaN(number)
@@ -12740,7 +14491,7 @@ $export($export.S, 'Number', {
 
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.5 Number.isSafeInteger(number)
@@ -12756,7 +14507,7 @@ $export($export.S, 'Number', {
 
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.6 Number.MAX_SAFE_INTEGER
@@ -12766,7 +14517,7 @@ $export($export.S, 'Number', { MAX_SAFE_INTEGER: 0x1fffffffffffff });
 
 
 /***/ }),
-/* 180 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.10 Number.MIN_SAFE_INTEGER
@@ -12776,7 +14527,7 @@ $export($export.S, 'Number', { MIN_SAFE_INTEGER: -0x1fffffffffffff });
 
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -12786,7 +14537,7 @@ $export($export.S + $export.F * (Number.parseFloat != $parseFloat), 'Number', { 
 
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -12796,7 +14547,7 @@ $export($export.S + $export.F * (Number.parseInt != $parseInt), 'Number', { pars
 
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.3 Math.acosh(x)
@@ -12820,7 +14571,7 @@ $export($export.S + $export.F * !($acosh
 
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.5 Math.asinh(x)
@@ -12836,7 +14587,7 @@ $export($export.S + $export.F * !($asinh && 1 / $asinh(0) > 0), 'Math', { asinh:
 
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.7 Math.atanh(x)
@@ -12852,7 +14603,7 @@ $export($export.S + $export.F * !($atanh && 1 / $atanh(-0) < 0), 'Math', {
 
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.9 Math.cbrt(x)
@@ -12867,7 +14618,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.11 Math.clz32(x)
@@ -12881,7 +14632,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.12 Math.cosh(x)
@@ -12896,7 +14647,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.14 Math.expm1(x)
@@ -12907,7 +14658,7 @@ $export($export.S + $export.F * ($expm1 != Math.expm1), 'Math', { expm1: $expm1 
 
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.16 Math.fround(x)
@@ -12917,7 +14668,7 @@ $export($export.S, 'Math', { fround: __webpack_require__(114) });
 
 
 /***/ }),
-/* 191 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.17 Math.hypot([value1[, value2[, … ]]])
@@ -12948,7 +14699,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 192 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.18 Math.imul(x, y)
@@ -12971,7 +14722,7 @@ $export($export.S + $export.F * __webpack_require__(4)(function () {
 
 
 /***/ }),
-/* 193 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.21 Math.log10(x)
@@ -12985,7 +14736,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 194 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.20 Math.log1p(x)
@@ -12995,7 +14746,7 @@ $export($export.S, 'Math', { log1p: __webpack_require__(113) });
 
 
 /***/ }),
-/* 195 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.22 Math.log2(x)
@@ -13009,7 +14760,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 196 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.28 Math.sign(x)
@@ -13019,7 +14770,7 @@ $export($export.S, 'Math', { sign: __webpack_require__(82) });
 
 
 /***/ }),
-/* 197 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.30 Math.sinh(x)
@@ -13040,7 +14791,7 @@ $export($export.S + $export.F * __webpack_require__(4)(function () {
 
 
 /***/ }),
-/* 198 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.33 Math.tanh(x)
@@ -13058,7 +14809,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 199 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.34 Math.trunc(x)
@@ -13072,11 +14823,11 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 200 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
-var toAbsoluteIndex = __webpack_require__(42);
+var toAbsoluteIndex = __webpack_require__(44);
 var fromCharCode = String.fromCharCode;
 var $fromCodePoint = String.fromCodePoint;
 
@@ -13101,11 +14852,11 @@ $export($export.S + $export.F * (!!$fromCodePoint && $fromCodePoint.length != 1)
 
 
 /***/ }),
-/* 201 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
-var toIObject = __webpack_require__(18);
+var toIObject = __webpack_require__(20);
 var toLength = __webpack_require__(9);
 
 $export($export.S, 'String', {
@@ -13125,7 +14876,7 @@ $export($export.S, 'String', {
 
 
 /***/ }),
-/* 202 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13139,7 +14890,7 @@ __webpack_require__(53)('trim', function ($trim) {
 
 
 /***/ }),
-/* 203 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13163,7 +14914,7 @@ __webpack_require__(85)(String, 'String', function (iterated) {
 
 
 /***/ }),
-/* 204 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13179,7 +14930,7 @@ $export($export.P, 'String', {
 
 
 /***/ }),
-/* 205 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13206,7 +14957,7 @@ $export($export.P + $export.F * __webpack_require__(88)(ENDS_WITH), 'String', {
 
 
 /***/ }),
-/* 206 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13225,7 +14976,7 @@ $export($export.P + $export.F * __webpack_require__(88)(INCLUDES), 'String', {
 
 
 /***/ }),
-/* 207 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -13237,7 +14988,7 @@ $export($export.P, 'String', {
 
 
 /***/ }),
-/* 208 */
+/* 209 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13262,29 +15013,15 @@ $export($export.P + $export.F * __webpack_require__(88)(STARTS_WITH), 'String', 
 
 
 /***/ }),
-/* 209 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-// B.2.3.2 String.prototype.anchor(name)
-__webpack_require__(16)('anchor', function (createHTML) {
-  return function anchor(name) {
-    return createHTML(this, 'a', 'name', name);
-  };
-});
-
-
-/***/ }),
 /* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-// B.2.3.3 String.prototype.big()
-__webpack_require__(16)('big', function (createHTML) {
-  return function big() {
-    return createHTML(this, 'big', '', '');
+// B.2.3.2 String.prototype.anchor(name)
+__webpack_require__(19)('anchor', function (createHTML) {
+  return function anchor(name) {
+    return createHTML(this, 'a', 'name', name);
   };
 });
 
@@ -13295,10 +15032,10 @@ __webpack_require__(16)('big', function (createHTML) {
 
 "use strict";
 
-// B.2.3.4 String.prototype.blink()
-__webpack_require__(16)('blink', function (createHTML) {
-  return function blink() {
-    return createHTML(this, 'blink', '', '');
+// B.2.3.3 String.prototype.big()
+__webpack_require__(19)('big', function (createHTML) {
+  return function big() {
+    return createHTML(this, 'big', '', '');
   };
 });
 
@@ -13309,10 +15046,10 @@ __webpack_require__(16)('blink', function (createHTML) {
 
 "use strict";
 
-// B.2.3.5 String.prototype.bold()
-__webpack_require__(16)('bold', function (createHTML) {
-  return function bold() {
-    return createHTML(this, 'b', '', '');
+// B.2.3.4 String.prototype.blink()
+__webpack_require__(19)('blink', function (createHTML) {
+  return function blink() {
+    return createHTML(this, 'blink', '', '');
   };
 });
 
@@ -13323,10 +15060,10 @@ __webpack_require__(16)('bold', function (createHTML) {
 
 "use strict";
 
-// B.2.3.6 String.prototype.fixed()
-__webpack_require__(16)('fixed', function (createHTML) {
-  return function fixed() {
-    return createHTML(this, 'tt', '', '');
+// B.2.3.5 String.prototype.bold()
+__webpack_require__(19)('bold', function (createHTML) {
+  return function bold() {
+    return createHTML(this, 'b', '', '');
   };
 });
 
@@ -13337,10 +15074,10 @@ __webpack_require__(16)('fixed', function (createHTML) {
 
 "use strict";
 
-// B.2.3.7 String.prototype.fontcolor(color)
-__webpack_require__(16)('fontcolor', function (createHTML) {
-  return function fontcolor(color) {
-    return createHTML(this, 'font', 'color', color);
+// B.2.3.6 String.prototype.fixed()
+__webpack_require__(19)('fixed', function (createHTML) {
+  return function fixed() {
+    return createHTML(this, 'tt', '', '');
   };
 });
 
@@ -13351,10 +15088,10 @@ __webpack_require__(16)('fontcolor', function (createHTML) {
 
 "use strict";
 
-// B.2.3.8 String.prototype.fontsize(size)
-__webpack_require__(16)('fontsize', function (createHTML) {
-  return function fontsize(size) {
-    return createHTML(this, 'font', 'size', size);
+// B.2.3.7 String.prototype.fontcolor(color)
+__webpack_require__(19)('fontcolor', function (createHTML) {
+  return function fontcolor(color) {
+    return createHTML(this, 'font', 'color', color);
   };
 });
 
@@ -13365,10 +15102,10 @@ __webpack_require__(16)('fontsize', function (createHTML) {
 
 "use strict";
 
-// B.2.3.9 String.prototype.italics()
-__webpack_require__(16)('italics', function (createHTML) {
-  return function italics() {
-    return createHTML(this, 'i', '', '');
+// B.2.3.8 String.prototype.fontsize(size)
+__webpack_require__(19)('fontsize', function (createHTML) {
+  return function fontsize(size) {
+    return createHTML(this, 'font', 'size', size);
   };
 });
 
@@ -13379,10 +15116,10 @@ __webpack_require__(16)('italics', function (createHTML) {
 
 "use strict";
 
-// B.2.3.10 String.prototype.link(url)
-__webpack_require__(16)('link', function (createHTML) {
-  return function link(url) {
-    return createHTML(this, 'a', 'href', url);
+// B.2.3.9 String.prototype.italics()
+__webpack_require__(19)('italics', function (createHTML) {
+  return function italics() {
+    return createHTML(this, 'i', '', '');
   };
 });
 
@@ -13393,10 +15130,10 @@ __webpack_require__(16)('link', function (createHTML) {
 
 "use strict";
 
-// B.2.3.11 String.prototype.small()
-__webpack_require__(16)('small', function (createHTML) {
-  return function small() {
-    return createHTML(this, 'small', '', '');
+// B.2.3.10 String.prototype.link(url)
+__webpack_require__(19)('link', function (createHTML) {
+  return function link(url) {
+    return createHTML(this, 'a', 'href', url);
   };
 });
 
@@ -13407,10 +15144,10 @@ __webpack_require__(16)('small', function (createHTML) {
 
 "use strict";
 
-// B.2.3.12 String.prototype.strike()
-__webpack_require__(16)('strike', function (createHTML) {
-  return function strike() {
-    return createHTML(this, 'strike', '', '');
+// B.2.3.11 String.prototype.small()
+__webpack_require__(19)('small', function (createHTML) {
+  return function small() {
+    return createHTML(this, 'small', '', '');
   };
 });
 
@@ -13421,10 +15158,10 @@ __webpack_require__(16)('strike', function (createHTML) {
 
 "use strict";
 
-// B.2.3.13 String.prototype.sub()
-__webpack_require__(16)('sub', function (createHTML) {
-  return function sub() {
-    return createHTML(this, 'sub', '', '');
+// B.2.3.12 String.prototype.strike()
+__webpack_require__(19)('strike', function (createHTML) {
+  return function strike() {
+    return createHTML(this, 'strike', '', '');
   };
 });
 
@@ -13435,8 +15172,22 @@ __webpack_require__(16)('sub', function (createHTML) {
 
 "use strict";
 
+// B.2.3.13 String.prototype.sub()
+__webpack_require__(19)('sub', function (createHTML) {
+  return function sub() {
+    return createHTML(this, 'sub', '', '');
+  };
+});
+
+
+/***/ }),
+/* 222 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 // B.2.3.14 String.prototype.sup()
-__webpack_require__(16)('sup', function (createHTML) {
+__webpack_require__(19)('sup', function (createHTML) {
   return function sup() {
     return createHTML(this, 'sup', '', '');
   };
@@ -13444,7 +15195,7 @@ __webpack_require__(16)('sup', function (createHTML) {
 
 
 /***/ }),
-/* 222 */
+/* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.3.3.1 / 15.9.4.4 Date.now()
@@ -13454,14 +15205,14 @@ $export($export.S, 'Date', { now: function () { return new Date().getTime(); } }
 
 
 /***/ }),
-/* 223 */
+/* 224 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(27);
+var toPrimitive = __webpack_require__(30);
 
 $export($export.P + $export.F * __webpack_require__(4)(function () {
   return new Date(NaN).toJSON() !== null
@@ -13477,12 +15228,12 @@ $export($export.P + $export.F * __webpack_require__(4)(function () {
 
 
 /***/ }),
-/* 224 */
+/* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.3.4.36 / 15.9.5.43 Date.prototype.toISOString()
 var $export = __webpack_require__(0);
-var toISOString = __webpack_require__(225);
+var toISOString = __webpack_require__(226);
 
 // PhantomJS / old WebKit has a broken implementations
 $export($export.P + $export.F * (Date.prototype.toISOString !== toISOString), 'Date', {
@@ -13491,7 +15242,7 @@ $export($export.P + $export.F * (Date.prototype.toISOString !== toISOString), 'D
 
 
 /***/ }),
-/* 225 */
+/* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13524,7 +15275,7 @@ module.exports = (fails(function () {
 
 
 /***/ }),
-/* 226 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var DateProto = Date.prototype;
@@ -13533,7 +15284,7 @@ var TO_STRING = 'toString';
 var $toString = DateProto[TO_STRING];
 var getTime = DateProto.getTime;
 if (new Date(NaN) + '' != INVALID_DATE) {
-  __webpack_require__(15)(DateProto, TO_STRING, function toString() {
+  __webpack_require__(18)(DateProto, TO_STRING, function toString() {
     var value = getTime.call(this);
     // eslint-disable-next-line no-self-compare
     return value === value ? $toString.call(this) : INVALID_DATE;
@@ -13542,23 +15293,23 @@ if (new Date(NaN) + '' != INVALID_DATE) {
 
 
 /***/ }),
-/* 227 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var TO_PRIMITIVE = __webpack_require__(6)('toPrimitive');
 var proto = Date.prototype;
 
-if (!(TO_PRIMITIVE in proto)) __webpack_require__(14)(proto, TO_PRIMITIVE, __webpack_require__(228));
+if (!(TO_PRIMITIVE in proto)) __webpack_require__(17)(proto, TO_PRIMITIVE, __webpack_require__(229));
 
 
 /***/ }),
-/* 228 */
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var anObject = __webpack_require__(2);
-var toPrimitive = __webpack_require__(27);
+var toPrimitive = __webpack_require__(30);
 var NUMBER = 'number';
 
 module.exports = function (hint) {
@@ -13568,7 +15319,7 @@ module.exports = function (hint) {
 
 
 /***/ }),
-/* 229 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
@@ -13578,12 +15329,12 @@ $export($export.S, 'Array', { isArray: __webpack_require__(62) });
 
 
 /***/ }),
-/* 230 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var ctx = __webpack_require__(21);
+var ctx = __webpack_require__(25);
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
 var call = __webpack_require__(115);
@@ -13622,7 +15373,7 @@ $export($export.S + $export.F * !__webpack_require__(64)(function (iter) { Array
 
 
 /***/ }),
-/* 231 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13648,18 +15399,18 @@ $export($export.S + $export.F * __webpack_require__(4)(function () {
 
 
 /***/ }),
-/* 232 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 22.1.3.13 Array.prototype.join(separator)
 var $export = __webpack_require__(0);
-var toIObject = __webpack_require__(18);
+var toIObject = __webpack_require__(20);
 var arrayJoin = [].join;
 
 // fallback for not array-like strings
-$export($export.P + $export.F * (__webpack_require__(56) != Object || !__webpack_require__(23)(arrayJoin)), 'Array', {
+$export($export.P + $export.F * (__webpack_require__(56) != Object || !__webpack_require__(27)(arrayJoin)), 'Array', {
   join: function join(separator) {
     return arrayJoin.call(toIObject(this), separator === undefined ? ',' : separator);
   }
@@ -13667,15 +15418,15 @@ $export($export.P + $export.F * (__webpack_require__(56) != Object || !__webpack
 
 
 /***/ }),
-/* 233 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $export = __webpack_require__(0);
 var html = __webpack_require__(77);
-var cof = __webpack_require__(22);
-var toAbsoluteIndex = __webpack_require__(42);
+var cof = __webpack_require__(26);
+var toAbsoluteIndex = __webpack_require__(44);
 var toLength = __webpack_require__(9);
 var arraySlice = [].slice;
 
@@ -13702,13 +15453,13 @@ $export($export.P + $export.F * __webpack_require__(4)(function () {
 
 
 /***/ }),
-/* 234 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $export = __webpack_require__(0);
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var toObject = __webpack_require__(10);
 var fails = __webpack_require__(4);
 var $sort = [].sort;
@@ -13721,7 +15472,7 @@ $export($export.P + $export.F * (fails(function () {
   // V8 bug
   test.sort(null);
   // Old WebKit
-}) || !__webpack_require__(23)($sort)), 'Array', {
+}) || !__webpack_require__(27)($sort)), 'Array', {
   // 22.1.3.25 Array.prototype.sort(comparefn)
   sort: function sort(comparefn) {
     return comparefn === undefined
@@ -13732,14 +15483,14 @@ $export($export.P + $export.F * (fails(function () {
 
 
 /***/ }),
-/* 235 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $export = __webpack_require__(0);
-var $forEach = __webpack_require__(31)(0);
-var STRICT = __webpack_require__(23)([].forEach, true);
+var $forEach = __webpack_require__(34)(0);
+var STRICT = __webpack_require__(27)([].forEach, true);
 
 $export($export.P + $export.F * !STRICT, 'Array', {
   // 22.1.3.10 / 15.4.4.18 Array.prototype.forEach(callbackfn [, thisArg])
@@ -13750,7 +15501,7 @@ $export($export.P + $export.F * !STRICT, 'Array', {
 
 
 /***/ }),
-/* 236 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(5);
@@ -13772,35 +15523,18 @@ module.exports = function (original) {
 
 
 /***/ }),
-/* 237 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $export = __webpack_require__(0);
-var $map = __webpack_require__(31)(1);
-
-$export($export.P + $export.F * !__webpack_require__(23)([].map, true), 'Array', {
-  // 22.1.3.15 / 15.4.4.19 Array.prototype.map(callbackfn [, thisArg])
-  map: function map(callbackfn /* , thisArg */) {
-    return $map(this, callbackfn, arguments[1]);
-  }
-});
-
-
-/***/ }),
 /* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $export = __webpack_require__(0);
-var $filter = __webpack_require__(31)(2);
+var $map = __webpack_require__(34)(1);
 
-$export($export.P + $export.F * !__webpack_require__(23)([].filter, true), 'Array', {
-  // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
-  filter: function filter(callbackfn /* , thisArg */) {
-    return $filter(this, callbackfn, arguments[1]);
+$export($export.P + $export.F * !__webpack_require__(27)([].map, true), 'Array', {
+  // 22.1.3.15 / 15.4.4.19 Array.prototype.map(callbackfn [, thisArg])
+  map: function map(callbackfn /* , thisArg */) {
+    return $map(this, callbackfn, arguments[1]);
   }
 });
 
@@ -13812,12 +15546,12 @@ $export($export.P + $export.F * !__webpack_require__(23)([].filter, true), 'Arra
 "use strict";
 
 var $export = __webpack_require__(0);
-var $some = __webpack_require__(31)(3);
+var $filter = __webpack_require__(34)(2);
 
-$export($export.P + $export.F * !__webpack_require__(23)([].some, true), 'Array', {
-  // 22.1.3.23 / 15.4.4.17 Array.prototype.some(callbackfn [, thisArg])
-  some: function some(callbackfn /* , thisArg */) {
-    return $some(this, callbackfn, arguments[1]);
+$export($export.P + $export.F * !__webpack_require__(27)([].filter, true), 'Array', {
+  // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
+  filter: function filter(callbackfn /* , thisArg */) {
+    return $filter(this, callbackfn, arguments[1]);
   }
 });
 
@@ -13829,12 +15563,12 @@ $export($export.P + $export.F * !__webpack_require__(23)([].some, true), 'Array'
 "use strict";
 
 var $export = __webpack_require__(0);
-var $every = __webpack_require__(31)(4);
+var $some = __webpack_require__(34)(3);
 
-$export($export.P + $export.F * !__webpack_require__(23)([].every, true), 'Array', {
-  // 22.1.3.5 / 15.4.4.16 Array.prototype.every(callbackfn [, thisArg])
-  every: function every(callbackfn /* , thisArg */) {
-    return $every(this, callbackfn, arguments[1]);
+$export($export.P + $export.F * !__webpack_require__(27)([].some, true), 'Array', {
+  // 22.1.3.23 / 15.4.4.17 Array.prototype.some(callbackfn [, thisArg])
+  some: function some(callbackfn /* , thisArg */) {
+    return $some(this, callbackfn, arguments[1]);
   }
 });
 
@@ -13846,12 +15580,12 @@ $export($export.P + $export.F * !__webpack_require__(23)([].every, true), 'Array
 "use strict";
 
 var $export = __webpack_require__(0);
-var $reduce = __webpack_require__(116);
+var $every = __webpack_require__(34)(4);
 
-$export($export.P + $export.F * !__webpack_require__(23)([].reduce, true), 'Array', {
-  // 22.1.3.18 / 15.4.4.21 Array.prototype.reduce(callbackfn [, initialValue])
-  reduce: function reduce(callbackfn /* , initialValue */) {
-    return $reduce(this, callbackfn, arguments.length, arguments[1], false);
+$export($export.P + $export.F * !__webpack_require__(27)([].every, true), 'Array', {
+  // 22.1.3.5 / 15.4.4.16 Array.prototype.every(callbackfn [, thisArg])
+  every: function every(callbackfn /* , thisArg */) {
+    return $every(this, callbackfn, arguments[1]);
   }
 });
 
@@ -13865,10 +15599,10 @@ $export($export.P + $export.F * !__webpack_require__(23)([].reduce, true), 'Arra
 var $export = __webpack_require__(0);
 var $reduce = __webpack_require__(116);
 
-$export($export.P + $export.F * !__webpack_require__(23)([].reduceRight, true), 'Array', {
-  // 22.1.3.19 / 15.4.4.22 Array.prototype.reduceRight(callbackfn [, initialValue])
-  reduceRight: function reduceRight(callbackfn /* , initialValue */) {
-    return $reduce(this, callbackfn, arguments.length, arguments[1], true);
+$export($export.P + $export.F * !__webpack_require__(27)([].reduce, true), 'Array', {
+  // 22.1.3.18 / 15.4.4.21 Array.prototype.reduce(callbackfn [, initialValue])
+  reduce: function reduce(callbackfn /* , initialValue */) {
+    return $reduce(this, callbackfn, arguments.length, arguments[1], false);
   }
 });
 
@@ -13880,17 +15614,12 @@ $export($export.P + $export.F * !__webpack_require__(23)([].reduceRight, true), 
 "use strict";
 
 var $export = __webpack_require__(0);
-var $indexOf = __webpack_require__(60)(false);
-var $native = [].indexOf;
-var NEGATIVE_ZERO = !!$native && 1 / [1].indexOf(1, -0) < 0;
+var $reduce = __webpack_require__(116);
 
-$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(23)($native)), 'Array', {
-  // 22.1.3.11 / 15.4.4.14 Array.prototype.indexOf(searchElement [, fromIndex])
-  indexOf: function indexOf(searchElement /* , fromIndex = 0 */) {
-    return NEGATIVE_ZERO
-      // convert -0 to +0
-      ? $native.apply(this, arguments) || 0
-      : $indexOf(this, searchElement, arguments[1]);
+$export($export.P + $export.F * !__webpack_require__(27)([].reduceRight, true), 'Array', {
+  // 22.1.3.19 / 15.4.4.22 Array.prototype.reduceRight(callbackfn [, initialValue])
+  reduceRight: function reduceRight(callbackfn /* , initialValue */) {
+    return $reduce(this, callbackfn, arguments.length, arguments[1], true);
   }
 });
 
@@ -13902,13 +15631,35 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(23)($nati
 "use strict";
 
 var $export = __webpack_require__(0);
-var toIObject = __webpack_require__(18);
-var toInteger = __webpack_require__(29);
+var $indexOf = __webpack_require__(60)(false);
+var $native = [].indexOf;
+var NEGATIVE_ZERO = !!$native && 1 / [1].indexOf(1, -0) < 0;
+
+$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(27)($native)), 'Array', {
+  // 22.1.3.11 / 15.4.4.14 Array.prototype.indexOf(searchElement [, fromIndex])
+  indexOf: function indexOf(searchElement /* , fromIndex = 0 */) {
+    return NEGATIVE_ZERO
+      // convert -0 to +0
+      ? $native.apply(this, arguments) || 0
+      : $indexOf(this, searchElement, arguments[1]);
+  }
+});
+
+
+/***/ }),
+/* 245 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $export = __webpack_require__(0);
+var toIObject = __webpack_require__(20);
+var toInteger = __webpack_require__(32);
 var toLength = __webpack_require__(9);
 var $native = [].lastIndexOf;
 var NEGATIVE_ZERO = !!$native && 1 / [1].lastIndexOf(1, -0) < 0;
 
-$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(23)($native)), 'Array', {
+$export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(27)($native)), 'Array', {
   // 22.1.3.14 / 15.4.4.15 Array.prototype.lastIndexOf(searchElement [, fromIndex])
   lastIndexOf: function lastIndexOf(searchElement /* , fromIndex = @[*-1] */) {
     // convert -0 to +0
@@ -13925,7 +15676,7 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(23)($nati
 
 
 /***/ }),
-/* 245 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
@@ -13933,11 +15684,11 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', { copyWithin: __webpack_require__(117) });
 
-__webpack_require__(36)('copyWithin');
+__webpack_require__(38)('copyWithin');
 
 
 /***/ }),
-/* 246 */
+/* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
@@ -13945,18 +15696,18 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', { fill: __webpack_require__(93) });
 
-__webpack_require__(36)('fill');
+__webpack_require__(38)('fill');
 
 
 /***/ }),
-/* 247 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
 var $export = __webpack_require__(0);
-var $find = __webpack_require__(31)(5);
+var $find = __webpack_require__(34)(5);
 var KEY = 'find';
 var forced = true;
 // Shouldn't skip holes
@@ -13966,18 +15717,18 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(36)(KEY);
+__webpack_require__(38)(KEY);
 
 
 /***/ }),
-/* 248 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
 var $export = __webpack_require__(0);
-var $find = __webpack_require__(31)(6);
+var $find = __webpack_require__(34)(6);
 var KEY = 'findIndex';
 var forced = true;
 // Shouldn't skip holes
@@ -13987,24 +15738,24 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(36)(KEY);
-
-
-/***/ }),
-/* 249 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(45)('Array');
+__webpack_require__(38)(KEY);
 
 
 /***/ }),
 /* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(47)('Array');
+
+
+/***/ }),
+/* 251 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var global = __webpack_require__(3);
 var inheritIfRequired = __webpack_require__(80);
 var dP = __webpack_require__(8).f;
-var gOPN = __webpack_require__(44).f;
+var gOPN = __webpack_require__(46).f;
 var isRegExp = __webpack_require__(63);
 var $flags = __webpack_require__(65);
 var $RegExp = global.RegExp;
@@ -14040,14 +15791,14 @@ if (__webpack_require__(7) && (!CORRECT_NEW || __webpack_require__(4)(function (
   for (var keys = gOPN(Base), i = 0; keys.length > i;) proxy(keys[i++]);
   proto.constructor = $RegExp;
   $RegExp.prototype = proto;
-  __webpack_require__(15)(global, 'RegExp', $RegExp);
+  __webpack_require__(18)(global, 'RegExp', $RegExp);
 }
 
-__webpack_require__(45)('RegExp');
+__webpack_require__(47)('RegExp');
 
 
 /***/ }),
-/* 251 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14060,7 +15811,7 @@ var TO_STRING = 'toString';
 var $toString = /./[TO_STRING];
 
 var define = function (fn) {
-  __webpack_require__(15)(RegExp.prototype, TO_STRING, fn, true);
+  __webpack_require__(18)(RegExp.prototype, TO_STRING, fn, true);
 };
 
 // 21.2.5.14 RegExp.prototype.toString()
@@ -14079,7 +15830,7 @@ if (__webpack_require__(4)(function () { return $toString.call({ source: 'a', fl
 
 
 /***/ }),
-/* 252 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@match logic
@@ -14095,7 +15846,7 @@ __webpack_require__(66)('match', 1, function (defined, MATCH, $match) {
 
 
 /***/ }),
-/* 253 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@replace logic
@@ -14113,7 +15864,7 @@ __webpack_require__(66)('replace', 2, function (defined, REPLACE, $replace) {
 
 
 /***/ }),
-/* 254 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@search logic
@@ -14129,7 +15880,7 @@ __webpack_require__(66)('search', 1, function (defined, SEARCH, $search) {
 
 
 /***/ }),
-/* 255 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@split logic
@@ -14206,20 +15957,20 @@ __webpack_require__(66)('split', 2, function (defined, SPLIT, $split) {
 
 
 /***/ }),
-/* 256 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(40);
+var LIBRARY = __webpack_require__(42);
 var global = __webpack_require__(3);
-var ctx = __webpack_require__(21);
+var ctx = __webpack_require__(25);
 var classof = __webpack_require__(58);
 var $export = __webpack_require__(0);
 var isObject = __webpack_require__(5);
-var aFunction = __webpack_require__(11);
-var anInstance = __webpack_require__(46);
-var forOf = __webpack_require__(47);
+var aFunction = __webpack_require__(14);
+var anInstance = __webpack_require__(48);
+var forOf = __webpack_require__(49);
 var speciesConstructor = __webpack_require__(67);
 var task = __webpack_require__(95).set;
 var microtask = __webpack_require__(96)();
@@ -14395,7 +16146,7 @@ if (!USE_NATIVE) {
     this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
     this._n = false;          // <- notify
   };
-  Internal.prototype = __webpack_require__(48)($Promise.prototype, {
+  Internal.prototype = __webpack_require__(50)($Promise.prototype, {
     // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
     then: function then(onFulfilled, onRejected) {
       var reaction = newPromiseCapability(speciesConstructor(this, $Promise));
@@ -14427,8 +16178,8 @@ if (!USE_NATIVE) {
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, { Promise: $Promise });
 __webpack_require__(52)($Promise, PROMISE);
-__webpack_require__(45)(PROMISE);
-Wrapper = __webpack_require__(26)[PROMISE];
+__webpack_require__(47)(PROMISE);
+Wrapper = __webpack_require__(29)[PROMISE];
 
 // statics
 $export($export.S + $export.F * !USE_NATIVE, PROMISE, {
@@ -14493,7 +16244,7 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(64)(function
 
 
 /***/ }),
-/* 257 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14514,7 +16265,7 @@ __webpack_require__(68)(WEAK_SET, function (get) {
 
 
 /***/ }),
-/* 258 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14523,7 +16274,7 @@ var $export = __webpack_require__(0);
 var $typed = __webpack_require__(69);
 var buffer = __webpack_require__(98);
 var anObject = __webpack_require__(2);
-var toAbsoluteIndex = __webpack_require__(42);
+var toAbsoluteIndex = __webpack_require__(44);
 var toLength = __webpack_require__(9);
 var isObject = __webpack_require__(5);
 var ArrayBuffer = __webpack_require__(3).ArrayBuffer;
@@ -14563,11 +16314,11 @@ $export($export.P + $export.U + $export.F * __webpack_require__(4)(function () {
   }
 });
 
-__webpack_require__(45)(ARRAY_BUFFER);
+__webpack_require__(47)(ARRAY_BUFFER);
 
 
 /***/ }),
-/* 259 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -14577,22 +16328,11 @@ $export($export.G + $export.W + $export.F * !__webpack_require__(69).ABV, {
 
 
 /***/ }),
-/* 260 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(33)('Int8', 1, function (init) {
-  return function Int8Array(data, byteOffset, length) {
-    return init(this, data, byteOffset, length);
-  };
-});
-
-
-/***/ }),
 /* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33)('Uint8', 1, function (init) {
-  return function Uint8Array(data, byteOffset, length) {
+__webpack_require__(35)('Int8', 1, function (init) {
+  return function Int8Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });
@@ -14602,7 +16342,18 @@ __webpack_require__(33)('Uint8', 1, function (init) {
 /* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33)('Uint8', 1, function (init) {
+__webpack_require__(35)('Uint8', 1, function (init) {
+  return function Uint8Array(data, byteOffset, length) {
+    return init(this, data, byteOffset, length);
+  };
+});
+
+
+/***/ }),
+/* 263 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(35)('Uint8', 1, function (init) {
   return function Uint8ClampedArray(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -14610,22 +16361,11 @@ __webpack_require__(33)('Uint8', 1, function (init) {
 
 
 /***/ }),
-/* 263 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(33)('Int16', 2, function (init) {
-  return function Int16Array(data, byteOffset, length) {
-    return init(this, data, byteOffset, length);
-  };
-});
-
-
-/***/ }),
 /* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33)('Uint16', 2, function (init) {
-  return function Uint16Array(data, byteOffset, length) {
+__webpack_require__(35)('Int16', 2, function (init) {
+  return function Int16Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });
@@ -14635,8 +16375,8 @@ __webpack_require__(33)('Uint16', 2, function (init) {
 /* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33)('Int32', 4, function (init) {
-  return function Int32Array(data, byteOffset, length) {
+__webpack_require__(35)('Uint16', 2, function (init) {
+  return function Uint16Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });
@@ -14646,8 +16386,8 @@ __webpack_require__(33)('Int32', 4, function (init) {
 /* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33)('Uint32', 4, function (init) {
-  return function Uint32Array(data, byteOffset, length) {
+__webpack_require__(35)('Int32', 4, function (init) {
+  return function Int32Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });
@@ -14657,8 +16397,8 @@ __webpack_require__(33)('Uint32', 4, function (init) {
 /* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33)('Float32', 4, function (init) {
-  return function Float32Array(data, byteOffset, length) {
+__webpack_require__(35)('Uint32', 4, function (init) {
+  return function Uint32Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });
@@ -14668,8 +16408,8 @@ __webpack_require__(33)('Float32', 4, function (init) {
 /* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33)('Float64', 8, function (init) {
-  return function Float64Array(data, byteOffset, length) {
+__webpack_require__(35)('Float32', 4, function (init) {
+  return function Float32Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });
@@ -14679,9 +16419,20 @@ __webpack_require__(33)('Float64', 8, function (init) {
 /* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(35)('Float64', 8, function (init) {
+  return function Float64Array(data, byteOffset, length) {
+    return init(this, data, byteOffset, length);
+  };
+});
+
+
+/***/ }),
+/* 270 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // 26.1.1 Reflect.apply(target, thisArgument, argumentsList)
 var $export = __webpack_require__(0);
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var anObject = __webpack_require__(2);
 var rApply = (__webpack_require__(3).Reflect || {}).apply;
 var fApply = Function.apply;
@@ -14698,13 +16449,13 @@ $export($export.S + $export.F * !__webpack_require__(4)(function () {
 
 
 /***/ }),
-/* 270 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.2 Reflect.construct(target, argumentsList [, newTarget])
 var $export = __webpack_require__(0);
-var create = __webpack_require__(43);
-var aFunction = __webpack_require__(11);
+var create = __webpack_require__(45);
+var aFunction = __webpack_require__(14);
 var anObject = __webpack_require__(2);
 var isObject = __webpack_require__(5);
 var fails = __webpack_require__(4);
@@ -14751,14 +16502,14 @@ $export($export.S + $export.F * (NEW_TARGET_BUG || ARGS_BUG), 'Reflect', {
 
 
 /***/ }),
-/* 271 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.3 Reflect.defineProperty(target, propertyKey, attributes)
 var dP = __webpack_require__(8);
 var $export = __webpack_require__(0);
 var anObject = __webpack_require__(2);
-var toPrimitive = __webpack_require__(27);
+var toPrimitive = __webpack_require__(30);
 
 // MS Edge has broken Reflect.defineProperty - throwing instead of returning false
 $export($export.S + $export.F * __webpack_require__(4)(function () {
@@ -14780,12 +16531,12 @@ $export($export.S + $export.F * __webpack_require__(4)(function () {
 
 
 /***/ }),
-/* 272 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.4 Reflect.deleteProperty(target, propertyKey)
 var $export = __webpack_require__(0);
-var gOPD = __webpack_require__(19).f;
+var gOPD = __webpack_require__(21).f;
 var anObject = __webpack_require__(2);
 
 $export($export.S, 'Reflect', {
@@ -14797,7 +16548,7 @@ $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 273 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14830,13 +16581,13 @@ $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 274 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.6 Reflect.get(target, propertyKey [, receiver])
-var gOPD = __webpack_require__(19);
-var getPrototypeOf = __webpack_require__(20);
-var has = __webpack_require__(13);
+var gOPD = __webpack_require__(21);
+var getPrototypeOf = __webpack_require__(22);
+var has = __webpack_require__(16);
 var $export = __webpack_require__(0);
 var isObject = __webpack_require__(5);
 var anObject = __webpack_require__(2);
@@ -14857,11 +16608,11 @@ $export($export.S, 'Reflect', { get: get });
 
 
 /***/ }),
-/* 275 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.7 Reflect.getOwnPropertyDescriptor(target, propertyKey)
-var gOPD = __webpack_require__(19);
+var gOPD = __webpack_require__(21);
 var $export = __webpack_require__(0);
 var anObject = __webpack_require__(2);
 
@@ -14873,12 +16624,12 @@ $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 276 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.8 Reflect.getPrototypeOf(target)
 var $export = __webpack_require__(0);
-var getProto = __webpack_require__(20);
+var getProto = __webpack_require__(22);
 var anObject = __webpack_require__(2);
 
 $export($export.S, 'Reflect', {
@@ -14889,7 +16640,7 @@ $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 277 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.9 Reflect.has(target, propertyKey)
@@ -14903,7 +16654,7 @@ $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 278 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.10 Reflect.isExtensible(target)
@@ -14920,7 +16671,7 @@ $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 279 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.11 Reflect.ownKeys(target)
@@ -14930,7 +16681,7 @@ $export($export.S, 'Reflect', { ownKeys: __webpack_require__(128) });
 
 
 /***/ }),
-/* 280 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.12 Reflect.preventExtensions(target)
@@ -14952,16 +16703,16 @@ $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 281 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.13 Reflect.set(target, propertyKey, V [, receiver])
 var dP = __webpack_require__(8);
-var gOPD = __webpack_require__(19);
-var getPrototypeOf = __webpack_require__(20);
-var has = __webpack_require__(13);
+var gOPD = __webpack_require__(21);
+var getPrototypeOf = __webpack_require__(22);
+var has = __webpack_require__(16);
 var $export = __webpack_require__(0);
-var createDesc = __webpack_require__(38);
+var createDesc = __webpack_require__(40);
 var anObject = __webpack_require__(2);
 var isObject = __webpack_require__(5);
 
@@ -14989,7 +16740,7 @@ $export($export.S, 'Reflect', { set: set });
 
 
 /***/ }),
-/* 282 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.14 Reflect.setPrototypeOf(target, proto)
@@ -15010,7 +16761,7 @@ if (setProto) $export($export.S, 'Reflect', {
 
 
 /***/ }),
-/* 283 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15025,11 +16776,11 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(36)('includes');
+__webpack_require__(38)('includes');
 
 
 /***/ }),
-/* 284 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15039,7 +16790,7 @@ var $export = __webpack_require__(0);
 var flattenIntoArray = __webpack_require__(129);
 var toObject = __webpack_require__(10);
 var toLength = __webpack_require__(9);
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var arraySpeciesCreate = __webpack_require__(92);
 
 $export($export.P, 'Array', {
@@ -15054,11 +16805,11 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(36)('flatMap');
+__webpack_require__(38)('flatMap');
 
 
 /***/ }),
-/* 285 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15068,7 +16819,7 @@ var $export = __webpack_require__(0);
 var flattenIntoArray = __webpack_require__(129);
 var toObject = __webpack_require__(10);
 var toLength = __webpack_require__(9);
-var toInteger = __webpack_require__(29);
+var toInteger = __webpack_require__(32);
 var arraySpeciesCreate = __webpack_require__(92);
 
 $export($export.P, 'Array', {
@@ -15082,11 +16833,11 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(36)('flatten');
+__webpack_require__(38)('flatten');
 
 
 /***/ }),
-/* 286 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15103,7 +16854,7 @@ $export($export.P, 'String', {
 
 
 /***/ }),
-/* 287 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15120,7 +16871,7 @@ $export($export.P, 'String', {
 
 
 /***/ }),
-/* 288 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15137,7 +16888,7 @@ $export($export.P, 'String', {
 
 
 /***/ }),
-/* 289 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15151,7 +16902,7 @@ __webpack_require__(53)('trimLeft', function ($trim) {
 
 
 /***/ }),
-/* 290 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15165,14 +16916,14 @@ __webpack_require__(53)('trimRight', function ($trim) {
 
 
 /***/ }),
-/* 291 */
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // https://tc39.github.io/String.prototype.matchAll/
 var $export = __webpack_require__(0);
-var defined = __webpack_require__(28);
+var defined = __webpack_require__(31);
 var toLength = __webpack_require__(9);
 var isRegExp = __webpack_require__(63);
 var getFlags = __webpack_require__(65);
@@ -15202,28 +16953,28 @@ $export($export.P, 'String', {
 
 
 /***/ }),
-/* 292 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(74)('asyncIterator');
 
 
 /***/ }),
-/* 293 */
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(74)('observable');
 
 
 /***/ }),
-/* 294 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/tc39/proposal-object-getownpropertydescriptors
 var $export = __webpack_require__(0);
 var ownKeys = __webpack_require__(128);
-var toIObject = __webpack_require__(18);
-var gOPD = __webpack_require__(19);
+var toIObject = __webpack_require__(20);
+var gOPD = __webpack_require__(21);
 var createProperty = __webpack_require__(90);
 
 $export($export.S, 'Object', {
@@ -15244,7 +16995,7 @@ $export($export.S, 'Object', {
 
 
 /***/ }),
-/* 295 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/tc39/proposal-object-values-entries
@@ -15259,7 +17010,7 @@ $export($export.S, 'Object', {
 
 
 /***/ }),
-/* 296 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/tc39/proposal-object-values-entries
@@ -15274,25 +17025,6 @@ $export($export.S, 'Object', {
 
 
 /***/ }),
-/* 297 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $export = __webpack_require__(0);
-var toObject = __webpack_require__(10);
-var aFunction = __webpack_require__(11);
-var $defineProperty = __webpack_require__(8);
-
-// B.2.2.2 Object.prototype.__defineGetter__(P, getter)
-__webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object', {
-  __defineGetter__: function __defineGetter__(P, getter) {
-    $defineProperty.f(toObject(this), P, { get: aFunction(getter), enumerable: true, configurable: true });
-  }
-});
-
-
-/***/ }),
 /* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15300,13 +17032,13 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object',
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var $defineProperty = __webpack_require__(8);
 
-// B.2.2.3 Object.prototype.__defineSetter__(P, setter)
+// B.2.2.2 Object.prototype.__defineGetter__(P, getter)
 __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object', {
-  __defineSetter__: function __defineSetter__(P, setter) {
-    $defineProperty.f(toObject(this), P, { set: aFunction(setter), enumerable: true, configurable: true });
+  __defineGetter__: function __defineGetter__(P, getter) {
+    $defineProperty.f(toObject(this), P, { get: aFunction(getter), enumerable: true, configurable: true });
   }
 });
 
@@ -15319,9 +17051,28 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object',
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(27);
-var getPrototypeOf = __webpack_require__(20);
-var getOwnPropertyDescriptor = __webpack_require__(19).f;
+var aFunction = __webpack_require__(14);
+var $defineProperty = __webpack_require__(8);
+
+// B.2.2.3 Object.prototype.__defineSetter__(P, setter)
+__webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object', {
+  __defineSetter__: function __defineSetter__(P, setter) {
+    $defineProperty.f(toObject(this), P, { set: aFunction(setter), enumerable: true, configurable: true });
+  }
+});
+
+
+/***/ }),
+/* 300 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $export = __webpack_require__(0);
+var toObject = __webpack_require__(10);
+var toPrimitive = __webpack_require__(30);
+var getPrototypeOf = __webpack_require__(22);
+var getOwnPropertyDescriptor = __webpack_require__(21).f;
 
 // B.2.2.4 Object.prototype.__lookupGetter__(P)
 __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object', {
@@ -15337,16 +17088,16 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object',
 
 
 /***/ }),
-/* 300 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(27);
-var getPrototypeOf = __webpack_require__(20);
-var getOwnPropertyDescriptor = __webpack_require__(19).f;
+var toPrimitive = __webpack_require__(30);
+var getPrototypeOf = __webpack_require__(22);
+var getOwnPropertyDescriptor = __webpack_require__(21).f;
 
 // B.2.2.5 Object.prototype.__lookupSetter__(P)
 __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object', {
@@ -15362,7 +17113,7 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(70), 'Object',
 
 
 /***/ }),
-/* 301 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
@@ -15372,7 +17123,7 @@ $export($export.P + $export.R, 'Map', { toJSON: __webpack_require__(132)('Map') 
 
 
 /***/ }),
-/* 302 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
@@ -15382,7 +17133,7 @@ $export($export.P + $export.R, 'Set', { toJSON: __webpack_require__(132)('Set') 
 
 
 /***/ }),
-/* 303 */
+/* 304 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-map.of
@@ -15390,7 +17141,7 @@ __webpack_require__(71)('Map');
 
 
 /***/ }),
-/* 304 */
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-set.of
@@ -15398,7 +17149,7 @@ __webpack_require__(71)('Set');
 
 
 /***/ }),
-/* 305 */
+/* 306 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-weakmap.of
@@ -15406,7 +17157,7 @@ __webpack_require__(71)('WeakMap');
 
 
 /***/ }),
-/* 306 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-weakset.of
@@ -15414,7 +17165,7 @@ __webpack_require__(71)('WeakSet');
 
 
 /***/ }),
-/* 307 */
+/* 308 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-map.from
@@ -15422,7 +17173,7 @@ __webpack_require__(72)('Map');
 
 
 /***/ }),
-/* 308 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-set.from
@@ -15430,7 +17181,7 @@ __webpack_require__(72)('Set');
 
 
 /***/ }),
-/* 309 */
+/* 310 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-weakmap.from
@@ -15438,21 +17189,11 @@ __webpack_require__(72)('WeakMap');
 
 
 /***/ }),
-/* 310 */
+/* 311 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/proposal-setmap-offrom/#sec-weakset.from
 __webpack_require__(72)('WeakSet');
-
-
-/***/ }),
-/* 311 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// https://github.com/tc39/proposal-global
-var $export = __webpack_require__(0);
-
-$export($export.G, { global: __webpack_require__(3) });
 
 
 /***/ }),
@@ -15462,16 +17203,26 @@ $export($export.G, { global: __webpack_require__(3) });
 // https://github.com/tc39/proposal-global
 var $export = __webpack_require__(0);
 
-$export($export.S, 'System', { global: __webpack_require__(3) });
+$export($export.G, { global: __webpack_require__(3) });
 
 
 /***/ }),
 /* 313 */
 /***/ (function(module, exports, __webpack_require__) {
 
+// https://github.com/tc39/proposal-global
+var $export = __webpack_require__(0);
+
+$export($export.S, 'System', { global: __webpack_require__(3) });
+
+
+/***/ }),
+/* 314 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // https://github.com/ljharb/proposal-is-error
 var $export = __webpack_require__(0);
-var cof = __webpack_require__(22);
+var cof = __webpack_require__(26);
 
 $export($export.S, 'Error', {
   isError: function isError(it) {
@@ -15481,7 +17232,7 @@ $export($export.S, 'Error', {
 
 
 /***/ }),
-/* 314 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://rwaldron.github.io/proposal-math-extensions/
@@ -15495,7 +17246,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 315 */
+/* 316 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://rwaldron.github.io/proposal-math-extensions/
@@ -15505,7 +17256,7 @@ $export($export.S, 'Math', { DEG_PER_RAD: Math.PI / 180 });
 
 
 /***/ }),
-/* 316 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://rwaldron.github.io/proposal-math-extensions/
@@ -15520,7 +17271,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 317 */
+/* 318 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://rwaldron.github.io/proposal-math-extensions/
@@ -15536,7 +17287,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 318 */
+/* 319 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
@@ -15553,7 +17304,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 319 */
+/* 320 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
@@ -15570,7 +17321,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 320 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
@@ -15592,7 +17343,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 321 */
+/* 322 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://rwaldron.github.io/proposal-math-extensions/
@@ -15602,7 +17353,7 @@ $export($export.S, 'Math', { RAD_PER_DEG: 180 / Math.PI });
 
 
 /***/ }),
-/* 322 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://rwaldron.github.io/proposal-math-extensions/
@@ -15617,7 +17368,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 323 */
+/* 324 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://rwaldron.github.io/proposal-math-extensions/
@@ -15627,7 +17378,7 @@ $export($export.S, 'Math', { scale: __webpack_require__(134) });
 
 
 /***/ }),
-/* 324 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
@@ -15649,7 +17400,7 @@ $export($export.S, 'Math', {
 
 
 /***/ }),
-/* 325 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // http://jfbastien.github.io/papers/Math.signbit.html
@@ -15662,14 +17413,14 @@ $export($export.S, 'Math', { signbit: function signbit(x) {
 
 
 /***/ }),
-/* 326 */
+/* 327 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // https://github.com/tc39/proposal-promise-finally
 
 var $export = __webpack_require__(0);
-var core = __webpack_require__(26);
+var core = __webpack_require__(29);
 var global = __webpack_require__(3);
 var speciesConstructor = __webpack_require__(67);
 var promiseResolve = __webpack_require__(121);
@@ -15689,7 +17440,7 @@ $export($export.P + $export.R, 'Promise', { 'finally': function (onFinally) {
 
 
 /***/ }),
-/* 327 */
+/* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15708,10 +17459,10 @@ $export($export.S, 'Promise', { 'try': function (callbackfn) {
 
 
 /***/ }),
-/* 328 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
 var toMetaKey = metadata.key;
 var ordinaryDefineOwnMetadata = metadata.set;
@@ -15722,10 +17473,10 @@ metadata.exp({ defineMetadata: function defineMetadata(metadataKey, metadataValu
 
 
 /***/ }),
-/* 329 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
 var toMetaKey = metadata.key;
 var getOrCreateMetadataMap = metadata.map;
@@ -15743,12 +17494,12 @@ metadata.exp({ deleteMetadata: function deleteMetadata(metadataKey, target /* , 
 
 
 /***/ }),
-/* 330 */
+/* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
-var getPrototypeOf = __webpack_require__(20);
+var getPrototypeOf = __webpack_require__(22);
 var ordinaryHasOwnMetadata = metadata.has;
 var ordinaryGetOwnMetadata = metadata.get;
 var toMetaKey = metadata.key;
@@ -15766,14 +17517,14 @@ metadata.exp({ getMetadata: function getMetadata(metadataKey, target /* , target
 
 
 /***/ }),
-/* 331 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Set = __webpack_require__(124);
 var from = __webpack_require__(133);
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
-var getPrototypeOf = __webpack_require__(20);
+var getPrototypeOf = __webpack_require__(22);
 var ordinaryOwnMetadataKeys = metadata.keys;
 var toMetaKey = metadata.key;
 
@@ -15791,10 +17542,10 @@ metadata.exp({ getMetadataKeys: function getMetadataKeys(target /* , targetKey *
 
 
 /***/ }),
-/* 332 */
+/* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
 var ordinaryGetOwnMetadata = metadata.get;
 var toMetaKey = metadata.key;
@@ -15806,10 +17557,10 @@ metadata.exp({ getOwnMetadata: function getOwnMetadata(metadataKey, target /* , 
 
 
 /***/ }),
-/* 333 */
+/* 334 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
 var ordinaryOwnMetadataKeys = metadata.keys;
 var toMetaKey = metadata.key;
@@ -15820,12 +17571,12 @@ metadata.exp({ getOwnMetadataKeys: function getOwnMetadataKeys(target /* , targe
 
 
 /***/ }),
-/* 334 */
+/* 335 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
-var getPrototypeOf = __webpack_require__(20);
+var getPrototypeOf = __webpack_require__(22);
 var ordinaryHasOwnMetadata = metadata.has;
 var toMetaKey = metadata.key;
 
@@ -15842,10 +17593,10 @@ metadata.exp({ hasMetadata: function hasMetadata(metadataKey, target /* , target
 
 
 /***/ }),
-/* 335 */
+/* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(34);
+var metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
 var ordinaryHasOwnMetadata = metadata.has;
 var toMetaKey = metadata.key;
@@ -15857,12 +17608,12 @@ metadata.exp({ hasOwnMetadata: function hasOwnMetadata(metadataKey, target /* , 
 
 
 /***/ }),
-/* 336 */
+/* 337 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $metadata = __webpack_require__(34);
+var $metadata = __webpack_require__(36);
 var anObject = __webpack_require__(2);
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var toMetaKey = $metadata.key;
 var ordinaryDefineOwnMetadata = $metadata.set;
 
@@ -15878,14 +17629,14 @@ $metadata.exp({ metadata: function metadata(metadataKey, metadataValue) {
 
 
 /***/ }),
-/* 337 */
+/* 338 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/rwaldron/tc39-notes/blob/master/es6/2014-09/sept-25.md#510-globalasap-for-enqueuing-a-microtask
 var $export = __webpack_require__(0);
 var microtask = __webpack_require__(96)();
 var process = __webpack_require__(3).process;
-var isNode = __webpack_require__(22)(process) == 'process';
+var isNode = __webpack_require__(26)(process) == 'process';
 
 $export($export.G, {
   asap: function asap(fn) {
@@ -15896,7 +17647,7 @@ $export($export.G, {
 
 
 /***/ }),
-/* 338 */
+/* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15904,15 +17655,15 @@ $export($export.G, {
 // https://github.com/zenparsing/es-observable
 var $export = __webpack_require__(0);
 var global = __webpack_require__(3);
-var core = __webpack_require__(26);
+var core = __webpack_require__(29);
 var microtask = __webpack_require__(96)();
 var OBSERVABLE = __webpack_require__(6)('observable');
-var aFunction = __webpack_require__(11);
+var aFunction = __webpack_require__(14);
 var anObject = __webpack_require__(2);
-var anInstance = __webpack_require__(46);
-var redefineAll = __webpack_require__(48);
-var hide = __webpack_require__(14);
-var forOf = __webpack_require__(47);
+var anInstance = __webpack_require__(48);
+var redefineAll = __webpack_require__(50);
+var hide = __webpack_require__(17);
+var forOf = __webpack_require__(49);
 var RETURN = forOf.RETURN;
 
 var getMethod = function (fn) {
@@ -16098,11 +17849,11 @@ hide($Observable.prototype, OBSERVABLE, function () { return this; });
 
 $export($export.G, { Observable: $Observable });
 
-__webpack_require__(45)('Observable');
+__webpack_require__(47)('Observable');
 
 
 /***/ }),
-/* 339 */
+/* 340 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // ie9- setTimeout & setInterval additional parameters fix
@@ -16128,7 +17879,7 @@ $export($export.G + $export.B + $export.F * MSIE, {
 
 
 /***/ }),
-/* 340 */
+/* 341 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
@@ -16140,14 +17891,14 @@ $export($export.G + $export.B, {
 
 
 /***/ }),
-/* 341 */
+/* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $iterators = __webpack_require__(94);
-var getKeys = __webpack_require__(41);
-var redefine = __webpack_require__(15);
+var getKeys = __webpack_require__(43);
+var redefine = __webpack_require__(18);
 var global = __webpack_require__(3);
-var hide = __webpack_require__(14);
+var hide = __webpack_require__(17);
 var Iterators = __webpack_require__(54);
 var wks = __webpack_require__(6);
 var ITERATOR = wks('iterator');
@@ -16204,7 +17955,7 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
 
 
 /***/ }),
-/* 342 */
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -16947,26 +18698,26 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(100)))
 
 /***/ }),
-/* 343 */
+/* 344 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(344);
-module.exports = __webpack_require__(26).RegExp.escape;
+__webpack_require__(345);
+module.exports = __webpack_require__(29).RegExp.escape;
 
 
 /***/ }),
-/* 344 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/benjamingr/RexExp.escape
 var $export = __webpack_require__(0);
-var $re = __webpack_require__(345)(/[\\^$*+?.()|[\]{}]/g, '\\$&');
+var $re = __webpack_require__(346)(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
 $export($export.S, 'RegExp', { escape: function escape(it) { return $re(it); } });
 
 
 /***/ }),
-/* 345 */
+/* 346 */
 /***/ (function(module, exports) {
 
 module.exports = function (regExp, replace) {
@@ -16980,12 +18731,12 @@ module.exports = function (regExp, replace) {
 
 
 /***/ }),
-/* 346 */
+/* 347 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__logic_cloudec__ = __webpack_require__(347);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__logic_cloudec__ = __webpack_require__(348);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__logic_cloudec___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__logic_cloudec__);
 /* eslint-disable */
 
@@ -16993,10 +18744,10 @@ window.cloudEC = new __WEBPACK_IMPORTED_MODULE_0__logic_cloudec___default.a();
 /* eslint-enable */
 
 /***/ }),
-/* 347 */
+/* 348 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(49), __webpack_require__(376), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, client_1, tupDeamon_1, serverConfig_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15), __webpack_require__(23), __webpack_require__(383), __webpack_require__(13), __webpack_require__(1), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, client_1, tupDeamon_1, serverConfig_1, util_1, enum_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CloudEC = (function () {
@@ -17112,6 +18863,72 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onCallBldTransferResult) != "undefined") {
                 client.on('CallBldTransferResult', listeners.onCallBldTransferResult);
             }
+            if (typeof (listeners.onUserInfoChange) != "undefined") {
+                client.on('UserInfoChange', listeners.onUserInfoChange);
+            }
+            if (typeof (listeners.onAddFriend) != "undefined") {
+                client.on('AddFriend', listeners.onAddFriend);
+            }
+            if (typeof (listeners.onUserStatusList) != "undefined") {
+                client.on('UserStatusList', listeners.onUserStatusList);
+            }
+            if (typeof (listeners.onGroupDismiss) != "undefined") {
+                client.on('GroupDismiss', listeners.onGroupDismiss);
+            }
+            if (typeof (listeners.onGroupInfoChange) != "undefined") {
+                client.on('GroupInfoChange', listeners.onGroupInfoChange);
+            }
+            if (typeof (listeners.onGroupOwnerChange) != "undefined") {
+                client.on('GroupOwnerChange', listeners.onGroupOwnerChange);
+            }
+            if (typeof (listeners.onGroupMemberAdd) != "undefined") {
+                client.on('GroupMemberAdd', listeners.onGroupMemberAdd);
+            }
+            if (typeof (listeners.onGroupMemberDel) != "undefined") {
+                client.on('GroupMemberDel', listeners.onGroupMemberDel);
+            }
+            if (typeof (listeners.onWasAddToGroup) != "undefined") {
+                client.on('WasAddToGroup', listeners.onWasAddToGroup);
+            }
+            if (typeof (listeners.onReceiveInviteJoinGroup) != "undefined") {
+                client.on('ReceiveInviteJoinGroup', listeners.onReceiveInviteJoinGroup);
+            }
+            if (typeof (listeners.onReceiveInviteToGroup) != "undefined") {
+                client.on('ReceiveInviteToGroup', listeners.onReceiveInviteToGroup);
+            }
+            if (typeof (listeners.onGroupOwnerInviteResult) != "undefined") {
+                client.on('GroupOwnerInviteResult', listeners.onGroupOwnerInviteResult);
+            }
+            if (typeof (listeners.onGroupKickout) != "undefined") {
+                client.on('GroupKickout', listeners.onGroupKickout);
+            }
+            if (typeof (listeners.onGroupLeaveResult) != "undefined") {
+                client.on('GroupLeaveResult', listeners.onGroupLeaveResult);
+            }
+            if (typeof (listeners.onMsgSendAck) != "undefined") {
+                client.on('MsgSendAck', listeners.onMsgSendAck);
+            }
+            if (typeof (listeners.onChatNotify) != "undefined") {
+                client.on('ChatNotify', listeners.onChatNotify);
+            }
+            if (typeof (listeners.onChatListNotify) != "undefined") {
+                client.on('ChatListNotify', listeners.onChatListNotify);
+            }
+            if (typeof (listeners.onUnDeliver) != "undefined") {
+                client.on('UnDeliver', listeners.onUnDeliver);
+            }
+            if (typeof (listeners.onWithdrawResult) != "undefined") {
+                client.on('WithdrawResult', listeners.onWithdrawResult);
+            }
+            if (typeof (listeners.onWithdrawNotify) != "undefined") {
+                client.on('WithdrawNotify', listeners.onWithdrawNotify);
+            }
+            if (typeof (listeners.onSendImInput) != "undefined") {
+                client.on('SendImInput', listeners.onSendImInput);
+            }
+            if (typeof (listeners.onSystemBulletin) != "undefined") {
+                client.on('SystemBulletin', listeners.onSystemBulletin);
+            }
             return client;
         };
         CloudEC.prototype.configure = function (options) {
@@ -17120,9 +18937,32 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.logLevel) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.LOG_LEVEL = options.logLevel;
+                switch (options.logLevel) {
+                    case 0:
+                        serverConfig_1.CloudEC_SERVERCONFIG.LOG_IM_LEVEL = enum_2.CLOUDEC_SDK_LOG_LEVEL.LOG_DEBUG;
+                        break;
+                    case 1:
+                        serverConfig_1.CloudEC_SERVERCONFIG.LOG_IM_LEVEL = enum_2.CLOUDEC_SDK_LOG_LEVEL.LOG_INFO;
+                        break;
+                    case 2:
+                        serverConfig_1.CloudEC_SERVERCONFIG.LOG_IM_LEVEL = enum_2.CLOUDEC_SDK_LOG_LEVEL.LOG_WARNING;
+                        break;
+                    case 3:
+                        serverConfig_1.CloudEC_SERVERCONFIG.LOG_IM_LEVEL = enum_2.CLOUDEC_SDK_LOG_LEVEL.LOG_ERROR;
+                        break;
+                }
             }
             if (typeof (options.logPath) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.LOG_PATH = options.logPath;
+            }
+            if (typeof (options.logFileCount) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_COUNT = options.logFileCount;
+            }
+            if (typeof (options.logFileSize) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_SIZE = options.logFileSize;
+            }
+            if (typeof (options.imServerVersion) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.IM_SERVER_VERSION = options.imServerVersion;
             }
             if (typeof (options.domain) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.ENTERPRISE_DOMAIN = options.domain;
@@ -17136,6 +18976,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (options.isWSS) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.IS_WSS = options.isWSS;
             }
+            if (typeof (options.confCtrlProtocol) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.CONF_CONTROL_PROTOCOL = options.confCtrlProtocol;
+            }
             if (typeof (options.dropFrame) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.DROP_FRAME_COUNT = options.dropFrame;
             }
@@ -17144,6 +18987,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.videoDisplayMode) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.VIDEO_DISPLAY_MODE = options.videoDisplayMode;
+            }
+            if (typeof (options.nativeNeedAttach) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_NEED_ATTACH = options.nativeNeedAttach;
             }
             if (typeof (options.nativeWindowHeight) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_WINDOW_HEIGHT = options.nativeWindowHeight;
@@ -17167,47 +19013,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         return CloudEC;
     }());
     exports.default = CloudEC;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 348 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(349), __webpack_require__(137), __webpack_require__(139), __webpack_require__(135), __webpack_require__(142)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, loginService_1, callManager_1, confManager_1, cmptManager_1, eaddrManager_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Initialization = (function () {
-        function Initialization() {
-        }
-        Initialization.init = function () {
-            this.initModel();
-        };
-        Initialization.uninit = function () {
-            delete Initialization.models;
-        };
-        Initialization.initModel = function () {
-            if (!Initialization.models["LoginService"]) {
-                Initialization.models["LoginService"] = new loginService_1.default();
-            }
-            if (!Initialization.models["CallManager"]) {
-                Initialization.models["CallManager"] = new callManager_1.default();
-            }
-            if (!Initialization.models["ConfManager"]) {
-                Initialization.models["ConfManager"] = confManager_1.default.getInstance();
-            }
-            if (!Initialization.models["CmptManager"]) {
-                Initialization.models["CmptManager"] = cmptManager_1.default.getInstance();
-            }
-            if (!Initialization.models["EaddrManager"]) {
-                Initialization.models["EaddrManager"] = eaddrManager_1.default.getInstance();
-            }
-        };
-        Initialization.models = {};
-        return Initialization;
-    }());
-    exports.default = Initialization;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -17251,7 +19056,217 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(24), __webpack_require__(25), __webpack_require__(354), __webpack_require__(355), __webpack_require__(139), __webpack_require__(135), __webpack_require__(142), __webpack_require__(32), __webpack_require__(50), __webpack_require__(371), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, eventInfo_1, dispatcher_1, uportal_1, sipServer_1, confManager_1, cmptManager_1, eaddrManager_1, observer_1, tupLoginWrapper_1, anonyConf_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Call = (function () {
+        function Call() {
+            this.callID = 0;
+            this.isVideo = 0;
+        }
+        Call.prototype.setCallID = function (call_id) {
+            this.callID = call_id;
+        };
+        Call.prototype.setCallType = function (isVideo) {
+            this.isVideo = isVideo;
+        };
+        Call.prototype.getCallType = function () {
+            return this.isVideo;
+        };
+        Call.prototype.setCallState = function (callState) {
+            this.callState = callState;
+        };
+        Call.prototype.setCallStyle = function (callStyle) {
+            this.callStyle = callStyle;
+        };
+        Call.prototype.setCallee = function (callee) {
+            this.callee = callee;
+        };
+        Call.prototype.getCallee = function () {
+            return this.callee;
+        };
+        Call.prototype.makeCall = function (calleeNumber, callType, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
+                var evt;
+                return __generator(this, function (_a) {
+                    evt = { result: false, info: "" };
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_CALL, calleeNumber, callType, function (data) {
+                        if (data) {
+                            evt.result = true;
+                            evt.info = "start call success";
+                            _this.callID = data.callId;
+                        }
+                        else {
+                            evt.result = false;
+                            evt.info = "start call failed";
+                        }
+                        callback(evt);
+                    });
+                    return [2];
+                });
+            });
+        };
+        Call.prototype.rejectCall = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REJECT_CALL, this.callID);
+                    return [2];
+                });
+            });
+        };
+        Call.prototype.acceptCall = function (isVideo) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ACCEPT_CALL, this.callID, isVideo);
+                    return [2];
+                });
+            });
+        };
+        Call.prototype.hold = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2];
+                });
+            });
+        };
+        Call.prototype.unhold = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2];
+                });
+            });
+        };
+        Call.prototype.dialDTMF = function (keyTone) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SEND_DTMF, this.callID, keyTone);
+                    return [2];
+                });
+            });
+        };
+        Call.prototype.tans2Video = function () {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ADD_VIDEO, this.callID);
+        };
+        Call.prototype.tans2Audio = function () {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_DEL_VIDEO, this.callID);
+        };
+        Call.prototype.answerSwitch = function (isAccept) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REPLY_ADD_VIDEO, this.callID, isAccept);
+        };
+        Call.prototype.toString = function () {
+        };
+        Call.prototype.videoMute = function (bMute, callID) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_VIDEO_SWITCH, callID, (bMute ? 1 : 0), function (ret) {
+                if (ret.result == true) {
+                    var localView = document.getElementById("CloudEC:localCanvas");
+                    var remoteView = document.getElementById("CloudEC:remoteCanvas");
+                    var localContext = localView.getContext('webgl');
+                    var remoteContext = remoteView.getContext('webgl');
+                    localContext.clearColor(0.7804, 0.7804, 0.7804, 1.0);
+                    localContext.clear(localContext.COLOR_BUFFER_BIT);
+                    remoteContext.clearColor(0.0, 0.0, 0.0, 1.0);
+                    remoteContext.clear(remoteContext.COLOR_BUFFER_BIT);
+                }
+            });
+        };
+        Call.prototype.micMute = function (bMute, callID) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_MIC_SWITCH, callID, bMute ? 1 : 0, function (ret) { });
+        };
+        Call.prototype.transfer2Conf = function (confParam, callID, callback) {
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_P2P_TRANSFER_TO_CONF, confParam, callID, callback);
+        };
+        return Call;
+    }());
+    exports.default = Call;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 350 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(351), __webpack_require__(137), __webpack_require__(139), __webpack_require__(135), __webpack_require__(142), __webpack_require__(143)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, loginService_1, callManager_1, confManager_1, cmptManager_1, eaddrManager_1, imManager_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Initialization = (function () {
+        function Initialization() {
+        }
+        Initialization.init = function () {
+            this.initModel();
+        };
+        Initialization.uninit = function () {
+            delete Initialization.models;
+        };
+        Initialization.initModel = function () {
+            if (!Initialization.models["LoginService"]) {
+                Initialization.models["LoginService"] = new loginService_1.default();
+            }
+            if (!Initialization.models["CallManager"]) {
+                Initialization.models["CallManager"] = new callManager_1.default();
+            }
+            if (!Initialization.models["ConfManager"]) {
+                Initialization.models["ConfManager"] = confManager_1.default.getInstance();
+            }
+            if (!Initialization.models["CmptManager"]) {
+                Initialization.models["CmptManager"] = cmptManager_1.default.getInstance();
+            }
+            if (!Initialization.models["EaddrManager"]) {
+                Initialization.models["EaddrManager"] = eaddrManager_1.default.getInstance();
+            }
+            if (!Initialization.models["ImManager"]) {
+                Initialization.models["ImManager"] = imManager_1.default.getInstance();
+            }
+        };
+        Initialization.models = {};
+        return Initialization;
+    }());
+    exports.default = Initialization;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 351 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12), __webpack_require__(11), __webpack_require__(356), __webpack_require__(357), __webpack_require__(139), __webpack_require__(135), __webpack_require__(142), __webpack_require__(143), __webpack_require__(28), __webpack_require__(39), __webpack_require__(375), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, eventInfo_1, dispatcher_1, uportal_1, sipServer_1, confManager_1, cmptManager_1, eaddrManager_1, imManager_1, observer_1, tupLoginWrapper_1, anonyConf_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LoginService = (function () {
@@ -17264,16 +19279,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.confManager = confManager_1.default.getInstance();
             this.cmptManager = cmptManager_1.default.getInstance();
             this.eaddrManager = eaddrManager_1.default.getInstance();
+            this.imManager = imManager_1.default.getInstance();
             this.logic_actions_list["loginReq"] = [];
             this.logic_actions_list["loginReq"].push(this.uPortal);
             this.logic_actions_list["loginReq"].push(this.sipServer);
             this.logic_actions_list["loginReq"].push(this.confManager);
             this.logic_actions_list["loginReq"].push(this.cmptManager);
             this.logic_actions_list["loginReq"].push(this.eaddrManager);
+            this.logic_actions_list["loginReq"].push(this.imManager);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_LOGIN_REQ, self.loginReq, self);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_LOGOUT_REQ, self.logoutReq, self);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_SET_PROXY_REQ, self.setProxyReq, self);
             dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_CONF_JOIN_ANONYCONF, self.joinAnonymousConf, self);
+            dispatcher_1.default.register(eventInfo_1.SDK_EVENT_ID.SDK_SIP_DEREGISTER_ANONYCONF, self.sipRegisterAnonyConf, self);
         }
         LoginService.prototype.loginReq = function (eventType, callback) {
             return __awaiter(this, void 0, void 0, function () {
@@ -17319,8 +19337,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 0: return [4, this.sipServer.sipserverDerigister()];
                         case 1:
                             _a.sent();
-                            return [4, this.uPortal.destroyStgTunnel()];
+                            return [4, this.imManager.logout()];
                         case 2:
+                            _a.sent();
+                            return [4, this.uPortal.destroyStgTunnel()];
+                        case 3:
                             _a.sent();
                             observer_1.default.unsubsribleAll();
                             sessionStorage.removeItem("cloudEC_loginInfo");
@@ -17346,7 +19367,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        LoginService.prototype.joinAnonymousConf = function (event, anonymousConfParam, serverInfo, callBack) {
+        LoginService.prototype.joinAnonymousConf = function (event, anonymousConfParam, serverInfo, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var ret, cloudEC_loginInfo, loginInfo, evt;
                 return __generator(this, function (_a) {
@@ -17355,28 +19376,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 1:
                             ret = _a.sent();
                             if (!ret.result) {
-                                callBack(ret);
+                                callback(ret);
                                 return [2];
                             }
                             return [4, this.sipServer.do_action()];
                         case 2:
                             ret = _a.sent();
                             if (!ret.result) {
-                                callBack(ret);
+                                callback(ret);
                                 return [2];
                             }
                             return [4, this.confManager.do_action()];
                         case 3:
                             ret = _a.sent();
                             if (!ret.result) {
-                                callBack(ret);
+                                callback(ret);
                                 return [2];
                             }
                             return [4, this.cmptManager.do_action()];
                         case 4:
                             ret = _a.sent();
                             if (!ret.result) {
-                                callBack(ret);
+                                callback(ret);
                                 return [2];
                             }
                             return [4, this.anonyConf.accessReservedConf(anonymousConfParam.callType)];
@@ -17385,7 +19406,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
                             loginInfo = JSON.parse(cloudEC_loginInfo);
                             evt = { result: true, info: loginInfo };
-                            callBack(evt);
+                            callback(evt);
+                            return [2];
+                    }
+                });
+            });
+        };
+        LoginService.prototype.sipRegisterAnonyConf = function (eventType) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.sipServer.sipserverDerigister()];
+                        case 1:
+                            _a.sent();
+                            return [4, this.anonyConf.destroyStgTunnel()];
+                        case 2:
+                            _a.sent();
+                            observer_1.default.unsubsribleAll();
+                            sessionStorage.removeItem("cloudEC_loginInfo");
                             return [2];
                     }
                 });
@@ -17399,7 +19437,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 350 */
+/* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -17437,7 +19475,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(351), __webpack_require__(50), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmpt_1, tupLoginWrapper_1, serverConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(353), __webpack_require__(39), __webpack_require__(13), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupCmpt_1, tupLoginWrapper_1, serverConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TupCmptWrapper = (function () {
@@ -17524,7 +19562,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 351 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -17680,9 +19718,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPCmpt.prototype.msgProcessor = function (data) {
             if (data.notify > 0) {
-                data.notify = data.notify & 0x7fff;
-                if (typeof this.notifyFuncs[data.notify] == "function") {
-                    this.notifyFuncs[data.notify](data);
+                var notifyIdx = data.notify & 0x7fff;
+                if (typeof this.notifyFuncs[notifyIdx] == "function") {
+                    this.notifyFuncs[notifyIdx](data);
                 }
             }
             if (data.rsp > 0) {
@@ -17693,7 +19731,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         TUPCmpt.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
-            util_1.default.debug("tupCmpt", "tupCmpt send data" + sendStr);
             if (this.uniSocket) {
                 this.uniSocket.sendData(sendStr);
             }
@@ -17710,7 +19747,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 352 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -17724,9 +19761,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.wsocket = {};
             this.msgProcessor = function (data) {
                 if (data.notify > 0) {
-                    data.notify = data.notify & 0x7fff;
-                    if (typeof _this.notifyFuncs[data.notify] == "function") {
-                        _this.notifyFuncs[data.notify](data);
+                    var notifyIdx = data.notify & 0x7fff;
+                    if (typeof _this.notifyFuncs[notifyIdx] == "function") {
+                        _this.notifyFuncs[notifyIdx](data);
                     }
                 }
                 if (data.rsp > 0) {
@@ -17806,6 +19843,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     }
                 };
                 _this.sendData(data);
+                data.param.auth_info = "";
             };
             this.setcfg = function (param, callbacks) {
                 if (callbacks && typeof callbacks.response == "function") {
@@ -17845,7 +19883,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPLogin.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
-            util_1.default.debug("tupLogin", sendStr);
             if (this.uniSocket)
                 this.uniSocket.sendData(sendStr);
             else
@@ -17930,23 +19967,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
-        TUPLogin.prototype.changeRegisterPassword = function (change_pwd_param, callbacks) {
-            if (callbacks && typeof callbacks.response == "function") {
-                this.rspFuncs[4] = callbacks.response;
-            }
-            if (callbacks && typeof callbacks.onPasswordChangeResult == "function") {
-                this.notifyFuncs[1] = callbacks.onPasswordChangeResult;
-            }
-            var data = {
-                "cmd": 327684,
-                "description": "tup_login_change_register_password",
-                "param": {
-                    "change_pwd_param": change_pwd_param
-                }
-            };
-            this.sendData(data);
-        };
-        ;
         TUPLogin.prototype.setLicenseManageParam = function (license_manage_param, callbacks) {
             if (callbacks && typeof callbacks.response == "function") {
                 this.rspFuncs[5] = callbacks.response;
@@ -18019,6 +20039,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             };
             this.sendData(data);
+            data.param.authorize_param = "";
         };
         ;
         TUPLogin.prototype.refreshToken = function (callbacks) {
@@ -18031,23 +20052,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var data = {
                 "cmd": 327692,
                 "description": "tup_login_refresh_token"
-            };
-            this.sendData(data);
-        };
-        ;
-        TUPLogin.prototype.getNonce = function (auth_token, callbacks) {
-            if (callbacks && typeof callbacks.response == "function") {
-                this.rspFuncs[17] = callbacks.response;
-            }
-            if (callbacks && typeof callbacks.nonceResult == "function") {
-                this.notifyFuncs[10] = callbacks.nonceResult;
-            }
-            var data = {
-                "cmd": 327697,
-                "description": "tup_login_get_nonce",
-                "param": {
-                    "auth_token": auth_token
-                }
             };
             this.sendData(data);
         };
@@ -18084,6 +20088,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             };
             this.sendData(data);
+            data.param.server = "";
         };
         ;
         TUPLogin.prototype.destoryStgTunnel = function (callbacks) {
@@ -18128,7 +20133,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
-        TUPLogin.prototype.test = function () { alert("TUPLogin:Test"); };
         TUPLogin.prototype.releaseLicense = function (callbacks) {
             if (callbacks && typeof callbacks.response == "function") {
                 this.rspFuncs[8] = callbacks.response;
@@ -18155,6 +20159,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             };
             this.sendData(data);
+            data.param.proxy_param = "";
         };
         ;
         TUPLogin.prototype.getBestLocalIp = function (param, callbacks) {
@@ -18212,6 +20217,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             };
             this.sendData(data);
+            data.param.confinfo_param = "";
         };
         ;
         return TUPLogin;
@@ -18223,10 +20229,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 353 */
+/* 355 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPUniSock = (function () {
@@ -18253,7 +20259,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.wsocket.onclose = opts.close;
             this.wsocket.onmessage = function (msg) {
                 var data = JSON.parse(msg.data);
-                util_1.default.debug("tupUniCmdSocket", msg.data);
+                var logInfo = util.replaceLogInfo(data);
+                util_1.default.debug("tupUniCmdSocket", logInfo);
                 if (data.notify > 0) {
                     var section = data.notify & 0xff0000;
                     if (_this.serviceMap.get(section)) {
@@ -18282,7 +20289,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 354 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -18320,7 +20327,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(50), __webpack_require__(17), __webpack_require__(12), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(39), __webpack_require__(15), __webpack_require__(13), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Uportal = (function () {
@@ -18330,7 +20337,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var siteInfo = ret.uportal_authorize_result.site_info;
                 if (siteInfo && siteInfo[0]) {
                     var _a = siteInfo[0], num_of_server = _a.num_of_server, access_server = _a.access_server;
-                    var sipUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "", maaUri = "";
+                    var sipUri = "", sipTlsUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "", maaUri = "";
                     var tmsServer = "", tmsAccount = "", tmsPwd = "";
                     var dataUrl = "";
                     var passcode = "";
@@ -18338,9 +20345,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         if (!access_server || !access_server[i]) {
                             continue;
                         }
-                        isSiptls = access_server[i].is_siptls;
-                        isSrtp = access_server[i].is_srtp;
+                        isSiptls = access_server[0].is_siptls;
+                        isSrtp = access_server[0].is_srtp;
                         sipUri += access_server[i].sip_uri;
+                        sipTlsUri = access_server[0].sip_tls_uri;
                         svnUri += access_server[i].svn_uri;
                         httpsProxy += access_server[i].httpsproxy_uri;
                         stgUri += access_server[i].stg_info.stg_uri;
@@ -18402,6 +20410,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         isSiptls: isSiptls,
                         isSrtp: isSrtp,
                         sipUri: sipUri,
+                        sipTlsUri: sipTlsUri,
                         svnUri: svnUri,
                         httpsProxy: httpsProxy,
                         stgUri: stgUri,
@@ -18604,6 +20613,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     isSiptls: 0,
                     isSrtp: 0,
                     sipUri: "",
+                    sipTlsUri: "",
                     svnUri: "",
                     httpsProxy: "",
                     stgUri: "",
@@ -18731,7 +20741,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         Uportal.prototype.loginUportal = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var CLOUDEC_LOGIN_INPUT_PARAM, authType, authParam, serverInfo, data, err, proxyParam, proxyParamTemp, err, ret, auth_token, loginInfo, err;
+                var CLOUDEC_LOGIN_INPUT_PARAM, authType, authParam, serverInfo, cleanAuthParam, cleanServerInfo, data, err, proxyParam, proxyParamTemp, err, ret, loginInfo, err;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -18740,13 +20750,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             authType = JSON.parse(CLOUDEC_LOGIN_INPUT_PARAM).authType;
                             authParam = JSON.parse(CLOUDEC_LOGIN_INPUT_PARAM).authParam;
                             serverInfo = JSON.parse(CLOUDEC_LOGIN_INPUT_PARAM).serverInfo;
+                            CLOUDEC_LOGIN_INPUT_PARAM = {};
+                            cleanAuthParam = {};
+                            cleanServerInfo = {};
+                            sessionStorage.setItem("CLOUDEC_LOGIN_INPUT_PARAM", JSON.stringify({ authType: authType, cleanAuthParam: cleanAuthParam, cleanServerInfo: cleanServerInfo }));
                             sessionStorage.removeItem("CLOUDEC_LOGIN_INPUT_PARAM");
                             return [4, this.wrapper.getBestLocalIp(serverInfo.serverAddress)];
                         case 1:
                             data = _a.sent();
                             if (0 == data.result) {
                                 sessionStorage.cloudEC_localIP = data.local_ip;
-                                util_1.default.debug("uportal", "Get local IP is " + sessionStorage.cloudEC_localIP);
+                                util_1.default.debug("uportal", "Get local IP is " + util.hideIPAddress(data.local_ip));
                             }
                             else {
                                 util_1.default.error("uportal", "Get local IP failed");
@@ -18755,7 +20769,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 return [2, { result: false, info: err }];
                             }
                             proxyParam = { proxyAddress: "", proxyPort: 0, proxyAccount: "", proxyPassword: "" };
-                            if (!(serverInfo.extensions != undefined)) return [3, 3];
+                            if (!(serverInfo.extensions != undefined && serverInfo.extensions != "")) return [3, 3];
                             proxyParamTemp = JSON.parse(serverInfo.extensions);
                             proxyParam = {
                                 proxyAddress: proxyParamTemp.proxyAddress,
@@ -18763,6 +20777,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 proxyAccount: proxyParamTemp.proxyAccount,
                                 proxyPassword: proxyParamTemp.proxyPassword
                             };
+                            proxyParamTemp = "";
                             return [4, this.wrapper.setProxy(proxyParam)];
                         case 2:
                             data = _a.sent();
@@ -18780,16 +20795,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         case 3: return [4, this.wrapper.loginAuthorize(authType, authParam, serverInfo, proxyParam)];
                         case 4:
                             data = _a.sent();
+                            authParam.passwd = "";
+                            proxyParam.proxyPassword = "";
                             ret = data.param;
                             if (ret.uportal_authorize_result && ret.uportal_authorize_result.is_first_login) {
-                                auth_token = ret.uportal_authorize_result.auth_token;
                                 util_1.default.debug("uportal", "this is the first login");
                             }
                             if (!(ret.result == 0)) return [3, 6];
                             return [4, this.updateSiteInfo(ret)];
                         case 5:
                             loginInfo = _a.sent();
-                            util_1.default.debug("uportal", "login Uportal success! the loginInfo is:" + JSON.stringify(loginInfo));
+                            util_1.default.debug("uportal", "login Uportal success!");
                             return [2, { result: true, loginInfo: loginInfo }];
                         case 6:
                             util_1.default.error("uportal", "login Uportal failed error_code=" + ret.result);
@@ -18814,7 +20830,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 355 */
+/* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -18852,7 +20868,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(356), __webpack_require__(51), __webpack_require__(137), __webpack_require__(1), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, sipCallConfig_1, tupCallWrapper_1, callManager_1, util, enum_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(358), __webpack_require__(51), __webpack_require__(137), __webpack_require__(1), __webpack_require__(15), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, sipCallConfig_1, tupCallWrapper_1, callManager_1, util, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SipServer = (function () {
@@ -18949,7 +20965,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
                             loginInfo = JSON.parse(cloudEC_loginInfo);
                             sipImpi = loginInfo.sipImpi;
-                            util_1.default.debug("sipserver", "sipserverDerigister sipImpi =" + sipImpi);
+                            util_1.default.debug("sipserver", "sipserverDerigister");
                             return [4, this.wrapper.deRegister(sipImpi)];
                         case 1:
                             _a.sent();
@@ -18993,7 +21009,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 356 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -19031,7 +21047,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(12), __webpack_require__(99), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, serverConfig_1, userConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15), __webpack_require__(13), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, enum_1, serverConfig_1, userConfig_1, util_1, util) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -19042,7 +21058,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             file_count: serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_COUNT,
             log_path: serverConfig_1.CloudEC_SERVERCONFIG.LOG_PATH
         };
-        util_1.default.debug("sipCallConfig, LogConfig =", logConfig);
+        util_1.default.debug("sipCallConfig, LogConfig =", JSON.stringify(logConfig));
         return logConfig;
     };
     exports.configHMELog = function () {
@@ -19062,7 +21078,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     exports.configSip = function () {
         var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
         var loginInfo = JSON.parse(cloudEC_loginInfo);
-        var sipServerAddress = loginInfo.sipServerAddress, sipServerPort = loginInfo.sipServerPort, sipServerBackup1 = loginInfo.sipServerBackup1, sipServerPortBackup1 = loginInfo.sipServerPortBackup1, sipServerLocal = loginInfo.sipServerLocal, sipServerPortLocal = loginInfo.sipServerPortLocal, sipPasswordType = loginInfo.sipPasswordType, sipOutgoingAccCode = loginInfo.sipOutgoingAccCode, fireWallMode = loginInfo.fireWallMode, sipDomain = loginInfo.sipDomain, serverAddress = loginInfo.serverAddress, isSiptls = loginInfo.isSiptls, terminalFuncType = loginInfo.terminalFuncType, eServerAddress = loginInfo.eServerAddress, maaUri = loginInfo.maaUri;
+        var sipServerAddress = loginInfo.sipServerAddress, sipServerPort = loginInfo.sipServerPort, sipServerBackup1 = loginInfo.sipServerBackup1, sipServerPortBackup1 = loginInfo.sipServerPortBackup1, sipServerLocal = loginInfo.sipServerLocal, sipServerPortLocal = loginInfo.sipServerPortLocal, sipPasswordType = loginInfo.sipPasswordType, sipOutgoingAccCode = loginInfo.sipOutgoingAccCode, fireWallMode = loginInfo.fireWallMode, sipDomain = loginInfo.sipDomain, serverAddress = loginInfo.serverAddress, isSiptls = loginInfo.isSiptls, sipTlsUri = loginInfo.sipTlsUri, terminalFuncType = loginInfo.terminalFuncType, eServerAddress = loginInfo.eServerAddress, maaUri = loginInfo.maaUri;
         var env = 0;
         var stgModeForCall = enum_1.CALL_FIREWALL_MODE.CALL_E_FIREWALL_MODE_LINE;
         if (enum_1.FIREWALL_MODE.LOGIN_E_FIREWALL_MODE_ONLY_HTTP === fireWallMode) {
@@ -19074,13 +21090,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         else {
             stgModeForCall = enum_1.CALL_FIREWALL_MODE.CALL_E_FIREWALL_MODE_LINE;
         }
-        var user_agent = "WeLink-Desktop";
+        var user_agent = "eSDK-Desktop";
         var isTlsEnable = false;
         if (isSiptls === 1) {
             isTlsEnable = true;
-            sipServerPort = 5061;
-            sipServerPortBackup1 = 5061;
-            sipServerPortLocal = 5061;
+            if (sipTlsUri != "") {
+                var sipTlsPort = parseInt(sipTlsUri.split(":")[1]);
+                sipServerPort = sipTlsPort;
+                sipServerPortBackup1 = sipTlsPort;
+                sipServerPortLocal = sipTlsPort;
+            }
+            else {
+                sipServerPort = 5061;
+                sipServerPortBackup1 = 5061;
+                sipServerPortLocal = 5061;
+            }
         }
         if (0 == (terminalFuncType & 0x0002) || (!eServerAddress && !maaUri)) {
             user_agent = "Huawei TE Desktop";
@@ -19096,9 +21120,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 backup1_addr: sipServerBackup1,
                 backup1_port: sipServerPortBackup1,
                 local_addr: sipServerLocal,
-                local_port: sipServerPortLocal,
                 local_ipv4: sessionStorage.cloudEC_localIP,
-                local_sip_port: 5060,
                 user_agent: user_agent,
                 net_environment: env,
                 proxy_addr: sipServerAddress,
@@ -19127,7 +21149,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             });
         }
-        util_1.default.debug("sipCallConfig", "configSipInfo =" + JSON.stringify(configSipInfo));
+        var logInfo = util.replaceLogInfo(configSipInfo);
+        util_1.default.debug("sipCallConfig", "configSipInfo =" + logInfo);
         return configSipInfo;
     };
     exports.configCall = function () {
@@ -19368,7 +21391,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         var ars_dataShaping = serverConfig_1.CloudEC_SERVERCONFIG.IS_TLS_SUPPORT ? 0 : parseInt(config["Device.ComCfg.Media.DataShaping"]);
         var dataLimit = isStgMode ? 512 : 384;
         var media = {
-            enable_bfcp: 0,
+            enable_bfcp: serverConfig_1.CloudEC_SERVERCONFIG.CONF_CONTROL_PROTOCOL,
+            enable_audio_bfcp: serverConfig_1.CloudEC_SERVERCONFIG.CONF_CONTROL_PROTOCOL,
             enable_data: 0,
             bfcp_param: {
                 floor_ctrl: 3,
@@ -19703,10 +21727,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 357 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(358), __webpack_require__(32), __webpack_require__(1), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, TUPRender_1, observer_1, util_1, serverConfig_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(360), __webpack_require__(28), __webpack_require__(1), __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, TUPRender_1, observer_1, util_1, serverConfig_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPCall = (function () {
@@ -19770,7 +21794,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             };
             this.sendData = function (data) {
                 var sendStr = JSON.stringify(data);
-                util_1.default.debug("tupCall", "tupCall send data" + sendStr);
                 if (_this.uniSocket)
                     _this.uniSocket.sendData(sendStr);
                 else
@@ -19807,6 +21830,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     }
                 };
                 _this.sendData(data);
+                data.param.pwd = "";
             };
             this.deRegister = function (sip_num, callbacks) {
                 if (callbacks && typeof callbacks.response == "function") {
@@ -20673,9 +22697,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         TUPCall.prototype.msgProcessor = function (data) {
             if (data.notify > 0) {
-                data.notify = data.notify & 0x7fff;
-                if (typeof this.notifyFuncs[data.notify] == "function") {
-                    this.notifyFuncs[data.notify](data);
+                var notifyIdx = data.notify & 0x7fff;
+                if (typeof this.notifyFuncs[notifyIdx] == "function") {
+                    this.notifyFuncs[notifyIdx](data);
                 }
             }
             if (data.rsp > 0) {
@@ -20693,10 +22717,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 358 */
+/* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(17), __webpack_require__(12), __webpack_require__(32), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, serverConfig_1, observer_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(15), __webpack_require__(13), __webpack_require__(28), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, serverConfig_1, observer_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPRender = (function () {
@@ -20834,7 +22858,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 359 */
+/* 361 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -20882,7 +22906,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(138), __webpack_require__(51), __webpack_require__(32), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, callService_1, tupCallWrapper_1, observer_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(138), __webpack_require__(51), __webpack_require__(28), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, callService_1, tupCallWrapper_1, observer_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var AudioCallService = (function (_super) {
@@ -21101,7 +23125,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 360 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -21149,7 +23173,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(138), __webpack_require__(51), __webpack_require__(32), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, callService_1, tupCallWrapper_1, observer_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(138), __webpack_require__(51), __webpack_require__(28), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, callService_1, tupCallWrapper_1, observer_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var VideoCallService = (function (_super) {
@@ -21239,7 +23263,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 361 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -21277,7 +23301,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(362), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, pluginNativeWnd_1, serverConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(364), __webpack_require__(13), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, pluginNativeWnd_1, serverConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupNativeWndWrapper = (function () {
@@ -21343,10 +23367,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         };
                     });
                     parentExeName = this.getExplorerInfo();
-                    util_1.default.debug("tupNativeWndWrapper", "parent exe name is " + parentExeName);
                     param = {
                         "parent_info": {
-                            "need_attach": 1,
+                            "need_attach": serverConfig_1.CloudEC_SERVERCONFIG.NATIVE_NEED_ATTACH,
                             "exe_name": parentExeName,
                             "title": document.title
                         },
@@ -21494,7 +23517,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 362 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -21534,9 +23557,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         PluginNativeWind.prototype.msgProcessor = function (data) {
             if (data.notify > 0) {
-                data.notify = data.notify & 0x7fff;
-                if (typeof this.notifyFuncs[data.notify] == "function") {
-                    this.notifyFuncs[data.notify](data);
+                var notifyIdx = data.notify & 0x7fff;
+                if (typeof this.notifyFuncs[notifyIdx] == "function") {
+                    this.notifyFuncs[notifyIdx](data);
                 }
             }
             if (data.rsp > 0) {
@@ -21734,7 +23757,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 363 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -21772,7 +23795,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(364), __webpack_require__(12), __webpack_require__(50), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrl_1, serverConfig_1, tupLoginWrapper_1, enum_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(366), __webpack_require__(13), __webpack_require__(39), __webpack_require__(15), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupConfctrl_1, serverConfig_1, tupLoginWrapper_1, enum_1, util_1, util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupConfctrlWrapper = (function () {
@@ -21816,7 +23839,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 "wait_msgp_thread": 1,
                 "batch_update": 0,
                 "connect_call": 1,
-                "save_participant_list": 1
+                "save_participant_list": 1,
+                "confctrl_ido": serverConfig_1.CloudEC_SERVERCONFIG.CONF_CONTROL_PROTOCOL
             };
             this.tupConfctrl.init(log, init_param, {});
         };
@@ -21844,12 +23868,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
             var loginInfo = JSON.parse(cloudEC_loginInfo);
             var authToken = loginInfo.authToken;
-            util_1.default.debug("tupConfctrlWrapper", "authToken = " + authToken);
             this.tupConfctrl.setToken(authToken, {});
+            authToken = "";
         };
         tupConfctrlWrapper.prototype.createConf = function (subject, mediaType, attendees, assMedia, language) {
             return __awaiter(this, void 0, void 0, function () {
-                var param, createConfPromise, callbacks;
+                var param, createConfPromise, callbacks, logInfo;
                 return __generator(this, function (_a) {
                     param = {
                         subject: subject,
@@ -21875,13 +23899,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 createConfPromise.resolve(data);
                             }
                             else {
-                                util_1.default.error("tupConfctrlWrapper", "Create instant conference failed :" + JSON.stringify(data));
+                                util_1.default.error("tupConfctrlWrapper", "Create instant conference failed!");
                                 data.notify = 458754;
                                 createConfPromise.reject(data);
                             }
                         }
                     };
-                    util_1.default.debug("tupConfctrlWrapper", 'createConfParam: ' + JSON.stringify(param));
+                    logInfo = util.replaceLogInfo(param);
+                    util_1.default.debug("tupConfctrlWrapper", 'createConfParam: ' + logInfo);
                     this.tupConfctrl.createConf(param, callbacks);
                     return [2, createConfPromise.promise];
                 });
@@ -21898,7 +23923,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 confParamsPromise.resolve(data);
                             }
                             else {
-                                util_1.default.error("tupConfctrlWrapper", "Get data conference param failed, data=" + JSON.stringify(data));
+                                util_1.default.error("tupConfctrlWrapper", "Get data conference param failed");
                                 confParamsPromise.reject(data);
                             }
                         }
@@ -22003,7 +24028,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                             else {
                                 ret.notify = 458778;
-                                util_1.default.error("tupConfctrlWrapper", "bookConf failed, ret=" + JSON.stringify(ret));
+                                util_1.default.error("tupConfctrlWrapper", "bookConf failed");
                                 reject(ret);
                             }
                         };
@@ -22300,12 +24325,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         tupConfctrlWrapper.prototype.watchAttendee = function (confHandle, attendee) {
             return __awaiter(this, void 0, void 0, function () {
-                var watchPromise, callbacks, param;
+                var watchPromise, callbacks, param, logInfo;
                 return __generator(this, function (_a) {
                     watchPromise = this.getPromise();
                     callbacks = {
                         onWatchAttendeeResult: function (data) {
-                            util_1.default.debug("tupConfctrlWrapper", 'onWatchAttendeeResult, data=' + JSON.stringify(data));
+                            util_1.default.debug("tupConfctrlWrapper", 'onWatchAttendeeResult');
                             if (data.param.operation_rsp_reason == 0) {
                                 watchPromise.resolve({ result: true, info: "" });
                             }
@@ -22318,7 +24343,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         conf_handle: confHandle,
                         watch_attendee: { attendee: [{ number: attendee.number }] }
                     };
-                    util_1.default.debug("tupConfctrlWrapper", 'watchAttendeeparam= ' + JSON.stringify(param));
+                    logInfo = util.replaceLogInfo(param);
+                    util_1.default.debug("tupConfctrlWrapper", 'watchAttendeeparam= ' + logInfo);
                     this.tupConfctrl.watchAttendee(param, callbacks);
                     return [2, watchPromise.promise];
                 });
@@ -22326,7 +24352,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         tupConfctrlWrapper.prototype.getConfList = function (pageIndex, pageSize) {
             return __awaiter(this, void 0, void 0, function () {
-                var param, getConfListPromise, callbacks;
+                var param, getConfListPromise, callbacks, logInfo;
                 return __generator(this, function (_a) {
                     param = {
                         account_id: "",
@@ -22353,7 +24379,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         }
                     };
-                    util_1.default.debug("tupConfctrlWrapper", 'getConfListParam= ' + JSON.stringify(param));
+                    logInfo = util.replaceLogInfo(param);
+                    util_1.default.debug("tupConfctrlWrapper", 'getConfListParam= ' + logInfo);
                     this.tupConfctrl.getConfList(param, callbacks);
                     return [2, getConfListPromise.promise];
                 });
@@ -22401,7 +24428,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         tupConfctrlWrapper.prototype.p2pTransferToConf = function (confInfo, call_id) {
             return __awaiter(this, void 0, void 0, function () {
-                var toConfPromise, callbacks;
+                var toConfPromise, callbacks, logInfo;
                 return __generator(this, function (_a) {
                     toConfPromise = this.getPromise();
                     callbacks = {
@@ -22414,9 +24441,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         }
                     };
-                    util_1.default.debug("tupConfctrlWrapper", 'p2pTransferToConf= ' + JSON.stringify(confInfo));
+                    logInfo = util.replaceLogInfo(confInfo);
+                    util_1.default.debug("tupConfctrlWrapper", 'p2pTransferToConf= ' + logInfo);
                     this.tupConfctrl.p2pTransferToConf(confInfo, call_id, callbacks);
                     return [2, toConfPromise.promise];
+                });
+            });
+        };
+        tupConfctrlWrapper.prototype.getConfInfoSyn = function (confId) {
+            return __awaiter(this, void 0, void 0, function () {
+                var param, getConfInfoSynPromise, callbacks;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            param = {
+                                conf_id: confId,
+                                page_index: 1,
+                                page_size: 2
+                            };
+                            getConfInfoSynPromise = this.getPromise();
+                            callbacks = {
+                                response: function (data) {
+                                    if (data.result == 0) {
+                                        getConfInfoSynPromise.resolve({ result: true, info: data });
+                                    }
+                                    else {
+                                        getConfInfoSynPromise.reject({ result: false, info: data });
+                                    }
+                                }
+                            };
+                            return [4, this.tupConfctrl.getConfInfoSyn(param, callbacks)];
+                        case 1:
+                            _a.sent();
+                            return [2, getConfInfoSynPromise.promise];
+                    }
                 });
             });
         };
@@ -22437,7 +24495,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 364 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -22451,9 +24509,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.wsocket = {};
             this.msgProcessor = function (data) {
                 if (data.notify > 0) {
-                    data.notify = data.notify & 0x7fff;
-                    if (typeof _this.notifyFuncs[data.notify] == "function") {
-                        _this.notifyFuncs[data.notify](data);
+                    var notifyIdx = data.notify & 0x7fff;
+                    if (typeof _this.notifyFuncs[notifyIdx] == "function") {
+                        _this.notifyFuncs[notifyIdx](data);
                     }
                 }
                 if (data.rsp > 0) {
@@ -22506,7 +24564,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPConfctrl.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
-            util_1.default.debug("TupConfctrl", "send data:" + sendStr);
             if (this.uniSocket)
                 this.uniSocket.sendData(sendStr);
             else
@@ -22788,6 +24845,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             };
             this.sendData(data);
+            password = "";
+            data.param.password = "";
         };
         TUPConfctrl.prototype.releaseChairman = function (conf_handle, number, callbacks) {
             if (callbacks && typeof callbacks.response == "function") {
@@ -22941,19 +25000,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             };
             this.sendData(data);
-        };
-        TUPConfctrl.prototype.setAuthCode = function (account, password, callbacks) {
-            if (callbacks && typeof callbacks.response == "function") {
-                this.rspFuncs[25] = callbacks.response;
-            }
-            var data = {
-                "cmd": 458777,
-                "description": "tup_confctrl_set_auth_code",
-                "param": {
-                    "account": account, "password": password
-                }
-            };
-            this.sendData(data);
+            data.param.token = "";
         };
         TUPConfctrl.prototype.bookConf = function (params, callbacks) {
             if (callbacks && typeof callbacks.response == "function") {
@@ -23029,19 +25076,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "cmd": 458782,
                 "description": "tup_confctrl_broadcast_attendee",
                 "param": params
-            };
-            this.sendData(data);
-        };
-        TUPConfctrl.prototype.enterChairmanPassword = function (password, conf_handle, callbacks) {
-            if (callbacks && typeof callbacks.response == "function") {
-                this.rspFuncs[31] = callbacks.response;
-            }
-            var data = {
-                "cmd": 458783,
-                "description": "tup_confctrl_enter_chairman_password",
-                "param": {
-                    "password": password, "conf_handle": conf_handle
-                }
             };
             this.sendData(data);
         };
@@ -23199,19 +25233,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             };
             this.sendData(data);
         };
-        TUPConfctrl.prototype.requestConfctrlRight = function (tmp_token, password, conf_handle, number, callbacks) {
-            if (callbacks && typeof callbacks.response == "function") {
-                this.rspFuncs[46] = callbacks.response;
-            }
-            var data = {
-                "cmd": 458798,
-                "description": "tup_confctrl_request_confctrl_right",
-                "param": {
-                    "tmp_token": tmp_token, "password": password, "conf_handle": conf_handle, "number": number
-                }
-            };
-            this.sendData(data);
-        };
         TUPConfctrl.prototype.getConfResourceSyn = function (random, conf_url, attend_conf_reqbody, callbacks) {
             if (callbacks && typeof callbacks.response == "function") {
                 this.rspFuncs[47] = callbacks.response;
@@ -23281,6 +25302,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             };
             this.sendData(data);
         };
+        TUPConfctrl.prototype.getConfInfoSyn = function (get_conf_info, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[58] = callbacks.response;
+            }
+            var data = {
+                "cmd": 458810,
+                "description": "tup_confctrl_get_conf_info_syn",
+                "param": {
+                    "get_conf_info": get_conf_info
+                }
+            };
+            this.sendData(data);
+        };
         TUPConfctrl.prototype.setTempUserFlag = function (isTempUser, callbacks) {
             if (callbacks && typeof callbacks.response == "function") {
                 this.rspFuncs[68] = callbacks.response;
@@ -23302,7 +25336,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 365 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -23340,7 +25374,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(366), __webpack_require__(367), __webpack_require__(49), __webpack_require__(37), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupMeeting_1, tupDataRender_1, client_1, errorCode_1, serverConfig_1, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(368), __webpack_require__(369), __webpack_require__(23), __webpack_require__(24), __webpack_require__(13), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupMeeting_1, tupDataRender_1, client_1, errorCode_1, serverConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tupDataConfWrapper = (function () {
@@ -23750,6 +25784,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         }
                     };
                     tupDataConfWrapper.tupMeeting.userRequestRole(confHandle, role, password, callbacks);
+                    password = "";
                     return [2, requestRolePromise.promise];
                 });
             });
@@ -23828,10 +25863,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 366 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPMeeting = (function () {
@@ -23850,17 +25885,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.wsocket.onclose = opts.close;
             this.wsocket.onmessage = function (msg) {
                 var data = JSON.parse(msg.data);
-                data.notify = data.notify - 40000000;
+                var notifyIdx = data.notify - 40000000;
                 if (data.notify > 0) {
-                    if (typeof _this.notifyFuncs[data.notify] == "function") {
-                        _this.notifyFuncs[data.notify](data);
+                    if (typeof _this.notifyFuncs[notifyIdx] == "function") {
+                        _this.notifyFuncs[notifyIdx](data);
                     }
-                    if (2111 != data.notify && 2808 != data.notify) {
-                        util_1.default.debug("tupMeeting", msg.data);
+                    if (2111 != notifyIdx && 2808 != notifyIdx) {
+                        var logInfo = util.replaceLogInfo(data);
+                        util_1.default.debug("tupMeeting", logInfo);
                     }
                 }
                 if (data.rsp > 0) {
-                    util_1.default.debug("tupMeeting", msg.data);
+                    var logInfo = util.replaceLogInfo(data);
+                    util_1.default.debug("tupMeeting", logInfo);
                     var rspIdx = data.rsp - 40000000;
                     if (typeof _this.rspFuncs[rspIdx] == "function") {
                         _this.rspFuncs[rspIdx](data);
@@ -23871,7 +25908,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPMeeting.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
-            util_1.default.debug("tupMeeting", sendStr);
             this.wsocket.send(sendStr);
         };
         ;
@@ -24188,6 +26224,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             };
             this.sendData(data);
+            data.param.pszkey = "";
         };
         ;
         TUPMeeting.prototype.loadComponent = function (confHandle, compts, callbacks) {
@@ -26632,10 +28669,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 367 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(136), __webpack_require__(15), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, YUVCanvas_1, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TUPDataRender = (function () {
@@ -26696,7 +28733,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 368 */
+/* 370 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -26735,9 +28772,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ;
         TUPEaddr.prototype.msgProcessor = function (data) {
             if (data.notify > 0) {
-                data.notify = data.notify & 0x000f;
-                if (typeof this.notifyFuncs[data.notify] == "function") {
-                    this.notifyFuncs[data.notify](data);
+                var notifyIdx = data.notify & 0x7fff;
+                if (typeof this.notifyFuncs[notifyIdx] == "function") {
+                    this.notifyFuncs[notifyIdx](data);
                 }
             }
             if (data.rsp > 0) {
@@ -26748,7 +28785,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         TUPEaddr.prototype.sendData = function (data) {
             var sendStr = JSON.stringify(data);
-            util_1.default.debug("tupEaddr", "send data: " + sendStr);
             if (this.uniSocket) {
                 this.uniSocket.sendData(sendStr);
             }
@@ -26764,6 +28800,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "param": params
             };
             this.sendData(data);
+            data.param = "";
         };
         ;
         TUPEaddr.prototype.eaddrSearchInfo = function (params, callbacks) {
@@ -26879,10 +28916,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 369 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(370), __webpack_require__(141), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, publicDB_1, indexDBConfig_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(372), __webpack_require__(141), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, publicDB_1, indexDBConfig_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ConfAttendeeList = (function () {
@@ -27128,7 +29165,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 370 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(141)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, indexDBConfig_1) {
@@ -27183,7 +29220,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 371 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -27221,7 +29258,2831 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(50), __webpack_require__(51), __webpack_require__(17), __webpack_require__(12), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, tupCallWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(374), __webpack_require__(39), __webpack_require__(13), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupIm_1, tupLoginWrapper_1, serverConfig_1, util_1, util) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var TupImWrapper = (function () {
+        function TupImWrapper() {
+            if (TupImWrapper._instance) {
+                throw new Error("Error: Instantiation failed: Use TupImWrapper.getInstance() instead of new.");
+            }
+            TupImWrapper._instance = this;
+        }
+        TupImWrapper.prototype.build = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var flag;
+                return __generator(this, function (_a) {
+                    util_1.default.info("tupImWrapper", "step in tupImWrapper to build");
+                    flag = false;
+                    if (this.tupIm && this.tupIm.wsocket.readyState === 1) {
+                        util_1.default.info("tupImWrapper", "websocket is connecting");
+                        return [2, flag];
+                    }
+                    if (!this.tupIm) {
+                        this.tupIm = new tupIm_1.default({
+                            socket: tupLoginWrapper_1.default.tupUniSock
+                        });
+                        flag = true;
+                    }
+                    return [2, flag];
+                });
+            });
+        };
+        TupImWrapper.prototype.getPromise = function () {
+            var p = {};
+            p.promise = new Promise(function (resolve, reject) {
+                p.resolve = resolve;
+                p.reject = reject;
+            });
+            return p;
+        };
+        TupImWrapper.getInstance = function () {
+            return TupImWrapper._instance;
+        };
+        TupImWrapper.prototype.init = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var callback, imLogParam, cloudEC_loginInfo, loginInfo, serverAddr, port;
+                return __generator(this, function (_a) {
+                    callback = { response: {} };
+                    imLogParam = {
+                        "log_path": serverConfig_1.CloudEC_SERVERCONFIG.LOG_PATH,
+                        "log_level": serverConfig_1.CloudEC_SERVERCONFIG.LOG_IM_LEVEL,
+                        "max_size_kb": serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_SIZE,
+                        "file_count": serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_COUNT,
+                    };
+                    cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                    loginInfo = JSON.parse(cloudEC_loginInfo);
+                    serverAddr = loginInfo.eServerAddress;
+                    port = loginInfo.eServerPort;
+                    this.tupIm.setLogParam(imLogParam, callback);
+                    this.tupIm.init(callback);
+                    this.tupIm.setServerAddress(serverAddr, port, callback);
+                    return [2];
+                });
+            });
+        };
+        TupImWrapper.prototype.tupImBase64Decode = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var callback, cloudEC_loginInfo, loginInfo, token, promise;
+                return __generator(this, function (_a) {
+                    callback = { response: {} };
+                    cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                    loginInfo = JSON.parse(cloudEC_loginInfo);
+                    token = loginInfo.authToken;
+                    promise = new Promise(function (resolve, reject) {
+                        callback.response = function (data) {
+                            resolve({ token: data.param.ack });
+                        };
+                    });
+                    this.tupIm.tupImBase64Decode(token, token.length, callback);
+                    token = "";
+                    loginInfo.authToken = "";
+                    cloudEC_loginInfo = {};
+                    return [2, promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.login = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var callback, cloudEC_loginInfo, loginInfo, account, version, loginType, imToken, promise, decodeResult, imLoginParam;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            callback = { response: {} };
+                            cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                            loginInfo = JSON.parse(cloudEC_loginInfo);
+                            account = loginInfo.userAccount;
+                            version = serverConfig_1.CloudEC_SERVERCONFIG.IM_SERVER_VERSION;
+                            loginType = 4;
+                            imToken = "";
+                            promise = new Promise(function (resolve, reject) {
+                                callback.response = function (data) {
+                                    if (data.result == 0) {
+                                        util_1.default.info("tupImWrapper", "im login success");
+                                        resolve({ result: true, info: data });
+                                    }
+                                    else {
+                                        util_1.default.error("tupImWrapper", "im login failed: " + JSON.stringify(data));
+                                        resolve({ result: false, info: data });
+                                    }
+                                };
+                            });
+                            return [4, this.tupImBase64Decode()];
+                        case 1:
+                            decodeResult = _a.sent();
+                            imToken = decodeResult.token;
+                            imLoginParam = {
+                                "account": account,
+                                "password": imToken,
+                                "version": version,
+                                "auth_type": loginType,
+                                "language": "zh-cn",
+                                "client_desc": "PC",
+                                "ticket": imToken,
+                                "token": imToken
+                            };
+                            this.tupIm.login(imLoginParam, callback);
+                            imToken = "";
+                            imLoginParam.password = "";
+                            imLoginParam.ticket = "";
+                            imLoginParam.token = "";
+                            return [2, promise];
+                    }
+                });
+            });
+        };
+        TupImWrapper.prototype.logout = function () {
+            var logoutPromise = this.getPromise();
+            var callbacks = {
+                response: function (data) {
+                    if (data.result == 0) {
+                        util_1.default.debug("tupImWrapper", "logout is successful");
+                        logoutPromise.resolve(data);
+                    }
+                    else {
+                        util_1.default.error("tupImWrapper", "logout failed!");
+                        logoutPromise.reject(data);
+                    }
+                }
+            };
+            this.tupIm.logout(callbacks);
+            return logoutPromise.promise;
+        };
+        TupImWrapper.prototype.getContactList = function (isSyncAll, timestamp, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var getContactListPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    getContactListPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "get contact list is successful");
+                                getContactListPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "get contact list failed! result=" + data.result);
+                                getContactListPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "is_sync_all": isSyncAll,
+                        "time_stamp": timestamp
+                    };
+                    this.tupIm.getContactList(param, callbacks);
+                    return [2, getContactListPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.getUserInfo = function (account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var getUserInfoPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            getUserInfoPromise = this.getPromise();
+                            callbacks = {
+                                response: function (data) {
+                                    if (data.result == 0) {
+                                        util_1.default.debug("tupImWrapper", "get user info is successful");
+                                        getUserInfoPromise.resolve(data);
+                                    }
+                                    else {
+                                        util_1.default.error("tupImWrapper", "get user info failed! result=" + data.result);
+                                        getUserInfoPromise.reject(data);
+                                    }
+                                }
+                            };
+                            param = {
+                                "account": account,
+                                "staff_id": 1
+                            };
+                            return [4, this.tupIm.getUserInfo(param, callbacks)];
+                        case 1:
+                            _a.sent();
+                            return [2, getUserInfoPromise.promise];
+                    }
+                });
+            });
+        };
+        TupImWrapper.prototype.setUserInfo = function (userInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var setUserInfoPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    setUserInfoPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "set user info is successful");
+                                setUserInfoPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "set user info failed! result=" + data.result);
+                                setUserInfoPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "staff_id": util.isUndefined(userInfo.staffID) ? 0 : userInfo.staffID,
+                        "account": util.isUndefined(userInfo.account) ? "" : userInfo.account,
+                        "staff_no": util.isUndefined(userInfo.staffNO) ? "" : userInfo.staffNO,
+                        "name": util.isUndefined(userInfo.name) ? "" : userInfo.name,
+                        "native_name": util.isUndefined(userInfo.nativeName) ? "" : userInfo.nativeName,
+                        "q_pin_yin": util.isUndefined(userInfo.qPinYin) ? "" : userInfo.qPinYin,
+                        "gender": util.isUndefined(userInfo.gender) ? 2 : userInfo.gender,
+                        "birthday": util.isUndefined(userInfo.birthday) ? "" : userInfo.birthday,
+                        "age": util.isUndefined(userInfo.age) ? "" : userInfo.age,
+                        "bind_no": util.isUndefined(userInfo.bindNO) ? "" : userInfo.bindNO,
+                        "mobile": util.isUndefined(userInfo.mobile) ? "" : userInfo.mobile,
+                        "home_phone": util.isUndefined(userInfo.homePhone) ? "" : userInfo.homePhone,
+                        "office_phone": util.isUndefined(userInfo.officePhone) ? "" : userInfo.officePhone,
+                        "short_phone": util.isUndefined(userInfo.shortPhone) ? "" : userInfo.shortPhone,
+                        "other_phone": util.isUndefined(userInfo.otherPhone) ? "" : userInfo.otherPhone,
+                        "voip": util.isUndefined(userInfo.voip) ? "" : userInfo.voip,
+                        "ip_phone": util.isUndefined(userInfo.ipPhone) ? "" : userInfo.ipPhone,
+                        "fax": util.isUndefined(userInfo.fax) ? "" : userInfo.fax,
+                        "email": util.isUndefined(userInfo.email) ? "" : userInfo.email,
+                        "website": util.isUndefined(userInfo.webSite) ? "" : userInfo.webSite,
+                        "signature": util.isUndefined(userInfo.signature) ? "" : userInfo.signature,
+                        "desc": util.isUndefined(userInfo.desc) ? "" : userInfo.desc,
+                        "address": util.isUndefined(userInfo.address) ? "" : userInfo.address,
+                        "image_id": util.isUndefined(userInfo.imageID) ? "" : userInfo.imageID,
+                        "postcode": util.isUndefined(userInfo.postalcode) ? "" : userInfo.postalcode,
+                        "is_security": util.isUndefined(userInfo.isSecrecy) ? 0 : userInfo.isSecrecy,
+                        "title": util.isUndefined(userInfo.title) ? "" : userInfo.title,
+                        "dept_id": util.isUndefined(userInfo.deptID) ? "" : userInfo.deptID,
+                        "dept_name_en": util.isUndefined(userInfo.deptNameEn) ? "" : userInfo.deptNameEn,
+                        "dept_name_cn": util.isUndefined(userInfo.deptNameCn) ? "" : userInfo.deptNameCn,
+                        "image_sync_time": util.isUndefined(userInfo.imageSyncTime) ? "" : userInfo.imageSyncTime,
+                        "old_account": util.isUndefined(userInfo.oldAccount) ? "" : userInfo.oldAccount,
+                        "state": util.isUndefined(userInfo.state) ? "0" : userInfo.state,
+                        "modify_time": util.isUndefined(userInfo.modifyTime) ? "" : userInfo.modifyTime
+                    };
+                    this.tupIm.setUserInfo(param, callbacks);
+                    return [2, setUserInfoPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.addContactGroup = function (index, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var addContactGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    addContactGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "add contact group is successful");
+                                addContactGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "add contact group failed! result=" + data.result);
+                                addContactGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "name": groupName,
+                        "index": index
+                    };
+                    this.tupIm.addUserGroup(param, callbacks);
+                    return [2, addContactGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.modContactGroup = function (groupID, index, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var modContactGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    modContactGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "modify contact group is successful");
+                                modContactGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "modify contact group failed! result=" + data.result);
+                                modContactGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": groupID,
+                        "name": groupName,
+                        "index": index
+                    };
+                    this.tupIm.modUserGroup(param, callbacks);
+                    return [2, modContactGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.delContactGroup = function (groupID, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var delContactGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    delContactGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "delete contact group is successful");
+                                delContactGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "delete contact group failed! result=" + data.result);
+                                delContactGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": groupID,
+                    };
+                    this.tupIm.delUserGroup(param, callbacks);
+                    return [2, delContactGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.updateGroupListOrder = function (groupIDs, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var updateGroupListOrderPromise, callbacks, userGroupList, x, param;
+                return __generator(this, function (_a) {
+                    updateGroupListOrderPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "update contact group is Successful");
+                                updateGroupListOrderPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "update contact group failed! result=" + data.result);
+                                updateGroupListOrderPromise.reject(data);
+                            }
+                        }
+                    };
+                    userGroupList = new Array();
+                    for (x in groupIDs) {
+                        userGroupList.push({
+                            "user_group": Number(groupIDs[x])
+                        });
+                    }
+                    param = {
+                        "user_group_list": userGroupList
+                    };
+                    this.tupIm.updateUsergroup(param, callbacks);
+                    return [2, updateGroupListOrderPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.moveContact = function (contactID, oldGroupID, newGroupID, type, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var moveContactrPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    moveContactrPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "move contact is Successful");
+                                moveContactrPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "move contact failed! result=" + data.result);
+                                moveContactrPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "contact_id": Number(contactID),
+                        "old_group_id": Number(oldGroupID),
+                        "new_group_id": Number(newGroupID),
+                        "type": type
+                    };
+                    this.tupIm.moveContactGroup(param, callbacks);
+                    return [2, moveContactrPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.addContact = function (contact, groupID, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var addContactPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    addContactPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "add contact is Successful");
+                                addContactPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "add contact failed! result=" + data.result);
+                                addContactPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": util.isUndefined(contact.id) ? 99 : Number(contact.id),
+                        "staff_id": util.isUndefined(contact.staffID) ? 0 : Number(contact.staffID),
+                        "name": contact.name,
+                        "nick_name": util.isUndefined(contact.nickName) ? "" : contact.nickName,
+                        "foreign_name": util.isUndefined(contact.foreignName) ? "" : contact.foreignName,
+                        "birthday": util.isUndefined(contact.birthday) ? "" : contact.birthday,
+                        "gender": util.isUndefined(contact.gender) ? 0 : Number(contact.gender),
+                        "corp_name": util.isUndefined(contact.corpName) ? "" : contact.corpName,
+                        "dept_name": util.isUndefined(contact.deptName) ? "" : contact.deptName,
+                        "title": util.isUndefined(contact.title) ? "" : contact.title,
+                        "mobile": contact.mobile,
+                        "office_phone": util.isUndefined(contact.officePhone) ? "" : contact.officePhone,
+                        "home_phone": util.isUndefined(contact.homePhone) ? "" : contact.homePhone,
+                        "other_phone": util.isUndefined(contact.otherPhone) ? "" : contact.otherPhone,
+                        "fax": util.isUndefined(contact.fax) ? "" : contact.fax,
+                        "email": util.isUndefined(contact.email) ? "" : contact.email,
+                        "website": util.isUndefined(contact.webSite) ? "" : contact.webSite,
+                        "im_no": util.isUndefined(contact.imNO) ? "" : contact.imNO,
+                        "address": util.isUndefined(contact.address) ? "" : contact.address,
+                        "desc": util.isUndefined(contact.desc) ? "" : contact.desc,
+                        "postcode": util.isUndefined(contact.postalcode) ? "" : contact.postalcode,
+                        "state": util.isUndefined(contact.state) ? 0 : Number(contact.state),
+                        "group_id": Number(groupID)
+                    };
+                    this.tupIm.addContact(param, callbacks);
+                    return [2, addContactPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.modContact = function (contact, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var modContactPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    modContactPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "modify contact is Successful");
+                                modContactPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "modify contact failed! result=" + data.result);
+                                modContactPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": Number(contact.id),
+                        "staff_id": util.isUndefined(contact.staffID) ? 0 : Number(contact.staffID),
+                        "name": contact.name,
+                        "nick_name": util.isUndefined(contact.nickName) ? "" : contact.nickName,
+                        "foreign_name": util.isUndefined(contact.foreignName) ? "" : contact.foreignName,
+                        "birthday": util.isUndefined(contact.birthday) ? "" : contact.birthday,
+                        "gender": util.isUndefined(contact.gender) ? 0 : Number(contact.gender),
+                        "corp_name": util.isUndefined(contact.corpName) ? "" : contact.corpName,
+                        "dept_name": util.isUndefined(contact.deptName) ? "" : contact.deptName,
+                        "title": util.isUndefined(contact.title) ? "" : contact.title,
+                        "mobile": contact.mobile,
+                        "office_phone": util.isUndefined(contact.officePhone) ? "" : contact.officePhone,
+                        "home_phone": util.isUndefined(contact.homePhone) ? "" : contact.homePhone,
+                        "other_phone": util.isUndefined(contact.otherPhone) ? "" : contact.otherPhone,
+                        "fax": util.isUndefined(contact.fax) ? "" : contact.fax,
+                        "email": util.isUndefined(contact.email) ? "" : contact.email,
+                        "website": util.isUndefined(contact.webSite) ? "" : contact.webSite,
+                        "im_no": util.isUndefined(contact.imNO) ? "" : contact.imNO,
+                        "address": util.isUndefined(contact.address) ? "" : contact.address,
+                        "desc": util.isUndefined(contact.desc) ? "" : contact.desc,
+                        "postcode": util.isUndefined(contact.postalcode) ? "" : contact.postalcode,
+                        "state": util.isUndefined(contact.state) ? 0 : Number(contact.state),
+                    };
+                    this.tupIm.modContact(param, callbacks);
+                    return [2, modContactPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.delContact = function (contactID, groupID, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var delContactPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    delContactPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "delete contact is Successful");
+                                delContactPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "delete contact failed! result=" + data.result);
+                                delContactPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "contact_id": Number(contactID),
+                        "group_id": Number(groupID)
+                    };
+                    this.tupIm.delFriendOrContact(param, callbacks);
+                    return [2, delContactPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.addFriend = function (account, groupID, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var addFriendPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    addFriendPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "add friend is Successful");
+                                addFriendPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "add friend failed! result=" + data.result);
+                                addFriendPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "account": account,
+                        "group_id": Number(groupID),
+                        "display_name": displayName
+                    };
+                    this.tupIm.addFriend(param, callbacks);
+                    return [2, addFriendPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.addFixedGroup = function (groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var addFixedGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    addFixedGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "add fixed group is successful");
+                                addFixedGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "add fixed group failed! result=" + data.result);
+                                addFixedGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": "",
+                        "name": groupInfo.name,
+                        "capacity": util.isUndefined(groupInfo.capacity) ? 200 : groupInfo.capacity,
+                        "manifesto": util.isUndefined(groupInfo.manifesto) ? "" : groupInfo.manifesto,
+                        "desc": util.isUndefined(groupInfo.desc) ? "" : groupInfo.desc,
+                        "owner": "owner",
+                        "auto_join_flag": util.isUndefined(groupInfo.jointFlag) ? 1 : groupInfo.jointFlag,
+                        "msg_policy_type": util.isUndefined(groupInfo.msgPolicyType) ? 1 : groupInfo.msgPolicyType,
+                        "group_type": 0,
+                        "fix_discuss": 0,
+                        "state": "0"
+                    };
+                    this.tupIm.addFixedGroup(param, callbacks);
+                    return [2, addFixedGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.addDiscussionGroup = function (groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var addDiscussionGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    addDiscussionGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "add discussion group is successful");
+                                addDiscussionGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "add discussion group failed! result=" + data.result);
+                                addDiscussionGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": "",
+                        "name": groupInfo.name,
+                        "capacity": util.isUndefined(groupInfo.capacity) ? 200 : groupInfo.capacity,
+                        "manifesto": util.isUndefined(groupInfo.manifesto) ? "" : groupInfo.manifesto,
+                        "desc": util.isUndefined(groupInfo.desc) ? "" : groupInfo.desc,
+                        "owner": "owner",
+                        "auto_join_flag": 0,
+                        "msg_policy_type": util.isUndefined(groupInfo.msgPolicyType) ? 1 : groupInfo.msgPolicyType,
+                        "group_type": 1,
+                        "fix_discuss": 0,
+                        "state": "0"
+                    };
+                    this.tupIm.addDiscussionGroup(param, callbacks);
+                    return [2, addDiscussionGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.modFixedGroup = function (groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var modFixedGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    modFixedGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "mod fixed group is successful");
+                                modFixedGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "mod fixed group failed! result=" + data.result);
+                                modFixedGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": groupInfo.id,
+                        "name": groupInfo.name,
+                        "capacity": util.isUndefined(groupInfo.capacity) ? 200 : groupInfo.capacity,
+                        "manifesto": util.isUndefined(groupInfo.manifesto) ? "" : groupInfo.manifesto,
+                        "desc": util.isUndefined(groupInfo.desc) ? "" : groupInfo.desc,
+                        "owner": groupInfo.owner,
+                        "auto_join_flag": util.isUndefined(groupInfo.jointFlag) ? 1 : groupInfo.jointFlag,
+                        "msg_policy_type": util.isUndefined(groupInfo.msgPolicyType) ? 1 : groupInfo.msgPolicyType,
+                        "group_type": 0,
+                        "fix_discuss": util.isUndefined(groupInfo.fixDiscuss) ? 0 : groupInfo.fixDiscuss,
+                        "state": util.isUndefined(groupInfo.state) ? "0" : groupInfo.state
+                    };
+                    this.tupIm.modFixedGroup(param, callbacks);
+                    return [2, modFixedGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.modDiscussionGroup = function (groupInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var modDiscussionGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    modDiscussionGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "mod discussion group is successful");
+                                modDiscussionGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "mod discussion group failed! result=" + data.result);
+                                modDiscussionGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": groupInfo.id,
+                        "name": groupInfo.name,
+                        "capacity": util.isUndefined(groupInfo.capacity) ? 200 : groupInfo.capacity,
+                        "manifesto": util.isUndefined(groupInfo.manifesto) ? "" : groupInfo.manifesto,
+                        "desc": util.isUndefined(groupInfo.desc) ? "" : groupInfo.desc,
+                        "owner": groupInfo.owner,
+                        "auto_join_flag": util.isUndefined(groupInfo.jointFlag) ? 0 : groupInfo.jointFlag,
+                        "msg_policy_type": util.isUndefined(groupInfo.msgPolicyType) ? 1 : groupInfo.msgPolicyType,
+                        "group_type": 1,
+                        "fix_discuss": util.isUndefined(groupInfo.fixDiscuss) ? 0 : groupInfo.fixDiscuss,
+                        "state": util.isUndefined(groupInfo.state) ? "0" : groupInfo.state
+                    };
+                    this.tupIm.modDiscussionGroup(param, callbacks);
+                    return [2, modDiscussionGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.delFixedGroup = function (groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var delFixedGroupPromise, callbacks;
+                return __generator(this, function (_a) {
+                    delFixedGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "delete fixed group is successful");
+                                delFixedGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "delete fixed group failed! result=" + data.result);
+                                delFixedGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    this.tupIm.delFixedGroup(groupId, callbacks);
+                    return [2, delFixedGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.delDiscussionGroup = function (groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var delDiscussionGroupPromise, callbacks;
+                return __generator(this, function (_a) {
+                    delDiscussionGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "delete discussion group is successful");
+                                delDiscussionGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "delete discussion group failed! result=" + data.result);
+                                delDiscussionGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    this.tupIm.delDiscussionGroup(groupId, callbacks);
+                    return [2, delDiscussionGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.searchGroup = function (searchGroupParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var searchGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    searchGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "search fixed group is successful");
+                                searchGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "search fixed group failed! result=" + data.result);
+                                searchGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "is_need_amount": searchGroupParam.isNeedAmount ? 1 : 0,
+                        "offset": util.isUndefined(searchGroupParam.offset) ? 0 : searchGroupParam.offset,
+                        "count": searchGroupParam.count,
+                        "query_key": searchGroupParam.condition,
+                        "query_type": searchGroupParam.queryType
+                    };
+                    this.tupIm.getFixedGroups(param, callbacks);
+                    return [2, searchGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.getGroupDetail = function (groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var getGroupDetailPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            getGroupDetailPromise = this.getPromise();
+                            callbacks = {
+                                response: function (data) {
+                                    if (data.result == 0) {
+                                        util_1.default.debug("tupImWrapper", "get group detail is successful");
+                                        getGroupDetailPromise.resolve(data);
+                                    }
+                                    else {
+                                        util_1.default.error("tupImWrapper", "get group detail failed! result=" + data.result);
+                                        getGroupDetailPromise.reject(data);
+                                    }
+                                }
+                            };
+                            param = {
+                                "group_id": groupId
+                            };
+                            return [4, this.tupIm.getFixedGroupDetail(param, callbacks)];
+                        case 1:
+                            _a.sent();
+                            return [2, getGroupDetailPromise.promise];
+                    }
+                });
+            });
+        };
+        TupImWrapper.prototype.addFixedGroupMember = function (groupId, account, groupName, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var addFixedGroupMemberPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    addFixedGroupMemberPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "add fixed group member successfully!");
+                                addFixedGroupMemberPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "add fixed group member failed! result=" + data.result);
+                                addFixedGroupMemberPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "account": account,
+                        "group_name": groupName,
+                        "display_name": util.isUndefined(displayName) ? "" : displayName,
+                    };
+                    this.tupIm.addFixedGroupMember(param, callbacks);
+                    return [2, addFixedGroupMemberPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.joinFixedGroup = function (groupId, groupName, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var joinFixedGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    joinFixedGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "join fixed group successfully!");
+                                joinFixedGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "join fixed group failed! result=" + data.result);
+                                joinFixedGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "group_name": groupName,
+                        "display_name": util.isUndefined(displayName) ? "" : displayName,
+                    };
+                    this.tupIm.joinFixedGroup(param, callbacks);
+                    return [2, joinFixedGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.addDiscussionGroupMember = function (groupId, account, groupName, displayName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var addDiscussionGroupMemberPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    addDiscussionGroupMemberPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "add discussion group member successfully!");
+                                addDiscussionGroupMemberPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "add discussion group member failed! result=" + data.result);
+                                addDiscussionGroupMemberPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "account": account,
+                        "group_name": groupName,
+                        "display_name": util.isUndefined(displayName) ? "" : displayName,
+                    };
+                    this.tupIm.addDiscussionGroupMember(param, callbacks);
+                    return [2, addDiscussionGroupMemberPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.delFixedGroupMember = function (groupId, account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var delFixedGroupMemberPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    delFixedGroupMemberPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "del fixed group member successfully!");
+                                delFixedGroupMemberPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "del fixed group member failed! result=" + data.result);
+                                delFixedGroupMemberPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "account": account
+                    };
+                    this.tupIm.delFixedGroupMember(param, callbacks);
+                    return [2, delFixedGroupMemberPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.leaveFixedGroup = function (groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var leaveFixedGroupPromise, callbacks;
+                return __generator(this, function (_a) {
+                    leaveFixedGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "leave fixed group successfully!");
+                                leaveFixedGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "leave fixed group failed! result=" + data.result);
+                                leaveFixedGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    this.tupIm.leaveFixedGroup(groupId, callbacks);
+                    return [2, leaveFixedGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.delDiscussionGroupMember = function (groupId, account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var delDiscussionGroupMemberPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    delDiscussionGroupMemberPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "del discussion group member successfully!");
+                                delDiscussionGroupMemberPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "del discussion group member failed! result=" + data.result);
+                                delDiscussionGroupMemberPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "account": account
+                    };
+                    this.tupIm.delDiscussionGroupMember(param, callbacks);
+                    return [2, delDiscussionGroupMemberPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.leaveDiscussionGroup = function (groupId, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var leaveDiscussionGroupPromise, callbacks;
+                return __generator(this, function (_a) {
+                    leaveDiscussionGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "leave discussion group successfully!");
+                                leaveDiscussionGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "leave discussion group failed! result=" + data.result);
+                                leaveDiscussionGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    this.tupIm.leaveDiscussionGroup(groupId, callbacks);
+                    return [2, leaveDiscussionGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.confirmFixedGroupInvite = function (approvalGroupParam, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var confirmFixedGroupInvitePromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    confirmFixedGroupInvitePromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "confirm fixed group invite successfully!");
+                                confirmFixedGroupInvitePromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "confirm fixed group invite failed! result=" + data.result);
+                                confirmFixedGroupInvitePromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "agree_join": approvalGroupParam.agreeJoin ? 1 : 0,
+                        "group_id": approvalGroupParam.groupId,
+                        "group_name": groupName,
+                        "member_account": approvalGroupParam.memberAccount,
+                        "display_name": util.isUndefined(approvalGroupParam.diaplayName) ? "" : approvalGroupParam.diaplayName
+                    };
+                    this.tupIm.confirmFixedGroupInvite(param, callbacks);
+                    return [2, confirmFixedGroupInvitePromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.confirmFixedGroupApply = function (approvalGroupParam, groupName, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var confirmFixedGroupApplyPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    confirmFixedGroupApplyPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "confirm fixed group apply successfully!");
+                                confirmFixedGroupApplyPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "confirm fixed group apply failed! result=" + data.result);
+                                confirmFixedGroupApplyPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "agree_join": approvalGroupParam.agreeJoin ? 1 : 0,
+                        "group_id": approvalGroupParam.groupId,
+                        "group_name": groupName,
+                        "member_account": approvalGroupParam.memberAccount,
+                        "display_name": util.isUndefined(approvalGroupParam.diaplayName) ? "" : approvalGroupParam.diaplayName
+                    };
+                    this.tupIm.confirmFixedGroupApply(param, callbacks);
+                    return [2, confirmFixedGroupApplyPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.getGroupMembers = function (groupId, isSyncAll, timestamp, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var getGroupMembersPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    getGroupMembersPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "get group member successfully!");
+                                getGroupMembersPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "get group member failed! result=" + data.result);
+                                getGroupMembersPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "is_sync_all": isSyncAll,
+                        "group_id": groupId,
+                        "time_stamp": timestamp
+                    };
+                    this.tupIm.getFixedGroupMembers(param, callbacks);
+                    return [2, getGroupMembersPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.setGroupMsgPromptPolicy = function (groupId, msgpolicyType, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var setGroupMsgPromptPolicyPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    setGroupMsgPromptPolicyPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "set group msg prompt policy successfully!");
+                                setGroupMsgPromptPolicyPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "set group msg prompt policy failed! result=" + data.result);
+                                setGroupMsgPromptPolicyPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "msg_policy_type": msgpolicyType
+                    };
+                    this.tupIm.setGroupMsgPolicy(param, callbacks);
+                    return [2, setGroupMsgPromptPolicyPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.setDisgroupPolicy = function (groupId, opType, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var setDisgroupPolicyPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    setDisgroupPolicyPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "set discussion group policy successfully!");
+                                setDisgroupPolicyPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "set discussion group policy failed! result=" + data.result);
+                                setDisgroupPolicyPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "policy": opType
+                    };
+                    this.tupIm.setDisgroupPolicy(param, callbacks);
+                    return [2, setDisgroupPolicyPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.modifyGroupType = function (groupId, opType, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var modifyGroupTypePromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    modifyGroupTypePromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "modify group type successfully!");
+                                modifyGroupTypePromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "modify group type failed! result=" + data.result);
+                                modifyGroupTypePromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "id": groupId,
+                        "group_type": opType
+                    };
+                    this.tupIm.modifyGroupType(param, callbacks);
+                    return [2, modifyGroupTypePromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.transferGroup = function (groupId, account, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var transferGroupPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    transferGroupPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "transfer group successfully!");
+                                transferGroupPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "transfer group failed! result=" + data.result);
+                                transferGroupPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "group_id": groupId,
+                        "account": account
+                    };
+                    this.tupIm.transferFixedGroup(param, callbacks);
+                    return [2, transferGroupPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.publishStatus = function (staus, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var publishStatusPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    publishStatusPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "Set personal status successfully!");
+                                publishStatusPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "Setting personal status failed! result=" + data.result);
+                                publishStatusPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "status": staus,
+                        "desc": ""
+                    };
+                    this.tupIm.publishStatus(param, callbacks);
+                    return [2, publishStatusPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.detectUserStatus = function (accounts, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var detectUserStatusPromise, callbacks, accountList, i, param;
+                return __generator(this, function (_a) {
+                    detectUserStatusPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "Detecting user status successfully!");
+                                detectUserStatusPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "Failed to detect user status! result=" + data.result);
+                                detectUserStatusPromise.reject(data);
+                            }
+                        }
+                    };
+                    accountList = new Array();
+                    for (i = 0; i < accounts.length; i++) {
+                        accountList[i] = { "account": accounts[i] };
+                    }
+                    param = {
+                        "account_list": accountList
+                    };
+                    this.tupIm.detectUserStatus(param, callbacks);
+                    return [2, detectUserStatusPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.sendIMMessage = function (messageSendParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var sendIMMessagePromise, callbacks, cloudEC_loginInfo, loginInfo, account, target, groupid, atUserInfoList, index, element, param;
+                return __generator(this, function (_a) {
+                    sendIMMessagePromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "Sending a message successfully!");
+                                sendIMMessagePromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "Sending message failed! result=" + data.result);
+                                sendIMMessagePromise.reject(data);
+                            }
+                        }
+                    };
+                    cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                    loginInfo = JSON.parse(cloudEC_loginInfo);
+                    account = loginInfo.userAccount;
+                    target = "";
+                    groupid = "";
+                    if (messageSendParam.chatType == 0) {
+                        target = messageSendParam.receiver;
+                    }
+                    else if (messageSendParam.chatType == 2 || messageSendParam.chatType == 6) {
+                        groupid = messageSendParam.receiver;
+                    }
+                    else {
+                    }
+                    atUserInfoList = new Array();
+                    for (index = 0; index < messageSendParam.atUserInfoList.length; index++) {
+                        element = messageSendParam.atUserInfoList[index];
+                        atUserInfoList[index] = { "account": element };
+                    }
+                    param = {
+                        "region_id": 1,
+                        "chat_type": messageSendParam.chatType,
+                        "source_flag": 0,
+                        "content_type": 1,
+                        "origin": account,
+                        "target": target,
+                        "group_id": groupid,
+                        "content": messageSendParam.content,
+                        "display_name": messageSendParam.displayName ? messageSendParam.displayName : "",
+                        "utc_stamp": messageSendParam.utcStamp ? messageSendParam.utcStamp : 1,
+                        "client_chat_id": messageSendParam.clientChatID,
+                        "media_type": messageSendParam.mediaType,
+                        "at_user_list": atUserInfoList
+                    };
+                    this.tupIm.sendIm(param, callbacks);
+                    return [2, sendIMMessagePromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.notifyImInputting = function (account, type) {
+            return __awaiter(this, void 0, void 0, function () {
+                var notifyImInputtingPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    notifyImInputtingPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "Send input status information successfully!");
+                                notifyImInputtingPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "Send input status information failure! result=" + data.result);
+                                notifyImInputtingPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "account": account,
+                        "type": type
+                    };
+                    this.tupIm.notifyImInputting(param, callbacks);
+                    return [2, notifyImInputtingPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.withDrawMessage = function (messageWithDrawParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var withDrawMessagePromise, callbacks, cloudEC_loginInfo, loginInfo, account, target, groupid, msgidList, param;
+                return __generator(this, function (_a) {
+                    withDrawMessagePromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "Withdraw message successfully!");
+                                withDrawMessagePromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "Withdraw message failure! result=" + data.result);
+                                withDrawMessagePromise.reject(data);
+                            }
+                        }
+                    };
+                    cloudEC_loginInfo = sessionStorage.cloudEC_loginInfo;
+                    loginInfo = JSON.parse(cloudEC_loginInfo);
+                    account = loginInfo.userAccount;
+                    target = "";
+                    groupid = "";
+                    if (messageWithDrawParam.isGroupMsg == 1) {
+                        target = messageWithDrawParam.receiver;
+                    }
+                    else if (messageWithDrawParam.isGroupMsg == 2) {
+                        groupid = messageWithDrawParam.receiver;
+                    }
+                    else {
+                    }
+                    msgidList = new Array();
+                    msgidList[0] = { "str_msgid": messageWithDrawParam.msgId };
+                    param = {
+                        "origin": account,
+                        "origin_name": messageWithDrawParam.originName ? messageWithDrawParam.originName : account,
+                        "group_name": messageWithDrawParam.groupName ? messageWithDrawParam.groupName : messageWithDrawParam.receiver,
+                        "target": messageWithDrawParam.receiver,
+                        "msg_type": messageWithDrawParam.isGroupMsg,
+                        "is_lastmsg": 1,
+                        "message_list": msgidList
+                    };
+                    this.tupIm.withdrawIm(param, callbacks);
+                    return [2, withDrawMessagePromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.setReadMessage = function (messageReadList, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var setReadMessagePromise, callbacks, messageList, index, element, message, param;
+                return __generator(this, function (_a) {
+                    setReadMessagePromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "Set the message to be read successfully!");
+                                setReadMessagePromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "Set message failed to read! result=" + data.result);
+                                setReadMessagePromise.reject(data);
+                            }
+                        }
+                    };
+                    messageList = new Array();
+                    for (index = 0; index < messageReadList.length; index++) {
+                        element = messageReadList[index];
+                        message = {
+                            "msg_type": messageReadList[index].msgType,
+                            "sender": messageReadList[index].sender,
+                            "str_msgid": messageReadList[index].msgId
+                        };
+                        messageList.push(message);
+                    }
+                    param = {
+                        "message_list": messageList
+                    };
+                    this.tupIm.setMessageRead(param, callbacks);
+                    return [2, setReadMessagePromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.getRecentConversation = function (timestamp, count, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var getRecentConversationPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    getRecentConversationPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "get the recent conversation successfully!");
+                                getRecentConversationPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "get the recent conversation failed! result=" + data.result);
+                                getRecentConversationPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "time_stamp": timestamp,
+                        "count": count
+                    };
+                    this.tupIm.getRecentConversation(param, callbacks);
+                    return [2, getRecentConversationPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.delRecentConversation = function (isDelAll, conversationId, type, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var delRecentConversationPromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    delRecentConversationPromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "delete the recent conversation successfully!");
+                                delRecentConversationPromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "delete the recent conversation failed! result=" + data.result);
+                                delRecentConversationPromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "is_del_all": isDelAll ? 1 : 0,
+                        "conversation_id": conversationId,
+                        "type": type
+                    };
+                    this.tupIm.delRecentConversation(param, callbacks);
+                    return [2, delRecentConversationPromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.deleteMessage = function (deleteMessageParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var deleteMessagePromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    deleteMessagePromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "delete message successfully!");
+                                deleteMessagePromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "delete message failed! result=" + data.result);
+                                deleteMessagePromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "msg_type": deleteMessageParam.isGroupMsg,
+                        "opt_type": deleteMessageParam.optType,
+                        "sender": deleteMessageParam.sender,
+                        "msgid_list": deleteMessageParam.msgIdList
+                    };
+                    this.tupIm.delHistoryMessage(param, callbacks);
+                    return [2, deleteMessagePromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.queryHistoryMessage = function (queryHistoryMessageParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var deleteMessagePromise, callbacks, param;
+                return __generator(this, function (_a) {
+                    deleteMessagePromise = this.getPromise();
+                    callbacks = {
+                        response: function (data) {
+                            if (data.result == 0) {
+                                util_1.default.debug("tupImWrapper", "query message successfully!");
+                                deleteMessagePromise.resolve(data);
+                            }
+                            else {
+                                util_1.default.error("tupImWrapper", "query message failed! result=" + data.result);
+                                deleteMessagePromise.reject(data);
+                            }
+                        }
+                    };
+                    param = {
+                        "operation_type": queryHistoryMessageParam.operationType,
+                        "msg_type": queryHistoryMessageParam.msgType,
+                        "sender": queryHistoryMessageParam.sender,
+                        "str_msgid": queryHistoryMessageParam.msgId,
+                        "count": queryHistoryMessageParam.count
+                    };
+                    this.tupIm.queryHistoryMessage(param, callbacks);
+                    return [2, deleteMessagePromise.promise];
+                });
+            });
+        };
+        TupImWrapper.prototype.setBasicImEvent = function (callbacks) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    this.tupIm.setBasicImEvent(callbacks);
+                    return [2];
+                });
+            });
+        };
+        TupImWrapper.prototype.setP2pFileImEvent = function (callbacks) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    this.tupIm.setP2pFileImEvent(callbacks);
+                    return [2];
+                });
+            });
+        };
+        TupImWrapper.prototype.setGroupImEvent = function (callbacks) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    this.tupIm.setGroupImEvent(callbacks);
+                    return [2];
+                });
+            });
+        };
+        TupImWrapper._instance = new TupImWrapper();
+        return TupImWrapper;
+    }());
+    exports.default = TupImWrapper;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 374 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var TUPIm = (function () {
+        function TUPIm(opts) {
+            var _this = this;
+            this.notifyFuncs = [];
+            this.rspFuncs = [];
+            this.wsocket = {};
+            this.section_id = 0x20000;
+            this.name = "Im";
+            this.notifyFuncs = new Array();
+            this.rspFuncs = new Array();
+            var serviceAddr = opts.svrAddr || "127.0.0.1";
+            var pcol = "ws://";
+            if (opts.ssl === 1) {
+                pcol = "wss://";
+            }
+            if (opts.socket) {
+                this.uniSocket = opts.socket;
+                this.uniSocket.registerService(this);
+            }
+            else {
+                this.wsocket = new WebSocket(pcol + serviceAddr + ":7684", "tup_im_service_protocol");
+                this.wsocket.onopen = opts.ready;
+                this.wsocket.onclose = opts.close;
+                this.wsocket.onmessage = function (msg) {
+                    var data = JSON.parse(msg.data);
+                    util_1.default.debug("tupIm", msg.data);
+                    _this.msgProcessor(data);
+                };
+            }
+        }
+        ;
+        TUPIm.prototype.msgProcessor = function (data) {
+            if (data.notify > 0) {
+                var notifyIdx = data.notify & 0x7fff;
+                if (typeof this.notifyFuncs[notifyIdx] == "function") {
+                    this.notifyFuncs[notifyIdx](data);
+                }
+            }
+            if (data.rsp > 0) {
+                var rspIdx = data.rsp & 0x7fff;
+                if (typeof this.rspFuncs[rspIdx] == "function") {
+                    this.rspFuncs[rspIdx](data);
+                }
+            }
+        };
+        TUPIm.prototype.sendData = function (data) {
+            var sendStr = JSON.stringify(data);
+            if (this.uniSocket) {
+                this.uniSocket.sendData(sendStr);
+            }
+            else {
+                this.wsocket.send(sendStr);
+            }
+        };
+        ;
+        TUPIm.prototype.init = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[1] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131073,
+                "description": "tup_im_init"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.uninit = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[2] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131074,
+                "description": "tup_im_uninit"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setBasicImEvent = function (callbacks) {
+            if (callbacks && typeof callbacks.onHeartBeart == "function") {
+                this.notifyFuncs[0] = callbacks.onHeartBeart;
+            }
+            if (callbacks && typeof callbacks.onSysUrlRet == "function") {
+                this.notifyFuncs[1] = callbacks.onSysUrlRet;
+            }
+            if (callbacks && typeof callbacks.onLogout == "function") {
+                this.notifyFuncs[2] = callbacks.onLogout;
+            }
+            if (callbacks && typeof callbacks.onKickOut == "function") {
+                this.notifyFuncs[3] = callbacks.onKickOut;
+            }
+            if (callbacks && typeof callbacks.onMultiDevice == "function") {
+                this.notifyFuncs[4] = callbacks.onMultiDevice;
+            }
+            if (callbacks && typeof callbacks.onGeneral == "function") {
+                this.notifyFuncs[5] = callbacks.onGeneral;
+            }
+            if (callbacks && typeof callbacks.onAddFriend == "function") {
+                this.notifyFuncs[6] = callbacks.onAddFriend;
+            }
+            if (callbacks && typeof callbacks.onUserInfoChange == "function") {
+                this.notifyFuncs[8] = callbacks.onUserInfoChange;
+            }
+            if (callbacks && typeof callbacks.onSendImInput == "function") {
+                this.notifyFuncs[34] = callbacks.onSendImInput;
+            }
+            if (callbacks && typeof callbacks.onCodeChat == "function") {
+                this.notifyFuncs[35] = callbacks.onCodeChat;
+            }
+            if (callbacks && typeof callbacks.onChatList == "function") {
+                this.notifyFuncs[36] = callbacks.onChatList;
+            }
+            if (callbacks && typeof callbacks.onSystemBulletin == "function") {
+                this.notifyFuncs[37] = callbacks.onSystemBulletin;
+            }
+            if (callbacks && typeof callbacks.onSms == "function") {
+                this.notifyFuncs[38] = callbacks.onSms;
+            }
+            if (callbacks && typeof callbacks.onUnDeliver == "function") {
+                this.notifyFuncs[39] = callbacks.onUnDeliver;
+            }
+            if (callbacks && typeof callbacks.onMsgRead == "function") {
+                this.notifyFuncs[40] = callbacks.onMsgRead;
+            }
+            if (callbacks && typeof callbacks.onMsgSendAck == "function") {
+                this.notifyFuncs[41] = callbacks.onMsgSendAck;
+            }
+            if (callbacks && typeof callbacks.onUserStatusList == "function") {
+                this.notifyFuncs[43] = callbacks.onUserStatusList;
+            }
+            if (callbacks && typeof callbacks.onWithdrawAck == "function") {
+                this.notifyFuncs[44] = callbacks.onWithdrawAck;
+            }
+            if (callbacks && typeof callbacks.onWithdrawNotify == "function") {
+                this.notifyFuncs[45] = callbacks.onWithdrawNotify;
+            }
+            if (callbacks && typeof callbacks.onOprCommand == "function") {
+                this.notifyFuncs[46] = callbacks.onOprCommand;
+            }
+        };
+        TUPIm.prototype.setP2pFileImEvent = function (callbacks) {
+            if (callbacks && typeof callbacks.onP2pFileIncoming == "function") {
+                this.notifyFuncs[29] = callbacks.onP2pFileIncoming;
+            }
+            if (callbacks && typeof callbacks.onP2pFileProcess == "function") {
+                this.notifyFuncs[30] = callbacks.onP2pFileProcess;
+            }
+            if (callbacks && typeof callbacks.onP2pFileStartResult == "function") {
+                this.notifyFuncs[31] = callbacks.onP2pFileStartResult;
+            }
+            if (callbacks && typeof callbacks.onP2pFileStopResult == "function") {
+                this.notifyFuncs[32] = callbacks.onP2pFileStopResult;
+            }
+            if (callbacks && typeof callbacks.onP2pFileStop == "function") {
+                this.notifyFuncs[33] = callbacks.onP2pFileStop;
+            }
+        };
+        TUPIm.prototype.setGroupImEvent = function (callbacks) {
+            if (callbacks && typeof callbacks.onApplyJoinFixedGroupResult == "function") {
+                this.notifyFuncs[10] = callbacks.onApplyJoinFixedGroupResult;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupMemberAdd == "function") {
+                this.notifyFuncs[11] = callbacks.onFixedGroupMemberAdd;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupMemberDel == "function") {
+                this.notifyFuncs[12] = callbacks.onFixedGroupMemberDel;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupInfoChg == "function") {
+                this.notifyFuncs[13] = callbacks.onFixedGroupInfoChg;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupOwnerChange == "function") {
+                this.notifyFuncs[14] = callbacks.onFixedGroupOwnerChange;
+            }
+            if (callbacks && typeof callbacks.onReceiveInviteToFixedGroup == "function") {
+                this.notifyFuncs[15] = callbacks.onReceiveInviteToFixedGroup;
+            }
+            if (callbacks && typeof callbacks.onReceiveInviteJoinFixedGroup == "function") {
+                this.notifyFuncs[16] = callbacks.onReceiveInviteJoinFixedGroup;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupWasAddedToGroup == "function") {
+                this.notifyFuncs[17] = callbacks.onFixedGroupWasAddedToGroup;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupDismiss == "function") {
+                this.notifyFuncs[18] = callbacks.onFixedGroupDismiss;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupOwnerInviteResult == "function") {
+                this.notifyFuncs[19] = callbacks.onFixedGroupOwnerInviteResult;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupKickout == "function") {
+                this.notifyFuncs[20] = callbacks.onFixedGroupKickout;
+            }
+            if (callbacks && typeof callbacks.onFixedGroupLeaveResult == "function") {
+                this.notifyFuncs[21] = callbacks.onFixedGroupLeaveResult;
+            }
+            if (callbacks && typeof callbacks.onDiscussGroupMemListAddMember == "function") {
+                this.notifyFuncs[22] = callbacks.onDiscussGroupMemListAddMember;
+            }
+            if (callbacks && typeof callbacks.onDiscussGroupMemListDelMember == "function") {
+                this.notifyFuncs[23] = callbacks.onDiscussGroupMemListDelMember;
+            }
+            if (callbacks && typeof callbacks.onDiscussGroupInfoChange == "function") {
+                this.notifyFuncs[24] = callbacks.onDiscussGroupInfoChange;
+            }
+            if (callbacks && typeof callbacks.onDiscussGroupWasAddToGroup == "function") {
+                this.notifyFuncs[25] = callbacks.onDiscussGroupWasAddToGroup;
+            }
+            if (callbacks && typeof callbacks.onDiscussGroupOwnerChange == "function") {
+                this.notifyFuncs[26] = callbacks.onDiscussGroupOwnerChange;
+            }
+            if (callbacks && typeof callbacks.onDiscussGroupDismiss == "function") {
+                this.notifyFuncs[27] = callbacks.onDiscussGroupDismiss;
+            }
+            if (callbacks && typeof callbacks.onDiscussGroupBroadcast == "function") {
+                this.notifyFuncs[28] = callbacks.onDiscussGroupBroadcast;
+            }
+            if (callbacks && typeof callbacks.onGroupFile == "function") {
+                this.notifyFuncs[42] = callbacks.onGroupFile;
+            }
+        };
+        ;
+        TUPIm.prototype.setServerAddress = function (ip, port, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[3] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131075,
+                "description": "tup_im_setserveraddress",
+                "param": {
+                    "ip": ip,
+                    "port": port
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.login = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[4] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131076,
+                "description": "tup_im_login",
+                "param": arg
+            };
+            this.sendData(data);
+            data.param = "";
+        };
+        ;
+        TUPIm.prototype.logout = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[5] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131077,
+                "description": "tup_im_logout"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.notifyImInputting = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[6] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131078,
+                "description": "tup_im_notifyiminputting",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getContactList = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[7] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131079,
+                "description": "tup_im_getcontactlist",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getServiceProfile = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[8] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131080,
+                "description": "tup_im_getserviceprofile",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getSysUrl = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[9] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131081,
+                "description": "tup_im_getsysurl"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getUserInfo = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[10] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131082,
+                "description": "tup_im_getuserinfo",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addUserGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[11] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131083,
+                "description": "tup_im_addusergroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.modUserGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[12] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131084,
+                "description": "tup_im_modusergroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delUserGroup = function (id, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[13] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131085,
+                "description": "tup_im_delusergroup",
+                "param": id
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.updateUsergroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[14] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131086,
+                "description": "tup_im_update_usergroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addFriend = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[15] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131087,
+                "description": "tup_im_addfriend",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delFriendOrContact = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[16] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131088,
+                "description": "tup_im_delfriendorcontact",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addContact = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[17] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131089,
+                "description": "tup_im_addcontact",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.modContact = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[18] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131090,
+                "description": "tup_im_modcontact",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.moveContactGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[19] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131091,
+                "description": "tup_im_movecontactgroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.detectUserStatus = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[20] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131092,
+                "description": "tup_im_detectuserstatus",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.subscribeUserStatus = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[21] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131093,
+                "description": "tup_im_subscribeuserstatus",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.unSubscribeUserStatus = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[22] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131094,
+                "description": "tup_im_unsubscribeuserstatus",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.sendIm = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[23] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131095,
+                "description": "tup_im_sendim",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setMessageRead = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[24] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131096,
+                "description": "tup_im_setmessageread",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.queryHistoryMessage = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[25] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131097,
+                "description": "tup_im_queryHistoryMessage",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getDepts = function (deptID, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[26] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131098,
+                "description": "tup_im_getdepts",
+                "param": deptID
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.queryEntaddressBook = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[27] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131099,
+                "description": "tup_im_queryentaddressbook",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.queryUserInfo = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[28] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131100,
+                "description": "tup_im_queryuserinfo",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addFixedGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[29] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131101,
+                "description": "tup_im_addfixedgroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.modFixedGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[30] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131102,
+                "description": "tup_im_modfixedgroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delFixedGroup = function (id, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[31] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131103,
+                "description": "tup_im_delfixedgroup",
+                "param": {
+                    "id": id
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addFixedGroupMember = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[32] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131104,
+                "description": "tup_im_addfixedgroupmember",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delFixedGroupMember = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[33] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131105,
+                "description": "tup_im_delfixedgroupmember",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.confirmFixedGroupApply = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[34] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131106,
+                "description": "tup_im_confirmfixedgroupapply",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.confirmFixedGroupInvite = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[35] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131107,
+                "description": "tup_im_confirmfixedgroupinvite",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.joinFixedGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[36] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131108,
+                "description": "tup_im_joinfixedgroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.leaveFixedGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[37] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131109,
+                "description": "tup_im_leavefixedgroup",
+                "param": {
+                    "arg": arg
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.transferFixedGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[38] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131110,
+                "description": "tup_im_transferfixedgroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getFixedGroupDetail = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[39] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131111,
+                "description": "tup_im_getfixedgroupdetail",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getFixedGroupMembers = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[40] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131112,
+                "description": "tup_im_getfixedgroupmembers",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getFixedGroups = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[41] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131113,
+                "description": "tup_im_getfixedgroups",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addDiscussionGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[42] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131114,
+                "description": "tup_im_adddiscussiongroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.modDiscussionGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[43] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131115,
+                "description": "tup_im_moddiscussiongroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delDiscussionGroup = function (id, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[44] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131116,
+                "description": "tup_im_deldiscussiongroup",
+                "param": {
+                    "id": id
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addDiscussionGroupMember = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[45] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131117,
+                "description": "tup_im_adddiscussiongroupmember",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delDiscussionGroupMember = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[46] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131118,
+                "description": "tup_im_deldiscussiongroupmember",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.addDiscussionGroupPhoneMember = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[47] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131119,
+                "description": "tup_im_adddiscussiongroupphonemember",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delDiscussionGroupPhoneMember = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[48] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131120,
+                "description": "tup_im_deldiscussiongroupphonemember",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.leaveDiscussionGroupSys = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[49] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131121,
+                "description": "tup_im_leavediscussiongroup",
+                "param": {
+                    "group_id": arg
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.leaveDiscussionGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[50] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131122,
+                "description": "tup_im_leave_discussion_group",
+                "param": {
+                    "group_id": arg
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.transferDiscussionGroup = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[51] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131123,
+                "description": "tup_im_transferdiscussiongroup",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setDisgroupPolicy = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[52] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131124,
+                "description": "tup_im_set_disgroup_policy",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.sendDisgroupOpMessage = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[53] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131125,
+                "description": "tup_im_send_disgroup_op_message",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setSelfDefineImage = function (image, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[54] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131126,
+                "description": "tup_im_setselfdefineimage",
+                "param": image
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setSystemImage = function (imageID, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[55] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131127,
+                "description": "tup_im_setsystemimage",
+                "param": {
+                    "imageID": imageID
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setUserInfo = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[56] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131128,
+                "description": "tup_im_setuserinfo",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getUserDefineImage = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[57] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131129,
+                "description": "tup_im_getuserdefineimage",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.publishStatus = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[58] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131130,
+                "description": "tup_im_publishstatus",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getConferenceList = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[59] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131131,
+                "description": "tup_im_get_conference_list",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getRecentConversation = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[60] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131132,
+                "description": "tup_im_get_recent_conversation",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delRecentConversation = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[61] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131133,
+                "description": "tup_im_del_recent_conversation",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.sendP2PFile = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[62] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131134,
+                "description": "tup_im_sendp2pfile",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.acceptP2PFile = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[63] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131135,
+                "description": "tup_im_acceptp2pfile",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.rejectP2PFile = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[64] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131136,
+                "description": "tup_im_rejectp2pfile",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.cancelP2PFile = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[65] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131137,
+                "description": "tup_im_cancelp2pfile",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.sendSms = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[66] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131138,
+                "description": "tup_im_sendsms",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.groupFilePreUpload = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[67] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131139,
+                "description": "tup_im_groupfile_pre_upload",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.groupFileReportUploadResult = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[68] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131140,
+                "description": "tup_im_groupfile_report_upload_result",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.groupFilePreDelete = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[69] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131141,
+                "description": "tup_im_groupfile_pre_delete",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.groupFileReportDeleteResult = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[70] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131142,
+                "description": "tup_im_groupfile_report_delete_result",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.groupFileQuery = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[71] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131143,
+                "description": "tup_im_groupfile_query",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setLinkageStatus = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[72] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131144,
+                "description": "tup_im_set_linkage_status",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getLinkageStatus = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[73] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131145,
+                "description": "tup_im_get_linkage_status",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.tupImBase64Decode = function (arg, len, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[77] = callbacks.response;
+            }
+            var data = {
+                "cmd": 0x2004D,
+                "description": "tup_im_base64_decode",
+                "param": {
+                    "arg": arg,
+                    "len": len
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setNetAccessMode = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[78] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131150,
+                "description": "tup_im_set_net_access_mode",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setDispatchMessage = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[79] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131151,
+                "description": "tup_im_setdispatchmessage",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setGroupMsgPolicy = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[80] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131152,
+                "description": "tup_im_set_group_msg_prompt_policy",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.setLogParam = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[81] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131153,
+                "description": "tup_im_set_log_param",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.clientPerformanceReport = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[82] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131154,
+                "description": "tup_im_client_performance_report",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.withdrawIm = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[83] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131155,
+                "description": "tup_im_withdraw_msg",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.sendHeartBeat = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[84] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131156,
+                "description": "tup_im_sendheartbeat"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.modifyGroupType = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[86] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131158,
+                "description": "tup_im_modify_group_type",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.openGroupSpace = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[87] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131159,
+                "description": "tup_im_open_group_space",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.kickOut = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[88] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131160,
+                "description": "tup_im_kick_out"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.getServiceUtcTime = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[89] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131161,
+                "description": "tup_im_get_service_utc_time"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.activeP2pPort = function (callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[90] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131162,
+                "description": "tup_im_active_p2p_port"
+            };
+            this.sendData(data);
+        };
+        ;
+        TUPIm.prototype.delHistoryMessage = function (arg, callbacks) {
+            if (callbacks && typeof callbacks.response == "function") {
+                this.rspFuncs[91] = callbacks.response;
+            }
+            var data = {
+                "cmd": 131163,
+                "description": "tup_im_del_history_message",
+                "param": arg
+            };
+            this.sendData(data);
+        };
+        ;
+        return TUPIm;
+    }());
+    exports.default = TUPIm;
+    ;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 375 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(39), __webpack_require__(51), __webpack_require__(15), __webpack_require__(13), __webpack_require__(99), __webpack_require__(1), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tupLoginWrapper_1, tupCallWrapper_1, enum_1, serverConfig_1, userConfig_1, util, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var AnonyConf = (function () {
@@ -27231,15 +32092,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var siteInfo = ret.tempuser_info_result.site_info;
                 if (siteInfo && siteInfo[0]) {
                     var _a = siteInfo[0], num_of_server = _a.num_of_server, access_server = _a.access_server, tms_account = _a.tms_account, tms_password = _a.tms_password;
-                    var sipUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "", maaUri = "";
+                    var sipUri = "", sipTlsUri = "", svnUri = "", httpsProxy = "", eserverUri = "", stgUri = "", stgAccount = "", stgPassword = "", sipStgUri = "", isSiptls = 0, isSrtp = 0, eserverStgUri = "", maaUri = "";
                     var tmsServer = "", tmsAccount = "", tmsPwd = "";
                     for (var i = 0; i < num_of_server; i++) {
                         if (!access_server || !access_server[i]) {
                             continue;
                         }
-                        isSiptls = access_server[i].is_siptls;
-                        isSrtp = access_server[i].is_srtp;
+                        isSiptls = access_server[0].is_siptls;
+                        isSrtp = access_server[0].is_srtp;
                         sipUri += access_server[i].sip_uri;
+                        sipTlsUri = access_server[0].sip_tls_uri;
                         svnUri += access_server[i].svn_uri;
                         httpsProxy += access_server[i].httpsproxy_uri;
                         stgUri += access_server[i].stg_info.stg_uri;
@@ -27300,6 +32162,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         isSiptls: isSiptls,
                         isSrtp: isSrtp,
                         sipUri: sipUri,
+                        sipTlsUri: sipTlsUri,
                         svnUri: svnUri,
                         httpsProxy: httpsProxy,
                         stgUri: stgUri,
@@ -27502,6 +32365,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     sipUri: "",
                     isSiptls: 0,
                     isSrtp: 0,
+                    sipTlsUri: "",
                     svnUri: "",
                     httpsProxy: "",
                     stgUri: "",
@@ -27548,7 +32412,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         }
         AnonyConf.prototype.do_actionAnonyLogin = function (anonymousConfParam, serverInfo) {
             return __awaiter(this, void 0, void 0, function () {
-                var ret, _a, stgUri, stgAccount, stgPassword, svnUri, stgTunnelBuiltResult, stgTunnelBuiltResult;
+                var ret, data, err, _a, stgUri, stgAccount, stgPassword, svnUri, stgTunnelBuiltResult, stgTunnelBuiltResult;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -27569,49 +32433,61 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 util_1.default.error("anonyConf", "Get tempUser info failed.");
                                 return [2, ret];
                             }
+                            return [4, this.loginWrapper.getBestLocalIp(serverInfo.serverAddress)];
+                        case 5:
+                            data = _b.sent();
+                            if (0 == data.result) {
+                                sessionStorage.cloudEC_localIP = data.local_ip;
+                                util_1.default.debug("anonymousconf", "Get local IP is " + util.hideIPAddress(data.local_ip));
+                            }
+                            else {
+                                util_1.default.error("anonymousconf", "Get local IP failed");
+                                err = { cmdId: 0, errorCode: -1, errorInfo: "Get local IP failed" };
+                                Object.assign(err, util.getErrCode(data.rsp, data.result));
+                                return [2, { result: false, info: err }];
+                            }
                             _a = ret.loginInfo, stgUri = _a.stgUri, stgAccount = _a.stgAccount, stgPassword = _a.stgPassword, svnUri = _a.svnUri;
-                            if (!userConfig_1.CloudEC_CLIENTCONFIG.USE_IM) return [3, 8];
+                            if (!userConfig_1.CloudEC_CLIENTCONFIG.USE_IM) return [3, 9];
                             if (!!(stgUri === undefined ||
                                 stgUri === "" ||
                                 stgUri === ";" ||
-                                stgUri === ";;")) return [3, 7];
+                                stgUri === ";;")) return [3, 8];
                             return [4, this.buildStgTunnel(stgUri, stgAccount, stgPassword)];
-                        case 5:
+                        case 6:
                             stgTunnelBuiltResult = _b.sent();
                             if (!stgTunnelBuiltResult.result) {
                                 util_1.default.error("anonyConf", "stgTunnel build failed.");
                                 return [2, { result: false }];
                             }
                             return [4, this.fireWallDetect(svnUri)];
-                        case 6:
+                        case 7:
                             _b.sent();
-                            _b.label = 7;
-                        case 7: return [3, 12];
-                        case 8:
+                            _b.label = 8;
+                        case 8: return [3, 13];
+                        case 9:
                             if (!!(stgUri === undefined ||
                                 stgUri === "" ||
                                 stgUri === ";" ||
-                                stgUri === ";;")) return [3, 10];
+                                stgUri === ";;")) return [3, 11];
                             util_1.default.debug("anonyConf", " start startFireWallDetect : " + svnUri);
                             return [4, this.fireWallDetect(svnUri)];
-                        case 9:
-                            _b.sent();
-                            _b.label = 10;
                         case 10:
-                            if (!(enum_1.FIREWALL_MODE.LOGIN_E_FIREWALL_MODE_ONLY_HTTP === this.fireWallConnectMode)) return [3, 12];
-                            if (!!(stgUri === undefined ||
-                                stgUri === "" ||
-                                stgUri === ";" ||
-                                stgUri === ";;")) return [3, 12];
+                            _b.sent();
+                            _b.label = 11;
+                        case 11:
+                            if (!(enum_1.FIREWALL_MODE.LOGIN_E_FIREWALL_MODE_ONLY_HTTP === this.fireWallConnectMode)) return [3, 13];
+                            if (!!(stgUri === undefined || stgUri === "" || stgUri === ";" || stgUri === ";;")) return [3, 13];
                             util_1.default.debug("anonyConf", " start buildStgTunnel ");
                             return [4, this.buildStgTunnel(stgUri, stgAccount, stgPassword)];
-                        case 11:
+                        case 12:
                             stgTunnelBuiltResult = _b.sent();
                             if (!stgTunnelBuiltResult.result) {
                                 return [2, { result: false }];
                             }
-                            _b.label = 12;
-                        case 12: return [2, { result: true }];
+                            _b.label = 13;
+                        case 13:
+                            stgPassword = "";
+                            return [2, { result: true }];
                     }
                 });
             });
@@ -27631,7 +32507,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [4, this.updateSiteInfo(ret)];
                         case 2:
                             loginInfo = _a.sent();
-                            util_1.default.debug("anonyConf", "Get tempUser info success! the tempUserInfo is:" + JSON.stringify(loginInfo));
+                            util_1.default.debug("anonyConf", "Get tempUser info success!");
                             return [2, { result: true, loginInfo: loginInfo }];
                         case 3:
                             util_1.default.error("anonyConf", "Get tempUser info failed error_code=" + ret.result);
@@ -27676,176 +32552,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 372 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Call = (function () {
-        function Call() {
-            this.callID = 0;
-            this.isVideo = 0;
-        }
-        Call.prototype.setCallID = function (call_id) {
-            this.callID = call_id;
-        };
-        Call.prototype.setCallType = function (isVideo) {
-            this.isVideo = isVideo;
-        };
-        Call.prototype.getCallType = function () {
-            return this.isVideo;
-        };
-        Call.prototype.setCallState = function (callState) {
-            this.callState = callState;
-        };
-        Call.prototype.setCallStyle = function (callStyle) {
-            this.callStyle = callStyle;
-        };
-        Call.prototype.setCallee = function (callee) {
-            this.callee = callee;
-        };
-        Call.prototype.getCallee = function () {
-            return this.callee;
-        };
-        Call.prototype.makeCall = function (calleeNumber, callType, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var _this = this;
-                var evt;
-                return __generator(this, function (_a) {
-                    evt = { result: false, info: "" };
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_START_CALL, calleeNumber, callType, function (data) {
-                        if (data) {
-                            evt.result = true;
-                            evt.info = "start call success";
-                            _this.callID = data.callId;
-                        }
-                        else {
-                            evt.result = false;
-                            evt.info = "start call failed";
-                        }
-                        callback(evt);
-                    });
-                    return [2];
-                });
-            });
-        };
-        Call.prototype.rejectCall = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REJECT_CALL, this.callID);
-                    return [2];
-                });
-            });
-        };
-        Call.prototype.acceptCall = function (isVideo) {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ACCEPT_CALL, this.callID, isVideo);
-                    return [2];
-                });
-            });
-        };
-        Call.prototype.hold = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2];
-                });
-            });
-        };
-        Call.prototype.unhold = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2];
-                });
-            });
-        };
-        Call.prototype.dialDTMF = function (keyTone) {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_SEND_DTMF, this.callID, keyTone);
-                    return [2];
-                });
-            });
-        };
-        Call.prototype.tans2Video = function () {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_ADD_VIDEO, this.callID);
-        };
-        Call.prototype.tans2Audio = function () {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_DEL_VIDEO, this.callID);
-        };
-        Call.prototype.answerSwitch = function (isAccept) {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CALL_REPLY_ADD_VIDEO, this.callID, isAccept);
-        };
-        Call.prototype.toString = function () {
-        };
-        Call.prototype.videoMute = function (bMute, callID) {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_VIDEO_SWITCH, callID, (bMute ? 1 : 0), function (ret) {
-                if (ret.result == true) {
-                    var localView = document.getElementById("CloudEC:localCanvas");
-                    var remoteView = document.getElementById("CloudEC:remoteCanvas");
-                    var localContext = localView.getContext('webgl');
-                    var remoteContext = remoteView.getContext('webgl');
-                    localContext.clearColor(0.7804, 0.7804, 0.7804, 1.0);
-                    localContext.clear(localContext.COLOR_BUFFER_BIT);
-                    remoteContext.clearColor(0.0, 0.0, 0.0, 1.0);
-                    remoteContext.clear(remoteContext.COLOR_BUFFER_BIT);
-                }
-            });
-        };
-        Call.prototype.micMute = function (bMute, callID) {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_MIC_SWITCH, callID, bMute ? 1 : 0, function (ret) { });
-        };
-        Call.prototype.transfer2Conf = function (confParam, callID, callback) {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_P2P_TRANSFER_TO_CONF, confParam, callID, callback);
-        };
-        return Call;
-    }());
-    exports.default = Call;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 373 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(1), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, util, client_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(1), __webpack_require__(23), __webpack_require__(1), __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, util, client_1, util_1, serverConfig_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Conference = (function () {
@@ -27901,7 +32611,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         Conference.prototype.getAttendeeListNumber = function () {
             var attendeeNum = 0;
             for (var i = 0; i < this.attendeeList.length; i++) {
-                if (this.attendeeList[i].participantId != "") {
+                if (this.attendeeList[i].name != "") {
                     attendeeNum = attendeeNum + 1;
                 }
             }
@@ -27912,6 +32622,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         Conference.prototype.getAttendeeList = function (callback) {
             var evt = { result: true, info: "" };
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
             if (this.attendeeList == null) {
                 this.attendeeList = new Array();
             }
@@ -27925,7 +32640,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var flagData = this.attendeeList.find(function (value) {
                 return attendee.number == value.number;
             });
-            if (flagData != undefined && flagData.participantId == "") {
+            if (flagData != undefined && flagData.name == "") {
                 var attendeeTemp = {
                     participantId: attendee.participantId,
                     name: attendee.name,
@@ -27944,7 +32659,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 };
                 this.updateAttendeeList(attendeeTemp);
             }
-            else if (flagData != undefined && flagData.participantId != "") {
+            else if (flagData != undefined && flagData.name != "") {
                 var attendeeTemp = {
                     participantId: flagData.participantId,
                     name: flagData.name,
@@ -28042,21 +32757,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         Conference.prototype.addAttendee = function (attendees) {
             if (util.isUndefined(attendees) || attendees.length === 0) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendees");
                 client_1.default.notifyErr(err);
+                return;
             }
             for (var i = 0; i < attendees.length; i++) {
                 if (!util.isValidAttendeeParam(attendees[i])) {
-                    var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
+                    var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendees");
                     client_1.default.notifyErr(err);
+                    return;
                 }
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_ADD_ATTENDEE, attendees, this.confHandle);
         };
         Conference.prototype.delAttendee = function (attendee) {
-            if (util.isUndefined(attendee)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
+            if (util.isUndefined(attendee) || util.isNull(attendee)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendee");
                 client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_DEL_ATTENDEE, attendee, this.confHandle, this.attendeeList);
         };
@@ -28067,11 +32785,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             else {
                 dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_MUTE_CONF, this.confHandle, 0);
             }
+            if (serverConfig_1.CloudEC_SERVERCONFIG.CONF_CONTROL_PROTOCOL == 1) {
+                this.isAllMute = mute ? 1 : 0;
+            }
         };
         Conference.prototype.muteAttendee = function (attendee, mute) {
-            if (util.isUndefined(attendee)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
+            if (util.isUndefined(attendee) || util.isNull(attendee)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendee");
                 client_1.default.notifyErr(err);
+                return;
             }
             if (mute) {
                 dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_MUTE_ATTENDEE, this.confHandle, { number: attendee }, 1);
@@ -28081,6 +32803,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
         };
         Conference.prototype.requestChairman = function (chairmanPwd) {
+            if (util.isUndefined(chairmanPwd)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("chairmanPwd");
+                client_1.default.notifyErr(err);
+                return;
+            }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_REQUEST_CHAIRMAN, this.confHandle, this.dataConfHandle, this.confId, this.hostKey, this.attendeeList, chairmanPwd);
         };
         Conference.prototype.releaseChairman = function () {
@@ -28088,9 +32815,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         Conference.prototype.postponeConf = function () { };
         Conference.prototype.handup = function (attendee) {
-            if (util.isUndefined(attendee)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
+            if (util.isUndefined(attendee) || util.isNull(attendee)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendee");
                 client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_HAND_UP, this.confHandle, attendee, this.attendeeList);
         };
@@ -28102,8 +32830,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         Conference.prototype.broadcastAttendee = function (isBroad, attendee) {
             if (util.isUndefined(attendee)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendee");
                 client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(isBroad) || !util.isBinaryNumber(isBroad)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("isBroad");
+                client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_BROADCAST_ATTENDEE, this.confHandle, isBroad, { number: attendee }, function (data) {
                 if (data.result && 1 == data.info.type) {
@@ -28120,8 +32854,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         Conference.prototype.watchAttendee = function (attendee) {
             if (util.isUndefined(attendee)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("attendees");
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendee");
                 client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WATCH_ATTENDEE, this.confHandle, { number: attendee });
         };
@@ -28130,6 +32865,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var evt = { result: false, info: err };
             if (!util.isInteger(userid)) {
                 client_1.default.notifyErr(evt);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AS_SET_OWNER, this.dataConfHandle, 1, userid);
         };
@@ -28138,6 +32874,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var evt = { result: false, info: err };
             if (!util.isInteger(userid)) {
                 client_1.default.notifyErr(evt);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AS_STOP, this.dataConfHandle);
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_AS_SET_OWNER, this.dataConfHandle, 0, userid);
@@ -28162,21 +32899,36 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_WB_DELETE, this.dataConfHandle, docid);
         };
         Conference.prototype.requestRemoteCtrl = function (privilege) {
+            if (!util.isIntegerRange(privilege, 1, 2)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("privilege");
+                client_1.default.notifyErr(err);
+                return;
+            }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_REQUEST_PRIVILEGE, this.dataConfHandle, privilege);
         };
         Conference.prototype.setRemoteCtrl = function (privilege, action, userid) {
-            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
             if (!util.isInteger(userid)) {
-                client_1.default.notifyErr(evt);
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("userid");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (!util.isIntegerRange(privilege, 1, 2)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("privilege");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (!util.isIntegerRange(action, 0, 4)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("action");
+                client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_PRIVILEGE, this.dataConfHandle, privilege, action, userid);
         };
         Conference.prototype.answerRemoteCtrl = function (userid, accept) {
-            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
             if (!util.isInteger(userid)) {
-                client_1.default.notifyErr(evt);
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("userid");
+                client_1.default.notifyErr(err);
+                return;
             }
             if (accept) {
                 dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_PRIVILEGE, this.dataConfHandle, 1, 1, userid);
@@ -28559,24 +33311,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         Conference.prototype.enableAnnotation = function () { };
         Conference.prototype.disableAnnotation = function () { };
         Conference.prototype.setConfMode = function (mode) {
-            if (!util.isInteger(mode)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("mode");
+            if (!util.isIntegerRange(mode, 0, 2)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("mode");
                 client_1.default.notifyErr(err);
-            }
-            if (mode !== 1 && mode !== 2 && mode !== 0) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("mode");
-                client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_CONFMODE, this.confHandle, mode);
         };
-        Conference.prototype.setConfMixedPicture = function (mode, imageType, attendees) {
-            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_CONF_MIXED_PICTURE, this.confHandle, mode, imageType, attendees);
+        Conference.prototype.setConfMixedPicture = function (imageType, attendees) {
+            if (!util.isIntegerRange(imageType, 0, 9) || imageType == 5 || imageType == 7 || imageType == 8) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("imageType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_CONF_MIXED_PICTURE, this.confHandle, 0, imageType, attendees);
         };
         Conference.prototype.sendMessage = function (messageParam) {
             var err = { cmdId: 400000000, errorCode: 490000001, errorInfo: "parameter error" };
             var evt = { result: false, info: err };
+            if (util.isUndefined(messageParam)) {
+                var errorInfo = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("messageParam");
+                client_1.default.notifyErr(errorInfo);
+                return;
+            }
             if (util.isUndefined(messageParam.msgType) || util.isUndefined(messageParam.msgContent) || !util.isInteger(messageParam.receiveID)) {
-                var errorInfo = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("msgType ,msgContent or receiveID");
+                var errorInfo = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("msgType ,msgContent or receiveID");
                 client_1.default.notifyErr(errorInfo);
                 return;
             }
@@ -28644,8 +33403,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         Conference.prototype.setDropFrame = function (count) {
             if (!util.isInteger(count)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("count");
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("count");
                 client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_CONF_SET_DROP_FRAME, count);
         };
@@ -28665,10 +33425,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 374 */
+/* 377 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(49), __webpack_require__(1), __webpack_require__(17), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util, enum_1, util_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(23), __webpack_require__(1), __webpack_require__(15), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util, enum_1, util_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Device = (function () {
@@ -28676,22 +33436,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         Device.prototype.getMediaDevice = function (deviceType, callback) {
             util_1.default.info("device", "step in getMediaDevice");
-            if (deviceType != enum_1.MediaDevice.MICROPHONE && deviceType != enum_1.MediaDevice.SPEAKER && deviceType != enum_1.MediaDevice.CAMERA) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("deviceType");
+            if (util.isUndefined(deviceType) || !util.isIntegerRange(deviceType, 0, 2)) {
+                var err = errorCode_1.EC_SDK_ERROR.CALL_PARAM_INVALID_ERROR("deviceType");
                 client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(200000000, 200000003, "callback");
+                client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_GET_MEDIA_DEVICE, deviceType, function (ret) {
                 callback(ret);
             });
         };
         Device.prototype.setMediaDevice = function (deviceType, index) {
-            if (deviceType != enum_1.MediaDevice.MICROPHONE && deviceType != enum_1.MediaDevice.SPEAKER && deviceType != enum_1.MediaDevice.CAMERA) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("deviceType");
+            if (util.isUndefined(deviceType) || !util.isIntegerRange(deviceType, 0, 2)) {
+                var err = errorCode_1.EC_SDK_ERROR.CALL_PARAM_INVALID_ERROR("deviceType");
                 client_1.default.notifyErr(err);
+                return;
             }
-            if (!util.isInteger(index)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("index");
+            if (util.isUndefined(deviceType) || !util.isInteger(index)) {
+                var err = errorCode_1.EC_SDK_ERROR.CALL_PARAM_INVALID_ERROR("index");
                 client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_SET_MEDIA_DEVICE, deviceType, index, function (ret) {
                 if (ret.result == true) {
@@ -28717,20 +33485,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return Device.SPKINDEX;
         };
         Device.prototype.setVoiceVol = function (deviceType, value) {
-            if (deviceType != enum_1.MediaDevice.MICROPHONE && deviceType != enum_1.MediaDevice.SPEAKER && deviceType != enum_1.MediaDevice.CAMERA) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("deviceType");
+            if (util.isUndefined(deviceType) || !util.isIntegerRange(deviceType, 0, 1)) {
+                var err = errorCode_1.EC_SDK_ERROR.CALL_PARAM_INVALID_ERROR("deviceType");
                 client_1.default.notifyErr(err);
+                return;
             }
             if (!util.isInteger(value)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("index");
+                var err = errorCode_1.EC_SDK_ERROR.CALL_PARAM_INVALID_ERROR("index");
                 client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_SET_VOICE, deviceType, value);
         };
         Device.prototype.getVoiceVol = function (deviceType, callback) {
-            if (deviceType != enum_1.MediaDevice.MICROPHONE && deviceType != enum_1.MediaDevice.SPEAKER && deviceType != enum_1.MediaDevice.CAMERA) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("deviceType");
+            if (util.isUndefined(deviceType) || !util.isIntegerRange(deviceType, 0, 1)) {
+                var err = errorCode_1.EC_SDK_ERROR.CALL_PARAM_INVALID_ERROR("deviceType");
                 client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(200000000, 200000003, "callback");
+                client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_DEVC_GET_VOICE, deviceType, function (ret) {
                 callback(ret);
@@ -28748,10 +33524,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 375 */
+/* 378 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(25), __webpack_require__(24), __webpack_require__(37), __webpack_require__(49), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(23), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Eaddr = (function () {
@@ -28760,8 +33536,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         Eaddr.prototype.searchUserInfo = function (queryParam, callback) {
             if (util.isUndefined(queryParam) || !util.isBinaryNumber(queryParam.searchType)
                 || util.isUndefined(queryParam.pageIndex) || !util.isInteger(queryParam.pageIndex)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("queryParam");
+                var err = errorCode_1.EC_SDK_ERROR.EADDR_PARAM_INVALID_ERROR("queryParam");
                 client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(600000000, 600000002, "callback");
+                client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_EADDR_SEARCH_USER, queryParam, function (ret) {
                 if (ret.result) {
@@ -28801,8 +33583,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         Eaddr.prototype.searchDeptInfo = function (deptId, callback) {
             if (util.isUndefined(deptId)) {
-                var err = errorCode_1.EC_SDK_ERROR.PARAM_INVALID_ERROR("deptId");
+                var err = errorCode_1.EC_SDK_ERROR.EADDR_PARAM_INVALID_ERROR("deptId");
                 client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(600000000, 600000002, "callback");
+                client_1.default.notifyErr(err);
+                return;
             }
             dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_EADDR_SEARCH_DEPT, deptId, function (ret) {
                 if (ret.result) {
@@ -28821,7 +33609,1708 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 376 */
+/* 379 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(23), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Contact = (function () {
+        function Contact() {
+        }
+        Contact.prototype.getContactlist = function (isSyncAll, timestamp, callback) {
+            if (util.isUndefined(isSyncAll) || !util.isBoolean(isSyncAll)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isSyncAll");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(timestamp) || util.isNull(timestamp)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "timestamp");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_CONTACT_LIST, isSyncAll ? 1 : 0, timestamp, function (data) {
+                if (data.result == 0) {
+                    var userContactInfo = void 0;
+                    var myUserLists = new Array();
+                    var imGroup = void 0;
+                    var imGroupList = new Array();
+                    var imGroupResult = data.param.im_group_list;
+                    var userGroup = void 0;
+                    var userGroupList = new Array();
+                    var userGroupResult = data.param.user_group_list;
+                    var userGroupMember = void 0;
+                    var userGroupMemberList = new Array();
+                    var constantInfoResult = void 0;
+                    var userListResult = data.param.user_list;
+                    var userGroupMemberListResult_1 = data.param.user_group_member_list;
+                    var contactListResult_1 = data.param.contact_list;
+                    var evt = { result: true, info: "" };
+                    for (var i = 0; (imGroupResult != null) && i < imGroupResult.length; i++) {
+                        imGroup = {
+                            id: imGroupResult[i].id,
+                            name: imGroupResult[i].name,
+                            owner: imGroupResult[i].owner,
+                            singleFileSpace: imGroupResult[i].single_file_space,
+                            state: imGroupResult[i].state,
+                            capacity: imGroupResult[i].capacity,
+                            desc: imGroupResult[i].desc,
+                            fixDiscuss: imGroupResult[i].fix_discuss,
+                            groupType: imGroupResult[i].group_type,
+                            isInitGroupName: imGroupResult[i].is_init_group_name,
+                            jointFlag: imGroupResult[i].joint_flag,
+                            manifesto: imGroupResult[i].manifesto,
+                            msgPolicyType: imGroupResult[i].msg_policy_type,
+                            extensions: "",
+                        };
+                        imGroupList.push(imGroup);
+                    }
+                    for (var i = 0; (userGroupResult != null) && i < userGroupResult.length; i++) {
+                        userGroup = {
+                            id: userGroupResult[i].id,
+                            index: userGroupResult[i].index,
+                            name: userGroupResult[i].name,
+                            state: userGroupResult[i].state,
+                            extensions: "",
+                        };
+                        userGroupList.push(userGroup);
+                    }
+                    var objUserList = new Array();
+                    var objContactList = new Array();
+                    var _loop_1 = function (i) {
+                        var flag = void 0;
+                        flag = userListResult.find(function (value) {
+                            return value.staff_id === contactListResult_1[i].staff_id;
+                        });
+                        if (flag != undefined) {
+                            var userInfo = {
+                                staffID: flag.staff_id,
+                                account: flag.account,
+                                staffNO: flag.staff_no,
+                                name: flag.name,
+                                nativeName: flag.native_name,
+                                qPinYin: flag.q_pin_yin,
+                                gender: flag.gender,
+                                birthday: flag.birthday,
+                                age: flag.age,
+                                bindNO: flag.bind_no,
+                                mobile: flag.mobile,
+                                homePhone: flag.home_phone,
+                                officePhone: flag.office_phone,
+                                shortPhone: flag.short_phone,
+                                otherPhone: flag.other_phone,
+                                voip: flag.voip,
+                                ipPhone: flag.ip_phone,
+                                fax: flag.fax,
+                                email: flag.email,
+                                webSite: flag.website,
+                                signature: flag.signature,
+                                desc: flag.desc,
+                                address: flag.address,
+                                imageID: flag.image_id,
+                                postalcode: flag.postcode,
+                                isSecrecy: flag.is_security,
+                                title: flag.title,
+                                deptID: flag.dept_id,
+                                deptNameEn: flag.dept_name_cn,
+                                deptNameCn: flag.dept_name_en,
+                                imageSyncTime: flag.image_sync_time,
+                                oldAccount: flag.old_account,
+                                state: flag.state,
+                                modifyTime: flag.modify_time,
+                                contactID: contactListResult_1[i].id,
+                                extensions: "",
+                            };
+                            objUserList.push(userInfo);
+                        }
+                        else {
+                            var objContact = {
+                                id: contactListResult_1[i].id,
+                                staffID: contactListResult_1[i].staff_id,
+                                name: contactListResult_1[i].name,
+                                nickName: contactListResult_1[i].nick_name,
+                                foreignName: contactListResult_1[i].foreign_name,
+                                birthday: contactListResult_1[i].birthday,
+                                gender: contactListResult_1[i].gender,
+                                corpName: contactListResult_1[i].crop_name,
+                                deptName: contactListResult_1[i].dept_name,
+                                title: contactListResult_1[i].title,
+                                mobile: contactListResult_1[i].mobile,
+                                officePhone: contactListResult_1[i].office_phone,
+                                homePhone: contactListResult_1[i].other_mobiles,
+                                otherPhone: contactListResult_1[i].other_phone,
+                                fax: contactListResult_1[i].fax,
+                                email: contactListResult_1[i].email,
+                                webSite: contactListResult_1[i].website,
+                                imNO: contactListResult_1[i].im_no,
+                                address: contactListResult_1[i].address,
+                                desc: contactListResult_1[i].desc,
+                                postalcode: contactListResult_1[i].postcode,
+                                state: contactListResult_1[i].state,
+                                extensions: "",
+                            };
+                            objContactList.push(objContact);
+                        }
+                    };
+                    for (var i = 0; (contactListResult_1 != null) && i < contactListResult_1.length; i++) {
+                        _loop_1(i);
+                    }
+                    for (var i = 0; (userGroupList != null) && i < userGroupList.length; i++) {
+                        var flagUser = void 0;
+                        var flagContact = void 0;
+                        var userList = new Array();
+                        var contactList = new Array();
+                        var _loop_2 = function (j) {
+                            if (userGroupList[i].id == userGroupMemberListResult_1[j].group_id) {
+                                flagUser = objUserList.find(function (value) {
+                                    return value.contactID === userGroupMemberListResult_1[j].contact_id;
+                                });
+                                if (flagUser != undefined) {
+                                    userList.push(flagUser);
+                                }
+                                flagContact = objContactList.find(function (value) {
+                                    return value.id === userGroupMemberListResult_1[j].contact_id;
+                                });
+                                if (flagContact != undefined) {
+                                    contactList.push(flagContact);
+                                }
+                            }
+                        };
+                        for (var j = 0; (userGroupMemberListResult_1 != null) && j < userGroupMemberListResult_1.length; j++) {
+                            _loop_2(j);
+                        }
+                        userGroupMember = {
+                            groupID: userGroupList[i].id,
+                            name: userGroupList[i].name,
+                            userList: userList,
+                            contactList: contactList,
+                            extensions: "",
+                        };
+                        userGroupMemberList.push(userGroupMember);
+                    }
+                    constantInfoResult = {
+                        imGroupList: imGroupList,
+                        userGroupList: userGroupList,
+                        userGroupMemberList: userGroupMemberList,
+                        extensions: "",
+                    };
+                    evt = {
+                        result: true,
+                        info: constantInfoResult,
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.getUserInfo = function (account, callback) {
+            if (util.isUndefined(account) || util.isNull(account)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_USER_INFO, account, function (data) {
+                if (data.result == 0) {
+                    var retUserInfo = data.param;
+                    var userInfo_1 = {
+                        staffID: retUserInfo.staff_id,
+                        account: retUserInfo.account,
+                        staffNO: retUserInfo.staff_no,
+                        name: retUserInfo.name,
+                        nativeName: retUserInfo.native_name,
+                        qPinYin: retUserInfo.q_pin_yin,
+                        gender: retUserInfo.gender,
+                        birthday: retUserInfo.birthday,
+                        age: retUserInfo.age,
+                        bindNO: retUserInfo.bind_no,
+                        mobile: retUserInfo.mobile,
+                        homePhone: retUserInfo.home_phone,
+                        officePhone: retUserInfo.office_phone,
+                        shortPhone: retUserInfo.short_phone,
+                        otherPhone: retUserInfo.other_phone,
+                        voip: retUserInfo.voip,
+                        ipPhone: retUserInfo.ip_phone,
+                        fax: retUserInfo.fax,
+                        email: retUserInfo.email,
+                        webSite: retUserInfo.website,
+                        signature: retUserInfo.signature,
+                        desc: retUserInfo.desc,
+                        address: retUserInfo.address,
+                        imageID: retUserInfo.image_id,
+                        postalcode: retUserInfo.postcode,
+                        isSecrecy: retUserInfo.is_security,
+                        title: retUserInfo.title,
+                        deptID: retUserInfo.dept_id,
+                        deptNameEn: retUserInfo.dept_name_en,
+                        deptNameCn: retUserInfo.dept_name_cn,
+                        imageSyncTime: retUserInfo.image_sync_time,
+                        oldAccount: retUserInfo.old_account,
+                        state: retUserInfo.state,
+                        modifyTime: retUserInfo.modify_time,
+                        contactID: 0,
+                        extensions: "",
+                    };
+                    dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_EADDR_SEARCH_USER, { condition: account, pageIndex: 1, searchType: 0 }, function (ret) {
+                        if (ret.result) {
+                            var user_list_info = ret.info.param.entry;
+                            var userContactInfo = void 0;
+                            userContactInfo = {
+                                name: user_list_info[0].name,
+                                staffNo: user_list_info[0].staffno,
+                                gender: user_list_info[0].gender,
+                                ucAccount: user_list_info[0].ucaccount,
+                                deptName: user_list_info[0].deptname,
+                                position: user_list_info[0].position,
+                                mobile: user_list_info[0].mobile,
+                                homePhone: user_list_info[0].homephone,
+                                officePhone: user_list_info[0].officephone,
+                                officePhone2: user_list_info[0].officephone2,
+                                otherPhone: user_list_info[0].otherphone,
+                                otherPhone2: user_list_info[0].otherphone2,
+                                espaceNumber: user_list_info[0].espacenumber,
+                                fax: user_list_info[0].fax,
+                                zipCode: user_list_info[0].zipcode,
+                                email: user_list_info[0].email,
+                                address: user_list_info[0].address,
+                                signature: userInfo_1.signature,
+                                website: user_list_info[0].website,
+                                headId: user_list_info[0]["head-id"]
+                            };
+                            callback({ result: true, info: userContactInfo });
+                        }
+                    });
+                }
+            });
+        };
+        Contact.prototype.setUserInfo = function (userInfo, callback) {
+            var evt = { result: true, info: "Set user information successfully！" };
+            if (util.isUndefined(userInfo) || util.isNull(userInfo)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "userInfo");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_USER_INFO, userInfo, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.addFriend = function (account, groupID, displayName, callback) {
+            var evt = { result: true, info: "add friend is successful" };
+            if (util.isUndefined(account) || util.isNull(account)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_FRIEND, account, groupID, displayName, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "add friend failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.addContactGroup = function (index, groupName, callback) {
+            var evt = { result: true, info: "add contact group is successful" };
+            if (util.isUndefined(groupName) || util.isNull(groupName)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupName");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(index) || util.isNull(index) || !util.isInteger(index)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "index");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_CONTACT_GROUP, index, groupName, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "add contact group failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.modContactGroup = function (groupID, index, groupName, callback) {
+            var evt = { result: true, info: "modify contact group is successful" };
+            if (util.isUndefined(groupName) || util.isNull(groupName)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupName");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(index) || util.isNull(index) || !util.isInteger(index)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "index");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_CONTACT_GROUP, groupID, index, groupName, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "modify contact group failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.delContactGroup = function (groupID, callback) {
+            var evt = { result: true, info: "delete contact group is successful" };
+            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_CONTACT_GROUP, groupID, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "delete contact group failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.updateGroupListOrder = function (groupIDs, callback) {
+            var evt = { result: true, info: "update group list order is successful" };
+            if (util.isUndefined(groupIDs) || util.isNull(groupIDs)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupIDs");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_UPDATE_GROUP_LIST_ORDER, groupIDs, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "update group list order failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.addContact = function (contactInfo, groupID, callback) {
+            var evt = { result: true, info: "add contact is successful" };
+            if (util.isUndefined(contactInfo) || util.isNull(contactInfo)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(contactInfo.name) || util.isNull(contactInfo.name)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.name");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(contactInfo.mobile) || util.isNull(contactInfo.mobile)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.mobile");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_CONTACT, contactInfo, groupID, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "add contact failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.modContact = function (contactInfo, callback) {
+            var evt = { result: true, info: "modify contact is successful" };
+            if (util.isUndefined(contactInfo) || util.isNull(contactInfo)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(contactInfo.name) || util.isNull(contactInfo.name)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.name");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(contactInfo.mobile) || util.isNull(contactInfo.mobile)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.mobile");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(contactInfo.gender) || !util.isNumber(contactInfo.gender)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.gender");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(contactInfo.id) || !util.isNumber(contactInfo.id)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.id");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(contactInfo.state) || !util.isNumber(contactInfo.state)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.state");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_CONTACT, contactInfo, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "modify contact failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.delContact = function (contactID, groupID, callback) {
+            var evt = { result: true, info: "delete contact is successful" };
+            if (util.isUndefined(contactID) || util.isNull(contactID) || !util.isInteger(contactID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_CONTACT, contactID, groupID, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "delete contact failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Contact.prototype.moveContact = function (contactID, oldGroupID, newGroupID, type, callback) {
+            var evt = { result: true, info: "move contact is successful" };
+            if (util.isUndefined(contactID) || util.isNull(contactID) || !util.isInteger(contactID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(oldGroupID) || util.isNull(oldGroupID) || !util.isInteger(oldGroupID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "oldGroupID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(newGroupID) || util.isNull(newGroupID) || !util.isInteger(newGroupID)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactID");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(type) || util.isNull(type) || !util.isBinaryNumber(type)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "type");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOVE_CONTACT, contactID, oldGroupID, newGroupID, type, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "move contact failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        return Contact;
+    }());
+    exports.default = Contact;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 380 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(23), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Group = (function () {
+        function Group() {
+        }
+        Group.prototype.addGroup = function (groupInfo, callback) {
+            var evt = { result: true, info: "add group is successful" };
+            if (util.isUndefined(groupInfo) || util.isNull(groupInfo)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupInfo");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupInfo.name) || util.isNull(groupInfo.name)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "name");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupInfo.groupType) || !util.isBinaryNumber(groupInfo.groupType)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (groupInfo.groupType == 0) {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_FIXED_GROUP, groupInfo, function (data) {
+                    if (data.result == 0) {
+                        callback(evt);
+                    }
+                    else {
+                        evt = {
+                            result: false,
+                            info: "add fixed group failed."
+                        };
+                        callback(evt);
+                    }
+                });
+            }
+            else {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_DISCUSSION_GROUP, groupInfo, function (data) {
+                    if (data.result == 0) {
+                        callback(evt);
+                    }
+                    else {
+                        evt = {
+                            result: false,
+                            info: "add discussion group failed."
+                        };
+                        callback(evt);
+                    }
+                });
+            }
+        };
+        Group.prototype.modGroup = function (groupInfo, callback) {
+            var evt = { result: true, info: "modify group is successful" };
+            if (util.isUndefined(groupInfo) || util.isNull(groupInfo)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupInfo");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupInfo.id) || util.isNull(groupInfo.id)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "id");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupInfo.name) || util.isNull(groupInfo.name)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "name");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupInfo.owner) || util.isNull(groupInfo.owner)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "owner");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(groupInfo.groupType) || !util.isBinaryNumber(groupInfo.groupType)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (groupInfo.groupType == 0) {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_FIXED_GROUP, groupInfo, function (data) {
+                    if (data.result == 0) {
+                        callback(evt);
+                    }
+                    else {
+                        evt = {
+                            result: false,
+                            info: "mod fixed group failed."
+                        };
+                        callback(evt);
+                    }
+                });
+            }
+            else {
+                dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_MOD_DISCUSSION_GROUP, groupInfo, function (data) {
+                    if (data.result == 0) {
+                        callback(evt);
+                    }
+                    else {
+                        evt = {
+                            result: false,
+                            info: "mod discussion group failed."
+                        };
+                        callback(evt);
+                    }
+                });
+            }
+        };
+        Group.prototype.delGroup = function (groupId, callback) {
+            var evt = { result: true, info: "delete group is successful" };
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_DETAIL, groupId, function (data) {
+                if (data.result == 0) {
+                    if (data.param.group_type == 0) {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_FIXED_GROUP, groupId, function (data) {
+                            if (data.result == 0) {
+                                callback(evt);
+                            }
+                            else {
+                                evt = {
+                                    result: false,
+                                    info: "del fixed group failed."
+                                };
+                                callback(evt);
+                            }
+                        });
+                    }
+                    else {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_DISCUSSION_GROUP, groupId, function (data) {
+                            if (data.result == 0) {
+                                callback(evt);
+                            }
+                            else {
+                                evt = {
+                                    result: false,
+                                    info: "del discussion group failed."
+                                };
+                                callback(evt);
+                            }
+                        });
+                    }
+                }
+                else {
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    client_1.default.notifyErr(err);
+                    return;
+                }
+            });
+        };
+        Group.prototype.searchGroup = function (searchGroupParam, callback) {
+            var evt = { result: true, info: "search the group list successfully" };
+            if (util.isUndefined(searchGroupParam) || util.isNull(searchGroupParam)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "searchGroupParam");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(searchGroupParam.isNeedAmount) || !util.isBoolean(searchGroupParam.isNeedAmount)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isNeedAmount");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(searchGroupParam.count) || !util.isInteger(searchGroupParam.count)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "count");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(searchGroupParam.queryType) || !util.isIntegerRange(searchGroupParam.queryType, 0, 2)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(searchGroupParam.condition)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "condition");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_SEARCH_GROUP, searchGroupParam, function (data) {
+                if (data.result == 0) {
+                    var retGroupList = data.param.group_list;
+                    var groupList = new Array();
+                    if (retGroupList != null) {
+                        for (var i = 0; i < retGroupList.length; i++) {
+                            var group = retGroupList[i];
+                            var groupInfo = {
+                                id: group.id,
+                                name: group.name,
+                                capacity: group.capacity,
+                                manifesto: group.manifesto,
+                                desc: group.desc,
+                                owner: group.owner,
+                                jointFlag: group.auto_join_flag,
+                                msgPolicyType: group.msg_policy_type,
+                                groupType: group.group_type,
+                                fixDiscuss: group.fix_discuss,
+                                state: group.state,
+                                isInitGroupName: group.is_init_group_name,
+                                singleFileSpace: group.single_file_space,
+                                extensions: ""
+                            };
+                            groupList.push(groupInfo);
+                        }
+                    }
+                    evt.info = { "count": data.param.count, "offset": data.param.offset,
+                        "amount": data.param.record_amount, "groupList": groupList };
+                    callback(evt);
+                }
+                else {
+                    callback(data);
+                }
+            });
+        };
+        Group.prototype.getGroupDetail = function (groupId, callback) {
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_DETAIL, groupId, function (data) {
+                if (data.result == 0) {
+                    var retGroupInfo = data.param;
+                    var groupInfo = {
+                        id: retGroupInfo.id,
+                        name: retGroupInfo.name,
+                        capacity: retGroupInfo.capacity,
+                        manifesto: retGroupInfo.manifesto,
+                        desc: retGroupInfo.desc,
+                        owner: retGroupInfo.owner,
+                        jointFlag: retGroupInfo.auto_join_flag,
+                        msgPolicyType: retGroupInfo.msg_policy_type,
+                        groupType: retGroupInfo.group_type,
+                        fixDiscuss: retGroupInfo.fix_discuss,
+                        state: retGroupInfo.state,
+                        isInitGroupName: retGroupInfo.is_init_group_name,
+                        singleFileSpace: retGroupInfo.single_file_space,
+                        extensions: ""
+                    };
+                    callback({ result: true, info: groupInfo });
+                }
+                else {
+                    callback(data);
+                }
+            });
+        };
+        Group.prototype.joinGroup = function (joinGroupParam, callback) {
+            var evt = { result: true, info: "join group is successful" };
+            if (util.isUndefined(joinGroupParam) || util.isNull(joinGroupParam)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            var groupId = joinGroupParam.groupId;
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            var flag = joinGroupParam.flag;
+            if (util.isUndefined(flag) || !util.isBinaryNumber(flag)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "flag");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            var account = joinGroupParam.account;
+            if (flag === 0 && (util.isUndefined(account) || util.isNull(account))) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            var displayName = joinGroupParam.displayName;
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_DETAIL, groupId, function (data) {
+                if (data.result == 0) {
+                    var groupName = data.param.name;
+                    if (flag == 1) {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_JOIN_FIXED_GROUP, groupId, groupName, displayName, function (data) {
+                            if (data.result == 0) {
+                            }
+                            else {
+                                evt = {
+                                    result: false,
+                                    info: "join fixed group failed."
+                                };
+                                callback(evt);
+                            }
+                        });
+                    }
+                    else {
+                        if (data.param.group_type == 0) {
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_FIXED_GROUP_MEMBER, groupId, account, groupName, displayName, function (data) {
+                                if (data.result == 0) {
+                                }
+                                else {
+                                    evt = {
+                                        result: false,
+                                        info: "add fixed group member failed."
+                                    };
+                                    callback(evt);
+                                }
+                            });
+                        }
+                        else {
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_ADD_DISCUSSION_GROUP_MEMBER, groupId, account, groupName, displayName, function (data) {
+                                if (data.result == 0) {
+                                }
+                                else {
+                                    evt = {
+                                        result: false,
+                                        info: "add discussion group member failed."
+                                    };
+                                    callback(evt);
+                                }
+                            });
+                        }
+                    }
+                }
+                else {
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    client_1.default.notifyErr(err);
+                    return;
+                }
+            });
+        };
+        Group.prototype.leaveGroup = function (groupId, account, flag, callback) {
+            var evt = { result: true, info: "leave group is successful" };
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(flag) || !util.isBinaryNumber(flag)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "flag");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (flag === 1 && (util.isUndefined(account) || util.isNull(account))) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_DETAIL, groupId, function (data) {
+                if (data.result == 0) {
+                    var groupType = data.param.group_type;
+                    if (flag == 0) {
+                        if (groupType == 0) {
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_LEAVE_FIXED_GROUP, groupId, function (data) {
+                                if (data.result == 0) {
+                                }
+                                else {
+                                    evt = {
+                                        result: false,
+                                        info: "leave fixed group failed."
+                                    };
+                                    callback(evt);
+                                }
+                            });
+                        }
+                        else {
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_LEAVE_DISCUSSION_GROUP, groupId, function (data) {
+                                if (data.result == 0) {
+                                }
+                                else {
+                                    evt = {
+                                        result: false,
+                                        info: "leave discussion group failed."
+                                    };
+                                    callback(evt);
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        if (groupType == 0) {
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_FIXED_GROUP_MEMBER, groupId, account, function (data) {
+                                if (data.result == 0) {
+                                }
+                                else {
+                                    evt = {
+                                        result: false,
+                                        info: "del fixed group member failed."
+                                    };
+                                    callback(evt);
+                                }
+                            });
+                        }
+                        else {
+                            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_DISCUSSION_GROUP_MEMBER, groupId, account, function (data) {
+                                if (data.result == 0) {
+                                }
+                                else {
+                                    evt = {
+                                        result: false,
+                                        info: "del discussion group member failed."
+                                    };
+                                    callback(evt);
+                                }
+                            });
+                        }
+                    }
+                }
+                else {
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    client_1.default.notifyErr(err);
+                    return;
+                }
+            });
+        };
+        Group.prototype.approvalGroup = function (approvalGroupParam, callback) {
+            var evt = { result: true, info: "approval group is successful" };
+            if (util.isUndefined(approvalGroupParam) || util.isNull(approvalGroupParam)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "approvalGroupParam");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(approvalGroupParam.groupId) || util.isNull(approvalGroupParam.groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(approvalGroupParam.memberAccount) || util.isNull(approvalGroupParam.memberAccount)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "memberAccount");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(approvalGroupParam.flag) || !util.isBinaryNumber(approvalGroupParam.flag)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "flag");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(approvalGroupParam.agreeJoin) || !util.isBoolean(approvalGroupParam.agreeJoin)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "agreeJoin");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_DETAIL, approvalGroupParam.groupId, function (data) {
+                if (data.result == 0) {
+                    var groupName = data.param.name;
+                    if (approvalGroupParam.flag == 0) {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_CONFIRM_FIXED_GROUP_INVITE, approvalGroupParam, groupName, function (data) {
+                            if (data.result == 0) {
+                            }
+                            else {
+                                evt = {
+                                    result: false,
+                                    info: "confirm fixed group invite failed."
+                                };
+                                callback(evt);
+                            }
+                        });
+                    }
+                    else {
+                        dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_CONFIRM_FIXED_GROUP_APPLY, approvalGroupParam, groupName, function (data) {
+                            if (data.result == 0) {
+                            }
+                            else {
+                                evt = {
+                                    result: false,
+                                    info: "confirm fixed group apply failed."
+                                };
+                                callback(evt);
+                            }
+                        });
+                    }
+                }
+                else {
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    client_1.default.notifyErr(err);
+                    return;
+                }
+            });
+        };
+        Group.prototype.getGroupMembers = function (groupId, isSyncAll, timestamp, callback) {
+            var evt = { result: true, info: "Get the list of group members successfully" };
+            var userList = new Array();
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(isSyncAll) || util.isNull(isSyncAll) || !util.isBoolean(isSyncAll)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isSyncAll");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(timestamp) || util.isNull(timestamp)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "timestamp");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_GROUP_MEMBERS, groupId, isSyncAll ? 1 : 0, timestamp, function (data) {
+                if (data.result == 0) {
+                    var memberInfoList = data.param.member_info;
+                    for (var index = 0; memberInfoList != null && index < memberInfoList.length; index++) {
+                        var element = memberInfoList[index];
+                        var userInfo = {
+                            staffID: element.staff_id,
+                            account: element.account,
+                            staffNO: element.staff_no,
+                            name: element.name,
+                            nativeName: element.native_name,
+                            qPinYin: element.q_pin_yin,
+                            gender: element.gender,
+                            birthday: element.birthday,
+                            age: element.age,
+                            bindNO: element.bind_no,
+                            mobile: element.mobile,
+                            homePhone: element.home_phone,
+                            officePhone: element.office_phone,
+                            shortPhone: element.short_phone,
+                            otherPhone: element.other_phone,
+                            voip: element.voip,
+                            ipPhone: element.ip_phone,
+                            fax: element.fax,
+                            email: element.email,
+                            webSite: element.website,
+                            signature: element.signature,
+                            desc: element.desc,
+                            address: element.address,
+                            imageID: element.image_id,
+                            postalcode: element.postcode,
+                            isSecrecy: element.is_security,
+                            title: element.title,
+                            deptID: element.dept_id,
+                            deptNameEn: element.dept_name_cn,
+                            deptNameCn: element.dept_name_en,
+                            imageSyncTime: element.image_sync_time,
+                            oldAccount: element.old_account,
+                            state: element.state,
+                            modifyTime: element.modify_time,
+                            contactID: 0,
+                            extensions: "",
+                        };
+                        userList.push(userInfo);
+                    }
+                    evt.info = { "groupMemberList": userList };
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Failed to get group member list!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Group.prototype.transferGroup = function (groupId, account, callback) {
+            var evt = { result: true, info: "Transfer group administrator successfully" };
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(account) || util.isNull(account)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_TRANSFER_GROUP, groupId, account, function (data) {
+                if (data.result == 0) {
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Transfer group administrator failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Group.prototype.setGroupMsgPromptPolicy = function (groupId, msgpolicyType, callback) {
+            var evt = { result: true, info: "Set the group message prompt mode successfully!" };
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(msgpolicyType) || !util.isIntegerRange(msgpolicyType, 0, 1)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "msgpolicyType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_GROUP_MSG_PROMPT_POLICY, groupId, msgpolicyType, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Failed to set group message prompt mode!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Group.prototype.setDisgroupPolicy = function (groupId, opType, callback) {
+            var evt = { result: true, info: "Group saved to list successfully succeeded" };
+            if (util.isUndefined(groupId) || util.isNull(groupId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(opType) || !util.isIntegerRange(opType, 0, 1)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "opType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_DISGROUP_POLICY, groupId, opType, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Group save to list failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        return Group;
+    }());
+    exports.default = Group;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 381 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(23), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Presence = (function () {
+        function Presence() {
+        }
+        Presence.prototype.publishStatus = function (status, callback) {
+            var evt = { result: true, info: "set personal status successfully!" };
+            if (util.isUndefined(status) || util.isNull(status) || !util.isInteger(status)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "status");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (status < -1 || status == 0 || status == 2 || status > 5) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "status");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_PUBLISH_STATUS, status, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "setting personal status failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Presence.prototype.detectUserStatus = function (accountList, callback) {
+            var evt = { result: true, info: "Detecting user status successfully!" };
+            if (util.isUndefined(accountList) || !util.isArray(accountList)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "accountList");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DETECT_USER_STATUS, accountList, function (data) {
+                if (data.result == 0) {
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Failed to detect user status!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        return Presence;
+    }());
+    exports.default = Presence;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 382 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(12), __webpack_require__(24), __webpack_require__(23), __webpack_require__(1), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, dispatcher_1, eventInfo_1, errorCode_1, client_1, util, enum_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Message = (function () {
+        function Message() {
+        }
+        Message.prototype.sendIMMessage = function (messageSendParam, callback) {
+            var evt = { result: true, info: "Sending a message successfully!" };
+            if (util.isUndefined(messageSendParam) || util.isNull(messageSendParam)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(messageSendParam.content) || util.isNull(messageSendParam.content)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.content");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(messageSendParam.chatType) || util.isNull(messageSendParam.chatType) || !util.isNumber(messageSendParam.chatType)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.chatType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(messageSendParam.mediaType) || util.isNull(messageSendParam.mediaType) || !util.isNumber(messageSendParam.mediaType)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.mediaType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(messageSendParam.receiver) || util.isNull(messageSendParam.receiver)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.receiver");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_SEND_MESSAGE, messageSendParam, function (data) {
+                if (data.result == 0) {
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Sending message failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Message.prototype.notifyImInputting = function (account, type) {
+            var evt = { result: true, info: "Set personal input status to success!" };
+            if (util.isUndefined(account) || util.isNull(account)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(type) || util.isNull(type) || !util.isBinaryNumber(type)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "type");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_NOTIFY_INPUTTING, account, type);
+        };
+        Message.prototype.withDrawMessage = function (messageWithDrawParam, callback) {
+            var evt = { result: true, info: "Withdraw message successfully!" };
+            if (util.isUndefined(messageWithDrawParam) || util.isNull(messageWithDrawParam)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(messageWithDrawParam.receiver) || util.isNull(messageWithDrawParam.receiver)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam.receiver");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(messageWithDrawParam.isGroupMsg) || util.isNull(messageWithDrawParam.isGroupMsg) || !util.isNumber(messageWithDrawParam.isGroupMsg)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam.isGroupMsg");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(messageWithDrawParam.msgId) || util.isNull(messageWithDrawParam.msgId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam.msgId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_WITH_DRAW_MESSAGE, messageWithDrawParam, function (data) {
+                if (data.result == 0) {
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Withdraw message failure!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Message.prototype.setReadMessage = function (messageReadList, callback) {
+            var evt = { result: true, info: "Set the message to be read successfully!" };
+            if (util.isUndefined(messageReadList) || util.isNull(messageReadList) || !util.isArray(messageReadList)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageReadList");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_SET_READ_MESSAGE, messageReadList, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "Set message failed to read!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Message.prototype.getRecentConversation = function (timestamp, count, callback) {
+            var evt = { result: true, info: "get the recent conversation successfully!" };
+            if (util.isUndefined(timestamp) || util.isNull(timestamp) || !util.isNumber(timestamp)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "timestamp");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(count) || util.isNull(count) || !util.isNumber(count)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "count");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_GET_RECENT_CONVERSATION, timestamp, count, function (data) {
+                if (data.result == 0) {
+                    evt.info = data.param;
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "get the recent conversation failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Message.prototype.delRecentConversation = function (isDelAll, conversationId, type, callback) {
+            var evt = { result: true, info: "delete the recent conversation successfully!" };
+            if (util.isUndefined(isDelAll) || util.isNull(isDelAll) || !util.isBoolean(isDelAll)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isDelAll");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(conversationId) || util.isNull(conversationId)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "conversationId");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(type) || util.isNull(type) || !util.isNumber(type)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "type");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (!(type == 0 || type == 2 || type == 3 || type == 6)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "type");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_RECENT_CONVERSATION, isDelAll, conversationId, type, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "delete the recent conversation failed!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Message.prototype.deleteMessage = function (deleteMessageParam, callback) {
+            var evt = { result: true, info: "delete message successfully!" };
+            if (util.isUndefined(deleteMessageParam) || util.isNull(deleteMessageParam)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "deleteMessageParam");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(deleteMessageParam.msgIdList) || util.isNull(deleteMessageParam.msgIdList) || !util.isArray(deleteMessageParam.msgIdList)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "msgIdList");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(deleteMessageParam.isGroupMsg) || util.isNull(deleteMessageParam.isGroupMsg) || !util.isIntegerRange(deleteMessageParam.isGroupMsg, 1, 2)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isGroupMsg");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(deleteMessageParam.optType) || util.isNull(deleteMessageParam.optType) || !util.isBinaryNumber(deleteMessageParam.optType)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "optType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_DEL_MESSAGE, deleteMessageParam, function (data) {
+                if (data.result == 0) {
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "delete message failure!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        Message.prototype.queryHistoryMessage = function (queryHistoryMessageParam, callback) {
+            var evt = { result: true, info: "query message to be read successfully!" };
+            if (util.isUndefined(queryHistoryMessageParam) || util.isNull(queryHistoryMessageParam)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(queryHistoryMessageParam.operationType) || util.isNull(queryHistoryMessageParam.operationType) || !util.isBinaryNumber(queryHistoryMessageParam.operationType)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.operationType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(queryHistoryMessageParam.msgType) || util.isNull(queryHistoryMessageParam.msgType) || !util.isIntegerRange(queryHistoryMessageParam.msgType, 0, 3) || queryHistoryMessageParam.msgType == 2) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.msgType");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(queryHistoryMessageParam.count) || util.isNull(queryHistoryMessageParam.count) || !util.isNumber(queryHistoryMessageParam.count)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.count");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (enum_1.IM_HISTORYMESSAGE_TYPE.BULLETIN != queryHistoryMessageParam.msgType && (util.isUndefined(queryHistoryMessageParam.sender) || util.isNull(queryHistoryMessageParam.sender))) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.sender");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            if (util.isUndefined(callback) || !util.isFunction(callback)) {
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                client_1.default.notifyErr(err);
+                return;
+            }
+            dispatcher_1.default.fire(eventInfo_1.SDK_EVENT_ID.SDK_IM_QUERY_HISTORY_MESSAGE, queryHistoryMessageParam, function (data) {
+                if (data.result == 0) {
+                    var queryHistoryInfo = data.param;
+                    var chatListInfo = queryHistoryInfo.chat_info_list;
+                    var queryHistoryResult = void 0;
+                    var chatInfoArr = new Array();
+                    for (var index = 0; chatListInfo != null && index < chatListInfo.length; index++) {
+                        var element = chatListInfo[index];
+                        var chatInfo = {
+                            chatType: element.chat_type,
+                            sourceFlag: element.source_flag,
+                            contentType: element.content_type,
+                            utcStamp: element.utc_stamp,
+                            origin: element.origin,
+                            target: element.target,
+                            groupID: element.group_id,
+                            content: element.content,
+                            name: element.name,
+                            regionID: element.region_id,
+                            clientChatID: element.client_chat_id,
+                            serverChatID: element.server_chat_id_str,
+                            groupName: element.group_name,
+                            mediaType: element.media_type,
+                            deliverTime: element.deliver_time,
+                            atUserInfoList: new Array(),
+                        };
+                        chatInfoArr.push(chatInfo);
+                    }
+                    queryHistoryResult = {
+                        operationType: queryHistoryInfo.operation_type,
+                        msgType: queryHistoryInfo.msg_type,
+                        sender: queryHistoryInfo.sender,
+                        totalCount: queryHistoryInfo.total_count,
+                        chatList: chatInfoArr,
+                    };
+                    evt.info = queryHistoryResult;
+                    callback(evt);
+                }
+                else {
+                    evt = {
+                        result: false,
+                        info: "query history message failed to read!"
+                    };
+                    callback(evt);
+                }
+            });
+        };
+        return Message;
+    }());
+    exports.default = Message;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 383 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -28835,9 +35324,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.wsocket = {};
             this.msgProcessor = function (data) {
                 if (data.notify > 0) {
-                    data.notify = data.notify & 0x7fff;
-                    if (typeof _this.notifyFuncs[data.notify] == "function") {
-                        _this.notifyFuncs[data.notify](data);
+                    var notifyIdx = data.notify & 0x7fff;
+                    if (typeof _this.notifyFuncs[notifyIdx] == "function") {
+                        _this.notifyFuncs[notifyIdx](data);
                     }
                 }
                 if (data.rsp > 0) {

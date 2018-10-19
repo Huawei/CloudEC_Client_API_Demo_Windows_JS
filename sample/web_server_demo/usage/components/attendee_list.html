@@ -309,13 +309,16 @@
                         c.hidden = "hidden";
                         c = r.insertCell(1);
                         c.innerHTML = (attendeeList[m].role == 0) ? "member" : "chairman";
+                        c.title = (attendeeList[m].role == 0) ? "member" : "chairman";
                         c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 15%;";
                         c = r.insertCell(2);
                         c.innerHTML = attendeeList[m].name;
+                        c.title = attendeeList[m].name;
                         c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 20%;";
                         c = r.insertCell(3);
                         c.innerHTML = "(" + attendeeList[m].number + ")";
-                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 15%;";
+                        c.title = attendeeList[m].number;
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 20%;";
                         c = r.insertCell(4);
                         c.innerHTML = (attendeeList[m].isSelf == 1) ? "me" : "";
                         c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 5%;";
@@ -329,6 +332,7 @@
                         }
                         c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
                         c.name = "cloudec_screenShare_btn";
+                        c.title = "screen sharing status";
                         c = r.insertCell(6);
                         if (1 == cloudecChairman) {
                             c.innerHTML = (attendeeList[m].isMute == 1) ? '<input type="button" id="unmuteAttendee" value ="unmute" onclick=cloudecUnmuteAttendee("' + cloudecAttendeeNumberStr + '") />' : '<input type="button" id="muteAttendee"  value = "mute" onclick=cloudecMuteAttendee("' + cloudecAttendeeNumberStr + '") />';
@@ -337,7 +341,8 @@
                         } else {
                             c.innerHTML = (attendeeList[m].isMute == 1) ? 'mute' : 'unmute';
                         }
-                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+                        c.title = "participant mute status";
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 10%;";
                         c = r.insertCell(7);
                         if (1 == cloudecChairman && attendeeList[m].isSelf == 1) {
                             c.innerHTML = '';
@@ -348,16 +353,18 @@
                         } else {
                             c.innerHTML = (attendeeList[m].raiseHandState == 1) ? 'hand' : '';
                         }
-                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+                        c.title = "raise hand status";
+                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 10%;";
                         c = r.insertCell(8);
                         c.innerHTML = "";
-                        c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
+                        c.hidden = "hidden";
                         c = r.insertCell(9);
                         if (1 == cloudecChairman && attendeeList[m].isSelf != 1) {
                             c.innerHTML = '<input type="button" id="removeAttendee"  value = "del" onclick=cloudecDelAttendee("' + cloudecAttendeeNumberStr + '") />';
                         } else {
                             c.innerHTML = '';
                         }
+                        c.title = "remove attendees";
                         c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
 
                     } else {
@@ -421,17 +428,17 @@
         CloudEC_AttendeeList.prototype.callback = function () {
             var cloudec_attendeelist_title_div = document.createElement('div');
             cloudec_attendeelist_title_div.id = "cloudec_attendeelist_title_div";
-            cloudec_attendeelist_title_div.style.cssText = "width: 600px;height: 50px;";//background: rgb(224, 255, 255);
+            cloudec_attendeelist_title_div.style.cssText = "width: 700px;height: 50px;";//background: rgb(224, 255, 255);
             cloudec_attendeelist_title_div.style.display = "block"//disable none
 
             var cloudec_attendeelist__hr = document.createElement('HR');
             cloudec_attendeelist__hr.id = "cloudec_attendeelist__hr";
-            cloudec_attendeelist__hr.style.cssText = "width: 600px;height: 3px;background-color: grey;margin: 0px 0px 0px 0px;";
+            cloudec_attendeelist__hr.style.cssText = "width: 700px;height: 3px;background-color: grey;margin: 0px 0px 0px 0px;";
             cloudec_attendeelist__hr.style.display = "block"//disable none
 
             var cloudec_attendeelist_body_div = document.createElement('div');
             cloudec_attendeelist_body_div.id = "cloudec_attendeelist_body_div";
-            cloudec_attendeelist_body_div.style.cssText = "width: 600px;height: 300px;";//background: rgb(224, 255, 255);
+            cloudec_attendeelist_body_div.style.cssText = "width: 700px;height: 300px;overflow-y: auto;";//background: rgb(224, 255, 255);
             cloudec_attendeelist_body_div.style.display = "block";//disable or able block
 
 
@@ -441,8 +448,9 @@
 
             var addAttendee_ipt = document.createElement('input');
             addAttendee_ipt.id = "addAttendee_ipt";
-            addAttendee_ipt.style.cssText = "width: 13%; height: 24px;margin-left: 5px;  border: 1px solid #dfffdf; border-style: inset;border-radius: 10px;";
+            addAttendee_ipt.style.cssText = "width: 13%; height: 24px;margin-left: 5px;";
             addAttendee_ipt.innerHTML = "number";
+            addAttendee_ipt.placeholder = "number";
 
             var addAttendee_btn = document.createElement('button');
             addAttendee_btn.style.cssText = "height: 24px;margin-left: 5px;";
@@ -458,14 +466,15 @@
 
             var unmuteAll_btn = document.createElement('button');
             unmuteAll_btn.style.cssText = "height: 24px;margin-left: 5px;";
-            unmuteAll_btn.innerHTML = "unmute";
-            unmuteAll_btn.title = "unmute";
+            unmuteAll_btn.innerHTML = "all unmute";
+            unmuteAll_btn.title = "all unmute";
             unmuteAll_btn.addEventListener("mousedown", cloudecUnmuteAll);
 
 			var chairmanPwd_ipt = document.createElement('input');
             chairmanPwd_ipt.id = "chairmanPwd_ipt";
-            chairmanPwd_ipt.style.cssText = "width: 13%; height: 24px;margin-left: 5px;  border: 1px solid #dfffdf; border-style: inset;border-radius: 10px;";
-            chairmanPwd_ipt.innerHTML = "Chairman's password";
+            chairmanPwd_ipt.style.cssText = "width: 20%; height: 24px;margin-left: 5px;";
+            chairmanPwd_ipt.innerHTML = "chairman's password";
+            chairmanPwd_ipt.placeholder = "chairman's password";
 			
             var requestChairman_btn = document.createElement('button');
             requestChairman_btn.style.cssText = "height: 24px;margin-left: 5px;";
@@ -481,7 +490,7 @@
 
             var setUserid_select = document.createElement('select');
             setUserid_select.id = "setUserid_select";
-            setUserid_select.style.cssText = "height: 24px;margin-left: 5px; width: 60px;";
+            setUserid_select.style.cssText = "height: 24px;margin-left: 5px; width: 150px;";
 
             var setRemoteCtrl_btn = document.createElement('button');
             setRemoteCtrl_btn.style.cssText = "height: 24px;margin-left: 5px;";
@@ -506,6 +515,8 @@
             cloudec_speaker_div.style.cssText = "";//background: rgb(224, 255, 255);
             cloudec_speaker_div.style.display = "block";//disable or able block
 
+            var blank_br = document.createElement('br');
+
             cloudec_attendeelist_title_div.appendChild(addAttendee_ipt);
             cloudec_attendeelist_title_div.appendChild(addAttendee_btn);
             cloudec_attendeelist_title_div.appendChild(muteAll_btn);
@@ -513,15 +524,16 @@
 			cloudec_attendeelist_title_div.appendChild(chairmanPwd_ipt);
             cloudec_attendeelist_title_div.appendChild(requestChairman_btn);
             cloudec_attendeelist_title_div.appendChild(releaseChairman_btn);
+            cloudec_attendeelist_title_div.appendChild(blank_br); 
             cloudec_attendeelist_title_div.appendChild(setUserid_select);
             cloudec_attendeelist_title_div.appendChild(setRemoteCtrl_btn);
             cloudec_attendeelist_title_div.appendChild(cancelRemoteCtrl_btn);
-            cloudec_attendeelist_title_div.appendChild(requestRemoteCtrl_btn);        
+            cloudec_attendeelist_title_div.appendChild(requestRemoteCtrl_btn);       
             cloudec_attendeelist_body_div.appendChild(cloudec_speaker_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist_title_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist__hr);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist_body_div);
-            cloudec_attendeelist_div.style.cssText = "width: 600px;border-style: solid;border-color: grey;";
+            cloudec_attendeelist_div.style.cssText = "width: 700px;border-style: solid;border-color: grey;";
             this.appendChild(cloudec_attendeelist_div);
 
             cloudec_attendeelist_div.addEventListener("cloudec:getAttendeeList", cloudecGetAttendeeList, false);

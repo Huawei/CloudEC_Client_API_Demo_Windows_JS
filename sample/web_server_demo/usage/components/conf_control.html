@@ -79,12 +79,12 @@
         cloudec_chat_one_div.style.display = "block" //disable none
 
         var cloudec_chat_one_name_div = document.createElement('div');
-        cloudec_chat_one_name_div.style.cssText = "width: 100%;"; //background: rgb(224, 255, 255);
+        cloudec_chat_one_name_div.style.cssText = "width: 100%;word-break:break-all;"; //background: rgb(224, 255, 255);
         cloudec_chat_one_name_div.style.display = "block" //disable none
         cloudec_chat_one_name_div.innerHTML = data.fromUserName;
 
         var cloudec_chat_one_content_div = document.createElement('div');
-        cloudec_chat_one_content_div.style.cssText = "width: 100%;"; //background: rgb(224, 255, 255);
+        cloudec_chat_one_content_div.style.cssText = "width: 100%;word-break:break-all;"; //background: rgb(224, 255, 255);
         cloudec_chat_one_content_div.style.display = "block" //disable none
         cloudec_chat_one_content_div.innerHTML = data.msgContent;
 
@@ -95,27 +95,8 @@
         cloudec_chat_one_div.appendChild(cloudec_chat_one_content_div);
         cloudec_chat_one_div.appendChild(cloudec_chat_one_content_br);
         cloudec_chat_display_div.appendChild(cloudec_chat_one_div);
-
+        cloudec_chat_display_div.scrollTop = cloudec_chat_display_div.scrollHeight;
     }
-
-    var cloudecMuteAll = function() {
-        var conference = client.getConfHandler();
-        if (conference == null) {
-            alert("Meeting has not yet started");
-            return;
-        }
-        client.muteConference(true);
-    }
-
-    var cloudecUnMuteAll = function() {
-        var conference = client.getConfHandler();
-        if (conference == null) {
-            alert("Meeting has not yet started");
-            return;
-        }
-        client.muteConference(false);
-    }
-
 
     var cloudecOpenVideo = function() {
         var conference = client.getConfHandler();
@@ -195,8 +176,6 @@
 
         var obj = document.getElementById("mixedPicture_select");
         var mixedPictureType = obj.options[obj.selectedIndex].value;
-        var objMode = document.getElementById("setConfMode_select");
-        var mode = objMode.options[objMode.selectedIndex].value;
 
         //todo Here I'm going to be a modal popup, simple implementation
         if (cloudecMixedPictureAttendee != null && cloudecMixedPictureAttendee != "") {
@@ -211,7 +190,7 @@
         }
 
         
-        client.setConfMixedPicture(Number(mode),Number(mixedPictureType),cloudecMixedAttendees);
+        client.setConfMixedPicture(Number(mixedPictureType),cloudecMixedAttendees);
     }
 
 
@@ -255,37 +234,37 @@
         CloudEC_ConfControl.prototype.callback = function() {
             var cloudec_confctrl_div = document.createElement('div');
             cloudec_confctrl_div.id = "cloudec_confctrl_div";
-            cloudec_confctrl_div.style.cssText = "width: 600px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_confctrl_div.style.cssText = "width: 700px;height: 25px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
             cloudec_confctrl_div.style.display = "block" //disable none
 
             var cloudec_videoctrl_div = document.createElement('div');
             cloudec_videoctrl_div.id = "cloudec_videoctrl_div";
-            cloudec_videoctrl_div.style.cssText = "width: 600px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_videoctrl_div.style.cssText = "width: 700px;height: 50px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
             cloudec_videoctrl_div.style.display = "block" //disable none
 
             var cloudec_chat_div = document.createElement('div');
             cloudec_chat_div.id = "cloudec_chat_div";
-            cloudec_chat_div.style.cssText = "width: 600px;height:300px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
+            cloudec_chat_div.style.cssText = "width: 700px;height:300px;border-style: solid;border-color: grey;"; //background: rgb(224, 255, 255);
             cloudec_chat_div.style.display = "block" //disable none
 
             var cloudec_chat_display_div = document.createElement('div');
             cloudec_chat_display_div.id = "cloudec_chat_display_div";
-            cloudec_chat_display_div.style.cssText = "width: 100%;height: 75%;overflow-y: scroll;"; //background: rgb(224, 255, 255);
+            cloudec_chat_display_div.style.cssText = "width: 100%;height: 85%;overflow-y: scroll;"; //background: rgb(224, 255, 255);
             cloudec_chat_display_div.style.display = "block" //disable none
 
             var cloudec_chat_input_div = document.createElement('div');
             cloudec_chat_input_div.id = "cloudec_chat_input_div";
-            cloudec_chat_input_div.style.cssText = "width: 100%;height: 25%;overflow-y: scroll;"; //background: rgb(224, 255, 255);
+            cloudec_chat_input_div.style.cssText = "width: 100%;height: 15%;overflow-y: scroll;"; //background: rgb(224, 255, 255);
             cloudec_chat_input_div.style.display = "block" //disable none
 
             var cloudec_chat_input_textarea = document.createElement('textarea');
             cloudec_chat_input_textarea.id = "cloudec_chat_input_textarea";
-            cloudec_chat_input_textarea.style.cssText = "width: 80%;height: 100%;float: left;"; //background: rgb(224, 255, 255);
+            cloudec_chat_input_textarea.style.cssText = "width: 90%;height: 100%;float: left;"; //background: rgb(224, 255, 255);
             cloudec_chat_input_textarea.style.display = "block" //disable none
 
             var cloudec_chat_send_btn = document.createElement('button');
             cloudec_chat_send_btn.id = "cloudec_chat_send_btn";
-            cloudec_chat_send_btn.style.cssText = "width: 20%;height: 100%;float: left;"; //background: rgb(224, 255, 255);
+            cloudec_chat_send_btn.style.cssText = "width: 10%;height: 100%;float: left;"; //background: rgb(224, 255, 255);
             cloudec_chat_send_btn.innerHTML = "send";
             cloudec_chat_send_btn.title = "send";
             cloudec_chat_send_btn.addEventListener("mousedown", cloudecSendMsg);
@@ -298,18 +277,6 @@
             chat_btn.innerHTML = "chat";
             chat_btn.title = "chat";
             chat_btn.addEventListener("mousedown", cloudecChat);
-
-            var muteAll_btn = document.createElement('button');
-            muteAll_btn.style.cssText = "height: 24px;margin-left: 5px;";
-            muteAll_btn.innerHTML = "all mute";
-            muteAll_btn.title = "all mute";
-            muteAll_btn.addEventListener("mousedown", cloudecMuteAll);
-
-            var unmuteAll_btn = document.createElement('button');
-            unmuteAll_btn.style.cssText = "height: 24px;margin-left: 5px;";
-            unmuteAll_btn.innerHTML = "all numute";
-            unmuteAll_btn.title = "all numute";
-            unmuteAll_btn.addEventListener("mousedown", cloudecUnMuteAll);
 
             var openVideo_btn = document.createElement('button');
             openVideo_btn.style.cssText = "height: 24px;margin-left: 5px;";
@@ -339,7 +306,7 @@
             setConfMode_select.id = "setConfMode_select";
             setConfMode_select.style.cssText = "height: 24px;margin-left: 5px;";
             setConfMode_select.options[0] = new Option("broadcast mode", 0);
-            setConfMode_select.options[1] = new Option("Voice control mode", 1);
+            setConfMode_select.options[1] = new Option("voice control mode", 1);
             setConfMode_select.options[2] = new Option("open to discussion", 2);
             //setConfMode_select.size = 3;
 
@@ -351,7 +318,9 @@
 
             var broadcastAttendee_ipt = document.createElement('input');
             broadcastAttendee_ipt.id = "broadcastAttendee_ipt";
-            broadcastAttendee_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 70px;";
+            broadcastAttendee_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 120px;";
+            broadcastAttendee_ipt.placeholder = "number";
+
 
             var broadcastAttendee_btn = document.createElement('button');
             broadcastAttendee_btn.style.cssText = "height: 24px;margin-left: 5px;";
@@ -367,7 +336,8 @@
 
             var watchAttendee_ipt = document.createElement('input');
             watchAttendee_ipt.id = "watchAttendee_ipt";
-            watchAttendee_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 40px;";
+            watchAttendee_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 100px;";
+            watchAttendee_ipt.placeholder = "number"; 
 
             var watchAttendee_btn = document.createElement('button');
             watchAttendee_btn.style.cssText = "height: 24px;margin-left: 5px;";
@@ -389,7 +359,8 @@
            
             var mixedPicture_ipt = document.createElement('input');
             mixedPicture_ipt.id = "mixedPicture_ipt";
-            mixedPicture_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 40px;";
+            mixedPicture_ipt.style.cssText = "height: 24px;margin-left: 5px;width: 233px;";
+            mixedPicture_ipt.placeholder = "number, separated by ','"; 
 
             var mixedPicture_btn = document.createElement('button');
             mixedPicture_btn.style.cssText = "height: 24px;margin-left: 5px;";
@@ -397,9 +368,9 @@
             mixedPicture_btn.title = "mixed Picture";
             mixedPicture_btn.addEventListener("mousedown", cloudecMixedPicture);
 
+            var blank_br = document.createElement('br');
+
             cloudec_confctrl_div.appendChild(chat_btn);
-            cloudec_confctrl_div.appendChild(muteAll_btn);
-            cloudec_confctrl_div.appendChild(unmuteAll_btn);
             cloudec_confctrl_div.appendChild(openVideo_btn);
             cloudec_confctrl_div.appendChild(closeVideo_btn);
             cloudec_confctrl_div.appendChild(leaveConference_btn);
@@ -409,6 +380,7 @@
             cloudec_videoctrl_div.appendChild(broadcastAttendee_ipt);
             cloudec_videoctrl_div.appendChild(broadcastAttendee_btn);
             cloudec_videoctrl_div.appendChild(cancelBroadcastAttendee_btn);
+            cloudec_videoctrl_div.appendChild(blank_br);
             cloudec_videoctrl_div.appendChild(watchAttendee_ipt);
             cloudec_videoctrl_div.appendChild(watchAttendee_btn);
             cloudec_videoctrl_div.appendChild(mixedPicture_select);
