@@ -428,17 +428,17 @@
         CloudEC_AttendeeList.prototype.callback = function () {
             var cloudec_attendeelist_title_div = document.createElement('div');
             cloudec_attendeelist_title_div.id = "cloudec_attendeelist_title_div";
-            cloudec_attendeelist_title_div.style.cssText = "width: 700px;height: 50px;";//background: rgb(224, 255, 255);
+            cloudec_attendeelist_title_div.style.cssText = "width: 735px;height: 50px;";//background: rgb(224, 255, 255);
             cloudec_attendeelist_title_div.style.display = "block"//disable none
 
             var cloudec_attendeelist__hr = document.createElement('HR');
             cloudec_attendeelist__hr.id = "cloudec_attendeelist__hr";
-            cloudec_attendeelist__hr.style.cssText = "width: 700px;height: 3px;background-color: grey;margin: 0px 0px 0px 0px;";
+            cloudec_attendeelist__hr.style.cssText = "width: 735px;height: 3px;background-color: grey;margin: 0px 0px 0px 0px;";
             cloudec_attendeelist__hr.style.display = "block"//disable none
 
             var cloudec_attendeelist_body_div = document.createElement('div');
             cloudec_attendeelist_body_div.id = "cloudec_attendeelist_body_div";
-            cloudec_attendeelist_body_div.style.cssText = "width: 700px;height: 300px;overflow-y: auto;";//background: rgb(224, 255, 255);
+            cloudec_attendeelist_body_div.style.cssText = "width: 735px;height: 300px;overflow-y: auto;";//background: rgb(224, 255, 255);
             cloudec_attendeelist_body_div.style.display = "block";//disable or able block
 
 
@@ -533,7 +533,7 @@
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist_title_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist__hr);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist_body_div);
-            cloudec_attendeelist_div.style.cssText = "width: 700px;border-style: solid;border-color: grey;";
+            cloudec_attendeelist_div.style.cssText = "width: 735px;border-style: solid;border-color: grey;";
             this.appendChild(cloudec_attendeelist_div);
 
             cloudec_attendeelist_div.addEventListener("cloudec:getAttendeeList", cloudecGetAttendeeList, false);

@@ -283,33 +283,35 @@
         },
 
         onReceiveInviteJoinGroup:function(ret){
-            var group_ret = confirm(ret.info.member_account + "apply to join " + ret.info.group_name +" group, accept or reject?");
+            var group_ret = confirm(ret.info.memberName + " apply to join " + ret.info.groupName +" group, accept or reject?");
 
             var approvalParam = {
                 flag: 1,
                 agreeJoin: group_ret,
-                groupId: ret.info.group_id,    
-                memberAccount: ret.info.member_account
+                groupId: ret.info.groupID,    
+                memberAccount: ret.info.memberAccount
             };
+
             client.approvalGroup(approvalParam, function(data){
                 var newPage = window.open("","approvalGroup");
                 newPage.document.write("approvalGroup:"+JSON.stringify(data));     
-            });                
+            });  
+
         },
 
         onReceiveInviteToGroup:function(ret) {
-            var group_ret = confirm("You are invited to join " + ret.info.group_name +" group, accept or reject?");
+            var group_ret = confirm("You are invited to join " + ret.info.groupName +" group, accept or reject?");
 
             var approvalParam = {
                 flag: 0,
                 agreeJoin: group_ret,
-                groupId: ret.info.group_id,    
-                memberAccount: ret.info.admin_account
+                groupId: ret.info.groupID,    
+                memberAccount: ret.info.adminAccount
             };
             client.approvalGroup(approvalParam, function(data){
                 var newPage = window.open("","approvalGroup");
                 newPage.document.write("approvalGroup:"+JSON.stringify(data)); 
-            });	         
+            });	   
         },
 
         onGroupOwnerInviteResult:function(ret){     
