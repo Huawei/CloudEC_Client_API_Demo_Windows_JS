@@ -67,6 +67,7 @@
                 document.getElementById("cloudec_attendeelist_div").dispatchEvent(clearAttendeeEvent);
                 var clearChatListEvent = new Event('cloudec:clearChatList');
                 document.getElementById("cloudec_chat_display_div").dispatchEvent(clearChatListEvent);
+                document.getElementById("cloudec-datacanvas").style.visibility="hidden";
                 alert("The meeting has already left")
             }
         },
@@ -78,6 +79,7 @@
                 document.getElementById("cloudec_attendeelist_div").dispatchEvent(clearAttendeeEvent);
                 var clearChatListEvent = new Event('cloudec:clearChatList');
                 document.getElementById("cloudec_chat_display_div").dispatchEvent(clearChatListEvent);
+                document.getElementById("cloudec-datacanvas").style.visibility="hidden";
                 alert("the conference is ended")
             }
         },
@@ -114,7 +116,12 @@
 
         //11 This callback is used to handle screen sharing
         onAsOnSharingState: function(ret) {
-
+            var dataCanvas = document.getElementById("cloudec-datacanvas");
+            if (ret.info.state == 1) {
+                dataCanvas.style.visibility="visible";
+            }else{
+                dataCanvas.style.visibility="hidden";
+            }
         },
 
         //12 This callback is used to handle call incoming
