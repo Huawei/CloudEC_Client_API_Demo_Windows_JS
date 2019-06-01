@@ -62,40 +62,40 @@
         client.releaseChairman();
     }
 
-    var cloudecStartShareScreen = function (dataconfUserId) {
+    var cloudecStartShareScreen = function (number) {
         var conference = client.getConfHandler();
         if (conference == null) {
             alert("Meeting has not yet started");
             return;
         }
-        client.startScreenSharing(parseInt(dataconfUserId));
+        client.startScreenSharing(number);
     }
 
-    var cloudecStopShareScreen = function (dataconfUserId) {
+    var cloudecStopShareScreen = function (number) {
         var conference = client.getConfHandler();
         if (conference == null) {
             alert("Meeting has not yet started");
             return;
         }
-        client.stopScreenSharing(parseInt(dataconfUserId));
+        client.stopScreenSharing(number);
     }
 
-    var cloudecOpenShareScreen = function (dataconfUserId) {
+    var cloudecOpenShareScreen = function (number) {
         var conference = client.getConfHandler();
         if (conference == null) {
             alert("Meeting has not yet started");
             return;
         }
-        client.sendMessage({ msgType: 1, msgContent: "CloudEC_OpenShareScreen", receiveID: parseInt(dataconfUserId) });
+        client.sendMessage({ msgType: 1, msgContent: "CloudEC_OpenShareScreen", receiveID: number });
     }
 
-    var cloudecCloseShareScreen = function (dataconfUserId) {
+    var cloudecCloseShareScreen = function (number) {
         var conference = client.getConfHandler();
         if (conference == null) {
             alert("Meeting has not yet started");
             return;
         }
-        client.sendMessage({ msgType: 1, msgContent: "CloudEC_CloseShareScreen", receiveID: parseInt(dataconfUserId) });
+        client.sendMessage({ msgType: 1, msgContent: "CloudEC_CloseShareScreen", receiveID: number });
     }
 
     var cloudecCreateWhiteBoard = function () {
@@ -126,7 +126,7 @@
         var index = useridSelect.selectedIndex;
         var value = useridSelect[index].value;
 
-        client.setRemoteCtrl(1, 1, parseInt(value));
+        client.setRemoteCtrl(1, 1, value);
     }
 
     var cloudecCancelRemoteCtrl = function () {
@@ -139,7 +139,7 @@
         var useridSelect = document.getElementById("setUserid_select");
         var index = useridSelect.selectedIndex;
         var value = useridSelect[index].value;
-        client.setRemoteCtrl(1, 0, parseInt(value));
+        client.setRemoteCtrl(1, 0, value);
     }
 
 
@@ -297,7 +297,7 @@
                     if (attendeeList[m].joinState == 0) {
                         //Synchronize updates to useridList
                         var option = document.createElement("option");
-                        option.setAttribute("value", attendeeList[m].dataconfUserId);
+                        option.setAttribute("value", attendeeList[m].number);
                         option.appendChild(document.createTextNode(attendeeList[m].name));
                         useridSelect.appendChild(option);
 
@@ -324,11 +324,11 @@
                         c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 5%;";
                         c = r.insertCell(5);
                         if (1 == cloudecChairman && attendeeList[m].isSelf == 1) {
-                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreen("' + attendeeList[m].dataconfUserId + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].dataconfUserId + '") />');
+                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreen("' + attendeeList[m].number + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].number + '") />');
                         } else if (1 == cloudecChairman && attendeeList[m].isSelf != 1) {
-                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecOpenShareScreen("' + attendeeList[m].dataconfUserId + '") />' : '<input type="button" value = "cancel" onclick=cloudecCloseShareScreen("' + attendeeList[m].dataconfUserId + '") />');
+                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreen("' + attendeeList[m].number + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].number + '") />');
                         } else if (1 != cloudecChairman && attendeeList[m].isSelf == 1) {
-                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '' : '<input type="button" value = "cancel" onclick=cloudecCloseShareScreen("' + attendeeList[m].dataconfUserId + '") />');
+                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].number + '") />');
                         }
                         c.style.cssText = "text-overflow: ellipsis;display: inline-block;overflow-x: hidden; width: 8%;";
                         c.name = "cloudec_screenShare_btn";

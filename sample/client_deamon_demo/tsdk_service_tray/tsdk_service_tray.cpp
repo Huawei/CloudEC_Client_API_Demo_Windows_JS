@@ -1,7 +1,15 @@
-#include <windows.h>
+#include <iostream>
+#include <stdlib.h>
+
+
+#include <Windows.h>
+#include <WinBase.h>
+
 #include "resource.h"
-#include "tsdk_service_interface.h"
-#pragma   comment(lib,   "lib/tupService.lib") 
+
+#include "tsdk_ws_deamon_interface.h"
+
+using namespace std;
 
 #define IDR_PAUSE 12  
 #define IDR_START 13
@@ -10,8 +18,8 @@
 #include <shellapi.h> 
 #pragma   comment(lib,   "shell32.lib")  
 */  
-LPCTSTR szAppName = TEXT("TSDK Service Daemon");  
-LPCTSTR szWndName = TEXT("TSDK Service Daemon");  
+LPCTSTR szAppName = TEXT("CloudLink Meeting Daemon");  
+LPCTSTR szWndName = TEXT("CloudLink Meeting Daemon");  
 HMENU hmenu;//[cn]菜单句柄 [en]Menu handle  
   
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)  
@@ -54,7 +62,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY://[cn]窗口销毁时候的消息.  [en]Message when the window is destroyed
         Shell_NotifyIcon(NIM_DELETE, &nid);  
         PostQuitMessage(0);
-		xx = WinExec("taskkill /F /IM tup_service_s.exe", SW_HIDE);		//lint !e713
+		xx = WinExec("taskkill /F /IM " TSDK_D_HUAWEI_CLOUD_MEETING_SERVICE_NAME, SW_HIDE);		//lint !e713
         break;  
     default:  
         /* 
@@ -75,6 +83,60 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     }  
     return DefWindowProc(hwnd, message, wParam, lParam);  
 }  
+
+
+void ProcessCmdLine(const char* cmdline, TSDK_S_WEB_SOCKET_SERVICE_DEAMON_PARAM *service_deamon_param)
+{
+    char* portArg = "--ws_port=";
+    const char* startPos = strstr(cmdline, portArg);
+    if (startPos)
+    {
+        service_deamon_param->service_port = atoi((startPos + strlen(portArg)));
+    }
+
+    string cmdStr = cmdline;
+    unsigned int start = cmdStr.find("--log_path=\"");
+    if (start != string::npos)
+    {
+        start += 12;
+        unsigned int end = cmdStr.find("\"", start);
+        if (end != string::npos)
+        {
+            string logPath = cmdStr.substr(start, end - start);
+            strcpy_s(service_deamon_param->log_path, TSDK_D_MAX_LOG_PATH_LEN + 1, logPath.c_str());
+        }
+    }
+
+    start = cmdStr.find("--show");
+    service_deamon_param->is_show_service_windows = (start != string::npos) ? 1 : 0;
+
+    start = cmdStr.find("--cert_file=\"");
+    if (start != string::npos)
+    {
+        start += 13;
+        unsigned int end = cmdStr.find("\"", start);
+        if (end != string::npos)
+        {
+            string cert_filepath = cmdStr.substr(start, end - start);
+            strcpy_s(service_deamon_param->cert_file, TSDK_D_MAX_CA_PATH_LEN + 1, cert_filepath.c_str());
+        }
+
+    }
+
+    start = cmdStr.find("--key_file=\"");
+    if (start != string::npos)
+    {
+        start += 12;
+        unsigned int end = cmdStr.find("\"", start);
+        if (end != string::npos)
+        {
+            string key_filepath = cmdStr.substr(start, end - start);
+            strcpy_s(service_deamon_param->key_file, TSDK_D_MAX_CA_PATH_LEN + 1, key_filepath.c_str());
+        }
+
+    }
+}
+
   
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  
                    LPSTR szCmdLine, int iCmdShow)  
@@ -122,7 +184,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     ShowWindow(hwnd, iCmdShow);  
     UpdateWindow(hwnd);
 
-	tup_service_deamon_startup(szCmdLine);
+    TSDK_S_WEB_SOCKET_SERVICE_DEAMON_PARAM service_deamon_param;
+    memset(&service_deamon_param, 0, sizeof(TSDK_S_WEB_SOCKET_SERVICE_DEAMON_PARAM));
+
+    ProcessCmdLine(szCmdLine, &service_deamon_param);
+
+	tsdk_startup_ws_service_deamon(&service_deamon_param);
   
     while (GetMessage(&msg, NULL, 0, 0))  
     {  

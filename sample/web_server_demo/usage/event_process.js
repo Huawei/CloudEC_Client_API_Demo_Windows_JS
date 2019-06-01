@@ -3,9 +3,16 @@
     var listeners = {
         //1 This callback is used to handle kick out of login scenes
         onForceUnReg: function(ret) {
-            alert("you have be kickouted" +  JSON.stringify(ret))
-            document.getElementById("login").style.display = "block";
-            document.getElementById("call").style.display = "none";
+            if(ret.info.serviceAccountType==0){
+                var confStatus = client.getConfHandler();
+                if(confStatus){
+                    client.leaveConf();
+                }
+                client.logout(); 
+                alert("you have be kickouted" +  JSON.stringify(ret))
+                document.getElementById("login").style.display = "block";
+                document.getElementById("call").style.display = "none";
+            }
         },
 
         //2 This callback is used to process text messages
@@ -67,7 +74,6 @@
                 document.getElementById("cloudec_attendeelist_div").dispatchEvent(clearAttendeeEvent);
                 var clearChatListEvent = new Event('cloudec:clearChatList');
                 document.getElementById("cloudec_chat_display_div").dispatchEvent(clearChatListEvent);
-                document.getElementById("cloudec-datacanvas").style.visibility="hidden";
                 alert("The meeting has already left")
             }
         },
@@ -79,14 +85,13 @@
                 document.getElementById("cloudec_attendeelist_div").dispatchEvent(clearAttendeeEvent);
                 var clearChatListEvent = new Event('cloudec:clearChatList');
                 document.getElementById("cloudec_chat_display_div").dispatchEvent(clearChatListEvent);
-                document.getElementById("cloudec-datacanvas").style.visibility="hidden";
                 alert("the conference is ended")
             }
         },
 
         //11 This callback is used to apply for remote control
         onAsOnPrivilege: function(ret) {
-            if (ret.info.sharePrivilege == 1) {
+            if (ret.info.sharePrivilegeType == 0) {
                 switch (ret.info.shareAction) {
                     case 0:
                         alert("share permissions are released ");
@@ -100,9 +105,9 @@
                     case 3:
                         var privilegeRet = confirm("The other person requests control of your computer,reject or accept?");
                         if (privilegeRet == true) {
-                            client.answerRemoteCtrl(ret.info.userid, true);
+                            client.answerRemoteCtrl(ret.info.attendee, true);
                         } else {
-                            client.answerRemoteCtrl(ret.info.userid, false);
+                            client.answerRemoteCtrl(ret.info.attendee, false);
                         }
 
                         break;
@@ -116,12 +121,7 @@
 
         //11 This callback is used to handle screen sharing
         onAsOnSharingState: function(ret) {
-            var dataCanvas = document.getElementById("cloudec-datacanvas");
-            if (ret.info.state == 1) {
-                dataCanvas.style.visibility="visible";
-            }else{
-                dataCanvas.style.visibility="hidden";
-            }
+
         },
 
         //12 This callback is used to handle call incoming
@@ -142,10 +142,15 @@
         onCallRingBack: function(ret) {
             //alert("the call is ring...." + ret)
             document.getElementById("callState").innerHTML = "call state: call ring back";
-            console.info("the conference is ring")
+            console.info("the call is ring")
         },
 
-        //14 This callback is used to handle call connection
+        //14 This callback is used to handle  
+        onEvtCallRtpCreated: function(ret) {
+            console.info("call timeout")
+        },
+
+        //15 This callback is used to handle call connection
         onCallConnected: function(ret) {
             //alert("the call is connected" + ret)
             document.getElementById("callState").innerHTML = "call state: call connected";
@@ -153,31 +158,31 @@
                 //call.
         },
 
-        //15 This callback is used to handle a call hangup 
+        //16 This callback is used to handle a call hangup 
         onCallEnded: function(ret) {
             //alert("the call is ended" + ret)
             document.getElementById("callState").innerHTML = "call state: Not Update Yet";
             console.info("the call is ended")
         },
 
-        //16 This callback is used to add a video
+        //17 This callback is used to add a video
         onAddVideoRequest: function(ret){
             if(ret.result){
-                alert("onAddVideoRequest:");
+                alert("onAddVideoRequest");
             }
         },
 
-        //17 This callback is used to delete a video
+        //18 This callback is used to delete a video
         onDelVideoRequest: function(ret){
             if(ret.result){
-                alert("onDelVideoRequest:");
+                alert("onDelVideoRequest");
             }       
         },
 
-        //18 This callback is used to handle video modification results
+        //19 This callback is used to handle video modification results
         onCallModifyVideoResult: function(ret){
             if(ret.result){
-                alert("onCallModifyVideoResult:"+ ret.info);
+                alert("onCallModifyVideoResult:"+ JSON.stringify(ret));
             }        
         },
 
@@ -234,15 +239,15 @@
         },
 
         onSetIptServiceResult:function(ret){
-            alert("onSetIptServiceResult:"+ ret.info);       
+            alert("onSetIptServiceResult:"+ JSON.stringify(ret));       
         },
 
         onCallBldTransferRecvSucRsp:function(ret){
-            alert("onCallBldTransferRecvSucRsp:"+ ret.info);                   
+            alert("onCallBldTransferRecvSucRsp:"+ JSON.stringify(ret));                   
         },
         
         onCallBldTransferResult:function(ret){
-            alert("onCallBldTransferResult:"+ ret.info);                       
+            alert("onCallBldTransferResult:"+ JSON.stringify(ret));                       
         },
 
         onUserInfoChange:function(ret){
@@ -388,6 +393,128 @@
             var newPage = window.open("","onSendImInput");
             newPage.document.write("onSendImInput:"+JSON.stringify(ret));                      
         },
+
+        onPluginEvtClickHangupCall:function(ret){
+            var call = client.getCallHandler();
+            if (call == null) {
+                return;
+            }
+            client.hangup();       
+        },
+
+        onEvtGetDataconfParamResult:function(ret){
+            if(ret.result){
+                client.joinDataConference();       
+            }else{
+            }
+        },
+
+        onPluginEvtClickMuteMic:function(ret){ 
+            console.log("onPluginEvtClickMuteMic:"+ JSON.stringify(ret));           
+        },
+
+        onPluginEvtClickMuteSpeaker:function(ret){ 
+            console.log("onPluginEvtClickMuteSpeaker:"+ JSON.stringify(ret));          
+        },
+
+        onPluginEvtClickMuteCamera:function(ret){
+            console.log("onPluginEvtClickMuteCamera:"+ JSON.stringify(ret));             
+        },
+
+        onPluginEvtClickAddMember:function(ret){
+            var transfer2ConfParam = null;
+            var memberList=prompt("Please enter the invitee number","")
+
+            if(ret.info.videoType == 0){
+                if(memberList!=undefined && memberList!=null && memberList!=""){
+                    var memberListArr = memberList.split(",");
+                    var memberListTemp = new Array();
+                    for (var i = 0; i < memberListArr.length; i++) {
+                        memberListTemp[i] = { number: memberListArr[i], name: "", smsPhone: "", email: "", autoInvite: 1, role: 0,extensions: "" };
+                    }
+                    transfer2ConfParam = { attendees: memberListTemp }	
+                }else{
+                    transfer2ConfParam=null;
+                }
+                client.transfer2Conf(transfer2ConfParam);	
+            }else{
+                if(memberList!=undefined && memberList!=null && memberList!=""){
+                    var cloudecAttendeesArray = memberList.split(",");
+                    var cloudecAttendees = new Array();
+                    for (var i = 0; i < cloudecAttendeesArray.length; i++) {
+                        cloudecAttendees[i] = { number: cloudecAttendeesArray[i], name: cloudecAttendeesArray[i], role: 0 };
+                    }
+            
+                    client.addAttendee(cloudecAttendees);
+                }else{
+                    console.log("attendee number is empty");       
+                    return;
+                }
+            }
+            client.uiPluginSetButtonState(3,1,(ret) => {});
+
+        }, 
+
+        onPluginEvtSetWindowSize:function(ret){
+            console.log("onPluginEvtSetWindowSize:"+ JSON.stringify(ret));        
+        },        
+        
+        onPluginEvtClickLeaveConf:function(ret){
+            client.leaveConf();    
+        },
+        
+        onPluginEvtClickEndConf:function(ret){
+            client.endConf();             
+        }, 
+
+        onPluginEvtClickShowMemberList:function(ret){
+            console.log("onPluginEvtClickShowMemberList:"+ JSON.stringify(ret));        
+        },   
+        
+        onPluginEvtConfCtrlOperation:function(ret){
+            console.log("onPluginEvtConfCtrlOperation:"+ JSON.stringify(ret));        
+        },  
+
+        onPluginEvtClickStartShare:function(ret){
+            if(ret.info.videoType == 0){
+                console.log("onPluginEvtClickStartShare on call");        
+            }else if(ret.info.videoType == 1){
+                console.log("onPluginEvtClickStartShare on video conf"); 
+            }else if(ret.info.videoType == 2){
+                console.log("onPluginEvtClickStartShare on data conf"); 
+            }else{
+               
+            }
+            console.log("onPluginEvtClickStartShare:"+ JSON.stringify(ret));        
+        },  
+        
+        onPluginEvtClickStopShare:function(ret){
+            console.log("onPluginEvtClickStopShare:"+ JSON.stringify(ret));        
+        },          
+        
+        onPluginEvtClickShowRemoteControl:function(ret){
+            // var number=prompt("Please enter the number","");
+            // if(number!=undefined && number!=null && number!=""){
+            //     client.setRemoteCtrl(1, 1, number);
+            // }else{
+  
+            // }
+            console.log("onPluginEvtClickShowRemoteControl:"+ JSON.stringify(ret));        
+        },  
+
+        onPluginEvtClickReleaseRemoteControl:function(ret){
+            var number=prompt("Please enter the number","");
+            if(number!=undefined && number!=null && number!=""){
+                client.setRemoteCtrl(1, 0, number);
+            }else{
+  
+            }
+            console.log("OnPluginEvtClickReleaseRemoteControl:"+ JSON.stringify(ret));        
+        }, 
+
+        onEvtConfctrlOperationResult:function(ret){
+            console.log("onEvtConfctrlOperationResult:"+ JSON.stringify(ret));    
+        }, 
     }
 
     root.client = cloudEC.createClient(listeners);

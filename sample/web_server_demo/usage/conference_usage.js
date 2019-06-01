@@ -72,16 +72,11 @@ function makeCall(){
 }
 
 function answerCall(accept){
-	var call = client.getCallHandler();
-	if (call == null) {
-		return;
-	}
 	var isVideo = document.getElementById("isVideoCall").checked;
 	client.answerCall(accept, isVideo);
 }
 
 function hangup(){
-	var call = client.getCallHandler();
 	if (call == null) {
 		return;
 	}
@@ -198,17 +193,18 @@ function blindTransfer(){
 //call end
 
 function joinInstanceConf() {
-	var conference;
 	var confTypeObj = document.getElementById("instance_conf_type");
 	var confType = parseInt(confTypeObj.options[confTypeObj.selectedIndex].value);
 	var attendeeInfo = document.getElementById("member_list").value;
+	var isHdConfObj = document.getElementById("instance_is_HD_Conf");
+	var isHdConf =  parseInt(isHdConfObj.options[isHdConfObj.selectedIndex].value);
 	var array = attendeeInfo.split(",");
 	var attendees = new Array();
 	for (var i = 0; i < array.length; i++) {
 		attendees[i] = { number: array[i], name: "", smsPhone: "", email: "", autoInvite: 1, role: 0 };
 	}
 
-	var instanceConfParam = { isVideo: confType, language: 1, attendees: attendees }
+	var instanceConfParam = { isVideo: confType, language: 1, attendees: attendees,isHdConf:isHdConf}
 
 
 	client.joinInstanceConf(instanceConfParam, function callback(ret) {});
@@ -282,34 +278,46 @@ function setConfNativeWndSize() {
 	client.resetNativeWndSize(nativeWndParam);	
 }
 
-function setConfNativeWndMinimize() {
-	var nativeWndParam = {
-		width: 0, 
-		height: 0,
-	};
-	client.resetNativeWndSize(nativeWndParam);	
-}
-
 function setConfNativeWndSmall() {
-	var nativeWndParam = {
-		width: 480, 
-		height: 352,
-	};
-	client.resetNativeWndSize(nativeWndParam);	
+	var wndSizeParam = {
+		width : 480,
+		height : 352,
+		yOffsetRate : 0,
+		xOffsetRate : 0,
+	}
+	client.resetNativeWndSize(wndSizeParam, (data)=>{});	
 }
 
 function setConfNativeWndMedium() {
-	var nativeWndParam = {
-		width: 720, 
-		height: 480,
-	};
-	client.resetNativeWndSize(nativeWndParam);	
+	var wndSizeParam = {
+		width : 720,
+		height : 480,
+		yOffsetRate : 0,
+		xOffsetRate : 0,
+	}
+	client.resetNativeWndSize(wndSizeParam, (data)=>{});	
 }
 
 function setConfNativeWndLarge() {
-	var nativeWndParam = {
-		width: 1080, 
-		height: 720,
-	};
-	client.resetNativeWndSize(nativeWndParam);	
+	var wndSizeParam = {
+		width : 1080,
+		height : 720,
+		yOffsetRate : 0,
+		xOffsetRate : 0,
+	}
+	client.resetNativeWndSize(wndSizeParam, (data)=>{});	
+}
+
+//UI plugin
+function uiPluginShowSmallWindow() {
+	client.uiPluginShowSmallWindow((data)=>{});	
+}
+
+function uiPluginShowAnnotationTool() {
+	client.uiPluginShowAnnotationTool((data)=>{});	
+}
+
+function uiPluginSetWindowTitle() {
+	var uiWndTitle = document.getElementById("ui_window_title").value;
+	client.uiPluginSetWindowTitle(uiWndTitle,(data)=>{});	
 }

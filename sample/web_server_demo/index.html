@@ -29,11 +29,9 @@
     <!--end:webcomponentsts component initialization-->
     <script src="./usage/components/My97DatePicker/WdatePicker.js"></script>
     <!--begin: Add components-->
-    <link rel="import" href="./usage/components/video_canvas.html">
     <link rel="import" href="./usage/components/conf_list.html">
     <link rel="import" href="./usage/components/book_conf.html">
     <link rel="import" href="./usage/components/media_device.html">
-    <link rel="import" href="./usage/components/data_canvas.html">
     <link rel="import" href="./usage/components/attendee_list.html">
     <link rel="import" href="./usage/components/conf_control.html">
     <link rel="import" href="./usage/components/eaddr_contact.html">
@@ -62,7 +60,7 @@
                 <fieldset>
                     <legend>User login</legend>
                     <div id="login">
-                        server address:<input type="text" id="svr_addr" value="10.174.5.156" /> port:
+                        server address:<input type="text" id="svr_addr" value="10.174.10.63" /> port:
                         <input type="text" id="svr_port" value="8443" /> username:
                         <input type="text" id="name" value=""/> password:
                         <input type="password" id="passwd" value="" />
@@ -128,7 +126,7 @@
                             <input type="button" value="unmute mic" id="unmutMic" onclick="micMute(false)" />
                         </p>
                         <p>                         
-                            media files:<input type="text" id="media_file_path" value="./audio/SoundTest.wav"/>
+                            media files:<input type="text" id="media_file_path" value="./resources/audio/callRing/SoundTest.wav"/>
                             <input type="button" value="play media files" onclick = "startPlayMedia()"/>
                             <input type="button" value="stop playing media files" onclick = "stopPlayMedia()"/>
                         </p>
@@ -189,10 +187,13 @@
                 <fieldset>
                     <legend>Native Window</legend>
                     <div id="setNativeWndSize">
-                        <button onclick="setConfNativeWndMinimize()">minimize</button>
                         <button onclick="setConfNativeWndSmall()">small(480*352)</button>
                         <button onclick="setConfNativeWndMedium()">medium(720*480)</button>
-                        <button onclick="setConfNativeWndLarge()">large(1080*720)</button>
+                        <button onclick="setConfNativeWndLarge()">large(1080*720)</button><br/>
+                        <button onclick="uiPluginShowSmallWindow()">ShowSmallWindow</button><br/>
+                        <button onclick="uiPluginShowAnnotationTool()">ShowAnnotationTool</button><br/>
+                        set call window title:<input type="text" id="ui_window_title" value="huaweiMeeting" />
+                        <button onclick="uiPluginSetWindowTitle()">SetWindowTitle</button><br/>
                     </div>
                 </fieldset>
             </div>
@@ -239,6 +240,11 @@
                                 <option value=2>audio+Data</option> 
                                 <option value=3 selected="selected">video+Data</option>
                                </select> 
+
+                    HD conference: <select id='instance_is_HD_Conf'>  
+                                <option value=0>no</option> 
+                                <option value=1 selected="selected">yes</option> 
+                                </select>            
                     members list:<input type="text" id="member_list" value="70010,70011" />
                     <button onclick="joinInstanceConf()">instance conference</button>
                 </fieldset>
@@ -247,15 +253,6 @@
                     conference ID:<input type="text" id="conferenceId" value="121997039" /> access code:
                     <input type="text" id="accessNumber" value="+865718001" /> conference password: <input type="password" id="confPasswd" value="" />
                     <button onclick="accessReservedConf()">access reserved conference</button>
-                </fieldset>
-
-                <fieldset style="margin-top:5px;height:500px;">
-                    <legend>Video canvas</legend>
-                    <cloudec-canvas />
-                </fieldset>
-                <fieldset style="margin-top:5px;">
-                    <legend>Data canvas</legend>
-                    <cloudec-datacanvas id="cloudec-datacanvas" width="640px" height="480px"  style="visibility:hidden"/>
                 </fieldset>
             </div>
         </li>

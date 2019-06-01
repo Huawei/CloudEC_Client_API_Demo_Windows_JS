@@ -91,8 +91,10 @@
         var e = evt.srcElement || evt.target;
         if (e.value == "0") {
             document.getElementById('cloudec_input_datetime').style.display = 'none';
+            document.getElementById('cloudec_room_timezone').style.display = 'none';
         } else {
             document.getElementById('cloudec_input_datetime').style.display = 'block';
+            document.getElementById('cloudec_room_timezone').style.display = 'block';
         }
     }
 
@@ -143,6 +145,12 @@
                 + "<input id='cloudec_start_type' name='cloudec_start_type' onclick='confStartType()' type='radio' value='0' />now"
                 + "<input id='cloudec_start_type' name='cloudec_start_type' onclick='confStartType()' checked='checked' type='radio' value='1' />later"
                 + "</td></tr>"
+                + "<tr>"
+                + "<td/>HD conference:</td><td>"
+                + "<input id='cloudec_is_HD_conf' name='cloudec_is_HD_conf'  type='radio' value='1' />yes"
+                + "<input id='cloudec_is_HD_conf' name='cloudec_is_HD_conf'  checked='checked' type='radio' value='0' />no"
+                + "</td>"
+                +"</tr>"
                 + "<tr><td></td><td>"
                 + "<select id='cloudec_room_timezone' name='cloudec_room_timezone' style='width:200px'>"
                 + select_str
@@ -177,6 +185,7 @@
             cloudec_confbook_btn.innerHTML = "book conference"
             cloudec_confbook_btn.addEventListener("mousedown", function (e) {
                 var startType = parseInt(document.querySelector('input[id="cloudec_start_type"]:checked').value)
+                var isHDConf = parseInt(document.querySelector('input[id="cloudec_is_HD_conf"]:checked').value)
                 var confType = parseInt(document.querySelector('input[id="cloudec_conf_type"]:checked').value)
                 var dateTime = document.getElementById("cloudec_input_datetime").value;
                 var topic = document.getElementById("cloudec_input_topic").value;
@@ -209,11 +218,16 @@
 
                 //Interface to call a book meeting
                 client.bookConference({
-                    topic: topic, duration: parseInt(duration), isVideo: confType,
+                    topic: topic, 
+                    duration: parseInt(duration), 
+                    isVideo: confType,
+                    isHdConf:isHDConf,
+                    confType:startType,
                     startTime: startType == 0 ? null : {
                         year: newDate.getFullYear(), month: (newDate.getMonth() + 1), date: newDate.getDate(),
                         hours: newDate.getHours(), minutes: newDate.getMinutes()
-                    }, language: 1,
+                    }, 
+                    language: 1,
                     attendees: attendeeList
                 }, function (ret) {
                     alert("bookConference callback" + JSON.stringify(ret))

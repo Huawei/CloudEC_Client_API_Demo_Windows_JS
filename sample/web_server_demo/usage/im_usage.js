@@ -9,7 +9,7 @@ function getContactList(){
 
 function addContactGroup(){
     var contactGroupName = document.getElementById("contactGroupNameForAdd").value;
-	client.addContactGroup( contactGroupName,-1, function(data){
+	client.addContactGroup( contactGroupName,0, function(data){
 		alert(JSON.stringify(data));
 	});	
 }
@@ -67,7 +67,7 @@ function addContact(){
     var contactMobile = document.getElementById("contactMobileByAdd").value;
     var contactInfo = {
         id: 99,
-        staffID: "",
+        staffID: 0,
         name: contactName,
         nickName: "",
         foreignName: contactForeignName,
@@ -87,7 +87,7 @@ function addContact(){
         address: "", 
         desc: "", 
         postalcode: "",
-        state: "",                 
+        state: 0,                 
         extensions: "",//option
     }
 	client.addContact(contactInfo, contactGroupID === "" ? "" : Number(contactGroupID), function(data){

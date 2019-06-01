@@ -24,9 +24,7 @@
         │  book_conf.html 预定会议组件
         │  conf_control.html 会议控制组件
         │  conf_list.html 会议信息列表组件
-        │  data_canvas.html 数据会议组件
         │  media_device.html 媒体设备组件
-        │  video_canvas.html 视频会议组件
         ├─my97datepicker 第三方日期组件
         └─webcomponentsjs-1.0.20 第三方支持自定义页面的组件，兼容多个浏览器
 ```
