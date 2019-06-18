@@ -152,7 +152,7 @@
         client.requestRemoteCtrl(1);
     }
 
-    var cloudecMuteAttendee = function (attendeeNumberStr) {
+    var cloudecMuteAttendee = function (attendeeNumberStr,isSelf) {
         var conference = client.getConfHandler();
         if (conference == null) {
             alert("Meeting has not yet started");
@@ -160,9 +160,12 @@
         }
         attendeeNumberStr = attendeeNumberStr + "";
         client.muteAttendee(attendeeNumberStr,true);
+        if (isSelf == 1){
+            client.micMute(true);
+        }
     }
 
-    var cloudecUnmuteAttendee = function (attendeeNumberStr) {
+    var cloudecUnmuteAttendee = function (attendeeNumberStr,isSelf) {
         var conference = client.getConfHandler();
         if (conference == null) {
             alert("Meeting has not yet started");
@@ -170,6 +173,9 @@
         }
         attendeeNumberStr = attendeeNumberStr + "";
         client.muteAttendee(attendeeNumberStr,false);
+        if (isSelf == 1){
+            client.micMute(false);
+        }
     }
 
     var cloudecHandup = function (attendeeNumberStr) {
@@ -302,7 +308,7 @@
                         useridSelect.appendChild(option);
 
                         //Update to attendee list
-                        var cloudecAttendeeNumberStr = attendeeList[m].number.toString();
+                        var cloudecAttendeeNumberStr = attendeeList[m].number;
                         r = t.insertRow(m);
                         c = r.insertCell(0);
                         c.innerHTML = attendeeList[m].participantId;
@@ -335,9 +341,9 @@
                         c.title = "screen sharing status";
                         c = r.insertCell(6);
                         if (1 == cloudecChairman) {
-                            c.innerHTML = (attendeeList[m].isMute == 1) ? '<input type="button" id="unmuteAttendee" value ="unmute" onclick=cloudecUnmuteAttendee("' + cloudecAttendeeNumberStr + '") />' : '<input type="button" id="muteAttendee"  value = "mute" onclick=cloudecMuteAttendee("' + cloudecAttendeeNumberStr + '") />';
+                            c.innerHTML = (attendeeList[m].isMute == 1) ? '<input type="button" id="unmuteAttendee" value ="unmute" onclick=cloudecUnmuteAttendee("' + cloudecAttendeeNumberStr+'"'+","+attendeeList[m].isSelf+ ') />' : '<input type="button" id="muteAttendee"  value = "mute" onclick=cloudecMuteAttendee("' + cloudecAttendeeNumberStr+'"'+","+attendeeList[m].isSelf+ ') />';
                         } else if (attendeeList[m].isSelf == 1) {
-                            c.innerHTML = (attendeeList[m].isMute == 1) ? '<input type="button" id="unmuteAttendee" value ="unmute" onclick=cloudecUnmuteAttendee("' + cloudecAttendeeNumberStr + '") />' : '<input type="button" id="muteAttendee"  value = "mute" onclick=cloudecMuteAttendee("' + cloudecAttendeeNumberStr + '") />';
+                            c.innerHTML = (attendeeList[m].isMute == 1) ? '<input type="button" id="unmuteAttendee" value ="unmute" onclick=cloudecUnmuteAttendee("' + cloudecAttendeeNumberStr+'"'+","+attendeeList[m].isSelf+ ') />' : '<input type="button" id="muteAttendee"  value = "mute" onclick=cloudecMuteAttendee("' + cloudecAttendeeNumberStr+'"'+","+attendeeList[m].isSelf+ ') />';
                         } else {
                             c.innerHTML = (attendeeList[m].isMute == 1) ? 'mute' : 'unmute';
                         }

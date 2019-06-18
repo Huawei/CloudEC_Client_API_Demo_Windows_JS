@@ -52,10 +52,10 @@
 
                 var media_type
                 switch (data.mediaType) {
-                    case 1: media_type = "Audio"; break
-                    case 3: media_type = "video"; break
-                    case 17: media_type = "Audio+data"; break
-                    case 19: media_type = "video+data"; break
+                    case 0: media_type = "Audio"; break
+                    case 1: media_type = "video"; break
+                    case 2: media_type = "Audio+data"; break
+                    case 3: media_type = "video+data"; break
                 }
                 var cloudec_confinfo_div = document.getElementById('cloudec_confinfo_div')
                 cloudec_confinfo_div.style.display = "block"

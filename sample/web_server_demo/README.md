@@ -18,7 +18,6 @@
     │  conference_usage.js  接口调用示例入口	
     │  event_process.js 接口回调事件监听处理模板		
     │  config.js 配置文件
-    │  im_usage.js 即时消息调用示例
     └─components  UI组件，按功能模块示例相关接口的调用方法
         │  attendee_list.html 与会者列表组件
         │  book_conf.html 预定会议组件

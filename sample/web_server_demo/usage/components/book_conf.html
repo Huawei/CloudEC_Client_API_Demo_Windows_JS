@@ -92,9 +92,13 @@
         if (e.value == "0") {
             document.getElementById('cloudec_input_datetime').style.display = 'none';
             document.getElementById('cloudec_room_timezone').style.display = 'none';
+            document.getElementById('cloudec_td_chairmain').style.display = 'none';
+            document.getElementById('cloudec_input_chairmain').style.display = 'none';
         } else {
             document.getElementById('cloudec_input_datetime').style.display = 'block';
             document.getElementById('cloudec_room_timezone').style.display = 'block';
+            document.getElementById('cloudec_td_chairmain').style.display = 'block';
+            document.getElementById('cloudec_input_chairmain').style.display = 'block';
         }
     }
 
@@ -171,12 +175,12 @@
                 + "<td><input id='cloudec_input_topic' type='text' value = 'CloudEC-Meeting' style='width:200px'/></td>"
                 + "</tr>"
                 + "<tr>"
-                + "<td>chairman:</td>"
-                + "<td><input id='cloudec_input_chairmain' type='text' value='10010' style='width:200px'/></td>"
+                + "<td id='cloudec_td_chairmain'>chairman:</td>"
+                + "<td><input id='cloudec_input_chairmain' type='text' value='' style='width:200px'/></td>"
                 + "</tr>"
                 + "<tr>"
                 + "<td>attendee:</td>"
-                + "<td><input id='cloudec_input_attendees' type='text' value='10011,10012' style='width:200px'/></td>"
+                + "<td><input id='cloudec_input_attendees' type='text' value='' style='width:200px'/></td>"
                 + "</tr>"
                 + "<tr>"
                 + "</table>"
@@ -186,14 +190,17 @@
             cloudec_confbook_btn.addEventListener("mousedown", function (e) {
                 var startType = parseInt(document.querySelector('input[id="cloudec_start_type"]:checked').value)
                 var isHDConf = parseInt(document.querySelector('input[id="cloudec_is_HD_conf"]:checked').value)
-                var confType = parseInt(document.querySelector('input[id="cloudec_conf_type"]:checked').value)
+                var confMediaType = parseInt(document.querySelector('input[id="cloudec_conf_type"]:checked').value)
                 var dateTime = document.getElementById("cloudec_input_datetime").value;
                 var topic = document.getElementById("cloudec_input_topic").value;
                 var duration = document.getElementById("cloudec_input_duration").value;
                 var chairmain = document.getElementById("cloudec_input_chairmain").value
                 var attendees_str = document.getElementById("cloudec_input_attendees").value
                 var attendees_array = attendees_str.split(",");
-                attendees_array.push(chairmain)
+                //The chairman is default self in instant conference. No need input.
+                if (startType == 1){
+                    attendees_array.push(chairmain)
+                }                
                 var attendeeList = [];
                 for (var m in attendees_array) {
                     var attendeeParam = {}
@@ -205,8 +212,10 @@
                     attendeeParam.email = ""
                     attendeeList[m] = attendeeParam
                 }
-                attendeeList[attendeeList.length - 1].role = 1;
-
+                if (startType == 1){
+                    attendeeList[attendeeList.length - 1].role = 1;
+                } 
+                
                 //Get time and convert to UTC for the corresponding time zone
                 var timezone = document.getElementById("cloudec_room_timezone");
                 var offset = timezone.options[timezone.selectedIndex].value * 60 * 60 * 1000;
@@ -220,7 +229,7 @@
                 client.bookConference({
                     topic: topic, 
                     duration: parseInt(duration), 
-                    isVideo: confType,
+                    isVideo: confMediaType,
                     isHdConf:isHDConf,
                     confType:startType,
                     startTime: startType == 0 ? null : {

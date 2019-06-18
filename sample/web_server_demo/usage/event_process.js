@@ -249,151 +249,7 @@
         onCallBldTransferResult:function(ret){
             alert("onCallBldTransferResult:"+ JSON.stringify(ret));                       
         },
-
-        onUserInfoChange:function(ret){
-           var newPage = window.open("","onUserInfoChange");
-           newPage.document.write("onUserInfoChange:"+JSON.stringify(ret));                        
-        },
-
-        onAddFriend:function(ret){
-           var newPage = window.open("","onAddFriend");
-           newPage.document.write("onAddFriend:"+JSON.stringify(ret));      
-        },
-        onUserStatusList:function(ret){    
-            var newPage = window.open("","onUserStatusList");
-            newPage.document.write("onUserStatusList:"+JSON.stringify(ret));                 
-        },
-
-        onGroupDismiss:function(ret){
-            var newPage = window.open("","onGroupDismiss");
-            newPage.document.write("onGroupDismiss:"+JSON.stringify(ret));                          
-        },
-
-        onGroupInfoChange:function(ret){
-            var newPage = window.open("","onGroupInfoChange");
-            newPage.document.write("onGroupInfoChange:"+JSON.stringify(ret));                     
-        },
-	
-        onGroupOwnerChange:function(ret){
-            var newPage = window.open("","onGroupOwnerChange");
-            newPage.document.write("onGroupOwnerChange:"+JSON.stringify(ret));                      
-        },
-
-        onGroupMemberAdd:function(ret){ 
-            var newPage = window.open("","onGroupMemberAdd");
-            newPage.document.write("onGroupMemberAdd:"+JSON.stringify(ret));                     
-        },
-
-        onGroupMemberDel:function(ret){
-            var newPage = window.open("","onGroupMemberDel");
-            newPage.document.write("onGroupMemberDel:"+JSON.stringify(ret));                        
-        },
-
-        onWasAddToGroup:function(ret){ 
-           var newPage = window.open("","onWasAddToGroup");
-           newPage.document.write("onWasAddToGroup:"+JSON.stringify(ret));                          
-        },
-
-        onReceiveInviteJoinGroup:function(ret){
-            var group_ret = confirm(ret.info.memberName + " apply to join " + ret.info.groupName +" group, accept or reject?");
-
-            var approvalParam = {
-                flag: 1,
-                agreeJoin: group_ret,
-                groupId: ret.info.groupID,    
-                memberAccount: ret.info.memberAccount
-            };
-
-            client.approvalGroup(approvalParam, function(data){
-                var newPage = window.open("","approvalGroup");
-                newPage.document.write("approvalGroup:"+JSON.stringify(data));     
-            });  
-
-        },
-
-        onReceiveInviteToGroup:function(ret) {
-            var group_ret = confirm("You are invited to join " + ret.info.groupName +" group, accept or reject?");
-
-            var approvalParam = {
-                flag: 0,
-                agreeJoin: group_ret,
-                groupId: ret.info.groupID,    
-                memberAccount: ret.info.adminAccount
-            };
-            client.approvalGroup(approvalParam, function(data){
-                var newPage = window.open("","approvalGroup");
-                newPage.document.write("approvalGroup:"+JSON.stringify(data)); 
-            });	   
-        },
-
-        onGroupOwnerInviteResult:function(ret){     
-            var newPage = window.open("","onGroupOwnerInviteResult");
-            newPage.document.write("onGroupOwnerInviteResult:"+JSON.stringify(ret));                 
-        },
-
-        onGroupKickout:function(ret){
-            var newPage = window.open("","onGroupKickout");
-            newPage.document.write("onGroupKickout:"+JSON.stringify(ret));                     
-        },
-
-        onGroupLeaveResult:function(ret){
-            var newPage = window.open("","onGroupLeaveResult");
-            newPage.document.write("onGroupLeaveResult:"+JSON.stringify(ret));                      
-        },
-
-        onMsgSendAck:function(ret){
-            var newPage = window.open("","onMsgSendAck");
-            newPage.document.write("onMsgSendAck:"+JSON.stringify(ret));                   
-        },
-
-        onChatNotify:function(ret){
-            var chatMessage = ret.info;
-            var messageReadParam = {
-                msgType:chatMessage.chatType,
-                sender: chatMessage.origin, 
-                msgId: chatMessage.serverChatID
-            }
         
-            var messageReadParamArray = new Array();
-            messageReadParamArray[0] = messageReadParam;
-            client.setReadMessage(messageReadParamArray, function(data){
-
-            });	
-            var newPage = window.open("","onChatNotify");
-            newPage.document.write("onChatNotify:"+JSON.stringify(ret));       
-            
-        },
-
-        onChatListNotify:function(ret){
-            var newPage = window.open("","onChatListNotify");
-            newPage.document.write("onChatListNotify:"+JSON.stringify(ret));                    
-        },
-
-        onSystemBulletin:function(ret){
-            var newPage = window.open("","onSystemBulletin");
-            newPage.document.write("onSystemBulletin:"+JSON.stringify(ret));                    
-        },
-
-        onUnDeliver:function(ret){
-            var newPage = window.open("","onUnDeliver");
-            newPage.document.write("onUnDeliver:"+JSON.stringify(ret));                      
-        },
-
-        onWithdrawResult:function(ret){    
-            var newPage = window.open("","onWithdrawResult");
-            newPage.document.write("onWithdrawResult:"+JSON.stringify(ret));                  
-        },
-
-        onWithdrawNotify:function(ret){   
-            var newPage = window.open("","onWithdrawNotify");
-            newPage.document.write("onWithdrawNotify:"+JSON.stringify(ret));                    
-        },
-
-        onSendImInput:function(ret){
-            var newPage = window.open("","onSendImInput");
-            newPage.document.write("onSendImInput:"+JSON.stringify(ret));                      
-        },
-
         onPluginEvtClickHangupCall:function(ret){
             var call = client.getCallHandler();
             if (call == null) {
@@ -492,14 +348,8 @@
             console.log("onPluginEvtClickStopShare:"+ JSON.stringify(ret));        
         },          
         
-        onPluginEvtClickShowRemoteControl:function(ret){
-            // var number=prompt("Please enter the number","");
-            // if(number!=undefined && number!=null && number!=""){
-            //     client.setRemoteCtrl(1, 1, number);
-            // }else{
-  
-            // }
-            console.log("onPluginEvtClickShowRemoteControl:"+ JSON.stringify(ret));        
+        onPluginEvtClickRequestRemoteControl:function(ret){
+            console.log("onPluginEvtClickRequestRemoteControl:"+ JSON.stringify(ret));        
         },  
 
         onPluginEvtClickReleaseRemoteControl:function(ret){

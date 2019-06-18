@@ -71,22 +71,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CloudEC_SERVERCONFIG = {
-        LOGIN_ADDRESS: "szxuces-vip.huawei.com",
-        LOGIN_PORT: "8443",
-        CA_PATH: "./",
         LOG_PATH: "./terminal_sdk_log/",
         LOG_LEVEL: 3,
-        LOG_IM_LEVEL: 0,
         LOG_FILE_COUNT: 5,
         LOG_FILE_SIZE: 10240,
-        IM_SERVER_VERSION: "v3.1.0.200",
-        LOGIN_SERVER_VERSION: "V6R6C00",
-        INVOKE_MODE: 1,
         ENTERPRISE_DOMAIN: "localhost.cloudec.huaweicloud.com",
         ENTERPRISE_DOMAIN_PORT: "7684",
         IS_TLS_SUPPORT: 0,
         IS_WSS: 1,
         CONF_CONTROL_PROTOCOL: 1,
+        IS_SUPPORT_IM: 0,
         UI_PLUGIN_APP_DISPLAY_NAME: "eSDK-Desktop",
         UI_PLUGIN_LANGUAGE: 0,
         UI_PLUGIN_RESOURCES_PATH: "",
@@ -105,9 +99,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         UI_PLUGIN_HIDE_INVITE_BUTTON: 0,
         UI_PLUGIN_HIDE_ATTENDEES_BUTTON: 0,
         UI_PLUGIN_HIDE_SHARE_BUTTON: 0,
+        UI_PLUGIN_HIDE_SHARE_CONF_LINK: 0,
         UI_PLUGIN_DATA_HIDE_INVITE_BUTTON: 0,
         UI_PLUGIN_DATA_HIDE_ATTENDEES_BUTTON: 0,
         UI_PLUGIN_DATA_HIDE_REQUEST_REMOTE_CONTROL_BUTTON: 0,
+        PAGE_TITLE: ""
     };
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -317,12 +313,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onPluginEvtSetWindowSize) != "undefined") {
                 tsdkClientAdapt.on('OnPluginEvtSetWindowSize', listeners.onPluginEvtSetWindowSize);
             }
-            if (typeof (listeners.onPluginEvtClickLeaveConf) != "undefined") {
-                tsdkClientAdapt.on('OnPluginEvtClickLeaveConf', listeners.onPluginEvtClickLeaveConf);
-            }
-            if (typeof (listeners.onPluginEvtClickEndConf) != "undefined") {
-                tsdkClientAdapt.on('OnPluginEvtClickEndConf', listeners.onPluginEvtClickEndConf);
-            }
             if (typeof (listeners.onPluginEvtClickShowMemberList) != "undefined") {
                 tsdkClientAdapt.on('OnPluginEvtClickShowMemberList', listeners.onPluginEvtClickShowMemberList);
             }
@@ -335,8 +325,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onPluginEvtClickStartShare) != "undefined") {
                 tsdkClientAdapt.on('OnPluginEvtClickStartShare', listeners.onPluginEvtClickStartShare);
             }
-            if (typeof (listeners.onPluginEvtClickShowRemoteControl) != "undefined") {
-                tsdkClientAdapt.on('OnPluginEvtClickShowRemoteControl', listeners.onPluginEvtClickShowRemoteControl);
+            if (typeof (listeners.onPluginEvtClickRequestRemoteControl) != "undefined") {
+                tsdkClientAdapt.on('OnPluginEvtClickRequestRemoteControl', listeners.onPluginEvtClickRequestRemoteControl);
             }
             if (typeof (listeners.onPluginEvtClickReleaseRemoteControl) != "undefined") {
                 tsdkClientAdapt.on('OnPluginEvtClickReleaseRemoteControl', listeners.onPluginEvtClickReleaseRemoteControl);
@@ -365,9 +355,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (options.logFileSize) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.LOG_FILE_SIZE = options.logFileSize;
             }
-            if (typeof (options.imServerVersion) != "undefined") {
-                serverConfig_1.CloudEC_SERVERCONFIG.IM_SERVER_VERSION = options.imServerVersion;
-            }
             if (typeof (options.domain) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.ENTERPRISE_DOMAIN = options.domain;
             }
@@ -379,6 +366,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.confCtrlProtocol) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.CONF_CONTROL_PROTOCOL = options.confCtrlProtocol;
+            }
+            if (typeof (options.IsSupportIm) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.IS_SUPPORT_IM = options.IsSupportIm;
             }
             if (typeof (options.uiPluginAppDisplayName) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_APP_DISPLAY_NAME = options.uiPluginAppDisplayName;
@@ -434,6 +424,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (options.uiPluginHideShareButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_BUTTON = options.uiPluginHideShareButton;
             }
+            if (typeof (options.uiPluginHideShareConfLink) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_CONF_LINK = options.uiPluginHideShareConfLink;
+            }
             if (typeof (options.uiPluginDataHideInviteButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON = options.uiPluginHideInviteButton;
             }
@@ -442,6 +435,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.uiPluginDataHideRequestRemotecontrolButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_REQUEST_REMOTE_CONTROL_BUTTON = options.uiPluginDataHideRequestRemotecontrolButton;
+            }
+            if (typeof (options.pageTitle) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.PAGE_TITLE = options.pageTitle;
             }
         };
         return CloudEC;
@@ -1349,7 +1345,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     else {
                     }
                     if (_this.confinfo.confHandle != 0) {
-                        videoType = _this.confinfo.mediaType == 3 ? 2 : 1;
+                        videoType = (_this.confinfo.mediaType == 3 || _this.confinfo.mediaType == 2) ? 2 : 1;
                     }
                     else {
                         videoType = 0;
@@ -1372,7 +1368,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         y: 0
                     };
                     if (_this.confinfo.confHandle != 0) {
-                        videoType = _this.confinfo.mediaType == 3 ? 2 : 1;
+                        videoType = (_this.confinfo.mediaType == 3 || _this.confinfo.mediaType == 2) ? 2 : 1;
                     }
                     else {
                         videoType = 0;
@@ -1437,14 +1433,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 OnPluginEvtClickSetShareQuality: function (ret) {
                 },
                 OnPluginEvtClickShowRemoteControl: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var clickShowRemoteControlNotify = {
-                        furtherProcessType: ret.param.furtherProcessType,
-                    };
-                    evt.info = clickShowRemoteControlNotify;
-                    _this.notify('OnPluginEvtClickShowRemoteControl', evt);
                 },
                 OnPluginEvtClickRequestRemoteControl: function (ret) {
+                    var evt = { result: true, info: "" };
+                    var clickRequestRemoteControlNotify = {
+                        furtherProcessType: ret.param.furtherProcessType,
+                    };
+                    evt.info = clickRequestRemoteControlNotify;
+                    _this.notify('OnPluginEvtClickRequestRemoteControl', evt);
                 },
                 OnPluginEvtClickReleaseRemoteControl: function (ret) {
                     var evt = { result: true, info: "" };
@@ -1553,7 +1549,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 supportAudioAndVideoConf: 1,
                 supportDataConf: 1,
                 supportCtd: 0,
-                supportIm: 1,
+                supportIm: serverConfig_1.CloudEC_SERVERCONFIG.IS_SUPPORT_IM,
                 supportRichMediaMessage: 0,
                 supportEnterpriseAddressBook: 1,
                 useUiPlugin: 1,
@@ -1571,19 +1567,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             };
             this.tsdkClient.setConfigParam(baseInfoParam, callbacks);
             var parentExeName = this.getExplorerInfo();
+            var pageTitle = serverConfig_1.CloudEC_SERVERCONFIG.PAGE_TITLE;
+            if (util.isUndefined(pageTitle) || util.isNull(pageTitle)) {
+                pageTitle = document.title;
+            }
             var frameParam = {
                 frameParam: {
                     hasFrameInfo: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HAS_FRAME_INFO,
                     frameInfo: {
-                        x: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_X,
-                        y: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_Y,
+                        leftTopX: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_X,
+                        leftTopY: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_Y,
                         width: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_WIDTH,
                         height: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_HEIGHT
                     },
                     hasParentWnd: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HAS_PARENT_INFO,
                     parentInfo: {
                         processName: parentExeName,
-                        title: document.title,
+                        title: pageTitle,
                         xOffset: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_X,
                         yOffset: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_Y,
                         xOffsetRate: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_PARENT_INFO_X_OFFSET_RATE,
@@ -1592,6 +1592,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                 },
             };
+            var frameParamStr = JSON.stringify(frameParam);
+            console.log(frameParamStr);
             this.tsdkClient.setConfigParam(frameParam, callbacks);
             var visibleInfo = {
                 visibleInfo: {
@@ -1600,7 +1602,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         hideBottomToolBar: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_BOTTOM_TOOL_BAR,
                         hideInviteButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_INVITE_BUTTON,
                         hideAttendeesButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_ATTENDEES_BUTTON,
-                        hideShareButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_BUTTON
+                        hideShareButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_BUTTON,
+                        hideShareConfLink: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_CONF_LINK
                     },
                     dataWindowVisibleInfo: {
                         hideInviteButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON,
@@ -1659,6 +1662,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.login(tsdkLoginParam, function (data) {
             });
             authParam.passwd = "";
+        };
+        TsdkClientAdapt.prototype.setDisplayName = function (displayName) {
+            var callbacks = function () { };
+            var err = { cmdId: 0, errorCode: 900000004, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (!util.isString(displayName)) {
+                TsdkClientAdapt.notifyErr(evt);
+                return;
+            }
+            var displayInfo = {
+                displayInfo: {
+                    displayName: displayName
+                },
+            };
+            this.tsdkClient.setConfigParam(displayInfo, callbacks);
         };
         TsdkClientAdapt.prototype.logout = function () {
             var callback = function () { };
@@ -1846,29 +1864,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.setMediaDevice = function (deviceType, index) {
             var callback = function () { };
-            if (deviceType == enum_1.MediaDevice.MICROPHONE) {
+            if (deviceType == enum_1.MEDIADEVICE_TYPE.MICROPHONE) {
                 this.tsdkClient.setMicIndex(index, callback);
             }
-            if (deviceType == enum_1.MediaDevice.SPEAKER) {
+            if (deviceType == enum_1.MEDIADEVICE_TYPE.SPEAKER) {
                 this.tsdkClient.setSpeakIndex(index, callback);
             }
-            if (deviceType == enum_1.MediaDevice.CAMERA) {
+            if (deviceType == enum_1.MEDIADEVICE_TYPE.CAMERA) {
                 this.tsdkClient.setVideoIndex(index, callback);
             }
         };
         TsdkClientAdapt.prototype.setVoiceVol = function (deviceType, value) {
             var callback = function () { };
-            if (deviceType == enum_1.MediaDevice.MICROPHONE) {
+            if (deviceType == enum_1.MEDIADEVICE_TYPE.MICROPHONE) {
                 this.tsdkClient.setMicVolume(value, callback);
             }
-            if (deviceType == enum_1.MediaDevice.SPEAKER) {
+            if (deviceType == enum_1.MEDIADEVICE_TYPE.SPEAKER) {
                 this.tsdkClient.setSpeakVolume(value, callback);
             }
         };
         TsdkClientAdapt.prototype.getVoiceVol = function (deviceType, callback) {
             var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
             var evt = { result: false, info: err };
-            if (deviceType == enum_1.MediaDevice.MICROPHONE) {
+            if (deviceType == enum_1.MEDIADEVICE_TYPE.MICROPHONE) {
                 this.tsdkClient.getMicVolume(function (data) {
                     evt = {
                         result: true,
@@ -1877,7 +1895,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     callback(evt);
                 });
             }
-            if (deviceType == enum_1.MediaDevice.SPEAKER) {
+            if (deviceType == enum_1.MEDIADEVICE_TYPE.SPEAKER) {
                 this.tsdkClient.getSpeakVolume(function (data) {
                     evt = {
                         result: true,
@@ -1926,20 +1944,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         var edate = new Date(confInfoList[m].endTime.replace(" ", "T"));
                         var l_edate = new Date(edate.valueOf() - offset);
                         var l_end_time = l_edate.toLocaleString();
-                        switch (confInfoList[m].confMediaType) {
-                            case 0:
-                                confInfoList[m].confMediaType = 1;
-                                break;
-                            case 1:
-                                confInfoList[m].confMediaType = 3;
-                                break;
-                            case 2:
-                                confInfoList[m].confMediaType = 17;
-                                break;
-                            case 3:
-                                confInfoList[m].confMediaType = 19;
-                                break;
-                        }
                         var obj = {
                             accessNumber: confInfoList[m].accessNumber,
                             chairmanPasswd: confInfoList[m].chairmanPwd,
@@ -1996,20 +2000,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var edate = new Date(confInfo.endTime.replace(" ", "T"));
                     var l_edate = new Date(edate.valueOf() - offset);
                     var l_end_time = l_edate.toLocaleString();
-                    switch (confInfo.confMediaType) {
-                        case 0:
-                            confInfo.confMediaType = 1;
-                            break;
-                        case 1:
-                            confInfo.confMediaType = 3;
-                            break;
-                        case 2:
-                            confInfo.confMediaType = 17;
-                            break;
-                        case 3:
-                            confInfo.confMediaType = 19;
-                            break;
-                    }
                     var conf_info = {
                         conferenceID: confInfo.confId,
                         accessNumber: confInfo.accessNumber,
@@ -2061,21 +2051,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 if (data.param.result == 0) {
                     var dataResult = data.param;
                     var confBaseInfo = dataResult.confBaseInfo;
-                    var confMediaType = dataResult.confMediaType;
-                    switch (confMediaType) {
-                        case 0:
-                            confMediaType = 1;
-                            break;
-                        case 1:
-                            confMediaType = 3;
-                            break;
-                        case 2:
-                            confMediaType = 17;
-                            break;
-                        case 3:
-                            confMediaType = 19;
-                            break;
-                    }
                     var date = new Date();
                     var offset = date.getTimezoneOffset() * 60 * 1000;
                     var sdate = new Date(confBaseInfo.startTime.replace(" ", "T"));
@@ -2116,8 +2091,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 startTimeStr = startTime.year + "-" + startTime.month + "-" + startTime.date + " " + startTime.hours + ":" + startTime.minutes;
             }
             var configedAttendees = new Array();
+            if (bookConferenceParam.confType == 0) {
+                var tsdkAttendeeBaseInfo = {
+                    displayName: "",
+                    sms: "",
+                    number: this.baseinfo.sipAccount,
+                    role: 1,
+                    email: "",
+                    accountId: this.baseinfo.sipAccount,
+                };
+                configedAttendees.push(tsdkAttendeeBaseInfo);
+            }
             for (var i = 0; !util.isUndefined(attendees) && i < attendees.length; i++) {
-                var TsdkAttendeeBaseInfo = {
+                var tsdkAttendeeBaseInfo = {
                     displayName: attendees[i].name,
                     sms: attendees[i].smsPhone,
                     number: attendees[i].number,
@@ -2125,7 +2111,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     email: attendees[i].email,
                     accountId: attendees[i].name,
                 };
-                configedAttendees[i] = TsdkAttendeeBaseInfo;
+                configedAttendees.push(tsdkAttendeeBaseInfo);
             }
             var bookConfInfo = {
                 welcomePrompt: 0,
@@ -2147,7 +2133,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 reminder: 0,
                 size: configedAttendees.length,
                 leavePrompt: 0,
-                isAutoProlong: 0,
+                isAutoProlong: 1,
                 subject: bookConferenceParam.topic,
             };
             this.registerLCallbacks(bookConferenceCallback);
@@ -2182,7 +2168,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var attendees = instanceConfParam.attendees;
             var configedAttendees = new Array();
             var tsdkAttendeeBaseInfo = {
-                displayName: this.baseinfo.sipAccount,
+                displayName: "",
                 sms: "",
                 number: this.baseinfo.sipAccount,
                 role: 1,
@@ -2322,7 +2308,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             this.tsdkClient.muteAttendee(this.confinfo.confHandle, attendee, mute ? 1 : 0, function (ret) { });
-            this.tsdkClient.muteMic(this.confinfo.callId, mute ? 1 : 0, function (ret) { });
         };
         TsdkClientAdapt.prototype.requestChairman = function (chairmanPwd) {
             if (util.isUndefined(chairmanPwd)) {
@@ -2483,7 +2468,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.answerConference = function (accept) {
             if (accept) {
-                this.tsdkClient.acceptConference(this.confinfo.confHandle, 1, function (ret) { });
+                this.tsdkClient.acceptConference(this.confinfo.confHandle, ((this.confinfo.mediaType) == 0 || (this.confinfo.mediaType) == 2) ? 0 : 1, function (ret) { });
             }
             else {
                 this.tsdkClient.rejectConference(this.confinfo.confHandle, function (ret) { });
@@ -4634,6 +4619,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        TsdkClientAdapt.prototype.getVersion = function () {
+            var CLOUDEC_SDK_INFO = {
+                version: "19.1.1",
+                name: "CloudLinkMeeting_JS_SDK",
+                time: "2019.6.14"
+            };
+            return "This is " + CLOUDEC_SDK_INFO.name + ",version is " + CLOUDEC_SDK_INFO.version
+                + ", the publish time is " + CLOUDEC_SDK_INFO.time + ".";
+        };
         TsdkClientAdapt.prototype.on = function (event, action) {
             var _listener = TsdkClientAdapt._listeners[event];
             if (!_listener) {
@@ -4997,525 +4991,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.LOGIN_AUTH_TYPE = {
-        ACCOUNT_AUTH: 0,
-        TOKEN_AUTH: 1,
-        CONF_PASSCODE_AUTH: 2
-    };
-    exports.FIREWALL_MODE = {
-        LOGIN_E_FIREWALL_MODE_ONLY_HTTP: 0,
-        LOGIN_E_FIREWALL_MODE_HTTP_AND_SVN: 1,
-        LOGIN_E_FIREWALL_MODE_NULL: 2
-    };
-    exports.CALL_FIREWALL_MODE = {
-        CALL_E_FIREWALL_MODE_LINE: 0,
-        CALL_E_FIREWALL_MODE_STG: 1,
-        CALL_E_FIREWALL_MODE_INNERSVN: 2,
-        CALL_E_FIREWALL_MODE_BUTT: 3
-    };
-    exports.IM_FIREWALL_MODE = {
-        IM_E_NET_ACCESS_MODE_NORMAL: 0,
-        IM_E_NET_ACCESS_MODE_STG: 1,
-    };
-    exports.CONF_MEDIATYPE = {
-        CONF_MEDIATYPE_FLAG_VOICE: 1,
-        CONF_MEDIATYPE_FLAG_VIDEO: 2,
-        CONF_MEDIATYPE_FLAG_HDVIDEO: 4,
-        CONF_MEDIATYPE_FLAG_TELEPRESENCE: 8,
-        CONF_MEDIATYPE_FLAG_DATA: 16,
-        CONF_MEDIATYPE_FLAG_DESKTOPSHARING: 32
-    };
-    exports.ONLINE_STATUS = {
-        OFFLINE: 0,
-        ONLINE: 1,
-        HIDDEN: 2,
-        BUSY: 3,
-        LEAVE: 4,
-        DO_NOT_DISTURB: 5,
-        MOBILE_ONLINE: 6,
-    };
-    exports.CHAT_TYPE = {
-        SINGLE_CHAT: 0,
-        SINGLE_CHAT_TEMPORARY: 1,
-        GROUP_CHAT: 2,
-        GROUP_CHAT_TEMPORARY: 3,
-        SERVICE_ONLINE: 4,
-        REMINDER: 5,
-        DISCUSSION_GROUP: 6,
-        FILE_TRANSFER_NOTIFICATION: 7,
-        SYSTEM_NOTIFICATION: 10,
-        SYSTEM_ADVERTISING: 11,
-        FUSION_MEETING_NOTIFICATION: 14,
-        IM_NOTIFICATION_MESSAGE: 20,
-        AUTO_REPLY: 101,
-    };
-    exports.OWNER_TYPE = {
-        MINE: "mine",
-        OTHERS: "others"
-    };
-    exports.IM_TYPE = {
-        SINGLE: 0,
-        GROUP: 1,
-        SHORT_MESSAGE: 2,
-        SYSTEM_ANNOUNCEMENT: 3,
-        OTHER: 4,
-    };
-    exports.SOURCE_FLAG = {
-        IM: 0,
-        MEETING: 1,
-    };
-    exports.CONTENT_TYPE = {
-        TEXT: 0,
-        RICH_TEXT: 1,
-    };
-    exports.MEDIA_TYPE = {
-        TEXT: 0,
-        AUDIO: 1,
-        VIDEO: 2,
-        PHOTO: 3,
-        FILE: 4,
-        PUBLIC_NUMBER: 5,
-        SCREEN_SHOT: 6,
-        CARD: 7,
-        PHOTO_TEXT: 8,
-        GROUP_SPACE_FILE: 10,
-        QUOTE: 11,
-        CALL_AUDIO: 100,
-        CALL_VIDEO: 101,
-        MOBILE_AUDIO: 200,
-        MOBILE_VIDEO: 201,
-    };
-    exports.CALL_STATUS = {
-        CALLED: 'called',
-        CALLING: 'calling',
-        NO_CALL: 'no_call',
-        ANSWERED: 'answered',
-        ANSWERING: 'answering',
-        NO_ANSWER: 'no_answer',
-    };
-    exports.INPUT_TYPE = {
-        INPUTTING: 0,
-        STOP: 1,
-    };
-    exports.SEND_STATUS = {
-        success: 1,
-        error: 0,
-    };
-    exports.QUERY_OPERATION_TYPE = {
-        NORMAL: 0,
-        FIRST: 1,
-    };
-    exports.IS_ENCRYPT = {
-        YES: 1,
-        NO: 0,
-    };
-    exports.SEARCH_STATUS = {
-        none: 0,
-        searching: 1,
-        searchover: 2,
-    };
-    exports.USER_INFO = {
-        CALL_NUM_LIST: ['bind_no', 'home_phone', 'ip_phone', 'mobile', 'office_phone', 'other_phone', 'short_phone', 'account'],
-        USER_SHOW_INFO: ['account', 'native_name', 'dept_name_cn']
-    };
-    exports.KEYPAD_CONST = {
-        DIAL_NUM_LIST: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0+", "#"],
-        KEY_AUDIO_SRC: '../resources/audio/key/',
-        KEY_AUDIO_LIST: ['0.wav', '1.wav', '2.wav', '3.wav', '4.wav', '5.wav', '6.wav', '7.wav', '8.wav', '9.wav', '10.wav', '11.wav'],
-        MAX_DIAL_NUM_LEN: 128,
-        DISTANCE: 200,
-        LOAD_LENGTH: 50,
-        ON_HOLD_TIME_STAMP: 400,
-        BTN_HIGH_LIGHT_TIME: 150
-    };
-    exports.isMobile = false;
-    exports.CALL_CONST = {
-        PROMPT_CALL_FAILED: 'CALL_CALLING_FAILED',
-        PROMPT_PREVENT_TWO_CALLS: 'PREVENT_TWO_CALLS',
-        PREVENT_TWO_OUTGOING_CALL: 'PREVENT_TWO_OUTGOING_CALL',
-        CALL_HOLD_FAILED: 'CALL_HOLD_FAILED',
-        CALL_UNHOLD_FAILED: 'CALL_UNHOLD_FAILED',
-        PROMPT_SIP_NOT_REG: 'CALL_SIP_NOT_REG',
-        MAX_CALL_LENGTH: 2,
-        MAX_VIDEO_CALL_LENGTH: 1,
-        DTMF_MAX_VALUE: 11,
-        DTMF_NUM_LIST: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"],
-        TIME_RE_REGISTER: 2000,
-        VOLUME_MAX: 100,
-        VOLUME_DEFAULT: 50,
-        NOTIFY_WIDTH: 310,
-        NOTIFY_HEIGHT: 191,
-        BOTTOM_MAX: 90,
-        VIBRATE_DISTANCE: 1000,
-        VIBRATE_CYCLE: 2000,
-        VOLUME_CIRCLE_SIZE: 12
-    };
-    exports.MEDIA_STATUS = {
-        NORMAL: -1,
-        SEND: 7,
-        SENDING: 0,
-        SEND_SUCCESS: 1,
-        SEND_ERROR: 2,
-        RECEIVE: 3,
-        RECEIVING: 4,
-        RECEIVE_SUCCESS: 5,
-        RECEIVE_ERROR: 6,
-        ERROR: -100,
-    };
-    exports.NOTIFICATION_MESSAGE_TYPE = {
-        MESSIONED: 0,
-        NOTIFICATION: 1,
-        REFERENCE: 2
-    };
-    exports.P2P_FILE_START_RESULT = {
-        Success: 0,
-        ModeDetectSuccess: 1,
-        TimeOut: -100,
-        TargetOffline: -104,
-        PeerReject: -112,
-        NoFileToSend: -116,
-        SendError: -120,
-        AcceptError: -121,
-        OpenFileError: -122,
-        Canceled: -124,
-        FileBusy: -125,
-        FileIsEmpty: -128,
-        FileModeMismatch: -132,
-        RegionalIsolation: -136
-    };
-    exports.P2P_FILE_STOP_REASON = {
-        Normal: 0,
-        TimeOut: 1,
-        SendError: 2,
-        AcceptError: 3,
-        Completed: 4,
-        Abnormal: 5,
-        SendOfflineFile: 6,
-        Unknow: -1
-    };
-    exports.ERROR_CODE = {
-        Timeout: -100,
-        Error: -1,
-        Success: 0,
-        OprMsgTimeout: 38,
-        Failure: 1001,
-        DBError: 1002,
-        ParamError: 1003,
-        DecodeError: 1004,
-        NotExist: 1005,
-        Exist: 1006,
-        GroupFilePermDenied: 1007,
-        GroupFileSpaceMax: 1008,
-        GroupFileSingleFileSizeMax: 1009,
-        IMGroupReachMaxNumber: 2001,
-        IMGroupFull: 2002,
-        DiscussionGroupReachMaxNumber: 2003,
-        FixedDiscussionGroupReachMaxNumber: 2004
-    };
-    exports.GROUP_TYPE = {
-        FIXED_GROUP: 0,
-        DISCUSS_GROUP: 1
-    };
-    exports.FILE_DEAL_TYPE = {
-        DOWNLOAD: 0,
-        UPLOAD: 1,
-        SEND: 2,
-        RECEIVE: 3,
-        RE_RECEIVE: 4,
-        RE_DOWNLOAD: 5
-    };
-    exports.GROUP_TAB_LIST = {
-        setting: 0,
-        member: 1,
-        files: 2,
-        album: 3
-    };
-    exports.CONTACT_TAB_LIST = {
-        information: 0,
-        number: 1,
-    };
-    exports.FILE_STATUS = {
-        upload: "upload",
-        download: "download",
-        failed: "fail",
-    };
-    exports.PX_TO_SIZE = {
-        "10px": 8,
-        "13px": 10,
-        "15px": 12,
-        "18px": 14,
-        "20px": 16,
-        "23px": 18,
-        "26px": 20,
-        "28px": 22
-    };
-    exports.PX_TO_SIZES = {
-        "8px": 8,
-        "10px": 10,
-        "12px": 12,
-        "14px": 14,
-        "16px": 16,
-        "18px": 18,
-        "20px": 20,
-        "22px": 22
-    };
-    exports.SIZE_TO_PX = {
-        8: "10px",
-        10: "13px",
-        12: "15px",
-        14: "18px",
-        16: "20px",
-        18: "23px",
-        20: "26px",
-        22: "28px",
-    };
-    exports.SIZE_TO_PXS = {
-        8: "8px",
-        10: "10px",
-        12: "12px",
-        14: "14px",
-        16: "16px",
-        18: "18px",
-        20: "20px",
-        22: "22px",
-    };
-    exports.RIGHT_MENU_TYPE = {
-        SEARCH_LIST: 0,
-        RECENT_LIST: 1,
-        CONTACT_GROUP: 2,
-        CONTACT_LIST: 3,
-        GROUP_LIST: 5,
-        CONVERSATION: 6,
-        EDITOR: 7,
-        CONF_MEMBERLIST: 8,
-        GROUP_MEMBER: 9,
-    };
-    exports.EXIT_OR_DISSOLUTION_GROUP = {
-        EXIT_GROUP: 0,
-        DISSOLUTION_GROUP: 1
-    };
-    exports.HIDE_OR_SHOW_WINDOW = {
-        HIDE_WINDOW: 0,
-        SHOW_WINDOW: 1
-    };
-    exports.DEAL_ERROR = "dealWasError";
-    exports.builtPlacements = {
-        left: {
-            points: ['cr', 'cl'],
-        },
-        right: {
-            points: ['cl', 'cr'],
-        },
-        top: {
-            points: ['bc', 'tc'],
-        },
-        bottom: {
-            points: ['tc', 'bc'],
-        },
-        topLeft: {
-            points: ['bl', 'tl'],
-        },
-        topRight: {
-            points: ['br', 'tr'],
-        },
-        bottomRight: {
-            points: ['tr', 'br'],
-        },
-        bottomLeft: {
-            points: ['tl', 'bl'],
-        },
-        center: {
-            points: ['cc', 'cc'],
-        },
-    };
-    exports.EDITOR_TOOL_BAR = {
-        FONT: 'font',
-        EMOJI: 'emoji',
-        ACCESSORY: 'accessory',
-        SCREEN_SHOT: 'screen-shot',
-        PULL_DOWN: 'pull-down',
-        CARD: 'card',
-        FAVOUR: 'favour',
-        HISTORY: 'history'
-    };
-    exports.EMOJI_TYPE = {
-        SYSTEM: 'system',
-        COLLECTION: 'collection',
-    };
-    exports.CONF_AUDIO_STATE = {
-        CONF_AUDIO_INVITING: 1,
-        CONF_AUDIO_INCONF: 5,
-        CONF_AUDIO_QUIT: 6,
-    };
-    exports.SIP_REGISTER_STATE = {
-        SIP_REGISTER_UNREGISTER: 0,
-        SIP_REGISTER_REGISTERING: 1,
-        SIP_REGISTER_DEREGISTERING: 2,
-        SIP_REGISTER_REGISTERED: 3
-    };
-    exports.IS_DOWNLOADED = {
-        YES: 1,
-        NO: 0,
-    };
-    exports.IS_UPLOADED = {
-        YES: 1,
-        NO: 0,
-    };
-    exports.IS_DELETE = {
-        YES: 1,
-        NO: 0,
-    };
-    exports.IS_QUOTE = {
-        YES: 1,
-        NO: 0,
-    };
-    exports.IS_RECEIVED = {
-        YES: 1,
-        NO: 0,
-    };
-    exports.IS_SENT = {
-        YES: 1,
-        NO: 0,
-    };
-    exports.GROUP_JOIN_FLAG = {
-        AUTO_JOIN: 0,
-        APPLY_JOIN: 1,
-    };
-    exports.SLIDER_DETAIL_TYPE = {
-        contact: "Contact",
-        group: "Group"
-    };
-    exports.CONTACT_SELECT_DIALOG_TYPE = {
-        CONTACT_SELECT_DIALOG_DISCUSSGROUP: 1,
-        CONTACT_SELECT_DIALOG_CONFADDMEMBER: 2,
-        CONTACT_SELECT_DIALOG_RELAYMESSAGE: 3,
-        CONTACT_SELECT_DIALOG_ADD_CONTACT: 4,
-    };
-    exports.SEARCH_MESSAGE_TYPE = {
-        SEARCH_TEXT: 0,
-        SEARCH_PICTURE: 1,
-        SEARCH_FILE: 2,
-        SEARCH_FILE_PICTURE: 3,
-    };
-    exports.SEARCH_MESSAGE_TYPE_VALUE = {
-        PICTURE: 1,
-        FILE: 2,
-    };
-    exports.MUTE_STATE = {
-        MUTE_STATE_UNMUTE: 0,
-        MUTE_STATE_MUTE: 1,
-        MUTE_STATE_TOUNMUTE: 2,
-        MUTE_STATE_TOMUTE: 3,
-    };
-    exports.CLOSE_WAYS = {
-        CLOSE_APP: "close",
-        MINIMIZE_APP: "minimizeApp"
-    };
-    exports.IS_REMINDER = {
-        TRUE: "true",
-        FALSE: "false",
-    };
-    exports.GROUP_NOTIFY_TYPE = {
-        DISMISS_GROUP_NOTIFY: 0,
-        LEAVE_GROUP_NOTIFY: 1,
-        GROUP_MEMADD_NOTIFY: 2,
-        GROUP_OWNERCHG_NOTIFY: 3,
-        RECEIVE_JOIN_GROUP_NOTIFY: 4,
-    };
-    exports.FIRST_LOGIN_NOT_REMIND = {
-        TRUE: "true",
-        FALSE: "false"
-    };
-    exports.CONF_MSG_TYPE = {
-        TYPE_IN_CONFERENCE: 0,
-        TYPE_ENTER_CONFERENCE: 1,
-        TYPE_LEAVE_CONFERENCE: 2,
-    };
-    exports.IOS_PHONE_VIDEO_CAMERA_PARAM = [
-        { captureRotation: 3, localDisRotation: 3, collectMode: 1 },
-        { captureRotation: 0, localDisRotation: 0, collectMode: 0 },
-        { captureRotation: 2, localDisRotation: 2, collectMode: 0 },
-        { captureRotation: 1, localDisRotation: 1, collectMode: 1 },
-        { captureRotation: 3, localDisRotation: 3, collectMode: 1 },
-        { captureRotation: 2, localDisRotation: 0, collectMode: 0 },
-        { captureRotation: 0, localDisRotation: 2, collectMode: 0 },
-        { captureRotation: 1, localDisRotation: 1, collectMode: 1 }
-    ];
-    exports.SERVER_PUBLIC_PATH = {
-        EMOTION_PATH: 'file:///UC.InternalImg//emotion/',
-        IMAGE_PATH: 'file:///UC.ExternalImg//temp/',
-    };
-    exports.KEY_CODE_ENTER = 13;
-    exports.CLIENT_TYPE = {
-        PC: 0,
-        MOBILE: 1,
-        WEB: 2
-    };
-    exports.CLIENT_DESC = {
-        PC: "eSDK-Desktop",
-        MOBILE: "eSDK-Mobile",
-    };
-    exports.RESUME_EVENT = {
-        IP_CHANGE: "ipchange",
-        AWAY_OFFLINE: "offline",
-        BACK_ONLINE: "online",
-        SESSION_TIMEOUT: "sessionTimeout",
-        SUSPEND: "suspend"
-    };
-    exports.CLOUDEC_SDK_INFO = {
-        version: "6.19.0.RC1",
-        name: "eSDK EC",
-        time: "2018.9.12"
-    };
-    exports.CLOUDEC_COMMON_RESULT = {
-        SUCCESS: 0,
-        FAILED: -1
-    };
-    var MediaDevice;
-    (function (MediaDevice) {
-        MediaDevice[MediaDevice["MICROPHONE"] = 0] = "MICROPHONE";
-        MediaDevice[MediaDevice["SPEAKER"] = 1] = "SPEAKER";
-        MediaDevice[MediaDevice["CAMERA"] = 2] = "CAMERA";
-    })(MediaDevice = exports.MediaDevice || (exports.MediaDevice = {}));
-    exports.CLOUDEC_CHANNEL_STATUS = {
-        IDLE: 0,
-        CONNECTED: 1,
-        CLOSED: 2
-    };
-    exports.CLOUDEC_LOGIN_E_DEPLOY_MODE = {
-        LOGIN_E_DEPLOY_ENTERPRISE_IPT: 0,
-        LOGIN_E_DEPLOY_ENTERPRISE_CC: 1,
-        LOGIN_E_DEPLOY_SPHOSTED_IPT: 2,
-        LOGIN_E_DEPLOY_SPHOSTED_CC: 3,
-        LOGIN_E_DEPLOY_SPHOSTED_CONF: 4,
-        LOGIN_E_DEPLOY_IMSHOSTED_IPT: 5,
-        LOGIN_E_DEPLOY_IMSHOSTED_CC: 6,
-    };
-    exports.CLOUDEC_IPT_TYPE = {
-        ENABLE_CALL_WAIT: 3,
-        DISABLE_CALL_WAIT: 4,
-        ENABLE_DO_NOT_DISTURB: 1,
-        DISABLE_DO_NOT_DISTURB: 2,
-        ENABLE_UNCONDITION_FORWARD: 25,
-        DISABLE_UNCONDITION_FORWARD: 26,
-        ENABLE_NO_REPLY_FORWARD: 29,
-        DISABLE_NO_REPLY_FORWARD: 30,
-        ENABLE_BUSY_FORWARD: 27,
-        DISABLE_BUSY_FORWARD: 28,
-        ENABLE_OFFLINE_FORWARD: 31,
-        DISABLE_OFFLINE_FORWARD: 32,
-    };
-    exports.IM_HISTORYMESSAGE_TYPE = {
-        SINGLECHAT: 0,
-        GROUPCHAT: 1,
-        BULLETIN: 3,
-    };
-    exports.CLOUDEC_SDK_LOG_LEVEL = {
-        LOG_ERROR: 0,
-        LOG_WARNING: 1,
-        LOG_INFO: 2,
-        LOG_DEBUG: 3,
-    };
+    var MEDIADEVICE_TYPE;
+    (function (MEDIADEVICE_TYPE) {
+        MEDIADEVICE_TYPE[MEDIADEVICE_TYPE["MICROPHONE"] = 0] = "MICROPHONE";
+        MEDIADEVICE_TYPE[MEDIADEVICE_TYPE["SPEAKER"] = 1] = "SPEAKER";
+        MEDIADEVICE_TYPE[MEDIADEVICE_TYPE["CAMERA"] = 2] = "CAMERA";
+    })(MEDIADEVICE_TYPE = exports.MEDIADEVICE_TYPE || (exports.MEDIADEVICE_TYPE = {}));
+    var IM_HISTORYMESSAGE_TYPE;
+    (function (IM_HISTORYMESSAGE_TYPE) {
+        IM_HISTORYMESSAGE_TYPE[IM_HISTORYMESSAGE_TYPE["SINGLECHAT"] = 0] = "SINGLECHAT";
+        IM_HISTORYMESSAGE_TYPE[IM_HISTORYMESSAGE_TYPE["GROUPCHAT"] = 1] = "GROUPCHAT";
+        IM_HISTORYMESSAGE_TYPE[IM_HISTORYMESSAGE_TYPE["BULLETIN"] = 3] = "BULLETIN";
+    })(IM_HISTORYMESSAGE_TYPE = exports.IM_HISTORYMESSAGE_TYPE || (exports.IM_HISTORYMESSAGE_TYPE = {}));
+    ;
+    var CLOUDEC_SDK_LOG_LEVEL;
+    (function (CLOUDEC_SDK_LOG_LEVEL) {
+        CLOUDEC_SDK_LOG_LEVEL[CLOUDEC_SDK_LOG_LEVEL["LOG_ERROR"] = 0] = "LOG_ERROR";
+        CLOUDEC_SDK_LOG_LEVEL[CLOUDEC_SDK_LOG_LEVEL["LOG_WARNING"] = 1] = "LOG_WARNING";
+        CLOUDEC_SDK_LOG_LEVEL[CLOUDEC_SDK_LOG_LEVEL["LOG_INFO"] = 2] = "LOG_INFO";
+        CLOUDEC_SDK_LOG_LEVEL[CLOUDEC_SDK_LOG_LEVEL["LOG_DEBUG"] = 3] = "LOG_DEBUG";
+    })(CLOUDEC_SDK_LOG_LEVEL = exports.CLOUDEC_SDK_LOG_LEVEL || (exports.CLOUDEC_SDK_LOG_LEVEL = {}));
+    ;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -5590,14 +5086,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         IM_E_LOGING_RESULT_TICKET_FLUID_ERROR: 20,
         IM_E_LOGING_RESULT_TICKET_REDIRECT_ERROR: 21
     };
-    exports.CONFERENCE_BOOK_ERROR = {};
-    exports.CONFERENCE_JOIN_ERROR = {
-        CONF_JOIN_ACCESSNUM_ERROR: 90000001,
-    };
-    exports.CONFERENCE_CTRL_ERROR = {};
-    exports.DATACONF_BOOK_ERROR = {};
-    exports.DATACONF_JOIN_ERROR = {};
-    exports.DATACONF_CTRL_ERROR = {};
     exports.EC_SDK_ERROR = {
         WEBSOCKET_IS_CLOSED: function (name) {
             return { result: false, info: { cmdId: undefined, errorCode: 900000001, errorInfo: name + " websocket has been closed, please reopen" } };
