@@ -59,7 +59,7 @@
                 <fieldset>
                     <legend>User login</legend>
                     <div id="login">
-                        server address:<input type="text" id="svr_addr" value="10.174.10.63" /> port:
+                        server address:<input type="text" id="svr_addr" value="bmeeting.huaweicloud.com" /> port:
                         <input type="text" id="svr_port" value="8443" /> username:
                         <input type="text" id="name" value=""/> password:
                         <input type="password" id="passwd" value="" />
@@ -189,10 +189,10 @@
                         <button onclick="setConfNativeWndSmall()">small(480*352)</button>
                         <button onclick="setConfNativeWndMedium()">medium(720*480)</button>
                         <button onclick="setConfNativeWndLarge()">large(1080*720)</button><br/>
-                        <button onclick="uiPluginShowSmallWindow()">ShowSmallWindow</button><br/>
-                        <button onclick="uiPluginShowAnnotationTool()">ShowAnnotationTool</button><br/>
+                        <button onclick="uiPluginShowSmallWindow()">show/hide small window</button><br/>
+                        <button onclick="uiPluginShowAnnotationTool()">show annotation tool</button><br/>
                         set call window title:<input type="text" id="ui_window_title" value="huaweiMeeting" />
-                        <button onclick="uiPluginSetWindowTitle()">SetWindowTitle</button><br/>
+                        <button onclick="uiPluginSetWindowTitle()">set window title</button><br/>
                     </div>
                 </fieldset>
             </div>
@@ -203,7 +203,7 @@
                 <fieldset>
                     <legend>Anonymous conference</legend>
                     <div id="anonymousConf">
-                        server address:<input type="text" id="anony_svr_addr" value="10.174.5.182" /> port:
+                        server address:<input type="text" id="anony_svr_addr" value="" /> port:
                         <input type="text" id="anony_svr_port" value="443" /> conference ID:
                         <input type="text" id="anony_conf_id" value="" /> conference password:
                         <input type="password" id="anony_passwd" value="" /> call type: <select id='anony_call_type'>  
@@ -236,8 +236,8 @@
                     conference type: <select id='instance_conf_type'>  
                                 <option value=0>audio</option> 
                                 <option value=1>video</option> 
-                                <option value=2>audio+Data</option> 
-                                <option value=3 selected="selected">video+Data</option>
+                                <option value=2>audio+data</option> 
+                                <option value=3 selected="selected">video+data</option>
                                </select> 
 
                     HD conference: <select id='instance_is_HD_Conf'>  
@@ -250,7 +250,7 @@
                 <fieldset>
                     <legend>Book conference</legend>
                     conference ID:<input type="text" id="conferenceId" value="121997039" /> access code:
-                    <input type="text" id="accessNumber" value="+865718001" /> conference password: <input type="password" id="confPasswd" value="" />
+                    <input type="text" id="accessNumber" value="+9916" /> conference password: <input type="password" id="confPasswd" value="" />
                     <button onclick="accessReservedConf()">access reserved conference</button>
                 </fieldset>
             </div>

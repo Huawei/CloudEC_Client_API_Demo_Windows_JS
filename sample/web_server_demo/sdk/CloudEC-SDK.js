@@ -85,25 +85,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         UI_PLUGIN_LANGUAGE: 0,
         UI_PLUGIN_RESOURCES_PATH: "",
         UI_PLUGIN_USER_FILES_PATH: "",
-        UI_PLUGIN_HAS_FRAME_INFO: 0,
-        UI_PLUGIN_FRAME_INFO_X: 0,
-        UI_PLUGIN_FRAME_INFO_Y: 0,
-        UI_PLUGIN_FRAME_INFO_WIDTH: 0,
-        UI_PLUGIN_FRAME_INFO_HEIGHT: 0,
-        UI_PLUGIN_HAS_PARENT_INFO: 0,
-        UI_PLUGIN_PARENT_INFO_X_OFFSET_RATE: 0,
-        UI_PLUGIN_PARENT_INFO_Y_OFFSET_RATE: 0,
-        UI_PLUGIN_PARENT_INFO_IS_NEED_ATTACH: 0,
+        UI_PLUGIN_HAS_FRAME_INFO: 1,
+        UI_PLUGIN_FRAME_INFO_X: 100,
+        UI_PLUGIN_FRAME_INFO_Y: 50,
+        UI_PLUGIN_FRAME_INFO_WIDTH: 1038,
+        UI_PLUGIN_FRAME_INFO_HEIGHT: 620,
+        UI_PLUGIN_HAS_PARENT_INFO: 1,
+        UI_PLUGIN_PARENT_INFO_X_OFFSET_RATE: 20,
+        UI_PLUGIN_PARENT_INFO_Y_OFFSET_RATE: 15,
+        UI_PLUGIN_PARENT_INFO_IS_NEED_ATTACH: 1,
         UI_PLUGIN_HIDE_TOP_TOOL_BAR: 0,
         UI_PLUGIN_HIDE_BOTTOM_TOOL_BAR: 0,
-        UI_PLUGIN_HIDE_INVITE_BUTTON: 0,
-        UI_PLUGIN_HIDE_ATTENDEES_BUTTON: 0,
-        UI_PLUGIN_HIDE_SHARE_BUTTON: 0,
-        UI_PLUGIN_HIDE_SHARE_CONF_LINK: 0,
-        UI_PLUGIN_DATA_HIDE_INVITE_BUTTON: 0,
-        UI_PLUGIN_DATA_HIDE_ATTENDEES_BUTTON: 0,
-        UI_PLUGIN_DATA_HIDE_REQUEST_REMOTE_CONTROL_BUTTON: 0,
-        PAGE_TITLE: ""
+        UI_PLUGIN_HIDE_INVITE_BUTTON: 1,
+        UI_PLUGIN_HIDE_ATTENDEES_BUTTON: 1,
+        UI_PLUGIN_HIDE_SHARE_BUTTON: 1,
+        UI_PLUGIN_HIDE_SHARE_CONF_LINK: 1,
+        UI_PLUGIN_HIDE_EXTEND_CONF_BUTTON: 0,
+        UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON: 1,
+        UI_PLUGIN_HIDE_CLOSE_BUTTON: 0,
+        UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON: 0,
+        UI_PLUGIN_DATA_HIDE_INVITE_BUTTON: 1,
+        UI_PLUGIN_DATA_HIDE_ATTENDEES_BUTTON: 1,
+        UI_PLUGIN_DATA_HIDE_REQUEST_REMOTE_CONTROL_BUTTON: 1,
+        PAGE_TITLE: "High-Level-API"
     };
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -337,6 +341,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onEvtConfctrlOperationResult) != "undefined") {
                 tsdkClientAdapt.on('OnEvtConfctrlOperationResult', listeners.onEvtConfctrlOperationResult);
             }
+            if (typeof (listeners.onPluginEvtClickDevicesSetting) != "undefined") {
+                tsdkClientAdapt.on('OnPluginEvtClickDevicesSetting', listeners.onPluginEvtClickDevicesSetting);
+            }
             return tsdkClientAdapt;
         };
         CloudEC.prototype.configure = function (options) {
@@ -426,6 +433,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.uiPluginHideShareConfLink) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_CONF_LINK = options.uiPluginHideShareConfLink;
+            }
+            if (typeof (options.uiPluginHideExtendConfButton) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_EXTEND_CONF_BUTTON = options.uiPluginHideExtendConfButton;
+            }
+            if (typeof (options.uiPluginHideAudioVideoSettingButton) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON = options.uiPluginHideAudioVideoSettingButton;
+            }
+            if (typeof (options.uiPluginHideCloseButton) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CLOSE_BUTTON = options.uiPluginHideCloseButton;
+            }
+            if (typeof (options.uiPluginHideMaxsizeMinisizeButton) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON = options.uiPluginHideMaxsizeMinisizeButton;
             }
             if (typeof (options.uiPluginDataHideInviteButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON = options.uiPluginHideInviteButton;
@@ -1394,6 +1413,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 OnPluginEvtClickSendIm: function (ret) {
                 },
                 OnPluginEvtClickDevicesSetting: function (ret) {
+                    var evt = { result: true, info: "" };
+                    var clickDevicesSettingNotify = {
+                        furtherProcessType: ret.param.furtherProcessType,
+                    };
+                    evt.info = clickDevicesSettingNotify;
+                    _this.notify('OnPluginEvtClickDevicesSetting', evt);
                 },
                 OnPluginEvtConfCtrlOperation: function (ret) {
                     var evt = { result: true, info: "" };
@@ -1464,16 +1489,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         videoType: videoType,
                     };
                     evt.info = clickStartShareNotify;
-                    if (videoType == 2) {
-                        for (var i = 0; i < _this.attendeeList.length; i++) {
-                            var member = _this.attendeeList[i];
-                            if (member.isSelf == 1) {
-                                _this.startScreenSharing(member.number, "");
-                            }
-                        }
-                    }
-                    else {
-                    }
                     _this.notify('OnPluginEvtClickStartShare', evt);
                 },
                 OnPluginEvtClickStopShare: function (ret) {
@@ -1603,12 +1618,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         hideInviteButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_INVITE_BUTTON,
                         hideAttendeesButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_ATTENDEES_BUTTON,
                         hideShareButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_BUTTON,
-                        hideShareConfLink: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_CONF_LINK
+                        hideShareConfLink: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_CONF_LINK,
+                        hideExtendConfButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_EXTEND_CONF_BUTTON,
+                        hideAudioVideoSettingButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON,
+                        hideCloseButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CLOSE_BUTTON,
+                        hideMaxsizeMinisizeButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON
                     },
                     dataWindowVisibleInfo: {
                         hideInviteButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON,
                         hideAttendeesButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_ATTENDEES_BUTTON,
-                        hideRequestRemotecontrolButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_REQUEST_REMOTE_CONTROL_BUTTON
+                        hideRequestRemoteControlButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_REQUEST_REMOTE_CONTROL_BUTTON
                     }
                 }
             };
@@ -1851,6 +1870,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.muteMic(this.callInfo.callId, isMuteMic, callback);
             this.tsdkClient.uiPluginSetButtonState(0, isMuteMic, callback);
         };
+        TsdkClientAdapt.prototype.videoMute = function (bMute) {
+            var callback = function () { };
+            var videoCtrlInfo = {
+                operation: bMute ? 8 : 4,
+                object: 6,
+                isSync: 1,
+            };
+            this.tsdkClient.videoControl(videoCtrlInfo, this.confinfo.callId, function (ret) { });
+            this.tsdkClient.uiPluginSetButtonState(1, bMute ? 1 : 0, callback);
+        };
+        TsdkClientAdapt.prototype.speakerMute = function (bMute) {
+            var callback = function () { };
+            var isMuteSpeaker = bMute ? 1 : 0;
+            this.tsdkClient.muteSpeaker(this.confinfo.callId, isMuteSpeaker, callback);
+            this.tsdkClient.uiPluginSetButtonState(2, isMuteSpeaker, callback);
+        };
         TsdkClientAdapt.prototype.getMediaDevice = function (deviceType, callback) {
             var evt = { result: false, info: "" };
             this.tsdkClient.getDevices(deviceType, function (data) {
@@ -2027,9 +2062,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.bookConference = function (bookConferenceParam, callback) {
             this.isLogin();
+            var err = { cmdId: 0, errorCode: 300000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
             if (this._confStatus && bookConferenceParam.confType == 0) {
-                var evt = { result: false, info: "Already in the meeting!" };
-                TsdkClientAdapt.notifyErr(evt);
+                var evt_1 = { result: false, info: "Already in the meeting!" };
+                TsdkClientAdapt.notifyErr(evt_1);
                 return;
             }
             var ret = this.isValidBookConferenceParam(bookConferenceParam);
@@ -2038,8 +2075,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
-                TsdkClientAdapt.notifyErr(err);
+                var err_1 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                TsdkClientAdapt.notifyErr(err_1);
                 return;
             }
             if (util.isUndefined(bookConferenceParam.topic) || bookConferenceParam.topic.length === 0) {
@@ -2079,8 +2116,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     };
                 }
                 else {
-                    var evt = { result: false, info: { cmdId: 300000000, errorCode: 30000001, errorInfo: data.param.reasonDescription } };
-                    bookConfData = evt;
+                    var evt_2 = { result: false, info: { cmdId: 300000000, errorCode: 30000001, errorInfo: data.param.reasonDescription } };
+                    bookConfData = evt_2;
                 }
                 callback(bookConfData);
             };
@@ -2114,38 +2151,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 configedAttendees.push(tsdkAttendeeBaseInfo);
             }
             var bookConfInfo = {
-                welcomePrompt: 0,
-                isMultiStreamConf: 0,
+                welcomePrompt: bookConferenceParam.welcomePrompt,
+                isMultiStreamConf: bookConferenceParam.isMultiStreamConf,
                 language: bookConferenceParam.language,
                 isHdConf: bookConferenceParam.isHdConf ? bookConferenceParam.isHdConf : 0,
-                isAutoMute: 0,
+                isAutoInvite: bookConferenceParam.isAutoInvite ? bookConferenceParam.isAutoInvite : 0,
+                isAutoMute: bookConferenceParam.isAutoMute,
                 attendeeNum: configedAttendees.length,
                 confType: bookConferenceParam.confType,
-                recordMode: 0,
+                recordMode: bookConferenceParam.recordMode,
                 isAutoRecord: bookConferenceParam.autoRecord,
-                enterPrompt: 0,
-                groupUri: "",
+                enterPrompt: bookConferenceParam.enterPrompt,
+                groupUri: bookConferenceParam.groupUri,
                 attendeeList: configedAttendees,
                 startTime: startTimeStr,
-                confEncryptMode: 0,
+                confEncryptMode: bookConferenceParam.confEncryptMode,
                 duration: bookConferenceParam.duration,
                 confMediaType: bookConferenceParam.isVideo,
-                reminder: 0,
+                reminder: bookConferenceParam.reminder,
                 size: configedAttendees.length,
-                leavePrompt: 0,
-                isAutoProlong: 1,
+                leavePrompt: bookConferenceParam.leavePrompt,
+                isAutoProlong: bookConferenceParam.isAutoProlong,
                 subject: bookConferenceParam.topic,
             };
             this.registerLCallbacks(bookConferenceCallback);
-            this.tsdkClient.bookConference(bookConfInfo, function (ret) { });
+            this.tsdkClient.bookConference(bookConfInfo, function (ret) {
+                if (ret.result == 0) {
+                    evt.result = true;
+                    evt.info = "Create a meeting successfully";
+                }
+                else {
+                    evt.result = false;
+                    evt.info = ret;
+                    callback(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.joinInstanceConf = function (instanceConfParam, callback) {
             this.isLogin();
-            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 300000001, errorInfo: "parameter error" };
             var evt = { result: false, info: err };
             if (this._confStatus) {
-                var evt_1 = { result: false, info: "Already in the meeting!" };
-                TsdkClientAdapt.notifyErr(evt_1);
+                var evt_3 = { result: false, info: "Already in the meeting!" };
+                TsdkClientAdapt.notifyErr(evt_3);
                 return;
             }
             var validret = this.isValideInstanceConfParam(instanceConfParam);
@@ -2154,8 +2202,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err_1 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
-                TsdkClientAdapt.notifyErr(err_1);
+                var err_2 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                TsdkClientAdapt.notifyErr(err_2);
                 return;
             }
             if (this._callStatus || this._callStatus) {
@@ -2188,28 +2236,69 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 configedAttendees.push(tsdkAttendeeBaseInfo_1);
             }
             var bookConfInfo = {
-                welcomePrompt: 0,
-                isMultiStreamConf: 0,
+                welcomePrompt: instanceConfParam.welcomePrompt,
+                isMultiStreamConf: instanceConfParam.isMultiStreamConf,
                 language: instanceConfParam.language,
                 isHdConf: instanceConfParam.isHdConf ? instanceConfParam.isHdConf : 0,
-                isAutoMute: 0,
+                isAutoInvite: 0,
+                isAutoMute: instanceConfParam.isAutoMute,
                 confType: 0,
-                recordMode: 0,
+                recordMode: instanceConfParam.recordMode,
                 isAutoRecord: instanceConfParam.autoRecord,
-                enterPrompt: 0,
-                groupUri: "",
+                enterPrompt: instanceConfParam.enterPrompt,
+                groupUri: instanceConfParam.groupUri,
                 attendeeList: configedAttendees,
                 attendeeNum: configedAttendees.length,
                 startTime: "",
-                confEncryptMode: 0,
+                confEncryptMode: instanceConfParam.confEncryptMode,
                 duration: 120,
                 confMediaType: instanceConfParam.isVideo,
-                reminder: 0,
+                reminder: instanceConfParam.reminder,
                 size: configedAttendees.length,
-                leavePrompt: 0,
-                isAutoProlong: 1,
+                leavePrompt: instanceConfParam.leavePrompt,
+                isAutoProlong: instanceConfParam.isAutoProlong,
                 subject: instanceConfParam.topic,
             };
+            var bookConferenceCallback = { OnEvtBookConfResult: {} };
+            bookConferenceCallback.OnEvtBookConfResult = function (data) {
+                var bookConfData;
+                if (data.param.result == 0) {
+                    var dataResult = data.param;
+                    var confBaseInfo = dataResult.confBaseInfo;
+                    var date = new Date();
+                    var offset = date.getTimezoneOffset() * 60 * 1000;
+                    var sdate = new Date(confBaseInfo.startTime.replace(" ", "T"));
+                    var l_sdate = new Date(sdate.valueOf() - offset);
+                    var l_start_time = l_sdate.toLocaleString();
+                    var edate = new Date(confBaseInfo.endTime.replace(" ", "T"));
+                    var l_edate = new Date(edate.valueOf() - offset);
+                    var l_end_time = l_edate.toLocaleString();
+                    var conf_info = {
+                        conferenceID: confBaseInfo.confId,
+                        accessNumber: confBaseInfo.accessNumber,
+                        chairmanPasswd: confBaseInfo.chairmanPwd,
+                        generalPasswd: confBaseInfo.guestPwd,
+                        state: confBaseInfo.confState,
+                        topic: confBaseInfo.subject,
+                        startTime: l_start_time,
+                        endTime: l_end_time,
+                        mediaType: confBaseInfo.confMediaType,
+                        scheduserName: confBaseInfo.scheduserName,
+                        scheduerNumber: confBaseInfo.scheduserAccount,
+                        attendeeAmount: confBaseInfo.size
+                    };
+                    bookConfData = {
+                        result: true,
+                        info: conf_info
+                    };
+                }
+                else {
+                    var evt_4 = { result: false, info: { cmdId: 300000000, errorCode: 30000001, errorInfo: data.param.reasonDescription } };
+                    bookConfData = evt_4;
+                }
+                callback(bookConfData);
+            };
+            this.registerLCallbacks(bookConferenceCallback);
             this.tsdkClient.bookConference(bookConfInfo, function (ret) {
                 if (ret.result == 0) {
                     evt.result = true;
@@ -2218,23 +2307,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 else {
                     evt.result = false;
                     evt.info = ret;
+                    callback(evt);
                 }
-                callback(evt);
             });
         };
         TsdkClientAdapt.prototype.joinConference = function (joinConfParam, callback) {
             this.isLogin();
             if (this._confStatus) {
-                var evt_2 = { result: false, info: "Already in the meeting!" };
-                TsdkClientAdapt.notifyErr(evt_2);
+                var evt_5 = { result: false, info: "Already in the meeting!" };
+                TsdkClientAdapt.notifyErr(evt_5);
                 return;
             }
             var err = { cmdId: 300000000, errorCode: 300000002, errorInfo: "parameter error" };
             var evt = { result: true, info: "" };
             var mediaType = 1;
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err_2 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
-                TsdkClientAdapt.notifyErr(err_2);
+                var err_3 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                TsdkClientAdapt.notifyErr(err_3);
                 return;
             }
             if (util.isUndefined(joinConfParam) || "" == joinConfParam.conferenceId
@@ -2396,14 +2485,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             };
             this.tsdkClient.watchAttendee(this.confinfo.confHandle, watchAttendeeInfo, function (ret) { });
         };
-        TsdkClientAdapt.prototype.videoMute = function (bMute) {
-            var videoCtrlInfo = {
-                operation: bMute ? 4 : 8,
-                object: 6,
-                isSync: 1,
-            };
-            this.tsdkClient.videoControl(videoCtrlInfo, this.confinfo.callId, function (ret) { });
-        };
         TsdkClientAdapt.prototype.getAttendeeList = function (callback) {
             var evt = { result: true, info: "" };
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
@@ -2499,13 +2580,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
             var evt = { result: false, info: err };
             if (this._confStatus) {
-                var evt_3 = { result: false, info: "Already in the meeting!" };
-                TsdkClientAdapt.notifyErr(evt_3);
+                var evt_6 = { result: false, info: "Already in the meeting!" };
+                TsdkClientAdapt.notifyErr(evt_6);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err_3 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
-                TsdkClientAdapt.notifyErr(err_3);
+                var err_4 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                TsdkClientAdapt.notifyErr(err_4);
                 return;
             }
             if (util.isUndefined(serverInfo) || "" == serverInfo.serverAddress || (typeof serverInfo.serverPort) != 'number') {
@@ -2571,30 +2652,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     autoRecord: 0,
                     isHdConf: 0,
                     attendees: configedAttendees,
+                    welcomePrompt: 0,
+                    isMultiStreamConf: 0,
+                    isAutoMute: 0,
+                    recordMode: 0,
+                    enterPrompt: 0,
+                    groupUri: "",
+                    confEncryptMode: 0,
+                    reminder: 0,
+                    leavePrompt: 0,
+                    isAutoProlong: 0,
                     extensions: "",
                 };
             }
             var bookConfInfo = {
-                welcomePrompt: 0,
-                isMultiStreamConf: 0,
+                welcomePrompt: confParam.welcomePrompt,
+                isMultiStreamConf: confParam.isMultiStreamConf,
                 language: confParam.language ? confParam.language : 1,
-                isHdConf: 0,
-                isAutoMute: 0,
+                isHdConf: confParam.isHdConf,
+                isAutoMute: confParam.isAutoMute,
+                isAutoInvite: 0,
                 attendeeNum: configedAttendees.length,
                 confType: 0,
-                recordMode: 0,
+                recordMode: confParam.recordMode,
                 isAutoRecord: confParam.autoRecord ? confParam.autoRecord : 0,
-                enterPrompt: 0,
+                enterPrompt: confParam.enterPrompt,
                 groupUri: "",
                 attendeeList: configedAttendees,
                 startTime: "",
-                confEncryptMode: 0,
+                confEncryptMode: confParam.confEncryptMode,
                 duration: 120,
                 confMediaType: confParam.isVideo ? confParam.isVideo : callType,
-                reminder: 0,
+                reminder: confParam.reminder,
                 size: 0,
                 leavePrompt: 0,
-                isAutoProlong: 1,
+                isAutoProlong: confParam.isAutoProlong,
                 subject: confParam.topic ? confParam.topic : "",
             };
             this.tsdkClient.p2pTransferToConference(this.callInfo.callId, bookConfInfo, function (ret) {
@@ -2637,13 +2729,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (!util.isIntegerRange(privilege, 1, 2)) {
-                var err_4 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("privilege");
-                TsdkClientAdapt.notifyErr(err_4);
+                var err_5 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("privilege");
+                TsdkClientAdapt.notifyErr(err_5);
                 return;
             }
             if (!util.isIntegerRange(action, 0, 4)) {
-                var err_5 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("action");
-                TsdkClientAdapt.notifyErr(err_5);
+                var err_6 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("action");
+                TsdkClientAdapt.notifyErr(err_6);
                 return;
             }
             this.tsdkClient.appShareSetPrivilege(action, this.confinfo.confHandle, privilege == 2 ? 1 : 0, attendee, function (ret) { });
@@ -4822,10 +4914,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         if (exports.isUndefined(param)) {
             return false;
         }
-        if ((!exports.isUndefined(param.autoInvite) && !exports.isBinaryNumber(param.autoInvite)) ||
-            (!exports.isUndefined(param.role) && !exports.isBinaryNumber(param.role))) {
-            return false;
-        }
         if ((!exports.isUndefined(param.email) && !exports.isString(param.email)) ||
             (!exports.isUndefined(param.name) && !exports.isString(param.name)) ||
             (!exports.isUndefined(param.smsPhone) && !exports.isString(param.smsPhone)) ||
@@ -5491,8 +5579,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         var IPAddressS = IPAddress.replace(pattern, '$1\*');
         return IPAddressS;
     };
-    var emailArr = ["account", "email", "requesterAccount", "responderAccount", "ownerAccount", "updateMemberAccount", "staffAccount"];
-    var nameArr = ["signature", "birthday", "sender", "origin", "target", "name", "groupName", "groupNameEn", "originName", "peerDisplayName", "codecName", "localAddr", "remoteAddr", "codecName", "subject", "scheduserAccount", "scheduserName", "displayName", "accountId", "userName", "shortUserName", "shortConfName", "reviciverNumber", "senderNumber", "senderDisplayName", "chatMsg", "documentName", "wbDelDisplayName", "sharingDisplayName", "departmentName", "iconId", "requesterName", "responderName", "manifesto", "updateMemberName", "terminal", "hostKey", "shortConfName", "shortUserName", "userName", "userUri"];
+    var emailArr = ["email"];
+    var nameArr = ["account", "requesterAccount", "responderAccount", "ownerAccount", "updateMemberAccount", "staffAccount", "signature", "birthday", "sender", "origin", "target", "name", "groupName", "groupNameEn", "originName", "peerDisplayName", "codecName", "localAddr", "remoteAddr", "codecName", "subject", "scheduserAccount", "scheduserName", "displayName", "accountId", "userName", "shortUserName", "shortConfName", "reviciverNumber", "senderNumber", "senderDisplayName", "chatMsg", "documentName", "wbDelDisplayName", "sharingDisplayName", "departmentName", "iconId", "requesterName", "responderName", "manifesto", "updateMemberName", "terminal", "hostKey", "shortConfName", "shortUserName", "userName", "userUri"];
     var passwordArr = ["password", "token", "securityTunnelInfo", "umServerLoginToken", "content", "chairmanPwd", "guestPwd", "contactInfo", "hostKey", "cryptKey", "userInfoList", "umServerLoginToken", "confName", "cryptKey"];
     var phoneArr = ["number", "peerNumber", "accessNumber", "sms", "participantId"];
     var IPAddressArr = ["lastLoginAddr"];

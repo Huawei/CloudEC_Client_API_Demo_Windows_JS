@@ -1,6 +1,7 @@
 "use strict";
 (function(root) {
-    var listeners = {
+    var isNochairSharing = 0;
+    var listeners = {   
         //1 This callback is used to handle kick out of login scenes
         onForceUnReg: function(ret) {
             if(ret.info.serviceAccountType==0){
@@ -38,11 +39,15 @@
         },
         //5 This callback is used to handle invitation sharing
         onSharedInComing: function(ret) {
-            var con_ret = confirm("You have a sharing invitation,reject or accept?");
-            if (con_ret == true) {
+            if(isNochairSharing==0){
+                var con_ret = confirm("You have a sharing invitation,reject or accept?");
+                if (con_ret == true) {
+                    client.answerScreenSharing(true);
+                } else {
+                    client.answerScreenSharing(false);
+                }
+            }else{
                 client.answerScreenSharing(true);
-            } else {
-                client.answerScreenSharing(false);
             }
         },
         //6 This callback is used to handle meeting invitation
@@ -109,7 +114,6 @@
                         } else {
                             client.answerRemoteCtrl(ret.info.attendee, false);
                         }
-
                         break;
                     case 4:
                         alert("share permission request is denied ");
@@ -338,6 +342,22 @@
                 console.log("onPluginEvtClickStartShare on video conf"); 
             }else if(ret.info.videoType == 2){
                 console.log("onPluginEvtClickStartShare on data conf"); 
+                client.getAttendeeList(function (ret){
+                    if(ret){
+                        var attendeeList = new Array();
+                        attendeeList = ret.info;
+                        for(var i=0;i<attendeeList.length;i++){
+                            var member = attendeeList[i];
+                            if(member.isSelf==1 && member.role==1){
+                                client.startScreenSharing(member.number,"");
+                            }else if(member.isSelf==1 && member.role!=1){
+                                isNochairSharing=1;
+                                client.startScreenSharing(member.number,"");
+                            }
+                        }
+
+                    }
+                });
             }else{
                
             }
@@ -364,6 +384,10 @@
 
         onEvtConfctrlOperationResult:function(ret){
             console.log("onEvtConfctrlOperationResult:"+ JSON.stringify(ret));    
+        }, 
+
+        onPluginEvtClickDevicesSetting:function(ret){
+            alert("Please start setting up the video and video settings you need.");
         }, 
     }
 

@@ -116,7 +116,21 @@ function transfer2Conf(){
 		for (var i = 0; i < memberListArr.length; i++) {
 			memberListTemp[i] = { number: memberListArr[i], name: "", smsPhone: "", email: "", autoInvite: 1, role: 0,extensions: "" };
 		}
-		transfer2ConfParam = { attendees: memberListTemp }	
+		transfer2ConfParam = { 
+			attendees: memberListTemp, 
+			language: 1, 
+			isHdConf:0,
+			welcomePrompt : 0,
+			isMultiStreamConf : 0,
+			isAutoMute : 0,
+			recordMode : 0,
+			enterPrompt : 0,
+			groupUri : "",
+			confEncryptMode : 0,
+			reminder : 0,
+			leavePrompt : 0,
+			isAutoProlong : 1, 
+		}	
 	}else{
 		transfer2ConfParam=null;
 	}
@@ -203,11 +217,25 @@ function joinInstanceConf() {
 	var array = attendeeInfo.split(",");
 	var attendees = new Array();
 	for (var i = 0; i < array.length; i++) {
-		attendees[i] = { number: array[i], name: "", smsPhone: "", email: "", autoInvite: 1, role: 0 };
+		attendees[i] = { number: array[i], name: "", smsPhone: "", email: "",role: 0 };
 	}
 
-	var instanceConfParam = { isVideo: confType, language: 1, attendees: attendees,isHdConf:isHdConf}
-
+	var instanceConfParam = { 
+		isVideo: confType, 
+		language: 1, 
+		attendees: attendees,
+		isHdConf:isHdConf,
+	    welcomePrompt : 0,
+    	isMultiStreamConf : 0,
+		isAutoMute : 0,
+		recordMode : 0,
+		enterPrompt : 0,
+		groupUri : "",
+		confEncryptMode : 0,
+		reminder : 0,
+		leavePrompt : 0,
+		isAutoProlong : 1, 
+	}
 
 	client.joinInstanceConf(instanceConfParam, function callback(ret) {});
 

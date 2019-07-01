@@ -104,7 +104,7 @@
             alert("Meeting has not yet started");
             return;
         }
-        client.videoMute(true);
+        client.videoMute(false);
     }
 
     var cloudecCloseVideo = function() {
@@ -113,7 +113,25 @@
             alert("Meeting has not yet started");
             return;
         }
-        client.videoMute(false);
+        client.videoMute(true);
+    }
+
+    var cloudecOpenSpeaker = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.speakerMute(false);
+    }
+
+    var cloudecCloseSpeaker = function() {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.speakerMute(true);
     }
 
     var cloudecLeaveConference = function() {
@@ -290,6 +308,18 @@
             closeVideo_btn.title = "turn off video";
             closeVideo_btn.addEventListener("mousedown", cloudecCloseVideo);
 
+            var openSpeaker_btn = document.createElement('button');
+            openSpeaker_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            openSpeaker_btn.innerHTML = "turn on speaker";
+            openSpeaker_btn.title = "turn on speaker";
+            openSpeaker_btn.addEventListener("mousedown", cloudecOpenSpeaker);
+
+            var closeSpeaker_btn = document.createElement('button');
+            closeSpeaker_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            closeSpeaker_btn.innerHTML = "turn off speaker";
+            closeSpeaker_btn.title = "turn off speaker";
+            closeSpeaker_btn.addEventListener("mousedown", cloudecCloseSpeaker);
+
             var leaveConference_btn = document.createElement('button');
             leaveConference_btn.style.cssText = "height: 24px;margin-left: 5px;";
             leaveConference_btn.innerHTML = "leave conference";
@@ -364,8 +394,8 @@
 
             var mixedPicture_btn = document.createElement('button');
             mixedPicture_btn.style.cssText = "height: 24px;margin-left: 5px;";
-            mixedPicture_btn.innerHTML = "mixed Picture";
-            mixedPicture_btn.title = "mixed Picture";
+            mixedPicture_btn.innerHTML = "mixed picture";
+            mixedPicture_btn.title = "mixed picture";
             mixedPicture_btn.addEventListener("mousedown", cloudecMixedPicture);
 
             var blank_br = document.createElement('br');
@@ -373,6 +403,8 @@
             cloudec_confctrl_div.appendChild(chat_btn);
             cloudec_confctrl_div.appendChild(openVideo_btn);
             cloudec_confctrl_div.appendChild(closeVideo_btn);
+            cloudec_confctrl_div.appendChild(openSpeaker_btn);
+            cloudec_confctrl_div.appendChild(closeSpeaker_btn);           
             cloudec_confctrl_div.appendChild(leaveConference_btn);
             cloudec_confctrl_div.appendChild(endConference_btn);
             cloudec_videoctrl_div.appendChild(setConfMode_select);

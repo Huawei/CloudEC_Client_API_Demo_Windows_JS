@@ -45,16 +45,16 @@
                 var conf_state
                 switch (cloudEC_conf_state) {
                     case 0: conf_state = "book status"; break
-                    case 1: conf_state = "Creating status"; break
-                    case 2: conf_state = "Meeting has started"; break
-                    case 3: conf_state = "Meeting is closed"; break
+                    case 1: conf_state = "creating status"; break
+                    case 2: conf_state = "meeting has started"; break
+                    case 3: conf_state = "meeting is closed"; break
                 }
 
                 var media_type
                 switch (data.mediaType) {
-                    case 0: media_type = "Audio"; break
+                    case 0: media_type = "audio"; break
                     case 1: media_type = "video"; break
-                    case 2: media_type = "Audio+data"; break
+                    case 2: media_type = "audio+data"; break
                     case 3: media_type = "video+data"; break
                 }
                 var cloudec_confinfo_div = document.getElementById('cloudec_confinfo_div')
@@ -108,7 +108,7 @@
                 c = r.insertCell(1);
                 c.innerHTML = "start time";
                 c = r.insertCell(2);
-                c.innerHTML = "Conference details";
+                c.innerHTML = "conference detail";
 
                 var data = ret.info
 

@@ -151,8 +151,8 @@
                 + "</td></tr>"
                 + "<tr>"
                 + "<td/>HD conference:</td><td>"
-                + "<input id='cloudec_is_HD_conf' name='cloudec_is_HD_conf'  type='radio' value='1' />yes"
-                + "<input id='cloudec_is_HD_conf' name='cloudec_is_HD_conf'  checked='checked' type='radio' value='0' />no"
+                + "<input id='cloudec_is_HD_conf' name='cloudec_is_HD_conf'  checked='checked' type='radio' value='1' />yes"
+                + "<input id='cloudec_is_HD_conf' name='cloudec_is_HD_conf'  type='radio' value='0' />no"
                 + "</td>"
                 +"</tr>"
                 + "<tr><td></td><td>"
@@ -206,7 +206,6 @@
                     var attendeeParam = {}
                     attendeeParam.name = attendees_array[m]
                     attendeeParam.number = attendees_array[m]
-                    attendeeParam.autoInvite = 0
                     attendeeParam.role = 0
                     attendeeParam.smsPhone = ""
                     attendeeParam.email = ""
@@ -237,7 +236,19 @@
                         hours: newDate.getHours(), minutes: newDate.getMinutes()
                     }, 
                     language: 1,
-                    attendees: attendeeList
+                    attendees: attendeeList,
+                    autoRecord:0,
+                    welcomePrompt : 0,
+                    isMultiStreamConf : 0,
+                    isAutoInvite :1,
+                    isAutoMute : 0,
+                    recordMode : 0,
+                    enterPrompt : 0,
+                    groupUri : "",
+                    confEncryptMode : 0,
+                    reminder : 0,
+                    leavePrompt : 0,
+                    isAutoProlong : 0,  
                 }, function (ret) {
                     alert("bookConference callback" + JSON.stringify(ret))
                 })
