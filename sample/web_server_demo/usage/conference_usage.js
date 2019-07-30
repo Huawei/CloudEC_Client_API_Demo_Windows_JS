@@ -47,7 +47,6 @@ function login() {
 				document.getElementById("cloudec_conflist_div").dispatchEvent(event);
 				event = new Event('cloudec:login');
 				document.getElementById("configPanel").dispatchEvent(event);
-				
 				client.setDisplayName(evt.info.sipAccount);
 			}
 
@@ -55,6 +54,16 @@ function login() {
 	passwd = "";
 	proxyPassword = "";
 	proxyParam ="";
+}
+
+function modifyPassword(){
+	var oldPasswd = document.getElementById("oldPasswd").value;
+	var newPasswd = document.getElementById("newPasswd").value;
+	var modifyPassword = {
+		newPassword : newPasswd,
+		oldPassword : oldPasswd,
+	}
+	client.modifyPassword(modifyPassword,()=>{});
 }
 
 //call start
@@ -275,6 +284,21 @@ function joinAnonymousConf() {
 	var callTypeObj = document.getElementById("anony_call_type");
 	var anonyCallType = parseInt(callTypeObj.options[callTypeObj.selectedIndex].value);	
 
+	if (document.getElementById("setProxy_Select_anony").checked)
+	{
+		var proxyAddress = document.getElementById("proxy_addr_anony").value;
+		var proxyPort = document.getElementById("proxy_port_anony").value;
+		var proxyAccount = document.getElementById("proxy_account_anony").value;
+		var proxyPassword = document.getElementById("proxy_pwd_anony").value;
+
+		var proxyParam = {
+			proxyAddress:proxyAddress,
+			proxyPort:proxyPort,
+			proxyAccount:proxyAccount,
+			proxyPassword:proxyPassword
+		}
+	}
+
 	var anonymousConfParam = {
 		confId: anonyConfId,		
 		confPasswd: anonyConfPasswd,
@@ -283,7 +307,8 @@ function joinAnonymousConf() {
 
 	var serverInfo = {
 		serverAddress: anonyServerAddress,
-		serverPort: parseInt(anonyServerPort)
+		serverPort: parseInt(anonyServerPort),
+		extensions: JSON.stringify(proxyParam)
 	}
 
 	client.joinAnonymousConf(anonymousConfParam, serverInfo, function callback(evt) {
@@ -338,6 +363,18 @@ function setConfNativeWndLarge() {
 	client.resetNativeWndSize(wndSizeParam, (data)=>{});	
 }
 
+function setConfNativeWndPosition() {
+	var uiWndLeftTopX = document.getElementById("ui_window_left_top_x").value;
+	var uiWndLeftTopY = document.getElementById("ui_window_left_top_y").value;
+	var wndSizeAbsPosParam = {
+		width : 0,
+		height : 0,
+		leftTopX : parseInt(uiWndLeftTopX),
+		leftTopY : parseInt(uiWndLeftTopY),
+	}
+	client.uiPluginSetWindowSizeAbsolutePos(wndSizeAbsPosParam, (data)=>{});	
+}
+
 //UI plugin
 function uiPluginShowSmallWindow() {
 	client.uiPluginShowSmallWindow((data)=>{});	
@@ -350,4 +387,8 @@ function uiPluginShowAnnotationTool() {
 function uiPluginSetWindowTitle() {
 	var uiWndTitle = document.getElementById("ui_window_title").value;
 	client.uiPluginSetWindowTitle(uiWndTitle,(data)=>{});	
+}
+
+function uiPluginShowVideoWindow() {
+	client.uiPluginShowVideoWindow((data)=>{});	
 }

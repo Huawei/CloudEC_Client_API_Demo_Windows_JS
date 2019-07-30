@@ -52,7 +52,14 @@
         },
         //6 This callback is used to handle meeting invitation
         onConfIncoming: function(ret) {
-            var con_ret = confirm("You have a incoming conference, reject or accept?");
+            var confIncomingInfo = ret.info;
+            var con_ret;
+            if(confIncomingInfo.subject!=""){
+                con_ret = confirm("You have a "+confIncomingInfo.subject+" conference, reject or accept?");
+            }else{
+                con_ret = confirm(confIncomingInfo.number+"invites you to join the conference, reject or accept?");
+            }
+            
             if (con_ret === true) {
                 client.answerConference(true)
             } else {
@@ -131,13 +138,19 @@
         //12 This callback is used to handle call incoming
         onCallIncomming: function(ret) {
             if(ret.result){
-                alert("you have a incoming call");
                 var callerNum = document.getElementById("caller_num");
                 callerNum.value = ret.info.callNo;
                 if(ret.info.callType){
                     document.getElementById("callState").innerHTML = "call state: video call";
                 }else{
                     document.getElementById("callState").innerHTML = "call state: audio call";
+                }
+
+                var con_ret = confirm("You have a call,reject or accept?");
+                if (con_ret == true) {
+                    client.answerCall(true, ret.info.isVideo);
+                } else {
+                    client.answerCall(false, ret.info.isVideo);
                 }
             }
         },
@@ -388,6 +401,14 @@
 
         onPluginEvtClickDevicesSetting:function(ret){
             alert("Please start setting up the video and video settings you need.");
+        }, 
+
+        onEvtModifyPasswordResult:function(ret){
+            if(ret.info.reasonCode==0){
+                alert("password has been updated.");
+            }else{
+                alert("modify password failed >>>errorCode:" + ret.info.reasonCode + "errorInfo:" + ret.info.reasonDescription)
+            }
         }, 
     }
 

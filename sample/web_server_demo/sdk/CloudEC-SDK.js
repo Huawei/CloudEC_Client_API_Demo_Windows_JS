@@ -344,6 +344,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onPluginEvtClickDevicesSetting) != "undefined") {
                 tsdkClientAdapt.on('OnPluginEvtClickDevicesSetting', listeners.onPluginEvtClickDevicesSetting);
             }
+            if (typeof (listeners.onEvtModifyPasswordResult) != "undefined") {
+                tsdkClientAdapt.on('OnEvtModifyPasswordResult', listeners.onEvtModifyPasswordResult);
+            }
             return tsdkClientAdapt;
         };
         CloudEC.prototype.configure = function (options) {
@@ -516,11 +519,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this._confStatus = false;
             this.playHandle = -1;
             this.attendeeList = new Array();
+            this.loginSuccessInfo = {
+                confEnvType: 0,
+                leftDaysOfPassword: 0,
+                isFirstLogin: 0,
+                isFreeUser: 0
+            };
             this.baseinfo = {
                 userAccount: "",
                 sipAccount: "",
                 shortNumber: "",
                 loginTime: "",
+                loginSuccessInfo: this.loginSuccessInfo,
             };
             this.confinfo = {
                 subject: "",
@@ -566,6 +576,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         sipAccount: "",
                         shortNumber: "",
                         loginTime: "",
+                        loginSuccessInfo: {
+                            confEnvType: 0,
+                            leftDaysOfPassword: 0,
+                            isFirstLogin: 0,
+                            isFreeUser: 0
+                        },
                     };
                 },
                 OnEvtLogoutFailed: function (ret) {
@@ -583,6 +599,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         sipAccount: "",
                         shortNumber: "",
                         loginTime: "",
+                        loginSuccessInfo: {
+                            confEnvType: 0,
+                            leftDaysOfPassword: 0,
+                            isFirstLogin: 0,
+                            isFreeUser: 0
+                        },
                     };
                 },
                 OnEvtCallOutgoing: function (ret) {
@@ -603,7 +625,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         isVideo: ret.param.callInfo.isVideoCall,
                     };
                     evt.info = _this.callInfo;
-                    _this.notify("CallIncomming", evt);
                     if (_this.playHandle < 0) {
                         _this.tsdkClient.startPlayMedia(0, "./resources/audio/callRing/In.wav", function (data) {
                             if (data.result == 0) {
@@ -611,10 +632,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         });
                     }
+                    _this.notify("CallIncomming", evt);
                 },
                 OnEvtCallRingback: function (ret) {
                     var evt = { result: true, info: "callRingback" };
-                    _this.notify("CallRingBack", evt);
                     if (_this.playHandle < 0) {
                         _this.tsdkClient.startPlayMedia(0, "./resources/audio/callRing/ring.wav", function (data) {
                             if (data.result == 0) {
@@ -622,10 +643,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         });
                     }
+                    _this.notify("CallRingBack", evt);
                 },
                 OnEvtCallRtpCreated: function (ret) {
                     var evt = { result: true, info: "callRtpCreated" };
-                    _this.notify("OnEvtCallRtpCreated", evt);
                     if (_this.playHandle >= 0) {
                         _this.tsdkClient.stopPlayMedia(_this.playHandle, function (data) {
                             if (data.result == 0) {
@@ -633,10 +654,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         });
                     }
+                    _this.notify("OnEvtCallRtpCreated", evt);
                 },
                 OnEvtCallConnected: function (ret) {
                     _this._callStatus = true;
-                    _this.notify("CallConnected", ret);
                     if (_this.playHandle >= 0) {
                         _this.tsdkClient.stopPlayMedia(_this.playHandle, function (data) {
                             if (data.result == 0) {
@@ -644,10 +665,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         });
                     }
+                    _this.notify("CallConnected", ret);
                 },
                 OnEvtCallEnded: function (ret) {
                     _this._callStatus = false;
-                    _this.notify("CallEnded", ret);
                     if (_this.playHandle >= 0) {
                         _this.tsdkClient.stopPlayMedia(_this.playHandle, function (data) {
                             if (data.result == 0) {
@@ -655,6 +676,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         });
                     }
+                    _this.notify("CallEnded", ret);
                 },
                 OnEvtCallDestroy: function (ret) {
                     _this._callStatus = false;
@@ -716,7 +738,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 },
                 OnEvtJoinConfResult: function (ret) {
                     _this._confStatus = true;
-                    _this.notify('ConfConnected', { result: true, info: "Access conference successful" });
                     if (_this.playHandle >= 0) {
                         _this.tsdkClient.stopPlayMedia(_this.playHandle, function (data) {
                             if (data.result == 0) {
@@ -727,6 +748,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     if (ret.param.result == 0) {
                         _this.confinfo.callId = ret.param.info.callId;
                     }
+                    _this.notify('ConfConnected', { result: true, info: "Access conference successful" });
                 },
                 OnEvtGetDataconfParamResult: function (ret) {
                     var evt = { result: true, info: "" };
@@ -789,7 +811,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             dataconfUserId: attendeeList[i].statusInfo.dataUserId,
                             dataconfMemberType: attendeeList[i].statusInfo.isPresent,
                             sharingPermit: attendeeList[i].statusInfo.isShareOwner,
-                            isBroadcast: attendeeList[i].statusInfo.isBroadcast
+                            isBroadcast: attendeeList[i].statusInfo.isBroadcast,
+                            isAnonymous: attendeeList[i].statusInfo.isAnonymous,
+                            isPresent: attendeeList[i].statusInfo.isPresent,
+                            hasCamera: attendeeList[i].statusInfo.hasCamera,
                         };
                         attendeeListTemp.push(attendee);
                     }
@@ -821,8 +846,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 },
                 OnEvtConfIncomingInd: function (ret) {
                     _this.confinfo.confHandle = ret.param.handle;
+                    _this.confinfo.callId = ret.param.callId;
                     _this.confinfo.mediaType = ret.param.confIncomingInfo.confMediaType;
-                    _this.notify('ConfIncoming', { result: true, info: "ConfIncoming" });
+                    _this.confinfo.subject = ret.param.confIncomingInfo.subject;
+                    var confIncomingInfo = {
+                        "confId": ret.param.confIncomingInfo.confId,
+                        "confMediaType": ret.param.confIncomingInfo.confMediaType,
+                        "groupUri": ret.param.confIncomingInfo.groupUri,
+                        "isHdConf": ret.param.confIncomingInfo.isHdConf,
+                        "number": ret.param.confIncomingInfo.number,
+                        "subject": ret.param.confIncomingInfo.subject
+                    };
+                    _this.notify('ConfIncoming', { result: true, info: confIncomingInfo });
                 },
                 OnEvtConfEndInd: function (ret) {
                     _this._confStatus = false;
@@ -839,14 +874,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var evt = { result: true, info: "ower change" };
                     if (ret.param.owner) {
                         var owner = ret.param.owner;
-                        if (ret.param.actionType == 1 && owner.baseInfo.role == 1 && owner.statusInfo.isSelf == 1) {
+                        if (ret.param.actionType == 1 && owner.statusInfo.isSelf == 1) {
                             _this.tsdkClient.appShareStart(0, _this.confinfo.confHandle, function (ret) { });
                         }
-                        else if (ret.param.actionType == 1 && owner.baseInfo.role == 0 && owner.statusInfo.isSelf == 1) {
+                        else if (ret.param.actionType == 3 && owner.statusInfo.isSelf == 1) {
                             evt.info = "You have a sharing invitation";
                             _this.notify('SharedInComing', evt);
                         }
-                        else if (ret.param.actionType == 0 && owner.baseInfo.role == 0 && owner.statusInfo.isSelf == 1) {
+                        else if (ret.param.actionType == 0 && owner.statusInfo.isSelf == 1) {
                             _this.tsdkClient.appShareStop(_this.confinfo.confHandle, function (ret) { });
                         }
                     }
@@ -1515,6 +1550,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     evt.info = hangupCallNotify;
                     _this.notify('OnPluginEvtClickEndConf', evt);
                 },
+                OnEvtModifyPasswordResult: function (ret) {
+                    var evt = { result: false, info: "password change failed!" };
+                    if (ret.param != null) {
+                        var modifyPasswordResult = {
+                            userId: ret.param.userId,
+                            reasonCode: ret.param.reasonCode,
+                            reasonDescription: ret.param.reasonDescription
+                        };
+                        evt = {
+                            result: true,
+                            info: modifyPasswordResult
+                        };
+                    }
+                    _this.notify('OnEvtModifyPasswordResult', evt);
+                },
                 OnError: function (ret) {
                     _this.notify("error", ret);
                 },
@@ -1523,21 +1573,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 _this.tsdkClient = data;
             });
         }
-        TsdkClientAdapt.prototype.login = function (authType, authParam, serverInfo, callback) {
-            var _this = this;
+        TsdkClientAdapt.prototype.initConfig = function (proxyParam) {
             var callbacks = function () { };
-            var err = { cmdId: 100000000, errorCode: 100000002, errorInfo: "parameter error" };
-            var evt = { result: false, info: err };
-            var proxyParam = { proxyUri: "", proxyPort: 0, userName: "", password: "" };
-            if (serverInfo.extensions != undefined && serverInfo.extensions != "") {
-                var proxyParamTemp = JSON.parse(serverInfo.extensions);
-                proxyParam = {
-                    proxyUri: proxyParamTemp.proxyAddress,
-                    proxyPort: parseInt(proxyParamTemp.proxyPort),
-                    userName: proxyParamTemp.proxyAccount,
-                    password: proxyParamTemp.proxyPassword
-                };
-            }
             var configParam = {
                 logParam: {
                     level: serverConfig_1.CloudEC_SERVERCONFIG.LOG_LEVEL,
@@ -1632,6 +1669,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             };
             this.tsdkClient.setConfigParam(visibleInfo, callbacks);
+        };
+        TsdkClientAdapt.prototype.login = function (authType, authParam, serverInfo, callback) {
+            var _this = this;
+            var callbacks = function () { };
+            var err = { cmdId: 100000000, errorCode: 100000002, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            var proxyParam = { proxyUri: "", proxyPort: 0, userName: "", password: "" };
+            if (serverInfo.extensions != undefined && serverInfo.extensions != "") {
+                var proxyParamTemp = JSON.parse(serverInfo.extensions);
+                proxyParam = {
+                    proxyUri: proxyParamTemp.proxyAddress,
+                    proxyPort: parseInt(proxyParamTemp.proxyPort),
+                    userName: proxyParamTemp.proxyAccount,
+                    password: proxyParamTemp.proxyPassword
+                };
+            }
+            this.initConfig(proxyParam);
             var tsdkLoginParam = {
                 userId: 1,
                 authType: authType,
@@ -1641,9 +1695,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 serverType: 0,
                 serverVersion: "V6R6C00",
                 serverAddr: serverInfo.serverAddress,
-                serverPort: serverInfo.serverPort
+                serverPort: serverInfo.serverPort,
+                appId: authParam.appId,
+                appKey: authParam.appKey,
             };
-            var loginCallback = { OnEvtVoipAccountStatus: {}, OnEvtAuthFailed: {}, OnEvtLoginFailed: {} };
+            var loginCallback = { OnEvtVoipAccountStatus: {}, OnEvtAuthFailed: {}, OnEvtLoginFailed: {}, OnEvtLoginSuccess: {} };
             loginCallback.OnEvtVoipAccountStatus = function (data) {
                 var userAccount = authParam.account;
                 var sipAccount = data.param.voipAccountInfo.number;
@@ -1651,11 +1707,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var milltime = new Date().getTime();
                 var mydate = util.formatDateYYYYMMDDHHMM(milltime);
                 var loginTime = mydate.date + " " + mydate.time;
-                var userInfo = { userAccount: userAccount, sipAccount: sipAccount, shortNumber: shortNumber, loginTime: loginTime };
+                var userInfo = { userAccount: userAccount, sipAccount: sipAccount, shortNumber: shortNumber, loginTime: loginTime, loginSuccessInfo: {
+                        confEnvType: 0,
+                        leftDaysOfPassword: 0,
+                        isFirstLogin: 0,
+                        isFreeUser: 0
+                    }, };
                 _this.baseinfo = userInfo;
-                evt.result = true;
-                evt.info = userInfo;
-                callback(evt);
             };
             loginCallback.OnEvtAuthFailed = function (data) {
                 evt.result = false;
@@ -1677,14 +1735,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 evt.info = err;
                 callback(evt);
             };
-            this.registerLCallbacks(loginCallback);
+            loginCallback.OnEvtLoginSuccess = function (data) {
+                _this._loginStatus = true;
+                var loginSuccessInfo = {
+                    confEnvType: 0,
+                    leftDaysOfPassword: 0,
+                    isFirstLogin: 0,
+                    isFreeUser: 0
+                };
+                if (data.param.loginSuccessInfo != undefined && null != data.param.loginSuccessInfo) {
+                    loginSuccessInfo = {
+                        confEnvType: data.param.loginSuccessInfo.confEnvType,
+                        leftDaysOfPassword: data.param.loginSuccessInfo.leftDaysOfPassword,
+                        isFirstLogin: data.param.loginSuccessInfo.isFirstLogin,
+                        isFreeUser: data.param.loginSuccessInfo.isFreeUser
+                    };
+                }
+                _this.baseinfo.loginSuccessInfo = loginSuccessInfo;
+                evt.result = true;
+                evt.info = _this.baseinfo;
+                callback(evt);
+            },
+                this.registerLCallbacks(loginCallback);
             this.tsdkClient.login(tsdkLoginParam, function (data) {
             });
             authParam.passwd = "";
         };
         TsdkClientAdapt.prototype.setDisplayName = function (displayName) {
             var callbacks = function () { };
-            var err = { cmdId: 0, errorCode: 900000004, errorInfo: "parameter error" };
+            var err = { cmdId: 900000000, errorCode: 900000004, errorInfo: "parameter error" };
             var evt = { result: false, info: err };
             if (!util.isString(displayName)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -1696,6 +1775,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 },
             };
             this.tsdkClient.setConfigParam(displayInfo, callbacks);
+        };
+        TsdkClientAdapt.prototype.modifyPassword = function (modifyPassword, callback) {
+            var callbacks = function () { };
+            var err = { cmdId: 100000000, errorCode: 100000002, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (!util.isString(modifyPassword.newPassword) || !util.isString(modifyPassword.oldPassword)) {
+                TsdkClientAdapt.notifyErr(evt);
+                return;
+            }
+            this.tsdkClient.modifyPassword(modifyPassword, callbacks);
         };
         TsdkClientAdapt.prototype.logout = function () {
             var callback = function () { };
@@ -1724,7 +1813,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 this.tsdkClient.acceptCall(this.callInfo.callId, isVideoCall, callback);
             }
             else {
-                this.tsdkClient.endCall(this.callInfo.callId);
+                this.tsdkClient.endCall(this.callInfo.callId, callback);
                 this.callInfo = {
                     callNo: "",
                     callId: "",
@@ -1737,7 +1826,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.hangup = function () {
             var _this = this;
             var callback = function () { };
-            this.tsdkClient.endCall(this.callInfo.callId, callback);
             if (this.playHandle >= 0) {
                 this.tsdkClient.stopPlayMedia(this.playHandle, function (data) {
                     if (data.result == 0) {
@@ -1745,6 +1833,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                 });
             }
+            this.tsdkClient.endCall(this.callInfo.callId, callback);
             this.callInfo = {
                 callNo: "",
                 callId: "",
@@ -1753,9 +1842,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 dtmfNo: ""
             };
         };
-        TsdkClientAdapt.prototype.sendDTMF = function (dmtfNo) {
+        TsdkClientAdapt.prototype.sendDTMF = function (dtmfNo) {
             var callback = function () { };
-            this.tsdkClient.sendDtmf(this.callInfo.callId, parseInt(dmtfNo), callback);
+            this.tsdkClient.sendDtmf(this.callInfo.callId, parseInt(dtmfNo), callback);
         };
         TsdkClientAdapt.prototype.switchAudioCall = function (toAudioCall) {
             var callback = function () { };
@@ -1884,7 +1973,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var callback = function () { };
             var isMuteSpeaker = bMute ? 1 : 0;
             this.tsdkClient.muteSpeaker(this.confinfo.callId, isMuteSpeaker, callback);
-            this.tsdkClient.uiPluginSetButtonState(2, isMuteSpeaker, callback);
+            this.tsdkClient.uiPluginSetButtonState(2, bMute ? 0 : 1, callback);
         };
         TsdkClientAdapt.prototype.getMediaDevice = function (deviceType, callback) {
             var evt = { result: false, info: "" };
@@ -1991,7 +2080,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             mediaType: confInfoList[m].confMediaType,
                             scheduserName: confInfoList[m].scheduserName,
                             scheduerNumber: confInfoList[m].scheduserAccount,
-                            attendeeAmount: confInfoList[m].size
+                            attendeeAmount: confInfoList[m].size,
+                            chairJoinUri: confInfoList[m].chairJoinUri,
+                            guestJoinUri: confInfoList[m].guestJoinUri,
                         };
                         conf_list[m] = obj;
                         confInfoList[m].chairmanPwd = "";
@@ -2047,7 +2138,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         mediaType: confInfo.confMediaType,
                         scheduserName: confInfo.scheduserName,
                         scheduerNumber: confInfo.scheduserAccount,
-                        attendeeAmount: data.param.confDetailInfo.attendeeNum
+                        attendeeAmount: data.param.confDetailInfo.attendeeNum,
+                        chairJoinUri: data.param.confDetailInfo.confInfo.chairJoinUri,
+                        guestJoinUri: data.param.confDetailInfo.confInfo.guestJoinUri,
                     };
                     callback({ result: true, info: conf_info });
                     confInfo.chairmanPwd = "";
@@ -2108,7 +2201,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         mediaType: confBaseInfo.confMediaType,
                         scheduserName: confBaseInfo.scheduserName,
                         scheduerNumber: confBaseInfo.scheduserAccount,
-                        attendeeAmount: confBaseInfo.size
+                        attendeeAmount: confBaseInfo.size,
+                        chairJoinUri: confBaseInfo.chairJoinUri,
+                        guestJoinUri: confBaseInfo.guestJoinUri,
                     };
                     bookConfData = {
                         result: true,
@@ -2285,7 +2380,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         mediaType: confBaseInfo.confMediaType,
                         scheduserName: confBaseInfo.scheduserName,
                         scheduerNumber: confBaseInfo.scheduserAccount,
-                        attendeeAmount: confBaseInfo.size
+                        attendeeAmount: confBaseInfo.size,
+                        chairJoinUri: confBaseInfo.chairJoinUri,
+                        guestJoinUri: confBaseInfo.guestJoinUri,
                     };
                     bookConfData = {
                         result: true,
@@ -2602,6 +2699,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 callback(evt);
                 return;
             }
+            var proxyParam = { proxyUri: "", proxyPort: 0, userName: "", password: "" };
+            if (serverInfo.extensions != undefined && serverInfo.extensions != "") {
+                var proxyParamTemp = JSON.parse(serverInfo.extensions);
+                proxyParam = {
+                    proxyUri: proxyParamTemp.proxyAddress,
+                    proxyPort: parseInt(proxyParamTemp.proxyPort),
+                    userName: proxyParamTemp.proxyAccount,
+                    password: proxyParamTemp.proxyPassword
+                };
+            }
+            this.initConfig(proxyParam);
             var tsdkConfAnonymousJoinParam = {
                 displayName: "anonymous",
                 confPassword: anonymousConfParam.confPasswd,
@@ -2636,15 +2744,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             }
             else {
-                var tsdkAttendeeBaseInfo = {
-                    displayName: "",
-                    sms: "",
-                    number: "",
-                    role: 0,
-                    email: "",
-                    accountId: "",
-                };
-                configedAttendees[0] = tsdkAttendeeBaseInfo;
                 confParam = {
                     topic: "",
                     isVideo: callType,
@@ -2693,6 +2792,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 var err = { cmdId: 400000000, errorCode: 400000002, errorInfo: "general error" };
                 var evt = { result: false, info: err };
             });
+        };
+        TsdkClientAdapt.prototype.setPresenter = function (attendee) {
+            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
+            var evt = { result: false, info: err };
+            if (!util.isString(attendee)) {
+                TsdkClientAdapt.notifyErr(evt);
+                return;
+            }
+            this.tsdkClient.setPresenter(this.confinfo.confHandle, attendee, function (ret) { });
+        };
+        TsdkClientAdapt.prototype.requestPresenter = function () {
+            this.tsdkClient.requestPresenter(this.confinfo.confHandle, function (ret) { });
         };
         TsdkClientAdapt.prototype.startScreenSharing = function (attendee, extensions) {
             var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
@@ -2834,12 +2945,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             }
             return { result: true, info: "" };
-        };
-        TsdkClientAdapt.prototype.upgradeConference = function (upgradeParam, callback) {
-            if (!upgradeParam.groupUri) {
-                upgradeParam.groupUri = "";
-            }
-            this.tsdkClient.upgradeConference(this.confinfo.confHandle, upgradeParam, callback);
         };
         TsdkClientAdapt.prototype.searchUserInfo = function (queryParam, callback) {
             if (util.isUndefined(queryParam) || !util.isBinaryNumber(queryParam.searchType)
@@ -4711,9 +4816,61 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        TsdkClientAdapt.prototype.uiPluginSetWindowSizeRelativePos = function (wndSizeRelPosParam, callbacks) {
+            return __awaiter(this, void 0, void 0, function () {
+                var err, wndSizeParam;
+                return __generator(this, function (_a) {
+                    if (util.isUndefined(wndSizeRelPosParam) || !util.isIntegerRange(wndSizeRelPosParam.width, 0, 4096)
+                        || !util.isIntegerRange(wndSizeRelPosParam.height, 0, 2048) || !util.isIntegerRange(wndSizeRelPosParam.xOffsetRate, 0, 100)
+                        || !util.isIntegerRange(wndSizeRelPosParam.yOffsetRate, 0, 100)) {
+                        err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("nativeWndParam");
+                        TsdkClientAdapt.notifyErr(err);
+                        return [2];
+                    }
+                    wndSizeParam = {
+                        frameHwnd: 0,
+                        hasWndSize: (wndSizeRelPosParam.width != 0 || wndSizeRelPosParam.height != 0) ? 1 : 0,
+                        width: wndSizeRelPosParam.width,
+                        height: wndSizeRelPosParam.height,
+                        hasRelativePos: (wndSizeRelPosParam.xOffsetRate != 0 || wndSizeRelPosParam.yOffsetRate != 0) ? 1 : 0,
+                        yOffsetRate: wndSizeRelPosParam.xOffsetRate,
+                        xOffsetRate: wndSizeRelPosParam.yOffsetRate,
+                    };
+                    this.tsdkClient.uiPluginSetWindowSizeRelativePos(wndSizeParam, function (data) { });
+                    return [2];
+                });
+            });
+        };
+        TsdkClientAdapt.prototype.uiPluginSetWindowSizeAbsolutePos = function (wndSizeAbsPosParam, callbacks) {
+            return __awaiter(this, void 0, void 0, function () {
+                var err, wndSizeParam;
+                return __generator(this, function (_a) {
+                    if (util.isUndefined(wndSizeAbsPosParam) || !util.isIntegerRange(wndSizeAbsPosParam.width, 0, 4096)
+                        || !util.isIntegerRange(wndSizeAbsPosParam.height, 0, 2048)) {
+                        err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("wndSizeAbsPosParam");
+                        TsdkClientAdapt.notifyErr(err);
+                        return [2];
+                    }
+                    wndSizeParam = {
+                        frameHwnd: 0,
+                        hasWndSize: (wndSizeAbsPosParam.width != 0 || wndSizeAbsPosParam.height != 0) ? 1 : 0,
+                        width: wndSizeAbsPosParam.width,
+                        height: wndSizeAbsPosParam.height,
+                        hasAbsolutePos: (wndSizeAbsPosParam.leftTopX >= 0 || wndSizeAbsPosParam.leftTopY >= 0) ? 1 : 0,
+                        leftTopX: wndSizeAbsPosParam.leftTopX,
+                        leftTopY: wndSizeAbsPosParam.leftTopY,
+                    };
+                    this.tsdkClient.uiPluginSetWindowSizeAbsolutePos(wndSizeParam, function (data) { });
+                    return [2];
+                });
+            });
+        };
+        TsdkClientAdapt.prototype.uiPluginShowVideoWindow = function (callback) {
+            this.tsdkClient.uiPluginShowVideoWindow(callback);
+        };
         TsdkClientAdapt.prototype.getVersion = function () {
             var CLOUDEC_SDK_INFO = {
-                version: "19.1.1",
+                version: "19.1.1.1",
                 name: "CloudLinkMeeting_JS_SDK",
                 time: "2019.6.14"
             };
@@ -4798,6 +4955,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             if (typeof (callback.OnEvtLoginFailed) != "undefined") {
                 this.tsdkClient.onAdapt('OnEvtLoginFailed', callback.OnEvtLoginFailed);
+            }
+            if (typeof (callback.OnEvtLoginSuccess) != "undefined") {
+                this.tsdkClient.onAdapt('OnEvtLoginSuccess', callback.OnEvtLoginSuccess);
             }
             if (typeof (callback.OnEvtVoipAccountStatus) != "undefined") {
                 this.tsdkClient.onAdapt('OnEvtVoipAccountStatus', callback.OnEvtVoipAccountStatus);
@@ -15346,6 +15506,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (typeof (listeners.OnEvtGetTempUserResult) != "undefined") {
                 tsdkClient.on('OnEvtGetTempUserResult', listeners.OnEvtGetTempUserResult);
             }
+            if (typeof (listeners.OnEvtModifyPasswordResult) != "undefined") {
+                tsdkClient.on('OnEvtModifyPasswordResult', listeners.OnEvtModifyPasswordResult);
+            }
             if (typeof (listeners.OnEvtCallStartResult) != "undefined") {
                 tsdkClient.on('OnEvtCallStartResult', listeners.OnEvtCallStartResult);
             }
@@ -15774,6 +15937,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.setPushService = function (pushServiceInfo, callback) {
             this.loginService.setPushService(pushServiceInfo, callback);
         };
+        TsdkClient.prototype.modifyPassword = function (modifyPassword, callback) {
+            this.loginService.modifyPassword(modifyPassword, callback);
+        };
         TsdkClient.prototype.startCall = function (calleeNumber, isVideo, callback) {
             this.callService.startCall(calleeNumber, isVideo, callback);
         };
@@ -16041,8 +16207,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.docShareSetDisplayMode = function (confHandle, displayMode, componentId, callback) {
             this.confService.docShareSetDisplayMode(confHandle, displayMode, componentId, callback);
         };
-        TsdkClient.prototype.annotationCreateStart = function (subType, confHandle, point, pageInfo, mainType, callback) {
-            this.confService.annotationCreateStart(subType, confHandle, point, pageInfo, mainType, callback);
+        TsdkClient.prototype.annotationCreateStart = function (point, pageInfo, mainType, subType, confHandle, componentId, callback) {
+            this.confService.annotationCreateStart(point, pageInfo, mainType, subType, confHandle, componentId, callback);
         };
         TsdkClient.prototype.annotationCreateUpdate = function (params, callback) {
             this.confService.annotationCreateUpdate(params, callback);
@@ -16050,8 +16216,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.annotationCreateDone = function (confHandle, componentId, isCancel, callback) {
             this.confService.annotationCreateDone(confHandle, componentId, isCancel, callback);
         };
-        TsdkClient.prototype.annotationSelectStart = function (confHandle, pageInfo, point, callback) {
-            this.confService.annotationSelectStart(confHandle, pageInfo, point, callback);
+        TsdkClient.prototype.annotationSelectStart = function (confHandle, point, componentId, pageInfo, callback) {
+            this.confService.annotationSelectStart(confHandle, point, componentId, pageInfo, callback);
         };
         TsdkClient.prototype.annotationSelectUpdate = function (confHandle, componentId, point, callback) {
             this.confService.annotationSelectUpdate(confHandle, componentId, point, callback);
@@ -16068,17 +16234,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.annotationLaserPointerStop = function (confHandle, componentId, callback) {
             this.confService.annotationLaserPointerStop(confHandle, componentId, callback);
         };
-        TsdkClient.prototype.annotationTextCreate = function (textInfo, confHandle, pageInfo, callback) {
-            this.confService.annotationTextCreate(textInfo, confHandle, pageInfo, callback);
+        TsdkClient.prototype.annotationTextCreate = function (textInfo, confHandle, componentId, pageInfo, callback) {
+            this.confService.annotationTextCreate(textInfo, confHandle, componentId, pageInfo, callback);
         };
-        TsdkClient.prototype.annotationTextUpdate = function (textInfo, confHandle, annotationId, pageInfo, isRedraw, callback) {
-            this.confService.annotationTextUpdate(textInfo, confHandle, annotationId, pageInfo, isRedraw, callback);
+        TsdkClient.prototype.annotationTextUpdate = function (annotationId, isRedraw, pageInfo, textInfo, confHandle, componentId, callback) {
+            this.confService.annotationTextUpdate(annotationId, isRedraw, pageInfo, textInfo, confHandle, componentId, callback);
         };
-        TsdkClient.prototype.annotationTextGetInfo = function (confHandle, annotationId, pageInfo, callback) {
-            this.confService.annotationTextGetInfo(confHandle, annotationId, pageInfo, callback);
+        TsdkClient.prototype.annotationTextGetInfo = function (confHandle, annotationId, componentId, pageInfo, callback) {
+            this.confService.annotationTextGetInfo(confHandle, annotationId, componentId, pageInfo, callback);
         };
-        TsdkClient.prototype.annotationEditStart = function (count, refAnnotationId, hitTestCode, annotationIdList, confHandle, startPoint, pageInfo, callback) {
-            this.confService.annotationEditStart(count, refAnnotationId, hitTestCode, annotationIdList, confHandle, startPoint, pageInfo, callback);
+        TsdkClient.prototype.annotationEditStart = function (count, refAnnotationId, pageInfo, hitTestCode, annotationIdList, confHandle, startPoint, componentId, callback) {
+            this.confService.annotationEditStart(count, refAnnotationId, pageInfo, hitTestCode, annotationIdList, confHandle, startPoint, componentId, callback);
         };
         TsdkClient.prototype.annotationEditUpdate = function (confHandle, componentId, currentPoint, callback) {
             this.confService.annotationEditUpdate(confHandle, componentId, currentPoint, callback);
@@ -16101,8 +16267,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.annotationDeleteAnnotation = function (confHandle, deleteInfo, callback) {
             this.confService.annotationDeleteAnnotation(confHandle, deleteInfo, callback);
         };
-        TsdkClient.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, pageInfo, callback) {
-            this.confService.annotationGetAnnotationInfo(confHandle, annotationId, pageInfo, callback);
+        TsdkClient.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, componentId, pageInfo, callback) {
+            this.confService.annotationGetAnnotationInfo(confHandle, annotationId, componentId, pageInfo, callback);
         };
         TsdkClient.prototype.annotationSetPen = function (newPenInfo, confHandle, componentId, penType, callback) {
             this.confService.annotationSetPen(newPenInfo, confHandle, componentId, penType, callback);
@@ -16136,6 +16302,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         };
         TsdkClient.prototype.setMixedPicture = function (confHandle, mixedPictureParams, callback) {
             this.confService.setMixedPicture(confHandle, mixedPictureParams, callback);
+        };
+        TsdkClient.prototype.releaseConference = function (confHandle, callback) {
+            this.confService.releaseConference(confHandle, callback);
+        };
+        TsdkClient.prototype.appShareSetVirtualViewInfo = function (confHandle, virtualViewInfo, callback) {
+            this.confService.appShareSetVirtualViewInfo(confHandle, virtualViewInfo, callback);
+        };
+        TsdkClient.prototype.appShareUpdateViewData = function (confHandle, viewDataInfo, callback) {
+            this.confService.appShareUpdateViewData(confHandle, viewDataInfo, callback);
+        };
+        TsdkClient.prototype.getRemoteViewPpiInfo = function (confHandle, callback) {
+            this.confService.getRemoteViewPpiInfo(confHandle, callback);
         };
         TsdkClient.prototype.ctdStartCall = function (ctdParam, callback) {
             this.ctdService.ctdStartCall(ctdParam, callback);
@@ -16266,6 +16444,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.uiPluginSetWindowSizeRelativePos = function (wndSizeParam, callback) {
             this.uiPluginService.uiPluginSetWindowSizeRelativePos(wndSizeParam, callback);
         };
+        TsdkClient.prototype.uiPluginSetWindowSizeAbsolutePos = function (wndSizeParam, callback) {
+            this.uiPluginService.uiPluginSetWindowSizeAbsolutePos(wndSizeParam, callback);
+        };
+        TsdkClient.prototype.uiPluginShowVideoWindow = function (callback) {
+            this.uiPluginService.uiPluginShowVideoWindow(callback);
+        };
         TsdkClient.prototype.on = function (event, action) {
             util_1.default.info("tsdkclient", "register event = " + event);
             var _listener = TsdkClient._listeners[event];
@@ -16357,6 +16541,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
             observer_1.default.subscribe('OnEvtGetTempUserResult', function (ret) {
                 _this.notify("OnEvtGetTempUserResult", ret);
+            });
+            observer_1.default.subscribe('OnEvtModifyPasswordResult', function (ret) {
+                _this.notify("OnEvtModifyPasswordResult", ret);
             });
         };
         ;
@@ -18957,6 +19144,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        LoginService.prototype.modifyPassword = function (modifyPassword, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.modifyPassword(modifyPassword)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
         LoginService.registerLoginEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper;
@@ -18978,6 +19179,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         OnEvtBuildStgTunnelFailed: LoginService.handleOnEvtBuildStgTunnelFailed,
                         OnEvtSecurityTunnelInfoInd: LoginService.handleOnEvtSecurityTunnelInfoInd,
                         OnEvtGetTempUserResult: LoginService.handleOnEvtGetTempUserResult,
+                        OnEvtModifyPasswordResult: LoginService.handleOnEvtModifyPasswordResult,
                     });
                     return [2];
                 });
@@ -19025,6 +19227,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         LoginService.handleOnEvtGetTempUserResult = function (data) {
             observer_1.default.publish('OnEvtGetTempUserResult', data);
+        };
+        LoginService.handleOnEvtModifyPasswordResult = function (data) {
+            observer_1.default.publish('OnEvtModifyPasswordResult', data);
         };
         return LoginService;
     }());
@@ -19142,6 +19347,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
+        TsdkLoginWrapper.prototype.modifyPassword = function (modifyPassword) {
+            util_1.default.info("TsdkLoginWrapper", "modifyPassword");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkLoginWrapper.tsdkLogin.modifyPassword(modifyPassword, callback);
+            return promise;
+        };
+        ;
         TsdkLoginWrapper.prototype.registerLoginEvent = function (callbacks) {
             TsdkLoginWrapper.tsdkLogin.setBasicLoginEvent(callbacks);
         };
@@ -19221,6 +19438,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
+        TsdkLogin.prototype.modifyPassword = function (modifyPassword, callbacks) {
+            this.callbackResponse(callbacks, 1004);
+            var data = {
+                "cmd": 0x103ec,
+                "description": "tsdk_modify_password",
+                "param": {
+                    "modifyPassword": modifyPassword
+                }
+            };
+            this.sendData(data);
+        };
+        ;
         TsdkLogin.prototype.setBasicLoginEvent = function (callbacks) {
             if (callbacks && typeof callbacks.OnEvtAuthSuccess == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[1001] = callbacks.OnEvtAuthSuccess;
@@ -19263,6 +19492,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (callbacks && typeof callbacks.OnEvtGetTempUserResult == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[1014] = callbacks.OnEvtGetTempUserResult;
+            }
+            if (callbacks && typeof callbacks.OnEvtModifyPasswordResult == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[1015] = callbacks.OnEvtModifyPasswordResult;
             }
         };
         ;
@@ -20036,12 +20268,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        ConfService.prototype.annotationCreateStart = function (subType, confHandle, point, pageInfo, mainType, callback) {
+        ConfService.prototype.annotationCreateStart = function (point, pageInfo, mainType, subType, confHandle, componentId, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var tsdkData;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4, this.wrapper.annotationCreateStart(subType, confHandle, point, pageInfo, mainType)];
+                        case 0: return [4, this.wrapper.annotationCreateStart(point, pageInfo, mainType, subType, confHandle, componentId)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20078,12 +20310,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        ConfService.prototype.annotationSelectStart = function (confHandle, pageInfo, point, callback) {
+        ConfService.prototype.annotationSelectStart = function (confHandle, point, componentId, pageInfo, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var tsdkData;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4, this.wrapper.annotationSelectStart(confHandle, pageInfo, point)];
+                        case 0: return [4, this.wrapper.annotationSelectStart(confHandle, point, componentId, pageInfo)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20162,12 +20394,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        ConfService.prototype.annotationTextCreate = function (textInfo, confHandle, pageInfo, callback) {
+        ConfService.prototype.annotationTextCreate = function (textInfo, confHandle, componentId, pageInfo, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var tsdkData;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4, this.wrapper.annotationTextCreate(textInfo, confHandle, pageInfo)];
+                        case 0: return [4, this.wrapper.annotationTextCreate(textInfo, confHandle, componentId, pageInfo)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20176,12 +20408,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        ConfService.prototype.annotationTextUpdate = function (textInfo, confHandle, annotationId, pageInfo, isRedraw, callback) {
+        ConfService.prototype.annotationTextUpdate = function (annotationId, isRedraw, pageInfo, textInfo, confHandle, componentId, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var tsdkData;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4, this.wrapper.annotationTextUpdate(textInfo, confHandle, annotationId, pageInfo, isRedraw)];
+                        case 0: return [4, this.wrapper.annotationTextUpdate(annotationId, isRedraw, pageInfo, textInfo, confHandle, componentId)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20190,12 +20422,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        ConfService.prototype.annotationTextGetInfo = function (confHandle, annotationId, pageInfo, callback) {
+        ConfService.prototype.annotationTextGetInfo = function (confHandle, annotationId, componentId, pageInfo, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var tsdkData;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4, this.wrapper.annotationTextGetInfo(confHandle, annotationId, pageInfo)];
+                        case 0: return [4, this.wrapper.annotationTextGetInfo(confHandle, annotationId, componentId, pageInfo)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20204,12 +20436,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        ConfService.prototype.annotationEditStart = function (count, refAnnotationId, hitTestCode, annotationIdList, confHandle, startPoint, pageInfo, callback) {
+        ConfService.prototype.annotationEditStart = function (count, refAnnotationId, pageInfo, hitTestCode, annotationIdList, confHandle, startPoint, componentId, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var tsdkData;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4, this.wrapper.annotationEditStart(count, refAnnotationId, hitTestCode, annotationIdList, confHandle, startPoint, pageInfo)];
+                        case 0: return [4, this.wrapper.annotationEditStart(count, refAnnotationId, pageInfo, hitTestCode, annotationIdList, confHandle, startPoint, componentId)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20316,12 +20548,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        ConfService.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, pageInfo, callback) {
+        ConfService.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, componentId, pageInfo, callback) {
             return __awaiter(this, void 0, void 0, function () {
                 var tsdkData;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4, this.wrapper.annotationGetAnnotationInfo(confHandle, annotationId, pageInfo)];
+                        case 0: return [4, this.wrapper.annotationGetAnnotationInfo(confHandle, annotationId, componentId, pageInfo)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20476,6 +20708,62 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4, this.wrapper.setMixedPicture(confHandle, mixedPictureParams)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        ConfService.prototype.releaseConference = function (confHandle, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.releaseConference(confHandle)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        ConfService.prototype.appShareSetVirtualViewInfo = function (confHandle, virtualViewInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.appShareSetVirtualViewInfo(confHandle, virtualViewInfo)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        ConfService.prototype.appShareUpdateViewData = function (confHandle, viewDataInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.appShareUpdateViewData(confHandle, viewDataInfo)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        ConfService.prototype.getRemoteViewPpiInfo = function (confHandle, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.getRemoteViewPpiInfo(confHandle)];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -21357,7 +21645,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
-        TsdkConfWrapper.prototype.annotationCreateStart = function (subType, confHandle, point, pageInfo, mainType) {
+        TsdkConfWrapper.prototype.annotationCreateStart = function (point, pageInfo, mainType, subType, confHandle, componentId) {
             util_1.default.info("TsdkConfWrapper", "annotationCreateStart");
             var callback = { response: {} };
             var promise = new Promise(function (resolve, reject) {
@@ -21365,7 +21653,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            TsdkConfWrapper.tsdkConf.annotationCreateStart(subType, confHandle, point, pageInfo, mainType, callback);
+            TsdkConfWrapper.tsdkConf.annotationCreateStart(point, pageInfo, mainType, subType, confHandle, componentId, callback);
             return promise;
         };
         ;
@@ -21393,7 +21681,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
-        TsdkConfWrapper.prototype.annotationSelectStart = function (confHandle, pageInfo, point) {
+        TsdkConfWrapper.prototype.annotationSelectStart = function (confHandle, point, componentId, pageInfo) {
             util_1.default.info("TsdkConfWrapper", "annotationSelectStart");
             var callback = { response: {} };
             var promise = new Promise(function (resolve, reject) {
@@ -21401,7 +21689,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            TsdkConfWrapper.tsdkConf.annotationSelectStart(confHandle, pageInfo, point, callback);
+            TsdkConfWrapper.tsdkConf.annotationSelectStart(confHandle, point, componentId, pageInfo, callback);
             return promise;
         };
         ;
@@ -21465,7 +21753,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
-        TsdkConfWrapper.prototype.annotationTextCreate = function (textInfo, confHandle, pageInfo) {
+        TsdkConfWrapper.prototype.annotationTextCreate = function (textInfo, confHandle, componentId, pageInfo) {
             util_1.default.info("TsdkConfWrapper", "annotationTextCreate");
             var callback = { response: {} };
             var promise = new Promise(function (resolve, reject) {
@@ -21473,11 +21761,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            TsdkConfWrapper.tsdkConf.annotationTextCreate(textInfo, confHandle, pageInfo, callback);
+            TsdkConfWrapper.tsdkConf.annotationTextCreate(textInfo, confHandle, componentId, pageInfo, callback);
             return promise;
         };
         ;
-        TsdkConfWrapper.prototype.annotationTextUpdate = function (textInfo, confHandle, annotationId, pageInfo, isRedraw) {
+        TsdkConfWrapper.prototype.annotationTextUpdate = function (annotationId, isRedraw, pageInfo, textInfo, confHandle, componentId) {
             util_1.default.info("TsdkConfWrapper", "annotationTextUpdate");
             var callback = { response: {} };
             var promise = new Promise(function (resolve, reject) {
@@ -21485,11 +21773,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            TsdkConfWrapper.tsdkConf.annotationTextUpdate(textInfo, confHandle, annotationId, pageInfo, isRedraw, callback);
+            TsdkConfWrapper.tsdkConf.annotationTextUpdate(annotationId, isRedraw, pageInfo, textInfo, confHandle, componentId, callback);
             return promise;
         };
         ;
-        TsdkConfWrapper.prototype.annotationTextGetInfo = function (confHandle, annotationId, pageInfo) {
+        TsdkConfWrapper.prototype.annotationTextGetInfo = function (confHandle, annotationId, componentId, pageInfo) {
             util_1.default.info("TsdkConfWrapper", "annotationTextGetInfo");
             var callback = { response: {} };
             var promise = new Promise(function (resolve, reject) {
@@ -21497,11 +21785,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            TsdkConfWrapper.tsdkConf.annotationTextGetInfo(confHandle, annotationId, pageInfo, callback);
+            TsdkConfWrapper.tsdkConf.annotationTextGetInfo(confHandle, annotationId, componentId, pageInfo, callback);
             return promise;
         };
         ;
-        TsdkConfWrapper.prototype.annotationEditStart = function (count, refAnnotationId, hitTestCode, annotationIdList, confHandle, startPoint, pageInfo) {
+        TsdkConfWrapper.prototype.annotationEditStart = function (count, refAnnotationId, pageInfo, hitTestCode, annotationIdList, confHandle, startPoint, componentId) {
             util_1.default.info("TsdkConfWrapper", "annotationEditStart");
             var callback = { response: {} };
             var promise = new Promise(function (resolve, reject) {
@@ -21509,7 +21797,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            TsdkConfWrapper.tsdkConf.annotationEditStart(count, refAnnotationId, hitTestCode, annotationIdList, confHandle, startPoint, pageInfo, callback);
+            TsdkConfWrapper.tsdkConf.annotationEditStart(count, refAnnotationId, pageInfo, hitTestCode, annotationIdList, confHandle, startPoint, componentId, callback);
             return promise;
         };
         ;
@@ -21597,7 +21885,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
-        TsdkConfWrapper.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, pageInfo) {
+        TsdkConfWrapper.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, componentId, pageInfo) {
             util_1.default.info("TsdkConfWrapper", "annotationGetAnnotationInfo");
             var callback = { response: {} };
             var promise = new Promise(function (resolve, reject) {
@@ -21605,7 +21893,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(data);
                 };
             });
-            TsdkConfWrapper.tsdkConf.annotationGetAnnotationInfo(confHandle, annotationId, pageInfo, callback);
+            TsdkConfWrapper.tsdkConf.annotationGetAnnotationInfo(confHandle, annotationId, componentId, pageInfo, callback);
             return promise;
         };
         ;
@@ -21738,6 +22026,54 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 };
             });
             TsdkConfWrapper.tsdkConf.setMixedPicture(confHandle, mixedPictureParams, callback);
+            return promise;
+        };
+        ;
+        TsdkConfWrapper.prototype.releaseConference = function (confHandle) {
+            util_1.default.info("TsdkConfWrapper", "releaseConference");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkConfWrapper.tsdkConf.releaseConference(confHandle, callback);
+            return promise;
+        };
+        ;
+        TsdkConfWrapper.prototype.appShareSetVirtualViewInfo = function (confHandle, virtualViewInfo) {
+            util_1.default.info("TsdkConfWrapper", "appShareSetVirtualViewInfo");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkConfWrapper.tsdkConf.appShareSetVirtualViewInfo(confHandle, virtualViewInfo, callback);
+            return promise;
+        };
+        ;
+        TsdkConfWrapper.prototype.appShareUpdateViewData = function (confHandle, viewDataInfo) {
+            util_1.default.info("TsdkConfWrapper", "appShareUpdateViewData");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkConfWrapper.tsdkConf.appShareUpdateViewData(confHandle, viewDataInfo, callback);
+            return promise;
+        };
+        ;
+        TsdkConfWrapper.prototype.getRemoteViewPpiInfo = function (confHandle) {
+            util_1.default.info("TsdkConfWrapper", "getRemoteViewPpiInfo");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkConfWrapper.tsdkConf.getRemoteViewPpiInfo(confHandle, callback);
             return promise;
         };
         ;
@@ -22399,13 +22735,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
-        TsdkConf.prototype.annotationCreateStart = function (subType, confHandle, point, pageInfo, mainType, callbacks) {
+        TsdkConf.prototype.annotationCreateStart = function (point, pageInfo, mainType, subType, confHandle, componentId, callbacks) {
             this.callbackResponse(callbacks, 3052);
             var data = {
                 "cmd": 0x10bec,
                 "description": "tsdk_annotation_create_start",
                 "param": {
-                    "subType": subType, "confHandle": confHandle, "point": point, "pageInfo": pageInfo, "mainType": mainType
+                    "point": point, "pageInfo": pageInfo, "mainType": mainType, "subType": subType, "confHandle": confHandle, "componentId": componentId
                 }
             };
             this.sendData(data);
@@ -22433,13 +22769,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
-        TsdkConf.prototype.annotationSelectStart = function (confHandle, pageInfo, point, callbacks) {
+        TsdkConf.prototype.annotationSelectStart = function (confHandle, point, componentId, pageInfo, callbacks) {
             this.callbackResponse(callbacks, 3055);
             var data = {
                 "cmd": 0x10bef,
                 "description": "tsdk_annotation_select_start",
                 "param": {
-                    "confHandle": confHandle, "pageInfo": pageInfo, "point": point
+                    "confHandle": confHandle, "point": point, "componentId": componentId, "pageInfo": pageInfo
                 }
             };
             this.sendData(data);
@@ -22505,49 +22841,49 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
-        TsdkConf.prototype.annotationTextCreate = function (textInfo, confHandle, pageInfo, callbacks) {
+        TsdkConf.prototype.annotationTextCreate = function (textInfo, confHandle, componentId, pageInfo, callbacks) {
             this.callbackResponse(callbacks, 3061);
             var data = {
                 "cmd": 0x10bf5,
                 "description": "tsdk_annotation_text_create",
                 "param": {
-                    "textInfo": textInfo, "confHandle": confHandle, "pageInfo": pageInfo
+                    "textInfo": textInfo, "confHandle": confHandle, "componentId": componentId, "pageInfo": pageInfo
                 }
             };
             this.sendData(data);
         };
         ;
-        TsdkConf.prototype.annotationTextUpdate = function (textInfo, confHandle, annotationId, pageInfo, isRedraw, callbacks) {
+        TsdkConf.prototype.annotationTextUpdate = function (annotationId, isRedraw, pageInfo, textInfo, confHandle, componentId, callbacks) {
             this.callbackResponse(callbacks, 3062);
             var data = {
                 "cmd": 0x10bf6,
                 "description": "tsdk_annotation_text_update",
                 "param": {
-                    "textInfo": textInfo, "confHandle": confHandle, "annotationId": annotationId, "pageInfo": pageInfo, "isRedraw": isRedraw
+                    "annotationId": annotationId, "isRedraw": isRedraw, "pageInfo": pageInfo, "textInfo": textInfo, "confHandle": confHandle, "componentId": componentId
                 }
             };
             this.sendData(data);
         };
         ;
-        TsdkConf.prototype.annotationTextGetInfo = function (confHandle, annotationId, pageInfo, callbacks) {
+        TsdkConf.prototype.annotationTextGetInfo = function (confHandle, annotationId, componentId, pageInfo, callbacks) {
             this.callbackResponse(callbacks, 3063);
             var data = {
                 "cmd": 0x10bf7,
                 "description": "tsdk_annotation_text_get_info",
                 "param": {
-                    "confHandle": confHandle, "annotationId": annotationId, "pageInfo": pageInfo
+                    "confHandle": confHandle, "annotationId": annotationId, "componentId": componentId, "pageInfo": pageInfo
                 }
             };
             this.sendData(data);
         };
         ;
-        TsdkConf.prototype.annotationEditStart = function (count, refAnnotationId, hitTestCode, annotationIdList, confHandle, startPoint, pageInfo, callbacks) {
+        TsdkConf.prototype.annotationEditStart = function (count, refAnnotationId, pageInfo, hitTestCode, annotationIdList, confHandle, startPoint, componentId, callbacks) {
             this.callbackResponse(callbacks, 3064);
             var data = {
                 "cmd": 0x10bf8,
                 "description": "tsdk_annotation_edit_start",
                 "param": {
-                    "count": count, "refAnnotationId": refAnnotationId, "hitTestCode": hitTestCode, "annotationIdList": annotationIdList, "confHandle": confHandle, "startPoint": startPoint, "pageInfo": pageInfo
+                    "count": count, "refAnnotationId": refAnnotationId, "pageInfo": pageInfo, "hitTestCode": hitTestCode, "annotationIdList": annotationIdList, "confHandle": confHandle, "startPoint": startPoint, "componentId": componentId
                 }
             };
             this.sendData(data);
@@ -22637,13 +22973,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
-        TsdkConf.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, pageInfo, callbacks) {
+        TsdkConf.prototype.annotationGetAnnotationInfo = function (confHandle, annotationId, componentId, pageInfo, callbacks) {
             this.callbackResponse(callbacks, 3072);
             var data = {
                 "cmd": 0x10c00,
                 "description": "tsdk_annotation_get_annotation_info",
                 "param": {
-                    "confHandle": confHandle, "annotationId": annotationId, "pageInfo": pageInfo
+                    "confHandle": confHandle, "annotationId": annotationId, "componentId": componentId, "pageInfo": pageInfo
                 }
             };
             this.sendData(data);
@@ -22776,6 +23112,54 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "description": "tsdk_set_mixed_picture",
                 "param": {
                     "confHandle": confHandle, "mixedPictureParams": mixedPictureParams
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkConf.prototype.releaseConference = function (confHandle, callbacks) {
+            this.callbackResponse(callbacks, 3084);
+            var data = {
+                "cmd": 0x10c0c,
+                "description": "tsdk_release_conference",
+                "param": {
+                    "confHandle": confHandle
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkConf.prototype.appShareSetVirtualViewInfo = function (confHandle, virtualViewInfo, callbacks) {
+            this.callbackResponse(callbacks, 3085);
+            var data = {
+                "cmd": 0x10c0d,
+                "description": "tsdk_app_share_set_virtual_view_info",
+                "param": {
+                    "confHandle": confHandle, "virtualViewInfo": virtualViewInfo
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkConf.prototype.appShareUpdateViewData = function (confHandle, viewDataInfo, callbacks) {
+            this.callbackResponse(callbacks, 3086);
+            var data = {
+                "cmd": 0x10c0e,
+                "description": "tsdk_app_share_update_view_data",
+                "param": {
+                    "confHandle": confHandle, "viewDataInfo": viewDataInfo
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkConf.prototype.getRemoteViewPpiInfo = function (confHandle, callbacks) {
+            this.callbackResponse(callbacks, 3087);
+            var data = {
+                "cmd": 0x10c0f,
+                "description": "tsdk_get_remote_view_ppi_info",
+                "param": {
+                    "confHandle": confHandle
                 }
             };
             this.sendData(data);
@@ -25249,6 +25633,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        UiPluginService.prototype.uiPluginSetWindowSizeAbsolutePos = function (wndSizeParam, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.uiPluginSetWindowSizeAbsolutePos(wndSizeParam)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        UiPluginService.prototype.uiPluginShowVideoWindow = function (callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.uiPluginShowVideoWindow()];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
         UiPluginService.registerUiPluginEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper;
@@ -25514,6 +25926,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
+        TsdkUiPluginWrapper.prototype.uiPluginSetWindowSizeAbsolutePos = function (wndSizeParam) {
+            util_1.default.info("TsdkUiPluginWrapper", "uiPluginSetWindowSizeAbsolutePos");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkUiPluginWrapper.tsdkUiPlugin.uiPluginSetWindowSizeAbsolutePos(wndSizeParam, callback);
+            return promise;
+        };
+        ;
+        TsdkUiPluginWrapper.prototype.uiPluginShowVideoWindow = function () {
+            util_1.default.info("TsdkUiPluginWrapper", "uiPluginShowVideoWindow");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkUiPluginWrapper.tsdkUiPlugin.uiPluginShowVideoWindow(callback);
+            return promise;
+        };
+        ;
         TsdkUiPluginWrapper.prototype.registerUiPluginEvent = function (callbacks) {
             TsdkUiPluginWrapper.tsdkUiPlugin.setBasicUiPluginEvent(callbacks);
         };
@@ -25610,6 +26046,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "param": {
                     "wndSizeParam": wndSizeParam
                 }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkUiPlugin.prototype.uiPluginSetWindowSizeAbsolutePos = function (wndSizeParam, callbacks) {
+            this.callbackResponse(callbacks, 10006);
+            var data = {
+                "cmd": 0x12716,
+                "description": "tsdk_ui_plugin_set_window_size_absolute_pos",
+                "param": {
+                    "wndSizeParam": wndSizeParam
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkUiPlugin.prototype.uiPluginShowVideoWindow = function (callbacks) {
+            this.callbackResponse(callbacks, 10007);
+            var data = {
+                "cmd": 0x12717,
+                "description": "tsdk_ui_plugin_show_video_window"
             };
             this.sendData(data);
         };

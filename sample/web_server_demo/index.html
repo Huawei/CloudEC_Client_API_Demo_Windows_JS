@@ -45,6 +45,13 @@
                 document.getElementById("proxyDiv").style.display = 'none';
             }
         }
+        function setProxyAnonyClick(obj) {
+            if (obj.checked) {
+                document.getElementById("proxyAnonyDiv").style.display = 'block';
+            } else {
+                document.getElementById("proxyAnonyDiv").style.display = 'none';
+            }
+        }
 
     </script>
 
@@ -73,6 +80,13 @@
                             password:<input type="password" id="proxy_pwd" value="" />
                         </div>
                     </div>
+
+                    <div id="changePassword">
+                            old password: <input type="password" id="oldPasswd" value="" />
+                            new password: <input type="password" id="newPasswd" value="" />
+                            <button onclick="modifyPassword()">change password</button>
+                    </div>
+					
                 </fieldset>
                 <fieldset>
                     <legend>User logout</legend>
@@ -189,8 +203,12 @@
                         <button onclick="setConfNativeWndSmall()">small(480*352)</button>
                         <button onclick="setConfNativeWndMedium()">medium(720*480)</button>
                         <button onclick="setConfNativeWndLarge()">large(1080*720)</button><br/>
-                        <button onclick="uiPluginShowSmallWindow()">show/hide small window</button><br/>
-                        <button onclick="uiPluginShowAnnotationTool()">show annotation tool</button><br/>
+                        left top x:<input type="text" id="ui_window_left_top_x" value="200" />
+                        left top y:<input type="text" id="ui_window_left_top_y" value="300" />
+                        <button onclick="setConfNativeWndPosition()">set window position</button><br/>
+                        <button onclick="uiPluginShowSmallWindow()">show/hide small window</button>
+                        <button onclick="uiPluginShowAnnotationTool()">show annotation tool</button>
+                        <button onclick="uiPluginShowVideoWindow()">show video window</button><br/>
                         set call window title:<input type="text" id="ui_window_title" value="huaweiMeeting" />
                         <button onclick="uiPluginSetWindowTitle()">set window title</button><br/>
                     </div>
@@ -203,14 +221,21 @@
                 <fieldset>
                     <legend>Anonymous conference</legend>
                     <div id="anonymousConf">
-                        server address:<input type="text" id="anony_svr_addr" value="" /> port:
-                        <input type="text" id="anony_svr_port" value="443" /> conference ID:
+                        server address:<input type="text" id="anony_svr_addr" value="bmeeting.huaweicloud.com" /> port:
+                        <input type="text" id="anony_svr_port" value="8443" /> conference ID:
                         <input type="text" id="anony_conf_id" value="" /> conference password:
                         <input type="password" id="anony_passwd" value="" /> call type: <select id='anony_call_type'>  
                                 <option value=0>audio</option> 
                                 <option value=1 selected="selected">video</option>
                              </select>
-                        <button onclick="joinAnonymousConf()">anonymous conference</button>
+                        <button onclick="joinAnonymousConf()">anonymous conference</button></br>
+                        <input type="checkbox" id="setProxy_Select_anony" onclick="setProxyAnonyClick(this)" />proxy server
+                        <div id="proxyAnonyDiv" style="display:none">
+                            address:<input type="text" id="proxy_addr_anony" value="" /> 
+                            port:<input type="text" id="proxy_port_anony" value="" /> 
+                            account number:<input type="text" id="proxy_account_anony" value="" /> 
+                            password:<input type="password" id="proxy_pwd_anony" value="" />
+                        </div>
                     </div>
                 </fieldset>
             </div>
