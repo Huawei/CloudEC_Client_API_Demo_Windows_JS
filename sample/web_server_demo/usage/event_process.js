@@ -410,6 +410,13 @@
                 alert("modify password failed >>>errorCode:" + ret.info.reasonCode + "errorInfo:" + ret.info.reasonDescription)
             }
         }, 
+        onEvtStatisticInfo:function(ret){
+            console.log("onEvtStatisticInfo");    
+        },        
+        
+        onEvtSvcWatchInfoInd:function(ret){
+            console.log("onEvtSvcWatchInfoInd");    
+        },  
     }
 
     root.client = cloudEC.createClient(listeners);

@@ -215,6 +215,19 @@ function blindTransfer(){
 
 	client.blindTransfer(transtoNumber);
 }
+
+function getCallStatisticInfo(){
+	client.getCallStatisticInfo(function(data){
+		console.log("getCallStatisticInfo");
+	});
+}
+
+function getShareStatisticInfo(){
+	client.getShareStatisticInfo(function(data){
+		console.log("getShareStatisticInfo");
+	});
+}
+
 //call end
 
 function joinInstanceConf() {

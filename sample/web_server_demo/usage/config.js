@@ -6,6 +6,8 @@
         confCtrlProtocol: 1,
         isTlsSupport: 0,
         uiPluginAppDisplayName : "eSDK-Desktop",
+        IsSupportIm:0,
+        IsSupportSvcConference:1,
 
         uiPluginlLanguage : 0,
         uiPluginResourcesPath: "",
@@ -30,6 +32,9 @@
         uiPluginHideAudioVideoSettingButton:1,
         uiPluginHideCloseButton:0,
         uiPluginHideMaxsizeMinisizeButton:0,
+        uiPluginHideConfTime:0,
+        uiPluginHideConfChairmanPwd:0,
+        uiPluginHideConfGuestPwd:0,
         uiPluginDataHideInviteButton:1,
         uiPluginDataHideAttendeesButton:1,
         uiPluginDataHideRequestRemotecontrolButton:1,
