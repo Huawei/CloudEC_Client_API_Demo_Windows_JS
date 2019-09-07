@@ -2281,15 +2281,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 configedAttendees.push(tsdkAttendeeBaseInfo);
             }
             for (var i = 0; !util.isUndefined(attendees) && i < attendees.length; i++) {
-                var tsdkAttendeeBaseInfo = {
-                    displayName: attendees[i].name,
-                    sms: attendees[i].smsPhone,
-                    number: attendees[i].number,
-                    role: attendees[i].role,
-                    email: attendees[i].email,
-                    accountId: attendees[i].name,
-                };
-                configedAttendees.push(tsdkAttendeeBaseInfo);
+                if (attendees[i].number != null && attendees[i].number != "") {
+                    var tsdkAttendeeBaseInfo = {
+                        displayName: attendees[i].name ? attendees[i].name : attendees[i].number,
+                        sms: attendees[i].smsPhone,
+                        number: attendees[i].number,
+                        role: attendees[i].role,
+                        email: attendees[i].email,
+                        accountId: attendees[i].number,
+                    };
+                    configedAttendees.push(tsdkAttendeeBaseInfo);
+                }
             }
             var bookConfInfo = {
                 welcomePrompt: bookConferenceParam.welcomePrompt,
@@ -2366,15 +2368,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             };
             configedAttendees.push(tsdkAttendeeBaseInfo);
             for (var i = 0; !util.isUndefined(attendees) && i < attendees.length; i++) {
-                var tsdkAttendeeBaseInfo_1 = {
-                    displayName: attendees[i].name ? attendees[i].name : attendees[i].number,
-                    sms: attendees[i].smsPhone,
-                    number: attendees[i].number,
-                    role: attendees[i].role,
-                    email: attendees[i].email,
-                    accountId: attendees[i].number,
-                };
-                configedAttendees.push(tsdkAttendeeBaseInfo_1);
+                if (attendees[i].number != null && attendees[i].number != "") {
+                    var tsdkAttendeeBaseInfo_1 = {
+                        displayName: attendees[i].name ? attendees[i].name : attendees[i].number,
+                        sms: attendees[i].smsPhone,
+                        number: attendees[i].number,
+                        role: attendees[i].role,
+                        email: attendees[i].email,
+                        accountId: attendees[i].number,
+                    };
+                    configedAttendees.push(tsdkAttendeeBaseInfo_1);
+                }
             }
             var bookConfInfo = {
                 welcomePrompt: instanceConfParam.welcomePrompt,
@@ -2783,15 +2787,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (!util.isUndefined(confParam) && !util.isUndefined(confParam.attendees)) {
                 var attendees = confParam.attendees;
                 for (var i = 0; i < attendees.length; i++) {
-                    var tsdkAttendeeBaseInfo = {
-                        displayName: attendees[i].name ? attendees[i].name : attendees[i].number,
-                        sms: attendees[i].smsPhone,
-                        number: attendees[i].number,
-                        role: attendees[i].role,
-                        email: attendees[i].email,
-                        accountId: attendees[i].number,
-                    };
-                    configedAttendees[i] = tsdkAttendeeBaseInfo;
+                    if (attendees[i].number != null && attendees[i].number != "") {
+                        var tsdkAttendeeBaseInfo = {
+                            displayName: attendees[i].name ? attendees[i].name : attendees[i].number,
+                            sms: attendees[i].smsPhone,
+                            number: attendees[i].number,
+                            role: attendees[i].role,
+                            email: attendees[i].email,
+                            accountId: attendees[i].number,
+                        };
+                        configedAttendees.push(tsdkAttendeeBaseInfo);
+                    }
                 }
             }
             else {
