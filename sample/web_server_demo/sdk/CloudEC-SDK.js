@@ -108,6 +108,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         UI_PLUGIN_HIDE_CONF_TIME: 0,
         UI_PLUGIN_HIDE_CONF_CHAIRMAN_PWD: 0,
         UI_PLUGIN_HIDE_CONF_GUEST_PWD: 0,
+        UI_PLUGIN_HIDE_SHARE_TYPE_SELECTION: 1,
         UI_PLUGIN_DATA_HIDE_INVITE_BUTTON: 1,
         UI_PLUGIN_DATA_HIDE_ATTENDEES_BUTTON: 1,
         UI_PLUGIN_DATA_HIDE_REQUEST_REMOTE_CONTROL_BUTTON: 1,
@@ -357,6 +358,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onEvtSvcWatchInfoInd) != "undefined") {
                 tsdkClientAdapt.on('OnEvtSvcWatchInfoInd', listeners.onEvtSvcWatchInfoInd);
             }
+            if (typeof (listeners.onEvtJoinDataConfResult) != "undefined") {
+                tsdkClientAdapt.on('OnEvtJoinDataConfResult', listeners.onEvtJoinDataConfResult);
+            }
             return tsdkClientAdapt;
         };
         CloudEC.prototype.configure = function (options) {
@@ -471,6 +475,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (options.uiPluginHideConfGuestPwd) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_GUEST_PWD = options.uiPluginHideConfGuestPwd;
             }
+            if (typeof (options.uiPluginHideShareTypeSelection) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_TYPE_SELECTION = options.uiPluginHideShareTypeSelection;
+            }
             if (typeof (options.uiPluginDataHideInviteButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON = options.uiPluginHideInviteButton;
             }
@@ -570,7 +577,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 callId: "",
                 callState: 0,
                 isVideo: 0,
-                dtmfNo: ""
+                dtmfNo: "",
+                callName: ""
             };
             this.tsdkJsInitParam = {
                 invokeMode: 1,
@@ -636,6 +644,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         callId: ret.param.callInfo.callId,
                         callState: ret.param.callInfo.callState,
                         isVideo: ret.param.callInfo.isVideoCall,
+                        callName: ret.param.callInfo.peerDisplayName
                     };
                 },
                 OnEvtCallIncoming: function (ret) {
@@ -645,6 +654,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         callId: ret.param.callInfo.callId,
                         callState: ret.param.callInfo.callState,
                         isVideo: ret.param.callInfo.isVideoCall,
+                        callName: ret.param.callInfo.peerDisplayName
                     };
                     evt.info = _this.callInfo;
                     if (_this.playHandle < 0) {
@@ -891,6 +901,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     _this.notify('EndConference', evt);
                 },
                 OnEvtJoinDataConfResult: function (ret) {
+                    var evt = { result: true, info: "Join the data conference successfully!" };
+                    if (ret.param.result != 0) {
+                        evt = { result: false, info: "Joining data conference failed!" };
+                    }
+                    _this.notify('OnEvtJoinDataConfResult', evt);
                 },
                 onAsOnSharingState: function (ret) {
                 },
@@ -1694,6 +1709,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         hideConfTime: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_TIME,
                         hideConfChairmanPwd: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_CHAIRMAN_PWD,
                         hideConfGuestPwd: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_GUEST_PWD,
+                        hideShareTypeSelection: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_TYPE_SELECTION
                     },
                     dataWindowVisibleInfo: {
                         hideInviteButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON,
@@ -1853,7 +1869,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     callId: "",
                     callState: 0,
                     isVideo: 0,
-                    dtmfNo: ""
+                    dtmfNo: "",
+                    callName: ""
                 };
             }
         };
@@ -1873,7 +1890,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 callId: "",
                 callState: 0,
                 isVideo: 0,
-                dtmfNo: ""
+                dtmfNo: "",
+                callName: ""
             };
         };
         TsdkClientAdapt.prototype.sendDTMF = function (dtmfNo) {
@@ -2784,6 +2802,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(evt);
                 return;
             }
+            var tsdkAttendeeBaseInfoTemp = {
+                displayName: "",
+                sms: "",
+                number: this.baseinfo.sipAccount,
+                role: 1,
+                email: "",
+                accountId: "",
+            };
+            configedAttendees.push(tsdkAttendeeBaseInfoTemp);
+            tsdkAttendeeBaseInfoTemp = {
+                displayName: "",
+                sms: "",
+                number: this.callInfo.callNo,
+                role: 0,
+                email: "",
+                accountId: "",
+            };
+            configedAttendees.push(tsdkAttendeeBaseInfoTemp);
             if (!util.isUndefined(confParam) && !util.isUndefined(confParam.attendees)) {
                 var attendees = confParam.attendees;
                 for (var i = 0; i < attendees.length; i++) {
@@ -4929,6 +4965,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.uiPluginShowVideoWindow = function (callback) {
             this.tsdkClient.uiPluginShowVideoWindow(callback);
+        };
+        TsdkClientAdapt.prototype.uiPluginShowShareSelectwnd = function (callback) {
+            this.tsdkClient.uiPluginShowShareSelectwnd(callback);
         };
         TsdkClientAdapt.prototype.getVersion = function () {
             var CLOUDEC_SDK_INFO = {
@@ -15093,6 +15132,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (typeof (listeners.OnEvtModifyPasswordResult) != "undefined") {
                 tsdkClient.on('OnEvtModifyPasswordResult', listeners.OnEvtModifyPasswordResult);
             }
+            if (typeof (listeners.OnEvtLoginResumingInd) != "undefined") {
+                tsdkClient.on('OnEvtLoginResumingInd', listeners.OnEvtLoginResumingInd);
+            }
+            if (typeof (listeners.OnEvtLoginResumeResult) != "undefined") {
+                tsdkClient.on('OnEvtLoginResumeResult', listeners.OnEvtLoginResumeResult);
+            }
             if (typeof (listeners.OnEvtCallStartResult) != "undefined") {
                 tsdkClient.on('OnEvtCallStartResult', listeners.OnEvtCallStartResult);
             }
@@ -15305,6 +15350,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             if (typeof (listeners.OnEvtSvcWatchInfoInd) != "undefined") {
                 tsdkClient.on('OnEvtSvcWatchInfoInd', listeners.OnEvtSvcWatchInfoInd);
+            }
+            if (typeof (listeners.OnEvtConfResumingInd) != "undefined") {
+                tsdkClient.on('OnEvtConfResumingInd', listeners.OnEvtConfResumingInd);
+            }
+            if (typeof (listeners.OnEvtConfResumeResult) != "undefined") {
+                tsdkClient.on('OnEvtConfResumeResult', listeners.OnEvtConfResumeResult);
             }
             if (typeof (listeners.OnEvtCtdStartCallResult) != "undefined") {
                 tsdkClient.on('OnEvtCtdStartCallResult', listeners.OnEvtCtdStartCallResult);
@@ -16040,6 +16091,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.uiPluginWatchSvcAttendee = function (number, callback) {
             this.uiPluginService.uiPluginWatchSvcAttendee(number, callback);
         };
+        TsdkClient.prototype.uiPluginShowShareSelectwnd = function (callback) {
+            this.uiPluginService.uiPluginShowShareSelectwnd(callback);
+        };
         TsdkClient.prototype.on = function (event, action) {
             util_1.default.info("tsdkclient", "register event = " + event);
             var _listener = TsdkClient._listeners[event];
@@ -16134,6 +16188,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
             observer_1.default.subscribe('OnEvtModifyPasswordResult', function (ret) {
                 _this.notify("OnEvtModifyPasswordResult", ret);
+            });
+            observer_1.default.subscribe('OnEvtLoginResumingInd', function (ret) {
+                _this.notify("OnEvtLoginResumingInd", ret);
+            });
+            observer_1.default.subscribe('OnEvtLoginResumeResult', function (ret) {
+                _this.notify("OnEvtLoginResumeResult", ret);
             });
         };
         ;
@@ -16355,6 +16415,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
             observer_1.default.subscribe('OnEvtSvcWatchInfoInd', function (ret) {
                 _this.notify("OnEvtSvcWatchInfoInd", ret);
+            });
+            observer_1.default.subscribe('OnEvtConfResumingInd', function (ret) {
+                _this.notify("OnEvtConfResumingInd", ret);
+            });
+            observer_1.default.subscribe('OnEvtConfResumeResult', function (ret) {
+                _this.notify("OnEvtConfResumeResult", ret);
             });
         };
         ;
@@ -18861,6 +18927,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         OnEvtSecurityTunnelInfoInd: LoginService.handleOnEvtSecurityTunnelInfoInd,
                         OnEvtGetTempUserResult: LoginService.handleOnEvtGetTempUserResult,
                         OnEvtModifyPasswordResult: LoginService.handleOnEvtModifyPasswordResult,
+                        OnEvtLoginResumingInd: LoginService.handleOnEvtLoginResumingInd,
+                        OnEvtLoginResumeResult: LoginService.handleOnEvtLoginResumeResult,
                     });
                     return [2];
                 });
@@ -18911,6 +18979,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         LoginService.handleOnEvtModifyPasswordResult = function (data) {
             observer_1.default.publish('OnEvtModifyPasswordResult', data);
+        };
+        LoginService.handleOnEvtLoginResumingInd = function (data) {
+            observer_1.default.publish('OnEvtLoginResumingInd', data);
+        };
+        LoginService.handleOnEvtLoginResumeResult = function (data) {
+            observer_1.default.publish('OnEvtLoginResumeResult', data);
         };
         return LoginService;
     }());
@@ -19176,6 +19250,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (callbacks && typeof callbacks.OnEvtModifyPasswordResult == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[1015] = callbacks.OnEvtModifyPasswordResult;
+            }
+            if (callbacks && typeof callbacks.OnEvtLoginResumingInd == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[1016] = callbacks.OnEvtLoginResumingInd;
+            }
+            if (callbacks && typeof callbacks.OnEvtLoginResumeResult == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[1017] = callbacks.OnEvtLoginResumeResult;
             }
         };
         ;
@@ -20461,6 +20541,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         OnEvtConfBaseInfoInd: ConfService.handleOnEvtConfBaseInfoInd,
                         OnEvtAsPrivilegeChange: ConfService.handleOnEvtAsPrivilegeChange,
                         OnEvtSvcWatchInfoInd: ConfService.handleOnEvtSvcWatchInfoInd,
+                        OnEvtConfResumingInd: ConfService.handleOnEvtConfResumingInd,
+                        OnEvtConfResumeResult: ConfService.handleOnEvtConfResumeResult,
                     });
                     return [2];
                 });
@@ -20595,6 +20677,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfService.handleOnEvtSvcWatchInfoInd = function (data) {
             observer_1.default.publish('OnEvtSvcWatchInfoInd', data);
+        };
+        ConfService.handleOnEvtConfResumingInd = function (data) {
+            observer_1.default.publish('OnEvtConfResumingInd', data);
+        };
+        ConfService.handleOnEvtConfResumeResult = function (data) {
+            observer_1.default.publish('OnEvtConfResumeResult', data);
         };
         return ConfService;
     }());
@@ -22865,6 +22953,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (callbacks && typeof callbacks.OnEvtSvcWatchInfoInd == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[3043] = callbacks.OnEvtSvcWatchInfoInd;
+            }
+            if (callbacks && typeof callbacks.OnEvtConfResumingInd == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[3044] = callbacks.OnEvtConfResumingInd;
+            }
+            if (callbacks && typeof callbacks.OnEvtConfResumeResult == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[3045] = callbacks.OnEvtConfResumeResult;
             }
         };
         ;
@@ -25249,6 +25343,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        UiPluginService.prototype.uiPluginShowShareSelectwnd = function (callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.uiPluginShowShareSelectwnd()];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
         UiPluginService.registerUiPluginEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper;
@@ -25550,6 +25658,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
+        TsdkUiPluginWrapper.prototype.uiPluginShowShareSelectwnd = function () {
+            util_1.default.info("TsdkUiPluginWrapper", "uiPluginShowShareSelectwnd");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkUiPluginWrapper.tsdkUiPlugin.uiPluginShowShareSelectwnd(callback);
+            return promise;
+        };
+        ;
         TsdkUiPluginWrapper.prototype.registerUiPluginEvent = function (callbacks) {
             TsdkUiPluginWrapper.tsdkUiPlugin.setBasicUiPluginEvent(callbacks);
         };
@@ -25679,6 +25799,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "param": {
                     "number": number
                 }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkUiPlugin.prototype.uiPluginShowShareSelectwnd = function (callbacks) {
+            this.callbackResponse(callbacks, 10009);
+            var data = {
+                "cmd": 0x12719,
+                "description": "tsdk_ui_plugin_show_share_selectwnd"
             };
             this.sendData(data);
         };

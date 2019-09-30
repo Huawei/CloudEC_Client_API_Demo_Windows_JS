@@ -1,6 +1,7 @@
 "use strict";
 (function(root) {
     var isNochairSharing = 0;
+    var isPluginClickShare = 0;
     var listeners = {   
         //1 This callback is used to handle kick out of login scenes
         onForceUnReg: function(ret) {
@@ -350,7 +351,9 @@
 
         onPluginEvtClickStartShare:function(ret){
             if(ret.info.videoType == 0){
-                console.log("onPluginEvtClickStartShare on call");        
+                console.log("onPluginEvtClickStartShare on call");	         
+                isPluginClickShare = 0;
+                client.transfer2Conf(null);	
             }else if(ret.info.videoType == 1){
                 console.log("onPluginEvtClickStartShare on video conf"); 
             }else if(ret.info.videoType == 2){
@@ -371,8 +374,6 @@
 
                     }
                 });
-            }else{
-               
             }
             console.log("onPluginEvtClickStartShare:"+ JSON.stringify(ret));        
         },  
@@ -416,6 +417,26 @@
         
         onEvtSvcWatchInfoInd:function(ret){
             console.log("onEvtSvcWatchInfoInd");    
+        },  
+
+        onEvtJoinDataConfResult:function(ret){
+            if(isPluginClickShare==1 && ret.result==0){
+                isPluginClickShare = 0;
+                client.getAttendeeList(function (ret){
+                    if(ret){
+                        var attendeeList = new Array();
+                        attendeeList = ret.info;
+                        for(var i=0;i<attendeeList.length;i++){
+                            var member = attendeeList[i];
+                            if(member.isSelf==1 && member.role==1){
+                                client.startScreenSharing(member.number,"");
+                            }
+                        }
+                    }
+                });
+            } else{
+                isPluginClickShare = 0;
+            }
         },  
     }
 
