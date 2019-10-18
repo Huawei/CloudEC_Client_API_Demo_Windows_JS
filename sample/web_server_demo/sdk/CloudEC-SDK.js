@@ -2313,7 +2313,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             var bookConfInfo = {
                 welcomePrompt: bookConferenceParam.welcomePrompt,
-                isMultiStreamConf: bookConferenceParam.isMultiStreamConf,
+                isMultiStreamConf: bookConferenceParam.isMultiStreamConf ? bookConferenceParam.isMultiStreamConf : 1,
                 language: bookConferenceParam.language,
                 isHdConf: bookConferenceParam.isHdConf ? bookConferenceParam.isHdConf : 0,
                 isAutoInvite: bookConferenceParam.isAutoInvite ? bookConferenceParam.isAutoInvite : 0,
@@ -2400,7 +2400,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             var bookConfInfo = {
                 welcomePrompt: instanceConfParam.welcomePrompt,
-                isMultiStreamConf: instanceConfParam.isMultiStreamConf,
+                isMultiStreamConf: instanceConfParam.isMultiStreamConf ? instanceConfParam.isMultiStreamConf : 1,
                 language: instanceConfParam.language,
                 isHdConf: instanceConfParam.isHdConf ? instanceConfParam.isHdConf : 0,
                 isAutoInvite: 0,
@@ -2845,7 +2845,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     isHdConf: 0,
                     attendees: configedAttendees,
                     welcomePrompt: 0,
-                    isMultiStreamConf: 0,
+                    isMultiStreamConf: 1,
                     isAutoMute: 0,
                     recordMode: 0,
                     enterPrompt: 0,
@@ -2859,7 +2859,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             var bookConfInfo = {
                 welcomePrompt: confParam.welcomePrompt,
-                isMultiStreamConf: confParam.isMultiStreamConf,
+                isMultiStreamConf: confParam.isMultiStreamConf ? confParam.isMultiStreamConf : 1,
                 language: confParam.language ? confParam.language : 1,
                 isHdConf: confParam.isHdConf,
                 isAutoMute: confParam.isAutoMute,
@@ -15004,18 +15004,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(333), __webpack_require__(6), __webpack_require__(359), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkClient_1, util_1, tsdkServiceDeamonSocket_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(333), __webpack_require__(6), __webpack_require__(359), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkClient_1, util_1, tsdkServiceDaemonSocket_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TerminalSDK = (function () {
         function TerminalSDK() {
-            this.serviceDeamonFirst = 1;
+            this.serviceDaemonFirst = 1;
         }
-        TerminalSDK.prototype.onDeamonReady = function () {
-            util_1.default.info("TerminalSDK", "TSDK Service Deamon is Ready");
+        TerminalSDK.prototype.onDaemonReady = function () {
+            util_1.default.info("TerminalSDK", "TSDK Service Daemon is Ready");
         };
-        TerminalSDK.prototype.onDeamonClose = function () {
-            util_1.default.error("TerminalSDK", "TSDK Service Deamon is Closed,please restart it");
+        TerminalSDK.prototype.onDaemonClose = function () {
+            util_1.default.error("TerminalSDK", "TSDK Service Daemon is Closed,please restart it");
         };
         TerminalSDK.prototype.createTsdkClient = function (tsdkJsInitParam, listeners, callbacks) {
             return __awaiter(this, void 0, void 0, function () {
@@ -15024,7 +15024,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     switch (_a.label) {
                         case 0:
                             if (!(tsdkJsInitParam.invokeMode == 1)) return [3, 2];
-                            return [4, this.createServiceDeamon(tsdkJsInitParam, listeners)];
+                            return [4, this.createServiceDaemon(tsdkJsInitParam, listeners)];
                         case 1:
                             tsdkClient = _a.sent();
                             return [3, 2];
@@ -15035,11 +15035,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
-        TerminalSDK.prototype.createServiceDeamon = function (tsdkJsInitParam, listeners) {
+        TerminalSDK.prototype.createServiceDaemon = function (tsdkJsInitParam, listeners) {
             var _this = this;
-            var tsdkServiceDeamon;
+            var tsdkServiceDaemon;
             var tsdkClient;
-            tsdkServiceDeamon = new tsdkServiceDeamonSocket_1.default({ ready: this.onDeamonReady, close: this.onDeamonClose,
+            tsdkServiceDaemon = new tsdkServiceDaemonSocket_1.default({ ready: this.onDaemonReady, close: this.onDaemonClose,
                 svrAddr: tsdkJsInitParam.svrAddr, ssl: tsdkJsInitParam.ssl });
             var callbacks = {
                 OnEvtServiceStartUp: {},
@@ -15048,10 +15048,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.OnEvtServiceStartUp = function () {
-                    util_1.default.info("TerminalSDK", "TSDK Service Deamon StartUp");
-                    if (_this.serviceDeamonFirst == 1 || tsdkManagerWrapper_1.default.serviceSocketState == 0) {
+                    util_1.default.info("TerminalSDK", "TSDK Service Daemon StartUp");
+                    if (_this.serviceDaemonFirst == 1 || tsdkManagerWrapper_1.default.serviceSocketState == 0) {
                         tsdkClient = _this.createService(tsdkJsInitParam, listeners);
-                        _this.serviceDeamonFirst = 0;
+                        _this.serviceDaemonFirst = 0;
                     }
                     else {
                         util_1.default.info("TerminalSDK", "TSDK Service websocket is connecting");
@@ -15059,11 +15059,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(tsdkClient);
                 },
                     callbacks.OnEvtServiceShutDown = function () {
-                        util_1.default.error("TerminalSDK", "TSDK Service Deamon  shutdown,please restart it");
+                        util_1.default.error("TerminalSDK", "TSDK Service Daemon  shutdown,please restart it");
                     },
                     callbacks.OnEvtServiceRecover = function () {
-                        util_1.default.info("TerminalSDK", "TSDK Service Deamon recover");
-                        if (_this.serviceDeamonFirst == 1 || tsdkManagerWrapper_1.default.serviceSocketState == 0) {
+                        util_1.default.info("TerminalSDK", "TSDK Service Daemon recover");
+                        if (_this.serviceDaemonFirst == 1 || tsdkManagerWrapper_1.default.serviceSocketState == 0) {
                             tsdkClient = _this.createService(tsdkJsInitParam, listeners);
                         }
                         else {
@@ -15072,7 +15072,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         resolve(tsdkClient);
                     };
             });
-            tsdkServiceDeamon.setSeviceDeamonCallBack(callbacks);
+            tsdkServiceDaemon.setSeviceDaemonCallBack(callbacks);
             return promise;
         };
         TerminalSDK.prototype.createService = function (tsdkJsInitParam, listeners) {
@@ -25914,8 +25914,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, Util) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var TsdkServiceDeamonSocket = (function () {
-        function TsdkServiceDeamonSocket(opts) {
+    var TsdkServiceDaemonSocket = (function () {
+        function TsdkServiceDaemonSocket(opts) {
             var _this = this;
             this.websocket = {};
             this.notifyFuncs = [];
@@ -25929,13 +25929,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (opts.ssl === 1) {
                 pcol = "wss://";
             }
-            this.websocket = new WebSocket(pcol + serviceAddr + ":" + servicePort, "tsdk_ws_ec_service_deamon_protocol");
+            this.websocket = new WebSocket(pcol + serviceAddr + ":" + servicePort, "tsdk_ws_ec_service_daemon_protocol");
             this.websocket.onopen = opts.ready;
             this.websocket.onclose = opts.close;
             this.websocket.onmessage = function (msg) {
                 var data = JSON.parse(msg.data);
                 var logInfo = Util.replaceLogInfo(data);
-                util_1.default.debug("tsdkServiceDeamonSocket", logInfo);
+                util_1.default.debug("tsdkServiceDaemonSocket", logInfo);
                 if (data.notify > 0) {
                     var notifyIdx = data.notify;
                     if (typeof _this.notifyFuncs[notifyIdx] == "function") {
@@ -25951,7 +25951,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             };
         }
         ;
-        TsdkServiceDeamonSocket.prototype.setSeviceDeamonCallBack = function (callbacks) {
+        TsdkServiceDaemonSocket.prototype.setSeviceDaemonCallBack = function (callbacks) {
             if (callbacks && typeof callbacks.OnEvtServiceStartUp == "function") {
                 this.notifyFuncs[1] = callbacks.OnEvtServiceStartUp;
             }
@@ -25963,9 +25963,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
         };
         ;
-        return TsdkServiceDeamonSocket;
+        return TsdkServiceDaemonSocket;
     }());
-    exports.default = TsdkServiceDeamonSocket;
+    exports.default = TsdkServiceDaemonSocket;
     ;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
