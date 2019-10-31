@@ -957,14 +957,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var evt = { result: true, info: "Received new message" };
                     var chatMsgInfo = ret.param.chatMsgInfo;
                     var time = util.formatDate(chatMsgInfo.time);
-                    var chatMsg = {
-                        fromUserName: chatMsgInfo.senderNumber,
-                        msgContent: chatMsgInfo.chatMsg,
-                        msgType: chatMsgInfo.chatType,
-                        sequenceNmuber: 0,
-                        time: time
-                    };
-                    evt.info = chatMsg;
+                    var chatMsgContent;
+                    try {
+                        chatMsgContent = decodeURIComponent(window.atob(chatMsgInfo.chatMsg));
+                        var chatMsg = {
+                            fromUserName: chatMsgInfo.senderNumber,
+                            msgContent: chatMsgContent,
+                            msgType: chatMsgInfo.chatType,
+                            sequenceNmuber: 0,
+                            time: time
+                        };
+                        evt.info = chatMsg;
+                    }
+                    catch (error) {
+                        evt.result = false;
+                        evt.info = "Wrong message encoding format.";
+                        console.error("Wrong message encoding format. Error info: " + error.message);
+                    }
                     _this.notify('ChatRecvMsg', evt);
                 },
                 OnEvtPresenterGiveInd: function (ret) {
@@ -1276,7 +1285,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         var msgListArr = withdrawMsgResult.withdrawMsgList;
                         var msgList = new Array();
                         for (var key in msgListArr) {
-                            if (msgListArr.hasOwnProperty(key)) {
+                            if (Object.prototype.hasOwnProperty.call(msgListArr, key)) {
                                 var element = msgListArr[key];
                                 msgList.push(element.msgId);
                             }
@@ -1299,7 +1308,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var msgListArr = withdrawMsgInfo.withdrawMsgList;
                     var msgList = new Array();
                     for (var key in msgListArr) {
-                        if (msgListArr.hasOwnProperty(key)) {
+                        if (Object.prototype.hasOwnProperty.call(msgListArr, key)) {
                             var element = msgListArr[key];
                             msgList.push(element.msgId);
                         }
@@ -1837,6 +1846,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.modifyPassword(modifyPassword, callbacks);
         };
         TsdkClientAdapt.prototype.logout = function () {
+            this.isServiceSocketException();
             var callback = function () { };
             this.tsdkClient.logout(callback);
         };
@@ -2738,10 +2748,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(errorInfo);
                 return;
             }
+            var msgContent = encodeURIComponent(messageParam.msgContent);
             var chatMsgInfo = {
-                chatMsg: messageParam.msgContent,
+                chatMsg: msgContent,
                 chatType: messageParam.msgType,
-                chatMsgLen: (messageParam.msgContent.length * 2 + 1),
+                chatMsgLen: msgContent.length,
                 senderDisplayName: this.baseinfo.userAccount,
             };
             this.tsdkClient.sendChatMsgInConference(this.confinfo.confHandle, chatMsgInfo, function (ret) { });
@@ -5025,12 +5036,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
         };
         TsdkClientAdapt.prototype.isLogin = function () {
+            this.isServiceSocketException();
             if (this._loginStatus) {
                 return this._loginStatus;
             }
             else {
                 TsdkClientAdapt.notifyErr(errorCode_1.EC_SDK_ERROR.LOGIN_STATUS_ERROR());
                 throw "login status error, please login first";
+            }
+        };
+        TsdkClientAdapt.prototype.isServiceSocketException = function () {
+            if (terminalSDK.getServiceSocketStatus()) {
+                TsdkClientAdapt.notifyErr(errorCode_1.EC_SDK_ERROR.CONNECTION_RESET());
+                throw errorCode_1.EC_SDK_ERROR.CONNECTION_RESET().info.errorInfo;
             }
         };
         TsdkClientAdapt.prototype.getExplorerInfo = function () {
@@ -5436,8 +5454,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         IM_E_LOGING_RESULT_TICKET_REDIRECT_ERROR: 21
     };
     exports.EC_SDK_ERROR = {
-        WEBSOCKET_IS_CLOSED: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000001, errorInfo: name + " websocket has been closed, please reopen" } };
+        CONNECTION_RESET: function () {
+            return { result: false, info: { cmdId: undefined, errorCode: 900000001, errorInfo: " The service connection has been reset. Please refresh." } };
         },
         OBJECT_INIT_FAILED: function (name) {
             return { result: false, info: { cmdId: undefined, errorCode: 900000002, errorInfo: name + " initialize failed" } };
@@ -15010,6 +15028,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     var TerminalSDK = (function () {
         function TerminalSDK() {
             this.serviceDaemonFirst = 1;
+            this.serviceSocketStatus = 0;
         }
         TerminalSDK.prototype.onDaemonReady = function () {
             util_1.default.info("TerminalSDK", "TSDK Service Daemon is Ready");
@@ -15048,7 +15067,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             };
             var promise = new Promise(function (resolve, reject) {
                 callbacks.OnEvtServiceStartUp = function () {
-                    util_1.default.info("TerminalSDK", "TSDK Service Daemon StartUp");
+                    util_1.default.info("TerminalSDK", "TSDK Service StartUp");
                     if (_this.serviceDaemonFirst == 1 || tsdkManagerWrapper_1.default.serviceSocketState == 0) {
                         tsdkClient = _this.createService(tsdkJsInitParam, listeners);
                         _this.serviceDaemonFirst = 0;
@@ -15059,14 +15078,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     resolve(tsdkClient);
                 },
                     callbacks.OnEvtServiceShutDown = function () {
-                        util_1.default.error("TerminalSDK", "TSDK Service Daemon  shutdown,please restart it");
+                        util_1.default.error("TerminalSDK", "TSDK Service shutdown,please restart it");
                     },
                     callbacks.OnEvtServiceRecover = function () {
-                        util_1.default.info("TerminalSDK", "TSDK Service Daemon recover");
+                        util_1.default.info("TerminalSDK", "TSDK Service recover");
                         if (_this.serviceDaemonFirst == 1 || tsdkManagerWrapper_1.default.serviceSocketState == 0) {
                             tsdkClient = _this.createService(tsdkJsInitParam, listeners);
                         }
                         else {
+                            _this.serviceSocketStatus = 1;
                             util_1.default.info("TerminalSDK", "TSDK Service websocket is connecting");
                         }
                         resolve(tsdkClient);
@@ -15074,6 +15094,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             });
             tsdkServiceDaemon.setSeviceDaemonCallBack(callbacks);
             return promise;
+        };
+        TerminalSDK.prototype.getServiceSocketStatus = function () {
+            return this.serviceSocketStatus;
         };
         TerminalSDK.prototype.createService = function (tsdkJsInitParam, listeners) {
             var tsdkClient;
@@ -25929,7 +25952,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (opts.ssl === 1) {
                 pcol = "wss://";
             }
-            this.websocket = new WebSocket(pcol + serviceAddr + ":" + servicePort, "tsdk_ws_ec_service_daemon_protocol");
+            this.websocket = new WebSocket(pcol + serviceAddr + ":" + servicePort, "tsdk_ws_ec_service_deamon_protocol");
             this.websocket.onopen = opts.ready;
             this.websocket.onclose = opts.close;
             this.websocket.onmessage = function (msg) {
