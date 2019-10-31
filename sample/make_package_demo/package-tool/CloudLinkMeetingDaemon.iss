@@ -38,16 +38,18 @@ ShowLanguageDialog=yes
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={#MyAppName}
 SetupLogging=yes
+DisableDirPage=yes
  
 [code] 
 var OverwriteFlag: Boolean;
 var vcRunTimeIsMissing: Boolean;
 function GetDefaultInstallRoot(Param: String): String;
 begin
-	if((GetWindowsVersion shr 16) > $0603) then
-		Result := ExpandConstant('{userappdata}')
-	else
-		Result := ExpandConstant('{pf}');
+    Result := ExpandConstant('{userappdata}')
+	//if((GetWindowsVersion shr 16) > $0603) then
+	//	Result := ExpandConstant('{userappdata}')
+	//else
+	//	Result := ExpandConstant('{pf}');
 end;
 
 function IsAppRunning(const FileName : string): Boolean;

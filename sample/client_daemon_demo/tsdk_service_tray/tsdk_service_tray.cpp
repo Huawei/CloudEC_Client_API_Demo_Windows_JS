@@ -189,8 +189,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     ProcessCmdLine(szCmdLine, &service_daemon_param);
 
-	//service_daemon_param.is_show_service_windows = 1;
-	tsdk_startup_ws_service_daemon(&service_daemon_param);
+	tsdk_startup_ws_service_deamon(&service_deamon_param);
   
     while (GetMessage(&msg, NULL, 0, 0))  
     {  
