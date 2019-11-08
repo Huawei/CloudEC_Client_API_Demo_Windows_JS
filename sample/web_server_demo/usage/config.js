@@ -21,6 +21,8 @@
         uiPluginParentInfoIsNeedAttach:1,
         uiPluginParentInfoXOffsetRate:20,
         uiPluginParentInfoYOffsetRate:15,
+		uiPluginFrameInfoMinWidth:480,
+        uiPluginFrameInfoMinHeight:352,        
 
         uiPluginHideTopToolBar:0,
         uiPluginHideBottomToolBar:0,
@@ -32,6 +34,7 @@
         uiPluginHideAudioVideoSettingButton:1,
         uiPluginHideCloseButton:0,
         uiPluginHideMaxsizeMinisizeButton:0,
+		uiPluginHideLeaveButton:0,        
         uiPluginHideConfTime:0,
         uiPluginHideConfChairmanPwd:0,
         uiPluginHideConfGuestPwd:0,

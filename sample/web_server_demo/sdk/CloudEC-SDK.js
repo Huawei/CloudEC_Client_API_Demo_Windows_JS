@@ -95,6 +95,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         UI_PLUGIN_PARENT_INFO_X_OFFSET_RATE: 20,
         UI_PLUGIN_PARENT_INFO_Y_OFFSET_RATE: 15,
         UI_PLUGIN_PARENT_INFO_IS_NEED_ATTACH: 1,
+        UI_PLUGIN_FRAME_INFO_MIN_WIDTH: 480,
+        UI_PLUGIN_FRAME_INFO_MIN_HEIGHT: 352,
         UI_PLUGIN_HIDE_TOP_TOOL_BAR: 0,
         UI_PLUGIN_HIDE_BOTTOM_TOOL_BAR: 0,
         UI_PLUGIN_HIDE_INVITE_BUTTON: 1,
@@ -105,6 +107,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON: 1,
         UI_PLUGIN_HIDE_CLOSE_BUTTON: 0,
         UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON: 0,
+        UI_PLUGIN_HIDE_LEAVE_BUTTON: 0,
         UI_PLUGIN_HIDE_CONF_TIME: 0,
         UI_PLUGIN_HIDE_CONF_CHAIRMAN_PWD: 0,
         UI_PLUGIN_HIDE_CONF_GUEST_PWD: 0,
@@ -433,6 +436,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (options.uiPluginParentInfoYOffsetRate) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_PARENT_INFO_Y_OFFSET_RATE = options.uiPluginParentInfoYOffsetRate;
             }
+            if (typeof (options.uiPluginFrameInfoMinWidth) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_MIN_WIDTH = options.uiPluginFrameInfoMinWidth;
+            }
+            if (typeof (options.uiPluginFrameInfoMinHeight) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_MIN_HEIGHT = options.uiPluginFrameInfoMinHeight;
+            }
             if (typeof (options.uiPluginParentInfoIsNeedAttach) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_PARENT_INFO_IS_NEED_ATTACH = options.uiPluginParentInfoIsNeedAttach;
             }
@@ -465,6 +474,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.uiPluginHideMaxsizeMinisizeButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON = options.uiPluginHideMaxsizeMinisizeButton;
+            }
+            if (typeof (options.uiPluginHideLeaveButton) != "undefined") {
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_LEAVE_BUTTON = options.uiPluginHideLeaveButton;
             }
             if (typeof (options.uiPluginHideConfTime) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_TIME = options.uiPluginHideConfTime;
@@ -1685,7 +1697,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         leftTopX: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_X,
                         leftTopY: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_Y,
                         width: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_WIDTH,
-                        height: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_HEIGHT
+                        height: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_HEIGHT,
+                        minWidth: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_MIN_WIDTH,
+                        minHeight: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_FRAME_INFO_MIN_HEIGHT
                     },
                     hasParentWnd: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HAS_PARENT_INFO,
                     parentInfo: {
@@ -1715,6 +1729,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         hideAudioVideoSettingButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON,
                         hideCloseButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CLOSE_BUTTON,
                         hideMaxsizeMinisizeButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON,
+                        hideLeaveButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_LEAVE_BUTTON,
                         hideConfTime: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_TIME,
                         hideConfChairmanPwd: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_CHAIRMAN_PWD,
                         hideConfGuestPwd: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CONF_GUEST_PWD,

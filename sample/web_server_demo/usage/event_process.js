@@ -296,6 +296,7 @@
         },
 
         onPluginEvtClickAddMember:function(ret){
+            client.uiPluginSetButtonState(3,1,(ret) => {});
             var transfer2ConfParam = null;
             var memberList=prompt("Please enter the invitee number","")
 
@@ -325,7 +326,7 @@
                     return;
                 }
             }
-            client.uiPluginSetButtonState(3,1,(ret) => {});
+            
 
         }, 
 
@@ -342,7 +343,8 @@
         }, 
 
         onPluginEvtClickShowMemberList:function(ret){
-            console.log("onPluginEvtClickShowMemberList:"+ JSON.stringify(ret));        
+            client.uiPluginSetButtonState(4,1,(ret) => {});
+            console.log("onPluginEvtClickShowMemberList:"+ JSON.stringify(ret));  
         },   
         
         onPluginEvtConfCtrlOperation:function(ret){
