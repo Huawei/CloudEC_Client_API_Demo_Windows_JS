@@ -133,7 +133,10 @@
 
         //11 This callback is used to handle screen sharing
         onAsOnSharingState: function(ret) {
-
+            if (ret.info.state == 0)
+            {
+                isNochairSharing=0;
+            }            
         },
 
         //12 This callback is used to handle call incoming
@@ -356,9 +359,7 @@
                 console.log("onPluginEvtClickStartShare on call");	         
                 isPluginClickShare = 0;
                 client.transfer2Conf(null);	
-            }else if(ret.info.videoType == 1){
-                console.log("onPluginEvtClickStartShare on video conf"); 
-            }else if(ret.info.videoType == 2){
+            }else{
                 console.log("onPluginEvtClickStartShare on data conf"); 
                 client.getAttendeeList(function (ret){
                     if(ret){

@@ -491,7 +491,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_TYPE_SELECTION = options.uiPluginHideShareTypeSelection;
             }
             if (typeof (options.uiPluginDataHideInviteButton) != "undefined") {
-                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON = options.uiPluginHideInviteButton;
+                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_INVITE_BUTTON = options.uiPluginDataHideInviteButton;
             }
             if (typeof (options.uiPluginDataHideAttendeesButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_DATA_HIDE_ATTENDEES_BUTTON = options.uiPluginDataHideAttendeesButton;
