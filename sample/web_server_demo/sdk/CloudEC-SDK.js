@@ -3002,6 +3002,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 callback(data.param.shareStatisticInfo);
             });
         };
+        TsdkClientAdapt.prototype.renameSelf = function (nickname) {
+            if (util.isUndefined(nickname) || util.isNull(nickname)) {
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("nickname");
+                TsdkClientAdapt.notifyErr(err);
+                return;
+            }
+            this.tsdkClient.renameSelf(this.confinfo.confHandle, nickname, function (ret) { });
+        };
         TsdkClientAdapt.prototype.isValideInstanceConfParam = function (param) {
             if (util.isUndefined(param)) {
                 return errorCode_1.EC_SDK_ERROR.PARAM_TYPE_ERROR("instanceConfParam");
@@ -4997,9 +5005,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.getVersion = function () {
             var CLOUDEC_SDK_INFO = {
-                version: "19.1.11",
+                version: "19.1.15.1",
                 name: "CloudLinkMeeting_JS_SDK",
-                time: "2019.08.30"
+                time: "2019.12.5"
             };
             return "This is " + CLOUDEC_SDK_INFO.name + ",version is " + CLOUDEC_SDK_INFO.version
                 + ", the publish time is " + CLOUDEC_SDK_INFO.time + ".";
@@ -15991,6 +15999,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.getShareStatisticInfo = function (confHandle, callback) {
             this.confService.getShareStatisticInfo(confHandle, callback);
         };
+        TsdkClient.prototype.renameSelf = function (confHandle, nickname, callback) {
+            this.confService.renameSelf(confHandle, nickname, callback);
+        };
         TsdkClient.prototype.ctdStartCall = function (ctdParam, callback) {
             this.ctdService.ctdStartCall(ctdParam, callback);
         };
@@ -20529,6 +20540,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        ConfService.prototype.renameSelf = function (confHandle, nickname, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.renameSelf(confHandle, nickname)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
         ConfService.registerConfEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper;
@@ -21810,6 +21835,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
+        TsdkConfWrapper.prototype.renameSelf = function (confHandle, nickname) {
+            util_1.default.info("TsdkConfWrapper", "renameSelf");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkConfWrapper.tsdkConf.renameSelf(confHandle, nickname, callback);
+            return promise;
+        };
+        ;
         TsdkConfWrapper.prototype.registerConfEvent = function (callbacks) {
             TsdkConfWrapper.tsdkConf.setBasicConfEvent(callbacks);
         };
@@ -22857,6 +22894,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "description": "tsdk_get_share_statistic_info",
                 "param": {
                     "confHandle": confHandle
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkConf.prototype.renameSelf = function (confHandle, nickname, callbacks) {
+            this.callbackResponse(callbacks, 3085);
+            var data = {
+                "cmd": 0x10c0d,
+                "description": "tsdk_rename_self",
+                "param": {
+                    "confHandle": confHandle, "nickname": nickname
                 }
             };
             this.sendData(data);

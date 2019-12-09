@@ -221,6 +221,16 @@
         client.delAttendee(attendeeNumberStr);
     }
 
+    var cloudecRenameSelf = function () {
+        var conference = client.getConfHandler();
+		var cloudecNickname = document.getElementById("nickname_ipt").value;
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.renameSelf(cloudecNickname);
+    }
+
     var cloudec_speaker1_timer;
     /**
      * Show the speaker in the conference
@@ -581,6 +591,18 @@
             requestPresenter_btn.title = "request presenter";
             requestPresenter_btn.addEventListener("mousedown", cloudecRequestPresenter);
 
+            var nickname_ipt = document.createElement('input');
+            nickname_ipt.id = "nickname_ipt";
+            nickname_ipt.style.cssText = "width: 10%; height: 24px;margin-left: 5px;";
+            nickname_ipt.innerHTML = "nickname";
+            nickname_ipt.placeholder = "nickname";
+			
+            var renameSelf_btn = document.createElement('button');
+            renameSelf_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            renameSelf_btn.innerHTML = "rename self";
+            renameSelf_btn.title = "rename self";
+            renameSelf_btn.addEventListener("mousedown", cloudecRenameSelf);
+
             var cloudec_speaker_div = document.createElement('div');
             cloudec_speaker_div.id = "cloudec_speaker_div";
             cloudec_speaker_div.style.cssText = "";//background: rgb(224, 255, 255);
@@ -603,7 +625,9 @@
             cloudec_attendeelist_title_div.appendChild(blank_br); 
             cloudec_attendeelist_title_div.appendChild(setPresenterUserid_select);
             cloudec_attendeelist_title_div.appendChild(setPresenter_btn);    
-            cloudec_attendeelist_title_div.appendChild(requestPresenter_btn);  
+            cloudec_attendeelist_title_div.appendChild(requestPresenter_btn);
+            cloudec_attendeelist_title_div.appendChild(nickname_ipt);
+            cloudec_attendeelist_title_div.appendChild(renameSelf_btn);  
             cloudec_attendeelist_body_div.appendChild(cloudec_speaker_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist_title_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist__hr);
