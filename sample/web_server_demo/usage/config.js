@@ -30,7 +30,6 @@
         uiPluginHideAttendeesButton:1,
         uiPluginHideShareButton:0,
         uiPluginHideShareConfLink:1,
-        uiPluginHideExtendConfButton:0,
         uiPluginHideAudioVideoSettingButton:1,
         uiPluginHideCloseButton:0,
         uiPluginHideMaxsizeMinisizeButton:0,

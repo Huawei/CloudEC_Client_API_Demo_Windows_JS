@@ -71,6 +71,16 @@
         client.startScreenSharing(number);
     }
 
+    var cloudecStartShareScreenOther = function (selfNumber, number) {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.stopScreenSharing(selfNumber);
+        client.startScreenSharing(number);
+    }
+
     var cloudecStopShareScreen = function (number) {
         var conference = client.getConfHandler();
         if (conference == null) {
@@ -340,6 +350,10 @@
                     cloudecPresent = 1;
                 }
 
+                var selfInfo = attendeeList.find( function (value) {
+                    return 1 == value.isSelf;
+                });
+
                 var useridSelect = document.getElementById("setUserid_select");
                 var setPresenterUseridSelect = document.getElementById("setPresenterUserid_select");
                 useridSelect.innerHTML="";
@@ -387,7 +401,7 @@
                         if ((1 == cloudecChairman || 1== cloudecPresent)&& attendeeList[m].isSelf == 1) {
                             c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreen("' + attendeeList[m].number + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].number + '") />');
                         } else if ((1 == cloudecChairman || 1== cloudecPresent) && attendeeList[m].isSelf != 1) {
-                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreen("' + attendeeList[m].number + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].number + '") />');
+                            c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreenOther("' + selfInfo.number + '"+","+"' + attendeeList[m].number + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].number + '") />');
                         } else if (!(1 == cloudecChairman || 1== cloudecPresent) && attendeeList[m].isSelf == 1) {
                             c.innerHTML = (attendeeList[m].isDataconfMember == 0) ? "" : ((attendeeList[m].sharingPermit == 0) ? '<input type="button" value = "share" onclick=cloudecStartShareScreen("' + attendeeList[m].number + '") />' : '<input type="button" value = "cancel" onclick=cloudecStopShareScreen("' + attendeeList[m].number + '") />');
                         }

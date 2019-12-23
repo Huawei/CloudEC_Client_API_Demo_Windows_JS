@@ -94,11 +94,15 @@
             document.getElementById('cloudec_room_timezone').style.display = 'none';
             document.getElementById('cloudec_td_chairmain').style.display = 'none';
             document.getElementById('cloudec_input_chairmain').style.display = 'none';
+            document.getElementById('cloudec_td_duration').style.display = 'none';
+            document.getElementById('cloudec_input_duration').style.display = 'none';
         } else {
             document.getElementById('cloudec_input_datetime').style.display = 'block';
             document.getElementById('cloudec_room_timezone').style.display = 'block';
             document.getElementById('cloudec_td_chairmain').style.display = 'block';
             document.getElementById('cloudec_input_chairmain').style.display = 'block';
+            document.getElementById('cloudec_td_duration').style.display = 'block';
+            document.getElementById('cloudec_input_duration').style.display = 'block';
         }
     }
 
@@ -167,7 +171,7 @@
                 + "</td>"
                 + "</tr>"
                 + "<tr>"
-                + "<td>duration (minutes):</td>"
+                + "<td id='cloudec_td_duration'>duration (minutes):</td>"
                 + "<td><input id='cloudec_input_duration' type='text' value = '30' style='width:200px'/></td>"
                 + "</tr>"
                 + "<tr>"

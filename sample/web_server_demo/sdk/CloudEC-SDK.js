@@ -103,7 +103,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         UI_PLUGIN_HIDE_ATTENDEES_BUTTON: 1,
         UI_PLUGIN_HIDE_SHARE_BUTTON: 1,
         UI_PLUGIN_HIDE_SHARE_CONF_LINK: 1,
-        UI_PLUGIN_HIDE_EXTEND_CONF_BUTTON: 0,
         UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON: 1,
         UI_PLUGIN_HIDE_CLOSE_BUTTON: 0,
         UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON: 0,
@@ -462,9 +461,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (options.uiPluginHideShareConfLink) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_CONF_LINK = options.uiPluginHideShareConfLink;
-            }
-            if (typeof (options.uiPluginHideExtendConfButton) != "undefined") {
-                serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_EXTEND_CONF_BUTTON = options.uiPluginHideExtendConfButton;
             }
             if (typeof (options.uiPluginHideAudioVideoSettingButton) != "undefined") {
                 serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON = options.uiPluginHideAudioVideoSettingButton;
@@ -1725,7 +1721,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         hideAttendeesButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_ATTENDEES_BUTTON,
                         hideShareButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_BUTTON,
                         hideShareConfLink: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_SHARE_CONF_LINK,
-                        hideExtendConfButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_EXTEND_CONF_BUTTON,
                         hideAudioVideoSettingButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_AUDIO_VIDEO_SETTING_BUTTON,
                         hideCloseButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_CLOSE_BUTTON,
                         hideMaxsizeMinisizeButton: serverConfig_1.CloudEC_SERVERCONFIG.UI_PLUGIN_HIDE_MAXSIZE_MINISIZE_BUTTON,
