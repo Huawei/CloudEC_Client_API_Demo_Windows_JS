@@ -363,6 +363,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onEvtJoinDataConfResult) != "undefined") {
                 tsdkClientAdapt.on('OnEvtJoinDataConfResult', listeners.onEvtJoinDataConfResult);
             }
+            if (typeof (listeners.OnEvtGetTempUserResult) != "undefined") {
+                tsdkClientAdapt.on('OnEvtGetTempUserResult', listeners.OnEvtGetTempUserResult);
+            }
             return tsdkClientAdapt;
         };
         CloudEC.prototype.configure = function (options) {
@@ -560,7 +563,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 confEnvType: 0,
                 leftDaysOfPassword: 0,
                 isFirstLogin: 0,
-                isFreeUser: 0
+                isFreeUser: 0,
+                uuid: ""
             };
             this.baseinfo = {
                 userAccount: "",
@@ -618,7 +622,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             confEnvType: 0,
                             leftDaysOfPassword: 0,
                             isFirstLogin: 0,
-                            isFreeUser: 0
+                            isFreeUser: 0,
+                            uuid: ""
                         },
                     };
                 },
@@ -641,9 +646,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             confEnvType: 0,
                             leftDaysOfPassword: 0,
                             isFirstLogin: 0,
-                            isFreeUser: 0
+                            isFreeUser: 0,
+                            uuid: ""
                         },
                     };
+                },
+                OnEvtGetTempUserResult: function (ret) {
+                    _this.notify("OnEvtGetTempUserResult", ret);
                 },
                 OnEvtCallOutgoing: function (ret) {
                     _this._callStatus = true;
@@ -683,6 +692,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         });
                     }
+                    evt.info = ret.param;
                     _this.notify("CallRingBack", evt);
                 },
                 OnEvtCallRtpCreated: function (ret) {
@@ -694,6 +704,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             }
                         });
                     }
+                    evt.info = ret.param;
                     _this.notify("OnEvtCallRtpCreated", evt);
                 },
                 OnEvtCallConnected: function (ret) {
@@ -781,7 +792,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     _this.notify("CallBldTransferResult", evt);
                 },
                 OnEvtJoinConfResult: function (ret) {
-                    _this._confStatus = true;
+                    var evt = { result: true, info: ret };
                     if (_this.playHandle >= 0) {
                         _this.tsdkClient.stopPlayMedia(_this.playHandle, function (data) {
                             if (data.result == 0) {
@@ -790,37 +801,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         });
                     }
                     if (ret.param.result == 0) {
+                        _this._confStatus = true;
                         _this.confinfo.callId = ret.param.info.callId;
                     }
-                    _this.notify('ConfConnected', { result: true, info: "Access conference successful" });
+                    else {
+                        evt.result = false;
+                    }
+                    _this.notify('ConfConnected', evt);
                 },
                 OnEvtGetDataconfParamResult: function (ret) {
                     var evt = { result: true, info: "" };
                     var dataConfResult = {
                         confHandle: ret.param.handle
                     };
-                    if (0 == ret.param.result) {
-                        evt.info = dataConfResult;
-                    }
-                    else {
+                    evt.info = dataConfResult;
+                    if (0 != ret.param.result) {
                         evt.result = false;
-                        evt.info = dataConfResult;
                     }
                     _this.notify('OnEvtGetDataconfParamResult', evt);
                 },
                 OnEvtConfctrlOperationResult: function (ret) {
                     var evt = { result: false, info: "OnEvtConfctrlOperationResult" };
+                    var operationResult = {
+                        operationType: ret.param.resultInfo.operationType,
+                        reasonCode: ret.param.resultInfo.reasonCode,
+                        description: ret.param.resultInfo.description,
+                    };
+                    evt.info = operationResult;
                     if (ret.param.result == 0) {
                         evt.result = true;
-                        var operationResult = {
-                            operationType: ret.param.resultInfo.operationType,
-                            reasonCode: ret.param.resultInfo.reasonCode,
-                            description: ret.param.resultInfo.description,
-                        };
-                        evt.info = operationResult;
-                    }
-                    else {
-                        evt.result = false;
                     }
                     _this.notify('OnEvtConfctrlOperationResult', evt);
                 },
@@ -1742,7 +1751,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.login = function (authType, authParam, serverInfo, callback) {
             var _this = this;
             var callbacks = function () { };
-            var err = { cmdId: 100000000, errorCode: 100000002, errorInfo: "parameter error" };
+            var err = { cmdId: 100000000, errorCode: 33554434, errorInfo: "[TSDK_E_LOGIN_ERR_AUTH_FAILED]:authentication failure." };
             var evt = { result: false, info: err };
             var proxyParam = { proxyUri: "", proxyPort: 0, userName: "", password: "" };
             if (serverInfo.extensions != undefined && serverInfo.extensions != "") {
@@ -1767,6 +1776,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 serverPort: serverInfo.serverPort,
                 appId: authParam.appId,
                 appKey: authParam.appKey,
+                appAccount: authParam.appAccount,
             };
             var loginCallback = { OnEvtVoipAccountStatus: {}, OnEvtAuthFailed: {}, OnEvtLoginFailed: {}, OnEvtLoginSuccess: {} };
             loginCallback.OnEvtVoipAccountStatus = function (data) {
@@ -1780,7 +1790,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         confEnvType: 0,
                         leftDaysOfPassword: 0,
                         isFirstLogin: 0,
-                        isFreeUser: 0
+                        isFreeUser: 0,
+                        uuid: ""
                     }, };
                 _this.baseinfo = userInfo;
             };
@@ -1798,7 +1809,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 evt.result = false;
                 err = {
                     cmdId: 100000000,
-                    errorCode: 100000003,
+                    errorCode: data.param.loginFailedInfo.reasonCode,
                     errorInfo: data.param.loginFailedInfo.reasonDescription
                 };
                 evt.info = err;
@@ -1810,14 +1821,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     confEnvType: 0,
                     leftDaysOfPassword: 0,
                     isFirstLogin: 0,
-                    isFreeUser: 0
+                    isFreeUser: 0,
+                    uuid: ""
                 };
                 if (data.param.loginSuccessInfo != undefined && null != data.param.loginSuccessInfo) {
                     loginSuccessInfo = {
                         confEnvType: data.param.loginSuccessInfo.confEnvType,
                         leftDaysOfPassword: data.param.loginSuccessInfo.leftDaysOfPassword,
                         isFirstLogin: data.param.loginSuccessInfo.isFirstLogin,
-                        isFreeUser: data.param.loginSuccessInfo.isFreeUser
+                        isFreeUser: data.param.loginSuccessInfo.isFreeUser,
+                        uuid: data.param.loginSuccessInfo.uuid
                     };
                 }
                 _this.baseinfo.loginSuccessInfo = loginSuccessInfo;
@@ -1832,7 +1845,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.setDisplayName = function (displayName) {
             var callbacks = function () { };
-            var err = { cmdId: 900000000, errorCode: 900000004, errorInfo: "parameter error" };
+            var err = { cmdId: 900000000, errorCode: 16777218, errorInfo: "[TSDK_E_MANAGER_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (!util.isString(displayName)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -1847,7 +1860,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.modifyPassword = function (modifyPassword, callback) {
             var callbacks = function () { };
-            var err = { cmdId: 100000000, errorCode: 100000002, errorInfo: "parameter error" };
+            var err = { cmdId: 100000000, errorCode: 33554434, errorInfo: "[TSDK_E_LOGIN_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (!util.isString(modifyPassword.newPassword) || !util.isString(modifyPassword.oldPassword)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -1994,7 +2007,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.blindTransfer(this.callInfo.callId, transToNumber, callback);
         };
         TsdkClientAdapt.prototype.startPlayMedia = function (loops, playFile, callback) {
-            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var err = { cmdId: 200000000, errorCode: 50331650, errorInfo: "[TSDK_E_CALL_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             this.tsdkClient.startPlayMedia(loops, playFile, function (data) {
                 if (data.result == 0) {
@@ -2005,13 +2018,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     callback(evt);
                 }
                 else {
-                    evt.info = { cmdId: 200000000, errorCode: 290000003, errorInfo: "failed to start playing the file" };
+                    evt.info = { cmdId: 200000000, errorCode: 50331649, errorInfo: "[TSDK_E_CALL_ERR_GENERAL_ERROR]:general error." };
                     TsdkClientAdapt.notifyErr(evt);
                 }
             });
         };
         TsdkClientAdapt.prototype.stopPlayMedia = function (handle) {
-            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var err = { cmdId: 200000000, errorCode: 50331650, errorInfo: "[TSDK_E_CALL_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             var callback = function () { };
             this.tsdkClient.stopPlayMedia(handle, function (data) {
@@ -2020,7 +2033,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     evt.info = "Stop playing the file successfully";
                 }
                 else {
-                    evt.info = { cmdId: 200000000, errorCode: 290000004, errorInfo: "stopped playing file does not exist" };
+                    evt.info = { cmdId: 200000000, errorCode: 50331649, errorInfo: "[TSDK_E_CALL_ERR_GENERAL_ERROR]:general error." };
                     TsdkClientAdapt.notifyErr(evt);
                 }
             });
@@ -2092,7 +2105,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
         };
         TsdkClientAdapt.prototype.getVoiceVol = function (deviceType, callback) {
-            var err = { cmdId: 200000000, errorCode: 200000003, errorInfo: "parameter error" };
+            var err = { cmdId: 200000000, errorCode: 50331650, errorInfo: "[TSDK_E_CALL_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (deviceType == enum_1.MEDIADEVICE_TYPE.MICROPHONE) {
                 this.tsdkClient.getMicVolume(function (data) {
@@ -2128,7 +2141,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -2188,7 +2201,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -2239,7 +2252,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.bookConference = function (bookConferenceParam, callback) {
             this.isLogin();
-            var err = { cmdId: 0, errorCode: 300000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (this._confStatus && bookConferenceParam.confType == 0) {
                 var evt_1 = { result: false, info: "Already in the meeting!" };
@@ -2252,7 +2265,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err_1 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err_1 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err_1);
                 return;
             }
@@ -2295,7 +2308,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     };
                 }
                 else {
-                    var evt_2 = { result: false, info: { cmdId: 300000000, errorCode: 30000001, errorInfo: data.param.reasonDescription } };
+                    var evt_2 = { result: false, info: { cmdId: 300000000, errorCode: data.param.reasonCode, errorInfo: data.param.reasonDescription } };
                     bookConfData = evt_2;
                 }
                 callback(bookConfData);
@@ -2370,7 +2383,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.joinInstanceConf = function (instanceConfParam, callback) {
             this.isLogin();
-            var err = { cmdId: 0, errorCode: 300000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (this._confStatus) {
                 var evt_3 = { result: false, info: "Already in the meeting!" };
@@ -2383,7 +2396,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err_2 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err_2 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err_2);
                 return;
             }
@@ -2478,7 +2491,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     };
                 }
                 else {
-                    var evt_4 = { result: false, info: { cmdId: 300000000, errorCode: 30000001, errorInfo: data.param.reasonDescription } };
+                    var evt_4 = { result: false, info: { cmdId: 300000000, errorCode: data.param.reasonCode, errorInfo: data.param.reasonDescription } };
                     bookConfData = evt_4;
                 }
                 callback(bookConfData);
@@ -2503,11 +2516,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(evt_5);
                 return;
             }
-            var err = { cmdId: 300000000, errorCode: 300000002, errorInfo: "parameter error" };
+            var err = { cmdId: 300000000, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: true, info: "" };
             var mediaType = 1;
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err_3 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err_3 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err_3);
                 return;
             }
@@ -2678,7 +2691,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.getAttendeeList = function (callback) {
             var evt = { result: true, info: "" };
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -2746,7 +2759,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
         };
         TsdkClientAdapt.prototype.sendMessage = function (messageParam) {
-            var err = { cmdId: 400000000, errorCode: 490000001, errorInfo: "parameter error" };
+            var err = { cmdId: 400000000, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (util.isUndefined(messageParam)) {
                 var errorInfo = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("messageParam");
@@ -2768,7 +2781,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.sendChatMsgInConference(this.confinfo.confHandle, chatMsgInfo, function (ret) { });
         };
         TsdkClientAdapt.prototype.joinAnonymousConf = function (anonymousConfParam, serverInfo, callback) {
-            var err = { cmdId: 0, errorCode: 400000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (this._confStatus) {
                 var evt_6 = { result: false, info: "Already in the meeting!" };
@@ -2776,7 +2789,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err_4 = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err_4 = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err_4);
                 return;
             }
@@ -2786,7 +2799,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 callback(evt);
                 return;
             }
-            if (util.isUndefined(anonymousConfParam) || "" == anonymousConfParam.confId || !util.isBinaryNumber(anonymousConfParam.callType)) {
+            if (util.isUndefined(anonymousConfParam) || "" == anonymousConfParam.confId) {
                 err.errorInfo = "anonymous conf parameters can not be empty";
                 evt.result = false;
                 evt.info = err;
@@ -2805,7 +2818,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             this.initConfig(proxyParam);
             var tsdkConfAnonymousJoinParam = {
-                displayName: "anonymous",
+                displayName: anonymousConfParam.displayName,
                 confPassword: anonymousConfParam.confPasswd,
                 userId: 1,
                 serverPort: serverInfo.serverPort,
@@ -2903,12 +2916,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 subject: confParam.topic ? confParam.topic : "",
             };
             this.tsdkClient.p2pTransferToConference(this.callInfo.callId, bookConfInfo, function (ret) {
-                var err = { cmdId: 400000000, errorCode: 400000002, errorInfo: "general error" };
+                var err = { cmdId: 400000000, errorCode: 67108865, errorInfo: "[TSDK_E_CONF_ERR_GENERAL_ERROR]:general error." };
                 var evt = { result: false, info: err };
             });
         };
         TsdkClientAdapt.prototype.setPresenter = function (attendee) {
-            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (!util.isString(attendee)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -2920,7 +2933,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.requestPresenter(this.confinfo.confHandle, function (ret) { });
         };
         TsdkClientAdapt.prototype.startScreenSharing = function (attendee, extensions) {
-            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (!util.isString(attendee)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -2929,7 +2942,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.appShareSetOwner(1, this.confinfo.confHandle, attendee, function (ret) { });
         };
         TsdkClientAdapt.prototype.stopScreenSharing = function (attendee) {
-            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (!util.isString(attendee)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -2947,7 +2960,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.appShareRequestPrivilege(this.confinfo.confHandle, privilege == 2 ? 1 : 0, function (ret) { });
         };
         TsdkClientAdapt.prototype.setRemoteCtrl = function (privilege, action, attendee) {
-            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (!util.isString(attendee)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -2966,7 +2979,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.tsdkClient.appShareSetPrivilege(action, this.confinfo.confHandle, privilege == 2 ? 1 : 0, attendee, function (ret) { });
         };
         TsdkClientAdapt.prototype.answerRemoteCtrl = function (attendee, accept) {
-            var err = { cmdId: 0, errorCode: 490000001, errorInfo: "parameter error" };
+            var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
             var evt = { result: false, info: err };
             if (!util.isString(attendee)) {
                 TsdkClientAdapt.notifyErr(evt);
@@ -3081,7 +3094,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(600000000, 600000002, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.EADDR_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3125,7 +3138,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     callback({ result: true, info: contactArray });
                 }
                 else {
-                    var err = { cmdId: 600000000, errorCode: 600000001, errorInfo: "general error" };
+                    var err = { cmdId: 600000000, errorCode: 100663297, errorInfo: "[TSDK_E_EADDR_ERR_GENERAL_ERROR]:general error." };
                     var evt = { result: false, info: err };
                     callback(evt);
                 }
@@ -3140,7 +3153,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(600000000, 600000002, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.EADDR_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3173,12 +3186,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.getUserInfo = function (account, callback) {
             this.isLogin();
             if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3231,12 +3244,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "Set user information successfully！" };
             if (util.isUndefined(userInfo) || util.isNull(userInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "userInfo");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("userInfo");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3289,12 +3302,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "" };
             if (util.isUndefined(isSyncAll) || !util.isBoolean(isSyncAll)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isSyncAll");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isSyncAll");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(timestamp) || util.isNull(timestamp)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "timestamp");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("timestamp");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3444,17 +3457,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "add friend is successful" };
             if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3480,27 +3493,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "add contact is successful" };
             if (util.isUndefined(contactInfo) || util.isNull(contactInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(contactInfo.name) || util.isNull(contactInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.name");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.name");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(contactInfo.mobile) || util.isNull(contactInfo.mobile)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.mobile");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.mobile");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3551,37 +3564,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "modify contact is successful" };
             if (util.isUndefined(contactInfo) || util.isNull(contactInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(contactInfo.name) || util.isNull(contactInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.name");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.name");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(contactInfo.mobile) || util.isNull(contactInfo.mobile)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.mobile");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.mobile");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(contactInfo.gender) || !util.isNumber(contactInfo.gender)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.gender");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.gender");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(contactInfo.id) || !util.isNumber(contactInfo.id)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.id");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.id");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(contactInfo.state) || !util.isNumber(contactInfo.state)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactInfo.state");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.state");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3628,17 +3641,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "delete contact is successful" };
             if (util.isUndefined(contactID) || util.isNull(contactID) || !util.isInteger(contactID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3659,17 +3672,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "add contact group is successful" };
             if (util.isUndefined(groupName) || util.isNull(groupName)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupName");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupName");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(index) || util.isNull(index) || !util.isInteger(index)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "index");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("index");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3694,22 +3707,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "modify contact group is successful" };
             if (util.isUndefined(groupName) || util.isNull(groupName)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupName");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupName");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(index) || util.isNull(index) || !util.isInteger(index)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "index");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("index");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3736,12 +3749,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "delete contact group is successful" };
             if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3762,27 +3775,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "move contact is successful" };
             if (util.isUndefined(contactID) || util.isNull(contactID) || !util.isInteger(contactID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(oldGroupID) || util.isNull(oldGroupID) || !util.isInteger(oldGroupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "oldGroupID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("oldGroupID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(newGroupID) || util.isNull(newGroupID) || !util.isInteger(newGroupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "contactID");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactID");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(type) || util.isNull(type) || !util.isBinaryNumber(type)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "type");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("type");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3809,12 +3822,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "update group list order is successful" };
             if (util.isUndefined(groupIDList) || util.isNull(groupIDList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupIDs");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupIDs");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3843,22 +3856,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "add group is successful" };
             if (util.isUndefined(groupInfo) || util.isNull(groupInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupInfo");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupInfo");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupInfo.name) || util.isNull(groupInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "name");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("name");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupInfo.groupType) || !util.isBinaryNumber(groupInfo.groupType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3894,32 +3907,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "modify group is successful" };
             if (util.isUndefined(groupInfo) || util.isNull(groupInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupInfo");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupInfo");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupInfo.id) || util.isNull(groupInfo.id)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "id");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("id");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupInfo.name) || util.isNull(groupInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "name");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("name");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupInfo.owner) || util.isNull(groupInfo.owner)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "owner");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("owner");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(groupInfo.groupType) || !util.isBinaryNumber(groupInfo.groupType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3956,12 +3969,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "delete group is successful" };
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -3981,7 +3994,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     });
                 }
                 else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                     TsdkClientAdapt.notifyErr(err);
                     return;
                 }
@@ -3992,30 +4005,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "join group is successful" };
             if (util.isUndefined(joinGroupParam) || util.isNull(joinGroupParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             var groupId = joinGroupParam.groupId;
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             var flag = joinGroupParam.flag;
             if (util.isUndefined(flag) || !util.isBinaryNumber(flag)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "flag");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("flag");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             var account = joinGroupParam.account;
             if (flag === 0 && (util.isUndefined(account) || util.isNull(account))) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4052,7 +4065,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     });
                 }
                 else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                     TsdkClientAdapt.notifyErr(err);
                     return;
                 }
@@ -4063,22 +4076,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "leave group is successful" };
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(flag) || !util.isBinaryNumber(flag)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "flag");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("flag");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (flag === 1 && (util.isUndefined(account) || util.isNull(account))) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4130,7 +4143,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                 }
                 else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                     TsdkClientAdapt.notifyErr(err);
                     return;
                 }
@@ -4141,32 +4154,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "approval group is successful" };
             if (util.isUndefined(approvalGroupParam) || util.isNull(approvalGroupParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "approvalGroupParam");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("approvalGroupParam");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(approvalGroupParam.groupId) || util.isNull(approvalGroupParam.groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(approvalGroupParam.memberAccount) || util.isNull(approvalGroupParam.memberAccount)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "memberAccount");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("memberAccount");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(approvalGroupParam.flag) || !util.isBinaryNumber(approvalGroupParam.flag)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "flag");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("flag");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(approvalGroupParam.agreeJoin) || !util.isBoolean(approvalGroupParam.agreeJoin)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "agreeJoin");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("agreeJoin");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4203,7 +4216,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     });
                 }
                 else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                     TsdkClientAdapt.notifyErr(err);
                     return;
                 }
@@ -4213,32 +4226,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "search the group list successfully" };
             if (util.isUndefined(searchGroupParam) || util.isNull(searchGroupParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "searchGroupParam");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("searchGroupParam");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(searchGroupParam.isNeedAmount) || !util.isBoolean(searchGroupParam.isNeedAmount)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isNeedAmount");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isNeedAmount");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(searchGroupParam.count) || !util.isInteger(searchGroupParam.count)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "count");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("count");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(searchGroupParam.queryType) || !util.isIntegerRange(searchGroupParam.queryType, 0, 2)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(searchGroupParam.condition)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "condition");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("condition");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4287,12 +4300,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.getGroupDetail = function (groupId, callback) {
             this.isLogin();
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4327,22 +4340,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var evt = { result: true, info: "Get the list of group members successfully" };
             var userList = new Array();
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(isSyncAll) || util.isNull(isSyncAll) || !util.isBoolean(isSyncAll)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isSyncAll");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isSyncAll");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(timestamp) || util.isNull(timestamp)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "timestamp");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("timestamp");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4413,17 +4426,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "Transfer group administrator successfully" };
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4459,7 +4472,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     });
                 }
                 else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                     TsdkClientAdapt.notifyErr(err);
                     return;
                 }
@@ -4469,17 +4482,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "Set the group message prompt mode successfully!" };
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(msgpolicyType) || !util.isIntegerRange(msgpolicyType, 0, 1)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "msgpolicyType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("msgpolicyType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4515,17 +4528,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             this.isLogin();
             var evt = { result: true, info: "Group saved to list successfully succeeded" };
             if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "groupId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(opType) || !util.isIntegerRange(opType, 0, 1)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "opType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("opType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4559,17 +4572,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.publishStatus = function (status, callback) {
             if (util.isUndefined(status) || util.isNull(status) || !util.isInteger(status)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "status");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("status");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (status < -1 || status == 0 || status == 2 || status > 5) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "status");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("status");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(300000000, 300000002, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4589,12 +4602,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.detectUserStatus = function (accountList, callback) {
             if (util.isUndefined(accountList) || !util.isArray(accountList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "accountList");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("accountList");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4617,32 +4630,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.sendIMMessage = function (messageSendParam, callback) {
             if (util.isUndefined(messageSendParam) || util.isNull(messageSendParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(messageSendParam.content) || util.isNull(messageSendParam.content)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.content");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.content");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(messageSendParam.chatType) || util.isNull(messageSendParam.chatType) || !util.isNumber(messageSendParam.chatType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.chatType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.chatType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(messageSendParam.mediaType) || util.isNull(messageSendParam.mediaType) || !util.isNumber(messageSendParam.mediaType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.mediaType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.mediaType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(messageSendParam.receiver) || util.isNull(messageSendParam.receiver)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageSendParam.receiver");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.receiver");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4674,12 +4687,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.notifyImInputting = function (account, type) {
             if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "account");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(type) || util.isNull(type) || !util.isBinaryNumber(type)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "type");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("type");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4688,27 +4701,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.withDrawMessage = function (messageWithDrawParam, callback) {
             if (util.isUndefined(messageWithDrawParam) || util.isNull(messageWithDrawParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(messageWithDrawParam.receiver) || util.isNull(messageWithDrawParam.receiver)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam.receiver");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam.receiver");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(messageWithDrawParam.isGroupMsg) || util.isNull(messageWithDrawParam.isGroupMsg) || !util.isNumber(messageWithDrawParam.isGroupMsg)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam.isGroupMsg");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam.isGroupMsg");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(messageWithDrawParam.msgId) || util.isNull(messageWithDrawParam.msgId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageWithDrawParam.msgId");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam.msgId");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4734,12 +4747,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.setReadMessage = function (messageReadList, callback) {
             var evt = { result: true, info: "Set the message to be read successfully!" };
             if (util.isUndefined(messageReadList) || util.isNull(messageReadList) || !util.isArray(messageReadList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "messageReadList");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageReadList");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4769,27 +4782,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.deleteMessage = function (deleteMessageParam, callback) {
             var evt = { result: true, info: "delete message successfully!" };
             if (util.isUndefined(deleteMessageParam) || util.isNull(deleteMessageParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "deleteMessageParam");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("deleteMessageParam");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(deleteMessageParam.msgIdList) || util.isNull(deleteMessageParam.msgIdList) || !util.isArray(deleteMessageParam.msgIdList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "msgIdList");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("msgIdList");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(deleteMessageParam.isGroupMsg) || util.isNull(deleteMessageParam.isGroupMsg) || !util.isIntegerRange(deleteMessageParam.isGroupMsg, 1, 2)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "isGroupMsg");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isGroupMsg");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(deleteMessageParam.optType) || util.isNull(deleteMessageParam.optType) || !util.isBinaryNumber(deleteMessageParam.optType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "optType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("optType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -4820,32 +4833,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.queryHistoryMessage = function (queryHistoryMessageParam, callback) {
             var evt = { result: true, info: "query message to be read successfully!" };
             if (util.isUndefined(queryHistoryMessageParam) || util.isNull(queryHistoryMessageParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(queryHistoryMessageParam.operationType) || util.isNull(queryHistoryMessageParam.operationType) || !util.isBinaryNumber(queryHistoryMessageParam.operationType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.operationType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.operationType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(queryHistoryMessageParam.msgType) || util.isNull(queryHistoryMessageParam.msgType) || !util.isIntegerRange(queryHistoryMessageParam.msgType, 0, 3) || queryHistoryMessageParam.msgType == 2) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.msgType");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.msgType");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(queryHistoryMessageParam.count) || util.isNull(queryHistoryMessageParam.count) || !util.isNumber(queryHistoryMessageParam.count)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.count");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.count");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (enum_1.IM_HISTORYMESSAGE_TYPE.BULLETIN != queryHistoryMessageParam.msgType && (util.isUndefined(queryHistoryMessageParam.sender) || util.isNull(queryHistoryMessageParam.sender))) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "queryHistoryMessageParam.sender");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.sender");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
             if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR(500000000, 590000001, "callback");
+                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
@@ -5000,9 +5013,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.getVersion = function () {
             var CLOUDEC_SDK_INFO = {
-                version: "19.1.15.1",
+                version: "19.1.16",
                 name: "CloudLinkMeeting_JS_SDK",
-                time: "2019.12.5"
+                time: "2020.1.10"
             };
             return "This is " + CLOUDEC_SDK_INFO.name + ",version is " + CLOUDEC_SDK_INFO.version
                 + ", the publish time is " + CLOUDEC_SDK_INFO.time + ".";
@@ -5252,42 +5265,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         var tempStr = num + temp + "";
         return tempStr.substring(1);
     };
-    exports.getErrResult = function (cmdId, errId, desc) {
-        var err = exports.getErrCode(cmdId, errId);
-        var errInfo = { cmdId: err.cmdId, errorCode: err.errorCode, errorInfo: desc };
-        var retInfo = { result: false, info: errInfo };
-        return retInfo;
-    };
-    exports.getErrCode = function (cmd_id, err_id) {
-        var offset_login = 100000000;
-        var offset_call = 200000000;
-        var offset_conf = 300000000;
-        var offset_data = 400000000;
-        var offset_im = 500000000;
-        var offset_eaddr = 600000000;
-        if (0x10000 < cmd_id && cmd_id < 0x20000) {
-            return { cmdId: cmd_id, errorCode: err_id + offset_call };
-        }
-        else if ((0x50000) < cmd_id && cmd_id < 0x60000) {
-            return { cmdId: cmd_id, errorCode: err_id + offset_login };
-        }
-        else if ((0x70000) < cmd_id && cmd_id < 0x80000) {
-            return { cmdId: cmd_id, errorCode: err_id + offset_conf };
-        }
-        else if (40000000 < cmd_id && cmd_id < 50000000) {
-            return { cmdId: cmd_id, errorCode: err_id + offset_data };
-        }
-        else if (0x20000 < cmd_id && cmd_id < 0x30000) {
-            return { cmdId: cmd_id, errorCode: err_id + offset_im };
-        }
-        else if (0x30000 < cmd_id && cmd_id < 0x40000) {
-            return { cmdId: cmd_id, errorCode: err_id + offset_eaddr };
-        }
-        else {
-            console.error("it is out of the offset range");
-            return { cmdId: cmd_id, errorCode: err_id };
-        }
-    };
     function replaceAll(s1, s2, s3) {
         var reg = new RegExp(s2, "gm");
         return s1.replace(reg, s3);
@@ -5473,61 +5450,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     };
     exports.EC_SDK_ERROR = {
         CONNECTION_RESET: function () {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000001, errorInfo: " The service connection has been reset. Please refresh." } };
-        },
-        OBJECT_INIT_FAILED: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000002, errorInfo: name + " initialize failed" } };
-        },
-        PARAM_TYPE_ERROR: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000003, errorInfo: "param " + name + " type error" } };
-        },
-        PARAM_INVALID_ERROR: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000004, errorInfo: "param " + name + " is invalid" } };
-        },
-        LOGIN_STATUS_ERROR: function () {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000005, errorInfo: "login status error, please login first" } };
+            return { result: false, info: { cmdId: undefined, errorCode: 32505856, errorInfo: " The service connection has been reset. Please refresh." } };
         },
         OBJECT_NOT_EXISTS: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000006, errorInfo: name + " object does not exists" } };
+            return { result: false, info: { cmdId: undefined, errorCode: 32505857, errorInfo: name + " object does not exists" } };
         },
-        PARAM_RANGE_ERROR: function (name, minValue, maxValue) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000007, errorInfo: name + " less than " + minValue + " or bigger than " + maxValue } };
+        LOGIN_STATUS_ERROR: function () {
+            return { result: false, info: { cmdId: undefined, errorCode: 32505858, errorInfo: "login status error, please login first" } };
         },
         ALREADY_IN_CONF: function () {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000008, errorInfo: "already in conference or call" } };
+            return { result: false, info: { cmdId: undefined, errorCode: 32505859, errorInfo: "already in conference or call" } };
         },
-        USER_ROLE_ERROR: function (name) {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000009, errorInfo: "cannot operate \'name\' to user, due to his role." } };
+        PARAM_TYPE_ERROR: function (name) {
+            return { result: false, info: { cmdId: undefined, errorCode: 32505860, errorInfo: "param " + name + " type error" } };
         },
-        CONF_STATE_ERROR: function () {
-            return { result: false, info: { cmdId: undefined, errorCode: 900000010, errorInfo: "conference state error" } };
-        },
-        CONF_SOCKET_ERROR: function (info) {
-            return { result: false, info: { cmdId: 300000000, errorCode: 390000002, errorInfo: info } };
-        },
-        CONF_CHAT_ERROR_INVALIDUSERID: function () {
-            return { result: false, info: { cmdId: 400000000, errorCode: 400001002, errorInfo: "Invalid user" } };
-        },
-        DATACONF_PARAM_INVALID_ERROR: function (name) {
-            return { result: false, info: { cmdId: 400000000, errorCode: 490000001, errorInfo: "param " + name + " is invalid" } };
-        },
-        DATACONF_PARAM_TYPE_ERROR: function (name) {
-            return { result: false, info: { cmdId: 400000000, errorCode: 490000002, errorInfo: "param " + name + " type error" } };
-        },
-        CALL_PARAM_INVALID_ERROR: function (name) {
-            return { result: false, info: { cmdId: 200000000, errorCode: 200000003, errorInfo: "param " + name + " is invalid" } };
+        PARAM_RANGE_ERROR: function (name, minValue, maxValue) {
+            return { result: false, info: { cmdId: undefined, errorCode: 32505861, errorInfo: name + " less than " + minValue + " or bigger than " + maxValue } };
         },
         CONF_PARAM_INVALID_ERROR: function (name) {
-            return { result: false, info: { cmdId: 300000000, errorCode: 300000002, errorInfo: "param " + name + " is invalid" } };
+            return { result: false, info: { cmdId: 300000000, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter " + name + " is invalid" } };
         },
         EADDR_PARAM_INVALID_ERROR: function (name) {
-            return { result: false, info: { cmdId: 600000000, errorCode: 600000002, errorInfo: "param " + name + " is invalid" } };
+            return { result: false, info: { cmdId: 600000000, errorCode: 100663298, errorInfo: "[TSDK_E_EADDR_ERR_PARAM_ERROR]:parameter " + name + " is invalid." } };
         },
-        IM_LOGIN_ERROR: function (cmdid, errorCode) {
-            return { result: false, info: { cmdId: cmdid, errorCode: errorCode, errorInfo: "im login failed" } };
-        },
-        IM_PARAM_INVALID_ERROR: function (cmdid, errorCode, name) {
-            return { result: false, info: { cmdId: cmdid, errorCode: errorCode, errorInfo: "param " + name + " is invalid" } };
+        IM_PARAM_INVALID_ERROR: function (name) {
+            return { result: false, info: { cmdId: 500000000, errorCode: 117440514, errorInfo: "[TSDK_E_IM_ERR_PARAM_ERROR]:parameter " + name + " is invalid." } };
         },
     };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -15742,6 +15689,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.getCallStatisticInfo = function (callId, callback) {
             this.callService.getCallStatisticInfo(callId, callback);
         };
+        TsdkClient.prototype.setCameraInfo = function (cameraInfo, callback) {
+            this.callService.setCameraInfo(cameraInfo, callback);
+        };
+        TsdkClient.prototype.getHardwareAccelerateCap = function (callback) {
+            this.callService.getHardwareAccelerateCap(callback);
+        };
+        TsdkClient.prototype.removeSvcVideoWindow = function (count, callId, window, callback) {
+            this.callService.removeSvcVideoWindow(count, callId, window, callback);
+        };
         TsdkClient.prototype.bookConference = function (bookConfInfo, callback) {
             this.confService.bookConference(bookConfInfo, callback);
         };
@@ -17259,6 +17215,48 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        CallService.prototype.setCameraInfo = function (cameraInfo, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.setCameraInfo(cameraInfo)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallService.prototype.getHardwareAccelerateCap = function (callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.getHardwareAccelerateCap()];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        CallService.prototype.removeSvcVideoWindow = function (count, callId, window, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.removeSvcVideoWindow(count, callId, window)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
         CallService.registerCallEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper;
@@ -17944,6 +17942,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
+        TsdkCallWrapper.prototype.setCameraInfo = function (cameraInfo) {
+            util_1.default.info("TsdkCallWrapper", "setCameraInfo");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkCallWrapper.tsdkCall.setCameraInfo(cameraInfo, callback);
+            return promise;
+        };
+        ;
+        TsdkCallWrapper.prototype.getHardwareAccelerateCap = function () {
+            util_1.default.info("TsdkCallWrapper", "getHardwareAccelerateCap");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkCallWrapper.tsdkCall.getHardwareAccelerateCap(callback);
+            return promise;
+        };
+        ;
+        TsdkCallWrapper.prototype.removeSvcVideoWindow = function (count, callId, window) {
+            util_1.default.info("TsdkCallWrapper", "removeSvcVideoWindow");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkCallWrapper.tsdkCall.removeSvcVideoWindow(count, callId, window, callback);
+            return promise;
+        };
+        ;
         TsdkCallWrapper.prototype.registerCallEvent = function (callbacks) {
             TsdkCallWrapper.tsdkCall.setBasicCallEvent(callbacks);
         };
@@ -18444,6 +18478,39 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "description": "tsdk_get_call_statistic_info",
                 "param": {
                     "callId": callId
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkCall.prototype.setCameraInfo = function (cameraInfo, callbacks) {
+            this.callbackResponse(callbacks, 2041);
+            var data = {
+                "cmd": 0x107f9,
+                "description": "tsdk_set_camera_info",
+                "param": {
+                    "cameraInfo": cameraInfo
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkCall.prototype.getHardwareAccelerateCap = function (callbacks) {
+            this.callbackResponse(callbacks, 2042);
+            var data = {
+                "cmd": 0x107fa,
+                "description": "tsdk_get_hardware_accelerate_cap"
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkCall.prototype.removeSvcVideoWindow = function (count, callId, window, callbacks) {
+            this.callbackResponse(callbacks, 2043);
+            var data = {
+                "cmd": 0x107fb,
+                "description": "tsdk_remove_svc_video_window",
+                "param": {
+                    "count": count, "callId": callId, "window": window
                 }
             };
             this.sendData(data);

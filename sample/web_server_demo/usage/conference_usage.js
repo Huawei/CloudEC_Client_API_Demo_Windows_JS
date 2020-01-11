@@ -294,8 +294,7 @@ function joinAnonymousConf() {
 	var anonyServerPort = document.getElementById("anony_svr_port").value;
 	var anonyConfId = document.getElementById("anony_conf_id").value;
 	var anonyConfPasswd = document.getElementById("anony_passwd").value;
-	var callTypeObj = document.getElementById("anony_call_type");
-	var anonyCallType = parseInt(callTypeObj.options[callTypeObj.selectedIndex].value);	
+	var displayName = document.getElementById("anony_display_name").value;	
 
 	if (document.getElementById("setProxy_Select_anony").checked)
 	{
@@ -315,7 +314,7 @@ function joinAnonymousConf() {
 	var anonymousConfParam = {
 		confId: anonyConfId,		
 		confPasswd: anonyConfPasswd,
-		callType: anonyCallType
+		displayName: displayName
 	}
 
 	var serverInfo = {

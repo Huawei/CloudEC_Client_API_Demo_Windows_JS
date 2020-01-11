@@ -441,6 +441,12 @@
                 isPluginClickShare = 0;
             }
         },  
+
+        OnEvtGetTempUserResult:function(ret) {
+            if(ret.param.reasonCode!=0){
+                alert("Join conference anonymously failed.");
+            }
+        },
     }
 
     root.client = cloudEC.createClient(listeners);
