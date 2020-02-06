@@ -5013,9 +5013,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.getVersion = function () {
             var CLOUDEC_SDK_INFO = {
-                version: "19.1.16",
+                version: "19.1.16.1",
                 name: "CloudLinkMeeting_JS_SDK",
-                time: "2020.1.10"
+                time: "2020.2.6"
             };
             return "This is " + CLOUDEC_SDK_INFO.name + ",version is " + CLOUDEC_SDK_INFO.version
                 + ", the publish time is " + CLOUDEC_SDK_INFO.time + ".";
