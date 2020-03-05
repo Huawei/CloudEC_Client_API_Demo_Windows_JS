@@ -366,6 +366,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.OnEvtGetTempUserResult) != "undefined") {
                 tsdkClientAdapt.on('OnEvtGetTempUserResult', listeners.OnEvtGetTempUserResult);
             }
+            if (typeof (listeners.OnEvtRequestConfRightFailed) != "undefined") {
+                tsdkClientAdapt.on('OnEvtRequestConfRightFailed', listeners.OnEvtRequestConfRightFailed);
+            }
+            if (typeof (listeners.OnEvtMediaErrorInfo) != "undefined") {
+                tsdkClientAdapt.on('OnEvtMediaErrorInfo', listeners.OnEvtMediaErrorInfo);
+            }
             return tsdkClientAdapt;
         };
         CloudEC.prototype.configure = function (options) {
@@ -773,6 +779,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var evt = { result: true, info: ret };
                     _this.notify("OnEvtStatisticInfo", evt);
                 },
+                OnEvtMediaErrorInfo: function (ret) {
+                    _this.notify("OnEvtMediaErrorInfo", ret);
+                },
                 OnEvtSetIptServiceResult: function (ret) {
                     var evt;
                     if (ret.param.setServiceResult.reasonCode == 0) {
@@ -896,6 +905,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     _this.notify('SpeakerIdentify', evt);
                 },
                 OnEvtRequestConfRightFailed: function (ret) {
+                    _this.notify("OnEvtRequestConfRightFailed", ret);
                 },
                 OnEvtConfIncomingInd: function (ret) {
                     _this.confinfo.confHandle = ret.param.handle;
@@ -2192,7 +2202,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             };
             this.registerLCallbacks(getMyConfListCallback);
-            this.tsdkClient.queryConferenceList(queryReq, function (ret) { });
+            this.tsdkClient.queryConferenceList(queryReq, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "getMyConfList", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.getMyConfInfo = function (confId, callback) {
             this.isLogin();
@@ -2248,7 +2264,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             };
             this.registerLCallbacks(getMyConfInfoCallback);
-            this.tsdkClient.queryConferenceDetail(queryReq, function (ret) { });
+            this.tsdkClient.queryConferenceDetail(queryReq, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "getMyConfInfo", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.bookConference = function (bookConferenceParam, callback) {
             this.isLogin();
@@ -2575,7 +2597,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 attendeeNum: attendeeList.length,
                 attendeeList: attendeeList,
             };
-            this.tsdkClient.addAttendee(this.confinfo.confHandle, addAttendeesInfo, function (ret) { });
+            this.tsdkClient.addAttendee(this.confinfo.confHandle, addAttendeesInfo, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "addAttendee", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.delAttendee = function (attendee) {
             if (util.isUndefined(attendee) || util.isNull(attendee)) {
@@ -2583,10 +2611,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
-            this.tsdkClient.removeAttendee(this.confinfo.confHandle, attendee, function (ret) { });
+            this.tsdkClient.removeAttendee(this.confinfo.confHandle, attendee, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "delAttendee", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.muteConference = function (mute) {
-            this.tsdkClient.muteConference(this.confinfo.confHandle, mute ? 1 : 0, function (ret) { });
+            this.tsdkClient.muteConference(this.confinfo.confHandle, mute ? 1 : 0, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "muteConference", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.muteAttendee = function (attendee, mute) {
             if (util.isUndefined(attendee) || util.isNull(attendee)) {
@@ -2594,7 +2634,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
-            this.tsdkClient.muteAttendee(this.confinfo.confHandle, attendee, mute ? 1 : 0, function (ret) { });
+            this.tsdkClient.muteAttendee(this.confinfo.confHandle, attendee, mute ? 1 : 0, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "muteAttendee", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.requestChairman = function (chairmanPwd) {
             if (util.isUndefined(chairmanPwd)) {
@@ -2602,11 +2648,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
-            this.tsdkClient.requestChairman(this.confinfo.confHandle, chairmanPwd, function (ret) { });
+            this.tsdkClient.requestChairman(this.confinfo.confHandle, chairmanPwd, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "requestChairman", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
             chairmanPwd = "";
         };
         TsdkClientAdapt.prototype.releaseChairman = function () {
-            this.tsdkClient.releaseChairman(this.confinfo.confHandle, function (ret) { });
+            this.tsdkClient.releaseChairman(this.confinfo.confHandle, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "releaseChairman", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.handup = function (attendee) {
             if (util.isUndefined(attendee) || util.isNull(attendee)) {
@@ -2618,7 +2676,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return attendee === value.number;
             });
             if (flag != undefined) {
-                this.tsdkClient.setHandup(this.confinfo.confHandle, flag.raiseHandState == 1 ? 0 : 1, attendee, function (ret) { });
+                this.tsdkClient.setHandup(this.confinfo.confHandle, flag.raiseHandState == 1 ? 0 : 1, attendee, function (ret) {
+                    var evt = { result: false, info: "" };
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "handup", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
             else {
                 var err = errorCode_1.EC_SDK_ERROR.CONF_PARAM_INVALID_ERROR("attendee");
@@ -2631,7 +2695,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
-            this.tsdkClient.setVideoMode(this.confinfo.confHandle, mode, function (ret) { });
+            this.tsdkClient.setVideoMode(this.confinfo.confHandle, mode, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "setConfMode", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.setConfMixedPicture = function (imageType, attendees) {
             if (!util.isIntegerRange(imageType, 0, 9) || imageType == 5 || imageType == 7 || imageType == 8) {
@@ -2656,7 +2726,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 attendeeList: configedAttendees,
                 imageType: imageType,
             };
-            this.tsdkClient.setMixedPicture(this.confinfo.confHandle, mixedPictureParams, function (ret) { });
+            this.tsdkClient.setMixedPicture(this.confinfo.confHandle, mixedPictureParams, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "setConfMixedPicture", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.broadcastAttendee = function (isBroad, attendee) {
             if (util.isUndefined(attendee)) {
@@ -2669,7 +2745,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
-            this.tsdkClient.broadcastAttendee(this.confinfo.confHandle, attendee, isBroad, function (ret) { });
+            this.tsdkClient.broadcastAttendee(this.confinfo.confHandle, attendee, isBroad, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "broadcastAttendee", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.watchAttendee = function (attendee) {
             if (util.isUndefined(attendee)) {
@@ -2682,10 +2764,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 watchAttendeeList: [{ number: attendee }],
             };
             if (serverConfig_1.CloudEC_SERVERCONFIG.IS_SUPPORT_SVC_CONFERENCE == 1) {
-                this.tsdkClient.uiPluginWatchSvcAttendee(attendee, function (ret) { });
+                this.tsdkClient.uiPluginWatchSvcAttendee(attendee, function (ret) {
+                    var evt = { result: false, info: "" };
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "watchAttendee", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
             else {
-                this.tsdkClient.watchAttendee(this.confinfo.confHandle, watchAttendeeInfo, function (ret) { });
+                this.tsdkClient.watchAttendee(this.confinfo.confHandle, watchAttendeeInfo, function (ret) {
+                    var evt = { result: false, info: "" };
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "watchAttendee", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
         };
         TsdkClientAdapt.prototype.getAttendeeList = function (callback) {
@@ -2748,14 +2842,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             });
         };
         TsdkClientAdapt.prototype.joinDataConference = function () {
-            this.tsdkClient.joinDataConference(this.confinfo.confHandle, function (ret) { });
+            this.tsdkClient.joinDataConference(this.confinfo.confHandle, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "joinDataConference", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.answerConference = function (accept) {
+            var evt = { result: false, info: "" };
             if (accept) {
-                this.tsdkClient.acceptConference(this.confinfo.confHandle, ((this.confinfo.mediaType) == 0 || (this.confinfo.mediaType) == 2) ? 0 : 1, function (ret) { });
+                this.tsdkClient.acceptConference(this.confinfo.confHandle, ((this.confinfo.mediaType) == 0 || (this.confinfo.mediaType) == 2) ? 0 : 1, function (ret) {
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "answerConference", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
             else {
-                this.tsdkClient.rejectConference(this.confinfo.confHandle, function (ret) { });
+                this.tsdkClient.rejectConference(this.confinfo.confHandle, function (ret) {
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "answerConference", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
         };
         TsdkClientAdapt.prototype.sendMessage = function (messageParam) {
@@ -2778,7 +2889,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 chatMsgLen: msgContent.length,
                 senderDisplayName: this.baseinfo.userAccount,
             };
-            this.tsdkClient.sendChatMsgInConference(this.confinfo.confHandle, chatMsgInfo, function (ret) { });
+            this.tsdkClient.sendChatMsgInConference(this.confinfo.confHandle, chatMsgInfo, function (ret) {
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "sendMessage", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.joinAnonymousConf = function (anonymousConfParam, serverInfo, callback) {
             var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
@@ -2826,6 +2942,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 confId: anonymousConfParam.confId,
             };
             this.tsdkClient.joinConferenceByAnonymous(tsdkConfAnonymousJoinParam, function (ret) {
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "joinAnonymousConf", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
             });
         };
         TsdkClientAdapt.prototype.transfer2Conf = function (confParam) {
@@ -2916,8 +3036,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 subject: confParam.topic ? confParam.topic : "",
             };
             this.tsdkClient.p2pTransferToConference(this.callInfo.callId, bookConfInfo, function (ret) {
-                var err = { cmdId: 400000000, errorCode: 67108865, errorInfo: "[TSDK_E_CONF_ERR_GENERAL_ERROR]:general error." };
-                var evt = { result: false, info: err };
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "transfer2Conf", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
             });
         };
         TsdkClientAdapt.prototype.setPresenter = function (attendee) {
@@ -2927,10 +3050,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(evt);
                 return;
             }
-            this.tsdkClient.setPresenter(this.confinfo.confHandle, attendee, function (ret) { });
+            this.tsdkClient.setPresenter(this.confinfo.confHandle, attendee, function (ret) {
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "setPresenter", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.requestPresenter = function () {
-            this.tsdkClient.requestPresenter(this.confinfo.confHandle, function (ret) { });
+            this.tsdkClient.requestPresenter(this.confinfo.confHandle, function (ret) {
+                if (ret.result != 0) {
+                    var evt = { result: false, info: "" };
+                    evt.info = { cmdId: ret.rsp, interfaceName: "requestPresenter", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.startScreenSharing = function (attendee, extensions) {
             var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
@@ -2939,7 +3073,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(evt);
                 return;
             }
-            this.tsdkClient.appShareSetOwner(1, this.confinfo.confHandle, attendee, function (ret) { });
+            this.tsdkClient.appShareSetOwner(1, this.confinfo.confHandle, attendee, function (ret) {
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "startScreenSharing", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.stopScreenSharing = function (attendee) {
             var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
@@ -2948,8 +3087,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(evt);
                 return;
             }
-            this.tsdkClient.appShareStop(this.confinfo.confHandle, function (ret) { });
-            this.tsdkClient.appShareSetOwner(0, this.confinfo.confHandle, attendee, function (ret) { });
+            this.tsdkClient.appShareStop(this.confinfo.confHandle, function (ret) {
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "stopScreenSharing", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
+            this.tsdkClient.appShareSetOwner(0, this.confinfo.confHandle, attendee, function (ret) {
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "stopScreenSharing", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.requestRemoteCtrl = function (privilege) {
             if (!util.isIntegerRange(privilege, 1, 2)) {
@@ -2957,7 +3106,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
-            this.tsdkClient.appShareRequestPrivilege(this.confinfo.confHandle, privilege == 2 ? 1 : 0, function (ret) { });
+            this.tsdkClient.appShareRequestPrivilege(this.confinfo.confHandle, privilege == 2 ? 1 : 0, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "requestRemoteCtrl", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.setRemoteCtrl = function (privilege, action, attendee) {
             var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
@@ -2976,7 +3131,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err_6);
                 return;
             }
-            this.tsdkClient.appShareSetPrivilege(action, this.confinfo.confHandle, privilege == 2 ? 1 : 0, attendee, function (ret) { });
+            this.tsdkClient.appShareSetPrivilege(action, this.confinfo.confHandle, privilege == 2 ? 1 : 0, attendee, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "setRemoteCtrl", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.answerRemoteCtrl = function (attendee, accept) {
             var err = { cmdId: 0, errorCode: 67108866, errorInfo: "[TSDK_E_CONF_ERR_PARAM_ERROR]:parameter error." };
@@ -2986,21 +3147,44 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return;
             }
             if (accept) {
-                this.tsdkClient.appShareSetPrivilege(1, this.confinfo.confHandle, 0, attendee, function (ret) { });
+                this.tsdkClient.appShareSetPrivilege(1, this.confinfo.confHandle, 0, attendee, function (ret) {
+                    var evt = { result: false, info: "" };
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "answerRemoteCtrl", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
             else {
-                this.tsdkClient.appShareSetPrivilege(4, this.confinfo.confHandle, 0, attendee, function (ret) { });
+                this.tsdkClient.appShareSetPrivilege(4, this.confinfo.confHandle, 0, attendee, function (ret) {
+                    var evt = { result: false, info: "" };
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "answerRemoteCtrl", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
         };
         TsdkClientAdapt.prototype.answerScreenSharing = function (accept) {
+            var evt = { result: false, info: "" };
             if (accept) {
-                this.tsdkClient.appShareStart(0, this.confinfo.confHandle, function (ret) { });
+                this.tsdkClient.appShareStart(0, this.confinfo.confHandle, function (ret) {
+                    if (ret.result != 0) {
+                        evt.info = { cmdId: ret.rsp, interfaceName: "answerScreenSharing", errorCode: ret.result };
+                        TsdkClientAdapt.notifyErr(evt);
+                    }
+                });
             }
             else {
                 for (var i = 0; i < this.attendeeList.length; i++) {
                     var member = this.attendeeList[i];
                     if (member.isSelf == 1) {
-                        this.tsdkClient.appShareSetOwner(0, this.confinfo.confHandle, member.number, function (ret) { });
+                        this.tsdkClient.appShareSetOwner(0, this.confinfo.confHandle, member.number, function (ret) {
+                            if (ret.result != 0) {
+                                evt.info = { cmdId: ret.rsp, interfaceName: "answerScreenSharing", errorCode: ret.result };
+                                TsdkClientAdapt.notifyErr(evt);
+                            }
+                        });
                     }
                 }
             }
@@ -3016,7 +3200,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 TsdkClientAdapt.notifyErr(err);
                 return;
             }
-            this.tsdkClient.renameSelf(this.confinfo.confHandle, nickname, function (ret) { });
+            this.tsdkClient.renameSelf(this.confinfo.confHandle, nickname, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "renameSelf", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
+        };
+        TsdkClientAdapt.prototype.allowAttendeeUnmute = function (allowUnmute) {
+            this.tsdkClient.allowAttendeeUnmute(this.confinfo.confHandle, allowUnmute ? 1 : 0, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "allowAttendeeUnmute", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.isValideInstanceConfParam = function (param) {
             if (util.isUndefined(param)) {
@@ -3144,7 +3343,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             };
             this.registerLCallbacks(searchContactsCallback);
-            this.tsdkClient.searchContacts(searchParam, function (ret) { });
+            this.tsdkClient.searchContacts(searchParam, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "searchUserInfo", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.searchDeptInfo = function (deptId, callback) {
             if (util.isUndefined(deptId)) {
@@ -3181,7 +3386,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             };
             this.registerLCallbacks(searchDepartmentCallback);
-            this.tsdkClient.searchDepartment(searchParam, function (ret) { });
+            this.tsdkClient.searchDepartment(searchParam, function (ret) {
+                var evt = { result: false, info: "" };
+                if (ret.result != 0) {
+                    evt.info = { cmdId: ret.rsp, interfaceName: "searchDeptInfo", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
+                }
+            });
         };
         TsdkClientAdapt.prototype.getUserInfo = function (account, callback) {
             this.isLogin();
@@ -5011,14 +5222,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         TsdkClientAdapt.prototype.uiPluginShowShareSelectwnd = function (callback) {
             this.tsdkClient.uiPluginShowShareSelectwnd(callback);
         };
-        TsdkClientAdapt.prototype.getVersion = function () {
-            var CLOUDEC_SDK_INFO = {
-                version: "19.1.16.1",
-                name: "CloudLinkMeeting_JS_SDK",
-                time: "2020.2.6"
-            };
-            return "This is " + CLOUDEC_SDK_INFO.name + ",version is " + CLOUDEC_SDK_INFO.version
-                + ", the publish time is " + CLOUDEC_SDK_INFO.time + ".";
+        TsdkClientAdapt.prototype.getVersion = function (callback) {
+            this.tsdkClient.getVersion(function (data) {
+                if (data.result == 0) {
+                    var sdkVersion = {
+                        name: "CloudLinkMeeting_JS_SDK",
+                        version: data.param.versionInfo
+                    };
+                    callback(sdkVersion);
+                }
+            });
         };
         TsdkClientAdapt.prototype.on = function (event, action) {
             var _listener = TsdkClientAdapt._listeners[event];
@@ -6935,6 +7148,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 };
             });
             TsdkManagerWrapper.tsdkManager.uninit(callback);
+            return promise;
+        };
+        ;
+        TsdkManagerWrapper.prototype.getVersion = function () {
+            util_1.default.info("TsdkManagerWrapper", "getVersion");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkManagerWrapper.tsdkManager.getVersion(callback);
             return promise;
         };
         ;
@@ -15210,6 +15435,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (typeof (listeners.OnEvtStatisticInfo) != "undefined") {
                 tsdkClient.on('OnEvtStatisticInfo', listeners.OnEvtStatisticInfo);
             }
+            if (typeof (listeners.OnEvtMediaErrorInfo) != "undefined") {
+                tsdkClient.on('OnEvtMediaErrorInfo', listeners.OnEvtMediaErrorInfo);
+            }
             if (typeof (listeners.OnEvtBookConfResult) != "undefined") {
                 tsdkClient.on('OnEvtBookConfResult', listeners.OnEvtBookConfResult);
             }
@@ -15556,6 +15784,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.uninit = function (callback) {
             this.managerService.uninit(callback);
             observer_1.default.unsubsribleAll();
+        };
+        TsdkClient.prototype.getVersion = function (callback) {
+            this.managerService.getVersion(callback);
         };
         TsdkClient.prototype.login = function (loginParam, callback) {
             this.loginService.login(loginParam, callback);
@@ -15953,6 +16184,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.renameSelf = function (confHandle, nickname, callback) {
             this.confService.renameSelf(confHandle, nickname, callback);
         };
+        TsdkClient.prototype.allowAttendeeUnmute = function (confHandle, allowUnmute, callback) {
+            this.confService.allowAttendeeUnmute(confHandle, allowUnmute, callback);
+        };
         TsdkClient.prototype.ctdStartCall = function (ctdParam, callback) {
             this.ctdService.ctdStartCall(ctdParam, callback);
         };
@@ -16282,6 +16516,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
             observer_1.default.subscribe('OnEvtStatisticInfo', function (ret) {
                 _this.notify("OnEvtStatisticInfo", ret);
+            });
+            observer_1.default.subscribe('OnEvtMediaErrorInfo', function (ret) {
+                _this.notify("OnEvtMediaErrorInfo", ret);
             });
         };
         ;
@@ -17292,6 +17529,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         OnEvtSetIptServiceResult: CallService.handleOnEvtSetIptServiceResult,
                         OnEvtIptServiceInfo: CallService.handleOnEvtIptServiceInfo,
                         OnEvtStatisticInfo: CallService.handleOnEvtStatisticInfo,
+                        OnEvtMediaErrorInfo: CallService.handleOnEvtMediaErrorInfo,
                     });
                     return [2];
                 });
@@ -17381,6 +17619,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallService.handleOnEvtStatisticInfo = function (data) {
             observer_1.default.publish('OnEvtStatisticInfo', data);
+        };
+        CallService.handleOnEvtMediaErrorInfo = function (data) {
+            observer_1.default.publish('OnEvtMediaErrorInfo', data);
         };
         return CallService;
     }());
@@ -18601,6 +18842,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (callbacks && typeof callbacks.OnEvtStatisticInfo == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[2028] = callbacks.OnEvtStatisticInfo;
             }
+            if (callbacks && typeof callbacks.OnEvtMediaErrorInfo == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[2029] = callbacks.OnEvtMediaErrorInfo;
+            }
         };
         ;
         return TsdkCall;
@@ -18802,6 +19046,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.sendData(data);
         };
         ;
+        TsdkManager.prototype.getVersion = function (callbacks) {
+            this.callbackResponse(callbacks, 4);
+            var data = {
+                "cmd": 0x10004,
+                "description": "tsdk_get_version"
+            };
+            this.sendData(data);
+        };
+        ;
         return TsdkManager;
     }());
     exports.default = TsdkManager;
@@ -18896,6 +19149,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4, this.wrapper.uninit()];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
+        ManagerService.prototype.getVersion = function (callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.getVersion()];
                         case 1:
                             tsdkData = _a.sent();
                             callback(tsdkData);
@@ -20616,6 +20883,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        ConfService.prototype.allowAttendeeUnmute = function (confHandle, allowUnmute, callback) {
+            return __awaiter(this, void 0, void 0, function () {
+                var tsdkData;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, this.wrapper.allowAttendeeUnmute(confHandle, allowUnmute)];
+                        case 1:
+                            tsdkData = _a.sent();
+                            callback(tsdkData);
+                            return [2];
+                    }
+                });
+            });
+        };
         ConfService.registerConfEvent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 var wrapper;
@@ -21909,6 +22190,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return promise;
         };
         ;
+        TsdkConfWrapper.prototype.allowAttendeeUnmute = function (confHandle, allowUnmute) {
+            util_1.default.info("TsdkConfWrapper", "allowAttendeeUnmute");
+            var callback = { response: {} };
+            var promise = new Promise(function (resolve, reject) {
+                callback.response = function (data) {
+                    resolve(data);
+                };
+            });
+            TsdkConfWrapper.tsdkConf.allowAttendeeUnmute(confHandle, allowUnmute, callback);
+            return promise;
+        };
+        ;
         TsdkConfWrapper.prototype.registerConfEvent = function (callbacks) {
             TsdkConfWrapper.tsdkConf.setBasicConfEvent(callbacks);
         };
@@ -22968,6 +23261,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 "description": "tsdk_rename_self",
                 "param": {
                     "confHandle": confHandle, "nickname": nickname
+                }
+            };
+            this.sendData(data);
+        };
+        ;
+        TsdkConf.prototype.allowAttendeeUnmute = function (confHandle, allowUnmute, callbacks) {
+            this.callbackResponse(callbacks, 3086);
+            var data = {
+                "cmd": 0x10c0e,
+                "description": "tsdk_allow_attendee_unmute",
+                "param": {
+                    "confHandle": confHandle, "allowUnmute": allowUnmute
                 }
             };
             this.sendData(data);

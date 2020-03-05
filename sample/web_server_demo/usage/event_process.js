@@ -447,6 +447,14 @@
                 alert("Join conference anonymously failed.");
             }
         },
+
+        OnEvtRequestConfRightFailed:function(ret) {
+            console.log("Request conference right failed.");    
+        },
+
+        OnEvtMediaErrorInfo:function(ret) {
+            console.log("OnEvtMediaErrorInfo"+ JSON.stringify(ret));
+        },
     }
 
     root.client = cloudEC.createClient(listeners);

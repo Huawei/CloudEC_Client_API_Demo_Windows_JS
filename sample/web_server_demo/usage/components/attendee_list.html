@@ -231,6 +231,24 @@
         client.renameSelf(cloudecNickname);
     }
 
+    var cloudecAllowUnmute = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.allowAttendeeUnmute(true);
+    }
+
+    var cloudecNotAllowUnmute = function () {
+        var conference = client.getConfHandler();
+        if (conference == null) {
+            alert("Meeting has not yet started");
+            return;
+        }
+        client.allowAttendeeUnmute(false);
+    }
+
     var cloudec_speaker1_timer;
     /**
      * Show the speaker in the conference
@@ -603,6 +621,18 @@
             renameSelf_btn.title = "rename self";
             renameSelf_btn.addEventListener("mousedown", cloudecRenameSelf);
 
+            var allowUnmute_btn = document.createElement('button');
+            allowUnmute_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            allowUnmute_btn.innerHTML = "allow unmute";
+            allowUnmute_btn.title = "allow unmute";
+            allowUnmute_btn.addEventListener("mousedown", cloudecAllowUnmute);
+
+            var notAllowUnmute_btn = document.createElement('button');
+            notAllowUnmute_btn.style.cssText = "height: 24px;margin-left: 5px;";
+            notAllowUnmute_btn.innerHTML = "not allow unmute";
+            notAllowUnmute_btn.title = "not allow unmute";
+            notAllowUnmute_btn.addEventListener("mousedown", cloudecNotAllowUnmute);
+
             var cloudec_speaker_div = document.createElement('div');
             cloudec_speaker_div.id = "cloudec_speaker_div";
             cloudec_speaker_div.style.cssText = "";//background: rgb(224, 255, 255);
@@ -622,12 +652,14 @@
             cloudec_attendeelist_title_div.appendChild(setRemoteCtrl_btn);
             cloudec_attendeelist_title_div.appendChild(cancelRemoteCtrl_btn);
             cloudec_attendeelist_title_div.appendChild(requestRemoteCtrl_btn); 
+            cloudec_attendeelist_title_div.appendChild(allowUnmute_btn);
             cloudec_attendeelist_title_div.appendChild(blank_br); 
             cloudec_attendeelist_title_div.appendChild(setPresenterUserid_select);
             cloudec_attendeelist_title_div.appendChild(setPresenter_btn);    
             cloudec_attendeelist_title_div.appendChild(requestPresenter_btn);
             cloudec_attendeelist_title_div.appendChild(nickname_ipt);
             cloudec_attendeelist_title_div.appendChild(renameSelf_btn);  
+            cloudec_attendeelist_title_div.appendChild(notAllowUnmute_btn);
             cloudec_attendeelist_body_div.appendChild(cloudec_speaker_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist_title_div);
             cloudec_attendeelist_div.appendChild(cloudec_attendeelist__hr);

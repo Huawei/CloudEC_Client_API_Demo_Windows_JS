@@ -20,6 +20,10 @@ function login() {
 		}
 	}
 
+	client.getVersion(function(data){
+		console.log(data);
+	});
+
 	//0 account auth type
 	client.login(0, { 'account': account, 'passwd': passwd },
 		{ 'serverAddress': serverAddress, 'serverPort': parseInt(serverPort), 'extensions': JSON.stringify(proxyParam) }, function callback(evt) {
