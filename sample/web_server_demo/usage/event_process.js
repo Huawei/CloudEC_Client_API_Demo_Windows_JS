@@ -455,6 +455,10 @@
         OnEvtMediaErrorInfo:function(ret) {
             console.log("OnEvtMediaErrorInfo"+ JSON.stringify(ret));
         },
+
+        OnEndConferenceResult:function(ret) {
+            console.log("OnEndConferenceResult"+ JSON.stringify(ret));
+        },
     }
 
     root.client = cloudEC.createClient(listeners);

@@ -372,6 +372,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.OnEvtMediaErrorInfo) != "undefined") {
                 tsdkClientAdapt.on('OnEvtMediaErrorInfo', listeners.OnEvtMediaErrorInfo);
             }
+            if (typeof (listeners.OnEndConferenceResult) != "undefined") {
+                tsdkClientAdapt.on('OnEndConferenceResult', listeners.OnEndConferenceResult);
+            }
             return tsdkClientAdapt;
         };
         CloudEC.prototype.configure = function (options) {
@@ -926,6 +929,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     _this._confStatus = false;
                     var evt = { result: true, info: "The meeting ended successfully!" };
                     _this.notify('EndConference', evt);
+                },
+                OnEvtConfEndResult: function (ret) {
+                    _this._confStatus = false;
+                    var evt = { result: true, info: "The meeting ended successfully!" };
+                    _this.notify('OnEndConferenceResult', evt);
                 },
                 OnEvtJoinDataConfResult: function (ret) {
                     var evt = { result: true, info: "Join the data conference successfully!" };
@@ -15573,6 +15581,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (typeof (listeners.OnEvtConfResumeResult) != "undefined") {
                 tsdkClient.on('OnEvtConfResumeResult', listeners.OnEvtConfResumeResult);
             }
+            if (typeof (listeners.OnEvtConfEndResult) != "undefined") {
+                tsdkClient.on('OnEvtConfEndResult', listeners.OnEvtConfEndResult);
+            }
             if (typeof (listeners.OnEvtCtdStartCallResult) != "undefined") {
                 tsdkClient.on('OnEvtCtdStartCallResult', listeners.OnEvtCtdStartCallResult);
             }
@@ -16658,6 +16669,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
             observer_1.default.subscribe('OnEvtConfResumeResult', function (ret) {
                 _this.notify("OnEvtConfResumeResult", ret);
+            });
+            observer_1.default.subscribe('OnEvtConfEndResult', function (ret) {
+                _this.notify("OnEvtConfEndResult", ret);
             });
         };
         ;
@@ -20949,6 +20963,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         OnEvtSvcWatchInfoInd: ConfService.handleOnEvtSvcWatchInfoInd,
                         OnEvtConfResumingInd: ConfService.handleOnEvtConfResumingInd,
                         OnEvtConfResumeResult: ConfService.handleOnEvtConfResumeResult,
+                        OnEvtConfEndResult: ConfService.handleOnEvtConfEndResult,
                     });
                     return [2];
                 });
@@ -21089,6 +21104,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         ConfService.handleOnEvtConfResumeResult = function (data) {
             observer_1.default.publish('OnEvtConfResumeResult', data);
+        };
+        ConfService.handleOnEvtConfEndResult = function (data) {
+            observer_1.default.publish('OnEvtConfEndResult', data);
         };
         return ConfService;
     }());
@@ -23413,6 +23431,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (callbacks && typeof callbacks.OnEvtConfResumeResult == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[3045] = callbacks.OnEvtConfResumeResult;
+            }
+            if (callbacks && typeof callbacks.OnEvtConfEndResult == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[3046] = callbacks.OnEvtConfEndResult;
             }
         };
         ;
