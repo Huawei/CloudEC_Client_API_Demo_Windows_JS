@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CloudLinkMeetingDaemon"
-#define MyAppVersion "19.1.16"
+#define MyAppVersion "19.1.18"
 #define MyAppPublisher "Huawei Inc."
 #define MyAppCopyright "Copyright (c) Huawei Technologies Co., Ltd. 2010-2019. All rights reserved."
 #define MyAppExeName "CloudLinkMeetingDaemon.exe"
@@ -304,7 +304,7 @@ English.appInstallSmall = Whether to use old version overwrite the installed Clo
 Chinese.appInstallSmall = 是否使用旧版本覆盖安装软件？
 
 [Tasks]
-;Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
 Name: "startmenu"; Description: "{cm:appAutoStart}"; GroupDescription:"{cm:AdditionalIcons}";Flags:checkablealone;
 
 [Registry]
@@ -345,7 +345,7 @@ Source: "D:\package\package-tool\CertMgr.exe"; DestDir: "{app}";
 [Icons]
 ;Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 ;Name: "{group}\Uninstall"; Filename: "{app}\unins000.exe"
-;Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 ;Boot mode: create shortcuts in the start menu startup directory. 
 Name: "{userstartup}\{#CloudLinkMeetingDaemon}"; Filename: "{app}\{#CloudLinkMeetingDaemon}";  Tasks: startmenu
 
