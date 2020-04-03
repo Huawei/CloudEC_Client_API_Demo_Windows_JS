@@ -74,7 +74,6 @@
                     + media_type
                     + "</li>"
                     + "<li>scheduser_name:" + data.scheduserName + "</li>"
-                    + "<li>scheduser_number:" + data.scheduerNumber + "</li>"
                     + "<li>num_of_addendee:" + data.attendeeAmount + "</li>"
                     + "</ul>"
                     + "<button type='button' onclick=joinConference('"
@@ -99,6 +98,10 @@
 
         client.getMyConfList(pageIndex, pageSize, function (ret) {
             if (ret.result) {
+                var oldTable = document.getElementById("cloudec_conflist_table")
+                if (oldTable) {
+                    div.removeChild(oldTable)
+                }
                 var t = document.createElement("table")
                 t.id = "cloudec_conflist_table"
                 t.insertRow(0)
@@ -156,7 +159,7 @@
 
             var cloudec_confinfo_div = document.createElement('div')
             cloudec_confinfo_div.id = "cloudec_confinfo_div"
-            cloudec_confinfo_div.style.cssText = "width: 380px;height: 300px;background: rgb(247, 240, 146);"
+            cloudec_confinfo_div.style.cssText = "width: 380px;height: 270px;background: rgb(247, 240, 146);"
             cloudec_confinfo_div.style.display = "none"//disable
 
             var cloudec_conflist_div = document.createElement('div')

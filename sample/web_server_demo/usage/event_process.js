@@ -75,7 +75,11 @@
         onError: function(ret) {
             if (390000003 == ret.info.errorCode) {
                 console.warn("Memory usage over 80%, please close the unrelated program.");
-            } else {
+            } 
+            else if(67109020 == ret.info.errorCode) {
+                alert("The current conference chairman did not allow the participants to unmute themselves");
+            }
+            else {
                 alert(JSON.stringify(ret));
             }
         },
@@ -98,7 +102,23 @@
                 document.getElementById("cloudec_attendeelist_div").dispatchEvent(clearAttendeeEvent);
                 var clearChatListEvent = new Event('cloudec:clearChatList');
                 document.getElementById("cloudec_chat_display_div").dispatchEvent(clearChatListEvent);
-                alert("the conference is ended")
+                switch (ret.info.reasonCode) {
+                    case 0:
+                        alert("The conference is ended.");
+                        break;
+                    case 1:
+                        alert("You have been removed from the conference by the host.");
+                        break;
+                    case 2:
+                        alert("Call disconnected due to network interruption.");
+                        break;
+                    case 3:
+                        alert("Call disconnected due to abnormal network connection.");
+                        break;
+                    default:
+                        alert("The conference is ended by other reason.");
+                        break;
+                }
             }
         },
 
@@ -458,6 +478,25 @@
 
         OnEndConferenceResult:function(ret) {
             console.log("OnEndConferenceResult"+ JSON.stringify(ret));
+            if (ret.param.result == 0) {
+                var clearAttendeeEvent = new Event('cloudec:clearAttendeeList');
+                document.getElementById("cloudec_attendeelist_div").dispatchEvent(clearAttendeeEvent);
+                var clearChatListEvent = new Event('cloudec:clearChatList');
+                document.getElementById("cloudec_chat_display_div").dispatchEvent(clearChatListEvent);
+                alert("The conference is ended.");
+            }            
+        },
+
+        OnEvtLogoutFailed:function(ret) {
+            console.log("OnEvtLogoutFailed"+ JSON.stringify(ret));
+        },
+
+        OnEvtConfSetShareOwnerFailed:function(ret) {
+            console.log("OnEvtConfSetShareOwnerFailed"+ JSON.stringify(ret));
+        },
+
+        OnEvtConfStartShareFailed:function(ret) {
+            console.log("OnEvtConfStartShareFailed"+ JSON.stringify(ret));
         },
     }
 

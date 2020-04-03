@@ -231,72 +231,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.onCallBldTransferResult) != "undefined") {
                 tsdkClientAdapt.on('CallBldTransferResult', listeners.onCallBldTransferResult);
             }
-            if (typeof (listeners.onUserInfoChange) != "undefined") {
-                tsdkClientAdapt.on('UserInfoChange', listeners.onUserInfoChange);
-            }
-            if (typeof (listeners.onAddFriend) != "undefined") {
-                tsdkClientAdapt.on('AddFriend', listeners.onAddFriend);
-            }
-            if (typeof (listeners.onUserStatusList) != "undefined") {
-                tsdkClientAdapt.on('UserStatusList', listeners.onUserStatusList);
-            }
-            if (typeof (listeners.onGroupDismiss) != "undefined") {
-                tsdkClientAdapt.on('GroupDismiss', listeners.onGroupDismiss);
-            }
-            if (typeof (listeners.onGroupInfoChange) != "undefined") {
-                tsdkClientAdapt.on('GroupInfoChange', listeners.onGroupInfoChange);
-            }
-            if (typeof (listeners.onGroupOwnerChange) != "undefined") {
-                tsdkClientAdapt.on('GroupOwnerChange', listeners.onGroupOwnerChange);
-            }
-            if (typeof (listeners.onGroupMemberAdd) != "undefined") {
-                tsdkClientAdapt.on('GroupMemberAdd', listeners.onGroupMemberAdd);
-            }
-            if (typeof (listeners.onGroupMemberDel) != "undefined") {
-                tsdkClientAdapt.on('GroupMemberDel', listeners.onGroupMemberDel);
-            }
-            if (typeof (listeners.onWasAddToGroup) != "undefined") {
-                tsdkClientAdapt.on('WasAddToGroup', listeners.onWasAddToGroup);
-            }
-            if (typeof (listeners.onReceiveInviteJoinGroup) != "undefined") {
-                tsdkClientAdapt.on('ReceiveInviteJoinGroup', listeners.onReceiveInviteJoinGroup);
-            }
-            if (typeof (listeners.onReceiveInviteToGroup) != "undefined") {
-                tsdkClientAdapt.on('ReceiveInviteToGroup', listeners.onReceiveInviteToGroup);
-            }
-            if (typeof (listeners.onGroupOwnerInviteResult) != "undefined") {
-                tsdkClientAdapt.on('GroupOwnerInviteResult', listeners.onGroupOwnerInviteResult);
-            }
-            if (typeof (listeners.onGroupKickout) != "undefined") {
-                tsdkClientAdapt.on('GroupKickout', listeners.onGroupKickout);
-            }
-            if (typeof (listeners.onGroupLeaveResult) != "undefined") {
-                tsdkClientAdapt.on('GroupLeaveResult', listeners.onGroupLeaveResult);
-            }
-            if (typeof (listeners.onMsgSendAck) != "undefined") {
-                tsdkClientAdapt.on('MsgSendAck', listeners.onMsgSendAck);
-            }
-            if (typeof (listeners.onChatNotify) != "undefined") {
-                tsdkClientAdapt.on('ChatNotify', listeners.onChatNotify);
-            }
-            if (typeof (listeners.onChatListNotify) != "undefined") {
-                tsdkClientAdapt.on('ChatListNotify', listeners.onChatListNotify);
-            }
-            if (typeof (listeners.onUnDeliver) != "undefined") {
-                tsdkClientAdapt.on('UnDeliver', listeners.onUnDeliver);
-            }
-            if (typeof (listeners.onWithdrawResult) != "undefined") {
-                tsdkClientAdapt.on('WithdrawResult', listeners.onWithdrawResult);
-            }
-            if (typeof (listeners.onWithdrawNotify) != "undefined") {
-                tsdkClientAdapt.on('WithdrawNotify', listeners.onWithdrawNotify);
-            }
-            if (typeof (listeners.onSendImInput) != "undefined") {
-                tsdkClientAdapt.on('SendImInput', listeners.onSendImInput);
-            }
-            if (typeof (listeners.onSystemBulletin) != "undefined") {
-                tsdkClientAdapt.on('SystemBulletin', listeners.onSystemBulletin);
-            }
             if (typeof (listeners.onEvtGetDataconfParamResult) != "undefined") {
                 tsdkClientAdapt.on('OnEvtGetDataconfParamResult', listeners.onEvtGetDataconfParamResult);
             }
@@ -374,6 +308,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (typeof (listeners.OnEndConferenceResult) != "undefined") {
                 tsdkClientAdapt.on('OnEndConferenceResult', listeners.OnEndConferenceResult);
+            }
+            if (typeof (listeners.OnEvtLogoutFailed) != "undefined") {
+                tsdkClientAdapt.on('OnEvtLogoutFailed', listeners.OnEvtLogoutFailed);
+            }
+            if (typeof (listeners.OnEvtConfSetShareOwnerFailed) != "undefined") {
+                tsdkClientAdapt.on('OnEvtConfSetShareOwnerFailed', listeners.OnEvtConfSetShareOwnerFailed);
+            }
+            if (typeof (listeners.OnEvtConfStartShareFailed) != "undefined") {
+                tsdkClientAdapt.on('OnEvtConfStartShareFailed', listeners.OnEvtConfStartShareFailed);
             }
             return tsdkClientAdapt;
         };
@@ -637,6 +580,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     };
                 },
                 OnEvtLogoutFailed: function (ret) {
+                    _this.notify("OnEvtLogoutFailed", ret);
                 },
                 OnEvtForceLogout: function (ret) {
                     var evt = { result: true, info: "force logout" };
@@ -849,6 +793,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var confState = ret.param.confStatus;
                     var handle = ret.param.handle;
                     var callId = _this.confinfo.callId;
+                    if (handle == 0) {
+                        console.log("conf handle is 0.");
+                    }
                     _this.confinfo = {
                         subject: confState.subject,
                         mediaType: confState.confMediaType,
@@ -912,6 +859,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 },
                 OnEvtConfIncomingInd: function (ret) {
                     _this.confinfo.confHandle = ret.param.handle;
+                    if (ret.param.handle == 0) {
+                        console.log("conf handle is 0.");
+                    }
                     _this.confinfo.callId = ret.param.callId;
                     _this.confinfo.mediaType = ret.param.confIncomingInfo.confMediaType;
                     _this.confinfo.subject = ret.param.confIncomingInfo.subject;
@@ -927,18 +877,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 },
                 OnEvtConfEndInd: function (ret) {
                     _this._confStatus = false;
-                    var evt = { result: true, info: "The meeting ended successfully!" };
+                    var endConferenceReason = {
+                        reasonCode: ret.param.reasonCode
+                    };
+                    var evt = { result: true, info: endConferenceReason };
                     _this.notify('EndConference', evt);
                 },
                 OnEvtConfEndResult: function (ret) {
-                    _this._confStatus = false;
-                    var evt = { result: true, info: "The meeting ended successfully!" };
-                    _this.notify('OnEndConferenceResult', evt);
+                    if (ret.param.result == 0) {
+                        _this._confStatus = false;
+                        _this.confinfo = {
+                            subject: "",
+                            mediaType: 0,
+                            confHandle: 0,
+                            confId: "",
+                            hostKey: "",
+                            createor: "",
+                            isAllMute: 0,
+                            lockState: 0,
+                        };
+                        console.log("set conf handle is 0.");
+                    }
+                    _this.notify('OnEndConferenceResult', ret);
                 },
                 OnEvtJoinDataConfResult: function (ret) {
                     var evt = { result: true, info: "Join the data conference successfully!" };
                     if (ret.param.result != 0) {
-                        evt = { result: false, info: "Joining data conference failed!" };
+                        evt = { result: false, info: ret.param };
                     }
                     _this.notify('OnEvtJoinDataConfResult', evt);
                 },
@@ -988,6 +953,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                     _this.notify('AsOnSharingState', evt);
                 },
+                OnEvtConfSetShareOwnerFailed: function (ret) {
+                    _this.notify('OnEvtConfSetShareOwnerFailed', ret);
+                },
+                OnEvtConfStartShareFailed: function (ret) {
+                    _this.notify('OnEvtConfStartShareFailed', ret);
+                },
                 OnEvtRecvChatMsg: function (ret) {
                     var evt = { result: true, info: "Received new message" };
                     var chatMsgInfo = ret.param.chatMsgInfo;
@@ -1028,335 +999,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 OnEvtSvcWatchInfoInd: function (ret) {
                     var evt = { result: true, info: ret };
                     _this.notify("OnEvtSvcWatchInfoInd", evt);
-                },
-                OnEvtAddFriendInd: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var addFriendInfo = ret.param.beAddedFriendInfo;
-                    var addFriendResult = {
-                        account: addFriendInfo.account,
-                        displayName: addFriendInfo.displayName,
-                        serverMsgID: addFriendInfo.serverMsgId,
-                    };
-                    evt.info = addFriendResult;
-                    _this.notify('AddFriend', evt);
-                },
-                OnEvtUserStatusUpdate: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var userStatusList = new Array();
-                    var userstatus_list = ret.param.userStatusInfoList;
-                    for (var index = 0; index < ret.param.count; index++) {
-                        var userStatus = {
-                            clientDesc: userstatus_list[index].clientDesc,
-                            clientType: userstatus_list[index].clientType,
-                            desc: userstatus_list[index].statusDesc,
-                            origin: userstatus_list[index].origin,
-                            status: userstatus_list[index].status,
-                            extensions: ""
-                        };
-                        userStatusList.push(userStatus);
-                    }
-                    evt.info = { "userStatusList": userStatusList };
-                    _this.notify('UserStatusList', evt);
-                },
-                OnEvtUserInfoUpdate: function (ret) {
-                    if (ret.param.userInfoList) {
-                        var retUserList = ret.param.userInfoList;
-                        var userInfo = void 0;
-                        var userList = new Array();
-                        if (!util.isUndefined(retUserList)) {
-                            for (var i = 0; i < ret.param.count; i++) {
-                                userInfo = {
-                                    staffID: retUserList[i].staffId,
-                                    account: retUserList[i].staffAccount,
-                                    staffNO: retUserList[i].staffNo,
-                                    name: retUserList[i].name,
-                                    nativeName: retUserList[i].nativeName,
-                                    qPinYin: retUserList[i].fullSpelling,
-                                    gender: retUserList[i].gender,
-                                    birthday: retUserList[i].birthday,
-                                    age: retUserList[i].age,
-                                    bindNO: retUserList[i].bindNumber,
-                                    mobile: retUserList[i].mobile,
-                                    homePhone: retUserList[i].homePhone,
-                                    officePhone: retUserList[i].officePhone,
-                                    shortPhone: retUserList[i].shortPhone,
-                                    otherPhone: retUserList[i].otherMobile,
-                                    voip: retUserList[i].voip,
-                                    ipPhone: retUserList[i].ipPhoneNumber,
-                                    fax: retUserList[i].fax,
-                                    email: retUserList[i].email,
-                                    webSite: retUserList[i].website,
-                                    signature: retUserList[i].signature,
-                                    desc: retUserList[i].description,
-                                    address: retUserList[i].address,
-                                    imageID: retUserList[i].imageId,
-                                    postalcode: retUserList[i].zipCode,
-                                    isSecrecy: retUserList[i].isSecrecy,
-                                    title: retUserList[i].title,
-                                    deptID: retUserList[i].departmentId,
-                                    deptNameEn: retUserList[i].departmentNameEn,
-                                    deptNameCn: retUserList[i].departmentNameCn,
-                                    imageSyncTime: retUserList[i].imageSyncTime,
-                                    oldAccount: retUserList[i].oldAccount,
-                                    state: retUserList[i].state,
-                                    modifyTime: retUserList[i].lastUpdateTime,
-                                    contactID: retUserList[i].contactId,
-                                    extensions: "",
-                                };
-                                userList.push(userInfo);
-                            }
-                            var evt = { result: true, info: userList };
-                            _this.notify('UserInfoChange', evt);
-                        }
-                    }
-                    else {
-                    }
-                },
-                OnEvtJoinChatGroupReq: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var data = ret.param.reqJoinGroupMsg;
-                    var receiveJoinGroupResult = {
-                        groupID: data.groupId,
-                        groupName: data.groupName,
-                        memberAccount: data.requesterAccount,
-                        memberName: data.requesterName,
-                        serverMsgID: data.serverMsgId,
-                    };
-                    evt.info = receiveJoinGroupResult;
-                    _this.notify('ReceiveInviteJoinGroup', evt);
-                },
-                OnEvtJoinChatGroupRsp: function (ret) {
-                },
-                OnEvtJoinChatGroupInd: function (ret) {
-                },
-                OnEvtDelChatGroupMemberResult: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var data = ret.info;
-                    var phonelist = new Array();
-                    for (var index = 0; data.phone_list && index < data.phone_list.length; index++) {
-                        var element = data.phone_list[index];
-                        phonelist.push(element.phone);
-                    }
-                    var groupInfoChangeResult = {
-                        groupID: data.group_id,
-                        groupName: data.group_name,
-                        adminAccount: data.admin_account,
-                        memberAccount: data.member_account,
-                        memberName: data.member_name,
-                        serverMsgID: data.server_msg_id_str ? data.server_msg_id_str : "",
-                        isInitGroupName: data.is_init_group_name,
-                        phonelist: phonelist,
-                        initInviteAccount: data.init_invite_account ? data.init_invite_account : "",
-                    };
-                    evt.info = groupInfoChangeResult;
-                    _this.notify('GroupMemberDel', evt);
-                },
-                OnEvtLeaveChatGroupResult: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var resultData = ret.param.leaveGroupResult;
-                    if (resultData.result == 0) {
-                        evt = {
-                            result: true,
-                            info: resultData.description
-                        };
-                    }
-                    else {
-                        evt = {
-                            result: false,
-                            info: resultData.description
-                        };
-                    }
-                    _this.notify('GroupLeaveResult', evt);
-                },
-                OnEvtChatGroupInfoUpdate: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var groupUpdateInfo = ret.param.groupUpdateInfo;
-                    var phonelist = new Array();
-                    var groupInfoChangeResult = {
-                        groupID: groupUpdateInfo.groupId,
-                        groupName: groupUpdateInfo.groupName,
-                        adminAccount: groupUpdateInfo.ownerAccount,
-                        memberAccount: groupUpdateInfo.updateMemberAccount,
-                        memberName: groupUpdateInfo.updateMemberName,
-                        serverMsgID: "",
-                        isInitGroupName: groupUpdateInfo.isInitGroupName,
-                        phonelist: phonelist,
-                        initInviteAccount: ret.param.inviteAccount,
-                    };
-                    evt.info = groupInfoChangeResult;
-                    _this.notify('GroupInfoChange', evt);
-                },
-                OnEvtInputtingStatusInd: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var sendImInputInfo = ret.param.inputtingStatusInfo;
-                    var EC_IMSendInputResult = {
-                        account: sendImInputInfo.origin,
-                        status: sendImInputInfo.isInputting,
-                    };
-                    evt.info = EC_IMSendInputResult;
-                    _this.notify('SendImInput', evt);
-                },
-                OnEvtChatMsg: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var codeChatInfo = ret.param.chatMsg;
-                    var chatInfo = {
-                        chatType: codeChatInfo.chatType,
-                        sourceFlag: codeChatInfo.sourceType,
-                        contentType: 0,
-                        utcStamp: codeChatInfo.utcStamp,
-                        origin: codeChatInfo.origin,
-                        target: codeChatInfo.target,
-                        groupID: codeChatInfo.groupId,
-                        content: codeChatInfo.content,
-                        name: codeChatInfo.name,
-                        regionID: codeChatInfo.regionId,
-                        clientChatID: codeChatInfo.clientMsgId,
-                        serverChatID: codeChatInfo.serverMsgId,
-                        groupName: codeChatInfo.groupName,
-                        mediaType: codeChatInfo.chatMediaType,
-                        deliverTime: codeChatInfo.serverDeliverTime,
-                        atUserInfoList: codeChatInfo.atUserList,
-                    };
-                    evt.info = chatInfo;
-                    _this.notify('ChatNotify', evt);
-                },
-                OnEvtBatchChatMsg: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var chatListInfo = ret.param.batchChatMsg;
-                    var chatList;
-                    var chatInfoArr = new Array();
-                    for (var index = 0; index < chatListInfo.count; index++) {
-                        var element = chatListInfo.chatMsgList[index];
-                        var chatInfo = {
-                            chatType: element.chatType,
-                            sourceFlag: element.sourceType,
-                            contentType: 0,
-                            utcStamp: element.utcStamp,
-                            origin: element.origin,
-                            target: element.target,
-                            groupID: element.groupId,
-                            content: element.content,
-                            name: element.name,
-                            regionID: element.regionId,
-                            clientChatID: element.clientMsgId,
-                            serverChatID: element.serverMsgId,
-                            groupName: element.groupName,
-                            mediaType: element.chatMediaType,
-                            deliverTime: element.serverDeliverTime,
-                            atUserInfoList: new Array(),
-                        };
-                        chatInfoArr.push(chatInfo);
-                    }
-                    chatList = {
-                        chatList: chatInfoArr,
-                        total: chatListInfo.unreadMsgCount,
-                        maxMsgId: chatListInfo.maxMsgId,
-                        minMsgId: chatListInfo.minMsgId,
-                        isAt: chatListInfo.isBeAt,
-                    };
-                    evt.info = chatList;
-                    _this.notify('ChatListNotify', evt);
-                },
-                OnEvtSystemBulletin: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var systemInfo = ret.param.systemBulletin;
-                    var chatInfo = {
-                        chatType: systemInfo.chatType,
-                        sourceFlag: systemInfo.sourceType,
-                        contentType: 0,
-                        utcStamp: systemInfo.utcStamp,
-                        origin: systemInfo.origin,
-                        target: systemInfo.target,
-                        groupID: systemInfo.groupId,
-                        content: systemInfo.content,
-                        name: systemInfo.name,
-                        regionID: systemInfo.regionId,
-                        clientChatID: systemInfo.clientMsgId,
-                        serverChatID: systemInfo.serverMsgId,
-                        groupName: systemInfo.groupName,
-                        mediaType: systemInfo.chatMediaType,
-                        deliverTime: systemInfo.serverDeliverTime,
-                        atUserInfoList: new Array(),
-                    };
-                    evt.info = chatInfo;
-                    _this.notify('SystemBulletin', evt);
-                },
-                OnEvtSms: function (ret) {
-                },
-                OnEvtUndeliverInd: function (ret) {
-                    var evt = { result: true, info: ret.info };
-                    _this.notify('UnDeliver', evt);
-                },
-                OnEvtMsgReadInd: function (ret) {
-                },
-                OnEvtMsgSendResult: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var sendMsgResult = ret.param.sendMsgResult;
-                    if (sendMsgResult.clientMsgId == 0 || sendMsgResult.serverMsgId == "0") {
-                        evt = { result: false, info: "sending message failed!" };
-                    }
-                    else {
-                        var msgSendAckResult = {
-                            origin: sendMsgResult.origin,
-                            target: sendMsgResult.target,
-                            utcStamp: sendMsgResult.utcStamp,
-                            chatID: sendMsgResult.clientMsgId,
-                            serverChatID: sendMsgResult.serverMsgId,
-                        };
-                        evt.info = msgSendAckResult;
-                    }
-                    _this.notify('MsgSendAck', evt);
-                },
-                OnEvtMsgWithdrawResult: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var withdrawMsgResult = ret.param.withdrawMsgResult;
-                    if (withdrawMsgResult.timeout >= 120) {
-                        evt = {
-                            result: false,
-                            info: "Information cannot be withdrawn for more than two minutes!"
-                        };
-                    }
-                    else {
-                        var msgListArr = withdrawMsgResult.withdrawMsgList;
-                        var msgList = new Array();
-                        for (var key in msgListArr) {
-                            if (Object.prototype.hasOwnProperty.call(msgListArr, key)) {
-                                var element = msgListArr[key];
-                                msgList.push(element.msgId);
-                            }
-                        }
-                        var withDrawResult = {
-                            origin: withdrawMsgResult.origin,
-                            target: withdrawMsgResult.target,
-                            msgType: withdrawMsgResult.withdrawMsgType,
-                            msgIdList: msgList,
-                            timeout: withdrawMsgResult.timeout,
-                            result: withdrawMsgResult.result,
-                        };
-                        evt.info = withDrawResult;
-                    }
-                    _this.notify('WithdrawResult', evt);
-                },
-                OnEvtMsgWithdrawInd: function (ret) {
-                    var evt = { result: true, info: "" };
-                    var withdrawMsgInfo = ret.param.withdrawMsgInfo;
-                    var msgListArr = withdrawMsgInfo.withdrawMsgList;
-                    var msgList = new Array();
-                    for (var key in msgListArr) {
-                        if (Object.prototype.hasOwnProperty.call(msgListArr, key)) {
-                            var element = msgListArr[key];
-                            msgList.push(element.msgId);
-                        }
-                    }
-                    var withDrawNotify = {
-                        origin: withdrawMsgInfo.origin,
-                        target: withdrawMsgInfo.target,
-                        msgType: withdrawMsgInfo.withdrawMsgType,
-                        serverChatID: withdrawMsgInfo.unreadMsgId ? withdrawMsgInfo.unreadMsgId : "0",
-                        msgIdList: msgList,
-                    };
-                    evt.info = withDrawNotify;
-                    _this.notify('WithdrawNotify', evt);
                 },
                 OnPluginEvtFrameHwndInfoUpdate: function (ret) {
                 },
@@ -1424,7 +1066,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     }
                     var hangupMuteMicNotify = {
                         callId: ret.param.callId,
-                        furtherProcessType: ret.param.furtherProcessType,
+                        furtherProcessType: 0,
                         micBtnStateInfo: micBtnStateInfo
                     };
                     evt.info = hangupMuteMicNotify;
@@ -2194,7 +1836,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             endTime: l_end_time,
                             mediaType: confInfoList[m].confMediaType,
                             scheduserName: confInfoList[m].scheduserName,
-                            scheduerNumber: confInfoList[m].scheduserAccount,
                             attendeeAmount: confInfoList[m].size,
                             chairJoinUri: confInfoList[m].chairJoinUri,
                             guestJoinUri: confInfoList[m].guestJoinUri,
@@ -2258,7 +1899,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         endTime: l_end_time,
                         mediaType: confInfo.confMediaType,
                         scheduserName: confInfo.scheduserName,
-                        scheduerNumber: confInfo.scheduserAccount,
                         attendeeAmount: data.param.confDetailInfo.attendeeNum,
                         chairJoinUri: data.param.confDetailInfo.confInfo.chairJoinUri,
                         guestJoinUri: data.param.confDetailInfo.confInfo.guestJoinUri,
@@ -2327,7 +1967,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         endTime: l_end_time,
                         mediaType: confBaseInfo.confMediaType,
                         scheduserName: confBaseInfo.scheduserName,
-                        scheduerNumber: confBaseInfo.scheduserAccount,
                         attendeeAmount: confBaseInfo.size,
                         chairJoinUri: confBaseInfo.chairJoinUri,
                         guestJoinUri: confBaseInfo.guestJoinUri,
@@ -2510,7 +2149,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         endTime: l_end_time,
                         mediaType: confBaseInfo.confMediaType,
                         scheduserName: confBaseInfo.scheduserName,
-                        scheduerNumber: confBaseInfo.scheduserAccount,
                         attendeeAmount: confBaseInfo.size,
                         chairJoinUri: confBaseInfo.chairJoinUri,
                         guestJoinUri: confBaseInfo.guestJoinUri,
@@ -2805,6 +2443,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         TsdkClientAdapt.prototype.leaveConf = function () {
             var _this = this;
+            if (this.confinfo.confHandle == 0) {
+                console.log("conf handle is 0.");
+            }
             this.tsdkClient.leaveConference(this.confinfo.confHandle, function (ret) {
                 var evt = { result: true, info: "The meeting has already left!" };
                 if (ret.result != 0) {
@@ -2821,32 +2462,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         isAllMute: 0,
                         lockState: 0,
                     };
+                    console.log("set conf handle is 0.");
                 }
                 _this._confStatus = false;
                 _this.notify('LeaveConference', evt);
             });
         };
         TsdkClientAdapt.prototype.endConf = function () {
-            var _this = this;
+            if (this.confinfo.confHandle == 0) {
+                console.log("conf handle is 0.");
+            }
             this.tsdkClient.endConference(this.confinfo.confHandle, function (ret) {
-                var evt = { result: true, info: "The meeting has already left!" };
+                var evt = { result: false, info: "" };
                 if (ret.result != 0) {
-                    evt = { result: false, info: "The meeting does not exist！" };
+                    evt.info = { cmdId: ret.rsp, interfaceName: "endConf", errorCode: ret.result };
+                    TsdkClientAdapt.notifyErr(evt);
                 }
-                else {
-                    _this.confinfo = {
-                        subject: "",
-                        mediaType: 0,
-                        confHandle: 0,
-                        confId: "",
-                        hostKey: "",
-                        createor: "",
-                        isAllMute: 0,
-                        lockState: 0,
-                    };
-                }
-                _this._confStatus = false;
-                _this.notify('EndConference', evt);
             });
         };
         TsdkClientAdapt.prototype.joinDataConference = function () {
@@ -3402,1738 +3033,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
             });
         };
-        TsdkClientAdapt.prototype.getUserInfo = function (account, callback) {
-            this.isLogin();
-            if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.getUserInfo(account, function (data) {
-                if (data.result == 0) {
-                    var retUserInfo = data.param.userInfo;
-                    var userInfo = {
-                        staffID: retUserInfo.staffId,
-                        account: retUserInfo.staffAccount,
-                        staffNO: retUserInfo.staffNo,
-                        name: retUserInfo.name,
-                        nativeName: retUserInfo.nativeName,
-                        qPinYin: retUserInfo.fullSpelling,
-                        gender: retUserInfo.gender,
-                        birthday: retUserInfo.birthday,
-                        age: retUserInfo.age,
-                        bindNO: retUserInfo.bindNumber,
-                        mobile: retUserInfo.mobile,
-                        homePhone: retUserInfo.homePhone,
-                        officePhone: retUserInfo.officePhone,
-                        shortPhone: retUserInfo.shortPhone,
-                        otherPhone: retUserInfo.otherMobile,
-                        voip: retUserInfo.voip,
-                        ipPhone: retUserInfo.ipPhoneNumber,
-                        fax: retUserInfo.fax,
-                        email: retUserInfo.email,
-                        webSite: retUserInfo.website,
-                        signature: retUserInfo.signature,
-                        desc: retUserInfo.description,
-                        address: retUserInfo.address,
-                        imageID: retUserInfo.imageId,
-                        postalcode: retUserInfo.zipCode,
-                        isSecrecy: retUserInfo.isSecrecy,
-                        title: retUserInfo.title,
-                        deptID: retUserInfo.departmentId,
-                        deptNameEn: retUserInfo.departmentNameEn,
-                        deptNameCn: retUserInfo.departmentNameCn,
-                        imageSyncTime: retUserInfo.imageSyncTime,
-                        oldAccount: retUserInfo.oldAccount,
-                        state: retUserInfo.state,
-                        modifyTime: retUserInfo.lastUpdateTime,
-                        contactID: retUserInfo.contactId,
-                        extensions: "",
-                    };
-                    callback({ result: true, info: userInfo });
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.setUserInfo = function (userInfo, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "Set user information successfully！" };
-            if (util.isUndefined(userInfo) || util.isNull(userInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("userInfo");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var userInfoPatam = {
-                fullSpelling: userInfo.qPinYin,
-                lastUpdateTime: userInfo.modifyTime,
-                imageId: userInfo.imageID,
-                contactId: userInfo.contactID,
-                bindNumber: userInfo.bindNO,
-                departmentNameCn: userInfo.deptNameCn,
-                isInvalid: userInfo.state,
-                title: userInfo.title,
-                departmentNameEn: userInfo.deptNameEn,
-                homePhone: userInfo.homePhone,
-                isSecrecy: userInfo.isSecrecy,
-                ipPhoneNumber: userInfo.ipPhone,
-                departmentId: userInfo.deptID,
-                staffId: userInfo.staffID,
-                otherPhone2: userInfo.otherPhone,
-                email: userInfo.email,
-                officePhone: userInfo.officePhone,
-                fax: userInfo.fax,
-                description: userInfo.desc,
-                staffAccount: userInfo.account,
-                shortPhone: userInfo.shortPhone,
-                zipCode: userInfo.postalcode,
-                birthday: userInfo.birthday,
-                address: userInfo.address,
-                nativeName: userInfo.nativeName,
-                otherPhone: userInfo.otherPhone,
-                voip: userInfo.voip,
-                webSite: userInfo.webSite,
-                name: userInfo.name,
-                otherMobile: userInfo.mobile,
-                staffNo: userInfo.staffNO,
-                gender: userInfo.gender,
-                age: userInfo.age,
-                imageSyncTime: userInfo.imageSyncTime,
-                oldAccount: userInfo.oldAccount,
-                mobile: userInfo.mobile,
-                signature: userInfo.signature,
-            };
-            this.tsdkClient.setUserInfo(userInfoPatam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.getContactlist = function (isSyncAll, timestamp, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "" };
-            if (util.isUndefined(isSyncAll) || !util.isBoolean(isSyncAll)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isSyncAll");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(timestamp) || util.isNull(timestamp)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("timestamp");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var reqParam = {
-                timestamp: timestamp,
-                isSyncAll: isSyncAll ? 1 : 0,
-            };
-            this.tsdkClient.getContactAndChatGroups(reqParam, function (data) {
-                var constantInfoResult;
-                var imGroup;
-                var userGroup;
-                var userGroupMember;
-                var imGroupList = new Array();
-                var userGroupList = new Array();
-                var userGroupMemberList = new Array();
-                var imGroupResult = data.param.groupsInfo.chatGroupInfoList ? data.param.groupsInfo.chatGroupInfoList : new Array();
-                var userGroupMemberListResult = data.param.groupsInfo.contactGroupDetailInfoList ? data.param.groupsInfo.contactGroupDetailInfoList : new Array();
-                var contactListResult = data.param.groupsInfo.contactGroupBaseInfoList ? data.param.groupsInfo.contactGroupBaseInfoList : new Array();
-                if (data.result == 0) {
-                    for (var i = 0; (imGroupResult != null) && i < imGroupResult.length; i++) {
-                        imGroup = {
-                            id: imGroupResult[i].groupId,
-                            name: imGroupResult[i].groupName,
-                            owner: imGroupResult[i].ownerAccount,
-                            singleFileSpace: imGroupResult[i].groupSpaceFileSizeThreshold,
-                            state: imGroupResult[i].isInvalid,
-                            capacity: imGroupResult[i].capacity,
-                            desc: imGroupResult[i].description,
-                            fixDiscuss: imGroupResult[i].isFixDiscuss,
-                            groupType: imGroupResult[i].groupType,
-                            isInitGroupName: imGroupResult[i].isInitGroupName,
-                            jointFlag: imGroupResult[i].joinAuthMode,
-                            manifesto: imGroupResult[i].manifesto,
-                            msgPolicyType: imGroupResult[i].msgPromptPolicy,
-                            extensions: "",
-                        };
-                        imGroupList.push(imGroup);
-                    }
-                    for (var i = 0; (contactListResult != null) && i < contactListResult.length; i++) {
-                        userGroup = {
-                            id: contactListResult[i].groupId,
-                            index: contactListResult[i].index,
-                            name: contactListResult[i].groupName,
-                            state: contactListResult[i].state,
-                            extensions: "",
-                        };
-                        userGroupList.push(userGroup);
-                    }
-                    for (var i = 0; (userGroupMemberListResult != null) && i < userGroupMemberListResult.length; i++) {
-                        var userList = new Array();
-                        var contactList = new Array();
-                        var selfDefContactList = userGroupMemberListResult[i].selfDefContactList ? userGroupMemberListResult[i].selfDefContactList : new Array();
-                        var friendList = userGroupMemberListResult[i].friendList ? userGroupMemberListResult[i].friendList : new Array();
-                        for (var i_1 = 0; (friendList != null) && i_1 < friendList.length; i_1++) {
-                            var userInfo = {
-                                staffID: friendList[i_1].staffId,
-                                account: friendList[i_1].staffAccount,
-                                staffNO: friendList[i_1].staffNo,
-                                name: friendList[i_1].name,
-                                nativeName: friendList[i_1].nativeName,
-                                qPinYin: friendList[i_1].fullSpelling,
-                                gender: friendList[i_1].gender,
-                                birthday: friendList[i_1].birthday,
-                                age: friendList[i_1].age,
-                                bindNO: friendList[i_1].bindNumber,
-                                mobile: friendList[i_1].mobile,
-                                homePhone: friendList[i_1].homePhone,
-                                officePhone: friendList[i_1].officePhone,
-                                shortPhone: friendList[i_1].shortPhone,
-                                otherPhone: friendList[i_1].otherMobile,
-                                voip: friendList[i_1].voip,
-                                ipPhone: friendList[i_1].ipPhoneNumber,
-                                fax: friendList[i_1].fax,
-                                email: friendList[i_1].email,
-                                webSite: friendList[i_1].website,
-                                signature: friendList[i_1].signature,
-                                desc: friendList[i_1].description,
-                                address: friendList[i_1].address,
-                                imageID: friendList[i_1].imageId,
-                                postalcode: friendList[i_1].zipCode,
-                                isSecrecy: friendList[i_1].isSecrecy,
-                                title: friendList[i_1].title,
-                                deptID: friendList[i_1].departmentId,
-                                deptNameEn: friendList[i_1].departmentNameEn,
-                                deptNameCn: friendList[i_1].departmentNameCn,
-                                imageSyncTime: friendList[i_1].imageSyncTime,
-                                oldAccount: friendList[i_1].oldAccount,
-                                state: friendList[i_1].state,
-                                modifyTime: friendList[i_1].lastUpdateTime,
-                                contactID: friendList[i_1].contactId,
-                                extensions: "",
-                            };
-                            userList.push(userInfo);
-                        }
-                        for (var i_2 = 0; (selfDefContactList != null) && i_2 < selfDefContactList.length; i_2++) {
-                            var selfDefContactInfo = {
-                                id: selfDefContactList[i_2].contactId,
-                                staffID: selfDefContactList[i_2].staffId,
-                                name: selfDefContactList[i_2].name,
-                                nickName: selfDefContactList[i_2].nickName,
-                                foreignName: selfDefContactList[i_2].foreignName,
-                                birthday: selfDefContactList[i_2].birthday,
-                                gender: selfDefContactList[i_2].gender,
-                                corpName: selfDefContactList[i_2].companyName,
-                                deptName: selfDefContactList[i_2].departmentName,
-                                title: selfDefContactList[i_2].title,
-                                mobile: selfDefContactList[i_2].mobile,
-                                officePhone: selfDefContactList[i_2].officePhone,
-                                homePhone: selfDefContactList[i_2].homePhone,
-                                otherPhone: selfDefContactList[i_2].otherPhone,
-                                fax: selfDefContactList[i_2].fax,
-                                email: selfDefContactList[i_2].email,
-                                webSite: selfDefContactList[i_2].webSite,
-                                imNO: selfDefContactList[i_2].imAccount,
-                                address: selfDefContactList[i_2].address,
-                                desc: selfDefContactList[i_2].description,
-                                postalcode: selfDefContactList[i_2].zipCode,
-                                state: selfDefContactList[i_2].isInvalid,
-                                extensions: "",
-                            };
-                            contactList.push(selfDefContactInfo);
-                        }
-                        userGroupMember = {
-                            groupID: userGroupMemberListResult[i].baseInfo.groupId,
-                            name: userGroupMemberListResult[i].baseInfo.groupName,
-                            userList: userList,
-                            contactList: contactList,
-                            extensions: "",
-                        };
-                        userGroupMemberList.push(userGroupMember);
-                    }
-                    constantInfoResult = {
-                        imGroupList: imGroupList,
-                        userGroupList: userGroupList,
-                        userGroupMemberList: userGroupMemberList,
-                        extensions: "",
-                    };
-                    evt = {
-                        result: true,
-                        info: constantInfoResult,
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.addFriend = function (account, groupID, displayName, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "add friend is successful" };
-            if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var reqParam = {
-                displayName: displayName,
-                groupId: groupID,
-                staffAccount: account,
-            };
-            this.tsdkClient.addFriend(reqParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "add friend failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.addContact = function (contactInfo, groupID, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "add contact is successful" };
-            if (util.isUndefined(contactInfo) || util.isNull(contactInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(contactInfo.name) || util.isNull(contactInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.name");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(contactInfo.mobile) || util.isNull(contactInfo.mobile)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.mobile");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var selfDefContactInfo = {
-                foreignName: contactInfo.foreignName,
-                contactId: contactInfo.id,
-                title: contactInfo.title,
-                departmentName: contactInfo.deptName,
-                staffId: 0,
-                otherPhone2: contactInfo.otherPhone,
-                nickName: contactInfo.nickName,
-                email: contactInfo.email,
-                officePhone: contactInfo.officePhone,
-                fax: contactInfo.fax,
-                description: contactInfo.desc,
-                companyName: contactInfo.corpName,
-                zipCode: contactInfo.postalcode,
-                birthday: contactInfo.birthday,
-                imAccount: contactInfo.imNO,
-                address: contactInfo.address,
-                otherPhone: contactInfo.otherPhone,
-                homePhone: contactInfo.homePhone,
-                webSite: contactInfo.webSite,
-                name: contactInfo.name,
-                otherMobile: contactInfo.mobile,
-                mobile: contactInfo.mobile,
-                gender: contactInfo.gender,
-                isInvalid: 0,
-            };
-            var reqParam = {
-                contact: selfDefContactInfo,
-                groupId: groupID,
-            };
-            this.tsdkClient.addContact(reqParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "add contact failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.modContact = function (contactInfo, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "modify contact is successful" };
-            if (util.isUndefined(contactInfo) || util.isNull(contactInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(contactInfo.name) || util.isNull(contactInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.name");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(contactInfo.mobile) || util.isNull(contactInfo.mobile)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.mobile");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(contactInfo.gender) || !util.isNumber(contactInfo.gender)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.gender");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(contactInfo.id) || !util.isNumber(contactInfo.id)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.id");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(contactInfo.state) || !util.isNumber(contactInfo.state)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactInfo.state");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var selfDefContactInfo = {
-                foreignName: contactInfo.foreignName,
-                contactId: contactInfo.id,
-                title: contactInfo.title,
-                departmentName: contactInfo.deptName,
-                staffId: 0,
-                otherPhone2: contactInfo.otherPhone,
-                nickName: contactInfo.nickName,
-                email: contactInfo.email,
-                officePhone: contactInfo.officePhone,
-                fax: contactInfo.fax,
-                description: contactInfo.desc,
-                companyName: contactInfo.corpName,
-                zipCode: contactInfo.postalcode,
-                birthday: contactInfo.birthday,
-                imAccount: contactInfo.imNO,
-                address: contactInfo.address,
-                otherPhone: contactInfo.otherPhone,
-                homePhone: contactInfo.homePhone,
-                webSite: contactInfo.webSite,
-                name: contactInfo.name,
-                otherMobile: contactInfo.mobile,
-                mobile: contactInfo.mobile,
-                gender: contactInfo.gender,
-                isInvalid: 0,
-            };
-            this.tsdkClient.modifyContact(selfDefContactInfo, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "modify contact failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.delContact = function (contactID, groupID, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "delete contact is successful" };
-            if (util.isUndefined(contactID) || util.isNull(contactID) || !util.isInteger(contactID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.delContact(contactID, groupID, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "delete contact failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.addContactGroup = function (groupName, index, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "add contact group is successful" };
-            if (util.isUndefined(groupName) || util.isNull(groupName)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupName");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(index) || util.isNull(index) || !util.isInteger(index)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("index");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var reqParam = {
-                groupName: groupName,
-                index: index,
-            };
-            this.tsdkClient.addContactGroup(reqParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "add contact group failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.modContactGroup = function (groupID, groupName, index, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "modify contact group is successful" };
-            if (util.isUndefined(groupName) || util.isNull(groupName)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupName");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(index) || util.isNull(index) || !util.isInteger(index)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("index");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var groupInfo = {
-                isInvalid: 0,
-                groupName: groupName,
-                groupId: groupID,
-                index: index,
-            };
-            this.tsdkClient.modifyContactGroup(groupInfo, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "modify contact group failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.delContactGroup = function (groupID, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "delete contact group is successful" };
-            if (util.isUndefined(groupID) || util.isNull(groupID) || !util.isInteger(groupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.delContactGroup(groupID, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "delete contact group failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.moveContact = function (contactID, oldGroupID, newGroupID, type, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "move contact is successful" };
-            if (util.isUndefined(contactID) || util.isNull(contactID) || !util.isInteger(contactID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(oldGroupID) || util.isNull(oldGroupID) || !util.isInteger(oldGroupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("oldGroupID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(newGroupID) || util.isNull(newGroupID) || !util.isInteger(newGroupID)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("contactID");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(type) || util.isNull(type) || !util.isBinaryNumber(type)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("type");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var reqParam = {
-                oldGroupId: oldGroupID,
-                opType: type,
-                id: contactID,
-                newGroupId: newGroupID,
-            };
-            this.tsdkClient.moveContact(reqParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "move contact failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.updateGroupListOrder = function (groupIDList, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "update group list order is successful" };
-            if (util.isUndefined(groupIDList) || util.isNull(groupIDList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupIDs");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var userGroupList = new Array();
-            for (var x in groupIDList) {
-                userGroupList.push(Number(groupIDList[x]));
-            }
-            var groupOrder = {
-                contactGroupIdCount: groupIDList.length,
-                contactGroupIdList: userGroupList,
-            };
-            this.tsdkClient.updateContactGroupOrder(groupOrder, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "update group list order failed!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.addGroup = function (groupInfo, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "add group is successful" };
-            if (util.isUndefined(groupInfo) || util.isNull(groupInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupInfo");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupInfo.name) || util.isNull(groupInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("name");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupInfo.groupType) || !util.isBinaryNumber(groupInfo.groupType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var groupInfoParam = {
-                groupType: groupInfo.groupType,
-                capacity: util.isUndefined(groupInfo.capacity) ? 200 : groupInfo.capacity,
-                description: util.isUndefined(groupInfo.desc) ? "" : groupInfo.desc,
-                isInvalid: 0,
-                ownerAccount: "owner",
-                isFixDiscuss: 0,
-                groupName: groupInfo.name,
-                manifesto: util.isUndefined(groupInfo.manifesto) ? "" : groupInfo.manifesto,
-                msgPromptPolicy: util.isUndefined(groupInfo.msgPolicyType) ? 1 : groupInfo.msgPolicyType,
-                groupSpaceFileSizeThreshold: 10240,
-                joinAuthMode: util.isUndefined(groupInfo.jointFlag) ? 1 : groupInfo.jointFlag,
-                groupId: "",
-                isInitGroupName: 0,
-            };
-            this.tsdkClient.addChatGroup(groupInfoParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "add fixed group failed."
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.modGroup = function (groupInfo, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "modify group is successful" };
-            if (util.isUndefined(groupInfo) || util.isNull(groupInfo)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupInfo");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupInfo.id) || util.isNull(groupInfo.id)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("id");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupInfo.name) || util.isNull(groupInfo.name)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("name");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupInfo.owner) || util.isNull(groupInfo.owner)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("owner");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(groupInfo.groupType) || !util.isBinaryNumber(groupInfo.groupType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var groupInfoParam = {
-                groupType: groupInfo.groupType,
-                capacity: util.isUndefined(groupInfo.capacity) ? 200 : groupInfo.capacity,
-                description: util.isUndefined(groupInfo.desc) ? "" : groupInfo.desc,
-                isInvalid: groupInfo.state,
-                ownerAccount: groupInfo.owner,
-                isFixDiscuss: util.isUndefined(groupInfo.fixDiscuss) ? 0 : groupInfo.fixDiscuss,
-                groupName: groupInfo.name,
-                manifesto: util.isUndefined(groupInfo.manifesto) ? "" : groupInfo.manifesto,
-                msgPromptPolicy: util.isUndefined(groupInfo.msgPolicyType) ? 1 : groupInfo.msgPolicyType,
-                groupSpaceFileSizeThreshold: 10240,
-                joinAuthMode: util.isUndefined(groupInfo.jointFlag) ? 1 : groupInfo.jointFlag,
-                groupId: groupInfo.id,
-                isInitGroupName: 0,
-            };
-            this.tsdkClient.modifyChatGroup(0, groupInfoParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "mod fixed group failed."
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.delGroup = function (groupId, callback) {
-            var _this = this;
-            this.isLogin();
-            var evt = { result: true, info: "delete group is successful" };
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.getChatGroupDetail(groupId, function (data) {
-                if (data.result == 0) {
-                    _this.tsdkClient.delChatGroup(data.param.groupInfo.groupType, groupId, function (data) {
-                        if (data.result == 0) {
-                            callback(evt);
-                        }
-                        else {
-                            evt = {
-                                result: false,
-                                info: "del fixed group failed."
-                            };
-                            callback(evt);
-                        }
-                    });
-                }
-                else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                    TsdkClientAdapt.notifyErr(err);
-                    return;
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.joinGroup = function (joinGroupParam, callback) {
-            var _this = this;
-            this.isLogin();
-            var evt = { result: true, info: "join group is successful" };
-            if (util.isUndefined(joinGroupParam) || util.isNull(joinGroupParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var groupId = joinGroupParam.groupId;
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var flag = joinGroupParam.flag;
-            if (util.isUndefined(flag) || !util.isBinaryNumber(flag)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("flag");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var account = joinGroupParam.account;
-            if (flag === 0 && (util.isUndefined(account) || util.isNull(account))) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.getChatGroupDetail(groupId, function (data) {
-                if (data.result == 0) {
-                    var reqJoinGroupParam = {
-                        groupType: data.param.groupInfo.groupType,
-                        joiningAccount: joinGroupParam.flag == 0 ? joinGroupParam.account : _this.baseinfo.userAccount,
-                        displayName: joinGroupParam.displayName,
-                        inviteAccount: joinGroupParam.flag == 0 ? _this.baseinfo.userAccount : "",
-                        groupName: data.param.groupInfo.groupName,
-                        isInvite: joinGroupParam.flag == 0 ? 1 : 0,
-                        groupId: joinGroupParam.groupId,
-                    };
-                    _this.tsdkClient.requestJoinChatGroup(reqJoinGroupParam, function (data) {
-                        if (data.result == 0) {
-                            callback(evt);
-                        }
-                        else {
-                            if (data.param.groupInfo.groupType == 0) {
-                                evt = {
-                                    result: false,
-                                    info: "request fixed group failed."
-                                };
-                            }
-                            else {
-                                evt = {
-                                    result: false,
-                                    info: "request discussion group failed."
-                                };
-                            }
-                            callback(evt);
-                        }
-                    });
-                }
-                else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                    TsdkClientAdapt.notifyErr(err);
-                    return;
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.leaveGroup = function (groupId, account, flag, callback) {
-            var _this = this;
-            this.isLogin();
-            var evt = { result: true, info: "leave group is successful" };
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(flag) || !util.isBinaryNumber(flag)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("flag");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (flag === 1 && (util.isUndefined(account) || util.isNull(account))) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.getChatGroupDetail(groupId, function (data) {
-                if (data.result == 0) {
-                    if (flag == 0) {
-                        _this.tsdkClient.leaveChatGroup(data.param.groupInfo.groupType, groupId, function (data) {
-                            if (data.result == 0) {
-                                callback(evt);
-                            }
-                            else {
-                                if (data.param.groupInfo.groupType == 0) {
-                                    evt = {
-                                        result: false,
-                                        info: "leave fixed group failed."
-                                    };
-                                }
-                                else {
-                                    evt = {
-                                        result: false,
-                                        info: "leave discussion group failed."
-                                    };
-                                }
-                                callback(evt);
-                            }
-                        });
-                    }
-                    else {
-                        _this.tsdkClient.delChatGroupMember(data.param.groupInfo.groupType, account, groupId, function (data) {
-                            if (data.result == 0) {
-                                callback(evt);
-                            }
-                            else {
-                                if (data.param.groupInfo.groupType == 0) {
-                                    evt = {
-                                        result: false,
-                                        info: "del fixed group failed."
-                                    };
-                                }
-                                else {
-                                    evt = {
-                                        result: false,
-                                        info: "del discussion group failed."
-                                    };
-                                }
-                                callback(evt);
-                            }
-                        });
-                    }
-                }
-                else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                    TsdkClientAdapt.notifyErr(err);
-                    return;
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.approvalGroup = function (approvalGroupParam, callback) {
-            var _this = this;
-            this.isLogin();
-            var evt = { result: true, info: "approval group is successful" };
-            if (util.isUndefined(approvalGroupParam) || util.isNull(approvalGroupParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("approvalGroupParam");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(approvalGroupParam.groupId) || util.isNull(approvalGroupParam.groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(approvalGroupParam.memberAccount) || util.isNull(approvalGroupParam.memberAccount)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("memberAccount");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(approvalGroupParam.flag) || !util.isBinaryNumber(approvalGroupParam.flag)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("flag");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(approvalGroupParam.agreeJoin) || !util.isBoolean(approvalGroupParam.agreeJoin)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("agreeJoin");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.getChatGroupDetail(approvalGroupParam.groupId, function (data) {
-                if (data.result == 0) {
-                    var groupName = data.param.groupInfo.groupName;
-                    var confirmJoinGroupParam = {
-                        joiningAccount: approvalGroupParam.memberAccount,
-                        displayName: approvalGroupParam.diaplayName,
-                        groupName: groupName,
-                        isInvite: approvalGroupParam.flag == 0 ? 1 : 0,
-                        isAgreeJoin: approvalGroupParam.agreeJoin ? 1 : 0,
-                        groupId: approvalGroupParam.groupId,
-                    };
-                    _this.tsdkClient.confirmJoinChatGroup(confirmJoinGroupParam, function (data) {
-                        if (data.result == 0) {
-                            callback(evt);
-                        }
-                        else {
-                            if (approvalGroupParam.flag == 0) {
-                                evt = {
-                                    result: false,
-                                    info: "confirm fixed group apply failed."
-                                };
-                            }
-                            else {
-                                evt = {
-                                    result: false,
-                                    info: "confirm fixed group invite failed."
-                                };
-                            }
-                            callback(evt);
-                        }
-                    });
-                }
-                else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                    TsdkClientAdapt.notifyErr(err);
-                    return;
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.searchGroup = function (searchGroupParam, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "search the group list successfully" };
-            if (util.isUndefined(searchGroupParam) || util.isNull(searchGroupParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("searchGroupParam");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(searchGroupParam.isNeedAmount) || !util.isBoolean(searchGroupParam.isNeedAmount)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isNeedAmount");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(searchGroupParam.count) || !util.isInteger(searchGroupParam.count)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("count");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(searchGroupParam.queryType) || !util.isIntegerRange(searchGroupParam.queryType, 0, 2)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(searchGroupParam.condition)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("condition");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var groupQueryParam = {
-                searchKeyword: searchGroupParam.condition,
-                maxReturnedCount: searchGroupParam.count,
-                queryType: searchGroupParam.queryType,
-                queryOffset: searchGroupParam.offset,
-                isNeedTotalCount: searchGroupParam.isNeedAmount,
-            };
-            this.tsdkClient.queryChatGroups(groupQueryParam, function (data) {
-                if (data.result == 0) {
-                    var retGroupList = data.param.groupQueryResult.chatGroupInfoList;
-                    var groupList = new Array();
-                    if (data.param.currentResultCount || retGroupList != null) {
-                        for (var i = 0; i < retGroupList.length; i++) {
-                            var group = retGroupList[i];
-                            var groupInfo = {
-                                id: group.groupId,
-                                name: group.groupName,
-                                capacity: group.capacity,
-                                manifesto: group.manifesto,
-                                desc: group.description,
-                                owner: group.ownerAccount,
-                                jointFlag: group.joinAuthMode,
-                                msgPolicyType: group.msgPromptPolicy,
-                                groupType: group.groupType,
-                                fixDiscuss: group.isFixDiscuss,
-                                state: group.state,
-                                isInitGroupName: group.isInitGroupName,
-                                singleFileSpace: group.groupSpaceFileSizeThreshold,
-                                extensions: ""
-                            };
-                            groupList.push(groupInfo);
-                        }
-                    }
-                    evt.info = { "count": data.param.currentResultCount, "offset": data.param.queryOffset,
-                        "amount": data.param.chatGroupTotalCount, "groupList": groupList };
-                    callback(evt);
-                }
-                else {
-                    callback(data);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.getGroupDetail = function (groupId, callback) {
-            this.isLogin();
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.getChatGroupDetail(groupId, function (data) {
-                if (data.result == 0) {
-                    var retGroupInfo = data.param.groupInfo;
-                    var groupInfo = {
-                        id: retGroupInfo.groupId,
-                        name: retGroupInfo.groupName,
-                        capacity: retGroupInfo.capacity,
-                        manifesto: retGroupInfo.manifesto,
-                        desc: retGroupInfo.description,
-                        owner: retGroupInfo.ownerAccount,
-                        jointFlag: retGroupInfo.joinAuthMode,
-                        msgPolicyType: retGroupInfo.msgPromptPolicy,
-                        groupType: retGroupInfo.groupType,
-                        fixDiscuss: retGroupInfo.isFixDiscuss,
-                        state: retGroupInfo.isInvalid,
-                        isInitGroupName: retGroupInfo.isInitGroupName,
-                        singleFileSpace: retGroupInfo.groupSpaceFileSizeThreshold,
-                        extensions: ""
-                    };
-                    callback({ result: true, info: groupInfo });
-                }
-                else {
-                    callback(data);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.getGroupMembers = function (groupId, isSyncAll, timestamp, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "Get the list of group members successfully" };
-            var userList = new Array();
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(isSyncAll) || util.isNull(isSyncAll) || !util.isBoolean(isSyncAll)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isSyncAll");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(timestamp) || util.isNull(timestamp)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("timestamp");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var memberGetParam = {
-                timestamp: timestamp,
-                isSyncAll: isSyncAll ? 1 : 0,
-                groupId: groupId,
-            };
-            this.tsdkClient.getChatGroupMembers(memberGetParam, function (data) {
-                if (data.result == 0) {
-                    var memberInfoList = data.param.memberGetResult.memberList;
-                    for (var index = 0; memberInfoList != null && index < memberInfoList.length; index++) {
-                        var element = memberInfoList[index];
-                        var userInfo = {
-                            staffID: element.staffId,
-                            account: element.staffAccount,
-                            staffNO: element.staffNo,
-                            name: element.name,
-                            nativeName: element.nativeName,
-                            qPinYin: element.fullSpelling,
-                            gender: element.gender,
-                            birthday: element.birthday,
-                            age: element.age,
-                            bindNO: element.bindNumber,
-                            mobile: element.mobile,
-                            homePhone: element.homePhone,
-                            officePhone: element.officePhone,
-                            shortPhone: element.shortPhone,
-                            otherPhone: element.otherMobile,
-                            voip: element.voip,
-                            ipPhone: element.ipPhoneNumber,
-                            fax: element.fax,
-                            email: element.email,
-                            webSite: element.website,
-                            signature: element.signature,
-                            desc: element.description,
-                            address: element.address,
-                            imageID: element.imageId,
-                            postalcode: element.zipCode,
-                            isSecrecy: element.isSecrecy,
-                            title: element.title,
-                            deptID: element.departmentId,
-                            deptNameEn: element.departmentNameEn,
-                            deptNameCn: element.departmentNameCn,
-                            imageSyncTime: element.imageSyncTime,
-                            oldAccount: element.oldAccount,
-                            state: element.state,
-                            modifyTime: element.lastUpdateTime,
-                            contactID: element.contactId,
-                            extensions: "",
-                        };
-                        userList.push(userInfo);
-                    }
-                    evt.info = { "groupMemberList": userList };
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "Failed to get group member list!"
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.transferGroup = function (groupId, account, callback) {
-            var _this = this;
-            this.isLogin();
-            var evt = { result: true, info: "Transfer group administrator successfully" };
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            this.tsdkClient.getChatGroupDetail(groupId, function (data) {
-                if (data.result == 0) {
-                    var retGroupInfo = data.param.groupInfo;
-                    var groupInfoParam = {
-                        groupType: retGroupInfo.groupType,
-                        capacity: retGroupInfo.capacity,
-                        description: "",
-                        isInvalid: 0,
-                        ownerAccount: account,
-                        isFixDiscuss: 0,
-                        groupName: "",
-                        manifesto: retGroupInfo.manifesto,
-                        msgPromptPolicy: 0,
-                        groupSpaceFileSizeThreshold: 0,
-                        joinAuthMode: 0,
-                        groupId: groupId,
-                        isInitGroupName: 0,
-                    };
-                    _this.tsdkClient.modifyChatGroup(1, groupInfoParam, function (data) {
-                        if (data.result == 0) {
-                            callback(evt);
-                        }
-                        else {
-                            evt = {
-                                result: false,
-                                info: "mod fixed group failed."
-                            };
-                            callback(evt);
-                        }
-                    });
-                }
-                else {
-                    var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                    TsdkClientAdapt.notifyErr(err);
-                    return;
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.setGroupMsgPromptPolicy = function (groupId, msgpolicyType, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "Set the group message prompt mode successfully!" };
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(msgpolicyType) || !util.isIntegerRange(msgpolicyType, 0, 1)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("msgpolicyType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var groupInfoParam = {
-                groupType: 0,
-                capacity: 0,
-                description: "",
-                isInvalid: 0,
-                ownerAccount: "",
-                isFixDiscuss: 0,
-                groupName: "",
-                manifesto: "",
-                msgPromptPolicy: msgpolicyType,
-                groupSpaceFileSizeThreshold: 0,
-                joinAuthMode: 0,
-                groupId: groupId,
-                isInitGroupName: 0,
-            };
-            this.tsdkClient.modifyChatGroup(2, groupInfoParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "mod fixed group failed."
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.setDisgroupPolicy = function (groupId, opType, callback) {
-            this.isLogin();
-            var evt = { result: true, info: "Group saved to list successfully succeeded" };
-            if (util.isUndefined(groupId) || util.isNull(groupId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("groupId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(opType) || !util.isIntegerRange(opType, 0, 1)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("opType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var groupInfoParam = {
-                groupType: opType,
-                capacity: 0,
-                description: "",
-                isInvalid: 0,
-                ownerAccount: "",
-                isFixDiscuss: 0,
-                groupName: "",
-                manifesto: "",
-                msgPromptPolicy: 0,
-                groupSpaceFileSizeThreshold: 0,
-                joinAuthMode: 0,
-                groupId: groupId,
-                isInitGroupName: 0,
-            };
-            this.tsdkClient.modifyChatGroup(4, groupInfoParam, function (data) {
-                if (data.result == 0) {
-                    callback(evt);
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "mod fixed group failed."
-                    };
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.publishStatus = function (status, callback) {
-            if (util.isUndefined(status) || util.isNull(status) || !util.isInteger(status)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("status");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (status < -1 || status == 0 || status == 2 || status > 5) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("status");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var statusInfoParam = {
-                status: status
-            };
-            var evt = { result: true, info: "set personal status successfully!" };
-            this.tsdkClient.setPersonalStatus(statusInfoParam, function (ret) {
-                if (ret.result != 0) {
-                    evt = {
-                        result: false,
-                        info: "setting personal status failed!"
-                    };
-                }
-                callback(evt);
-            });
-        };
-        TsdkClientAdapt.prototype.detectUserStatus = function (accountList, callback) {
-            if (util.isUndefined(accountList) || !util.isArray(accountList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("accountList");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var accountListArr = new Array();
-            for (var x in accountList) {
-                accountListArr.push({
-                    staffAccount: accountList[x],
-                });
-            }
-            var detectParam = {
-                accountList: accountListArr,
-                accountCount: accountListArr.length
-            };
-            var evt = { result: false, info: "Failed to detect user status!" };
-            this.tsdkClient.detectUserStatus(detectParam, function (ret) {
-                if (ret.result != 0) {
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.sendIMMessage = function (messageSendParam, callback) {
-            if (util.isUndefined(messageSendParam) || util.isNull(messageSendParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(messageSendParam.content) || util.isNull(messageSendParam.content)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.content");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(messageSendParam.chatType) || util.isNull(messageSendParam.chatType) || !util.isNumber(messageSendParam.chatType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.chatType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(messageSendParam.mediaType) || util.isNull(messageSendParam.mediaType) || !util.isNumber(messageSendParam.mediaType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.mediaType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(messageSendParam.receiver) || util.isNull(messageSendParam.receiver)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageSendParam.receiver");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var atUserInfoList = new Array();
-            for (var index = 0; index < messageSendParam.atUserInfoList.length; index++) {
-                var element = messageSendParam.atUserInfoList[index];
-                atUserInfoList[index] = { "staffAccount": element };
-            }
-            var evt = { result: false, info: "Sending message failed!" };
-            var chatMsg = {
-                origin: this.baseinfo.userAccount,
-                clientChatId: messageSendParam.clientChatID,
-                atUserList: atUserInfoList,
-                sourceType: 0,
-                atUserCount: messageSendParam.atUserInfoList == null ? 0 : messageSendParam.atUserInfoList.length,
-                chatType: messageSendParam.chatType,
-                regionId: 0,
-                content: messageSendParam.content,
-                target: messageSendParam.receiver,
-                originName: messageSendParam.displayName ? messageSendParam.displayName : "",
-                groupId: messageSendParam.receiver,
-                chatMediaType: messageSendParam.mediaType,
-            };
-            this.tsdkClient.sendMessage(chatMsg, function (ret) {
-                if (ret.result != 0) {
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.notifyImInputting = function (account, type) {
-            if (util.isUndefined(account) || util.isNull(account)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("account");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(type) || util.isNull(type) || !util.isBinaryNumber(type)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("type");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var callback = function () { };
-            this.tsdkClient.setInputting(account, type, callback);
-        };
-        TsdkClientAdapt.prototype.withDrawMessage = function (messageWithDrawParam, callback) {
-            if (util.isUndefined(messageWithDrawParam) || util.isNull(messageWithDrawParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(messageWithDrawParam.receiver) || util.isNull(messageWithDrawParam.receiver)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam.receiver");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(messageWithDrawParam.isGroupMsg) || util.isNull(messageWithDrawParam.isGroupMsg) || !util.isNumber(messageWithDrawParam.isGroupMsg)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam.isGroupMsg");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(messageWithDrawParam.msgId) || util.isNull(messageWithDrawParam.msgId)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageWithDrawParam.msgId");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var evt = { result: false, info: "Sending message failed!" };
-            var msgidList = new Array();
-            msgidList[0] = { "msgId": Number(messageWithDrawParam.msgId) };
-            var withdrawMsgReq = {
-                origin: this.baseinfo.userAccount,
-                withdrawMsgList: msgidList,
-                target: messageWithDrawParam.receiver,
-                isIncludeLastMsg: 1,
-                withdrawMsgCount: 1,
-                groupName: messageWithDrawParam.groupName,
-                withdrawMsgType: messageWithDrawParam.isGroupMsg,
-                originName: messageWithDrawParam.originName
-            };
-            this.tsdkClient.withdrawMessage(withdrawMsgReq, function (ret) {
-                if (ret.result != 0) {
-                    callback(evt);
-                }
-            });
-        };
-        TsdkClientAdapt.prototype.setReadMessage = function (messageReadList, callback) {
-            var evt = { result: true, info: "Set the message to be read successfully!" };
-            if (util.isUndefined(messageReadList) || util.isNull(messageReadList) || !util.isArray(messageReadList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("messageReadList");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var readMsgList = new Array();
-            for (var i = 0; i < messageReadList.length; i++) {
-                var readMsg = {
-                    origin: messageReadList[i].sender,
-                    msgId: Number(messageReadList[i].msgId),
-                    historyMsgType: messageReadList[i].msgType
-                };
-                readMsgList[i] = readMsg;
-            }
-            var setMsgReadParam = {
-                readMsgCount: readMsgList.length,
-                readMsgList: readMsgList,
-            };
-            this.tsdkClient.setMessageRead(setMsgReadParam, function (ret) {
-                if (ret.result != 0) {
-                    evt = {
-                        result: false,
-                        info: "Set message failed to read!"
-                    };
-                }
-                callback(evt);
-            });
-        };
-        TsdkClientAdapt.prototype.deleteMessage = function (deleteMessageParam, callback) {
-            var evt = { result: true, info: "delete message successfully!" };
-            if (util.isUndefined(deleteMessageParam) || util.isNull(deleteMessageParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("deleteMessageParam");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(deleteMessageParam.msgIdList) || util.isNull(deleteMessageParam.msgIdList) || !util.isArray(deleteMessageParam.msgIdList)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("msgIdList");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(deleteMessageParam.isGroupMsg) || util.isNull(deleteMessageParam.isGroupMsg) || !util.isIntegerRange(deleteMessageParam.isGroupMsg, 1, 2)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("isGroupMsg");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(deleteMessageParam.optType) || util.isNull(deleteMessageParam.optType) || !util.isBinaryNumber(deleteMessageParam.optType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("optType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var msgIdList = new Array();
-            for (var i = 0; i < deleteMessageParam.msgIdList.length; i++) {
-                var msgBaseInfo = {
-                    msgId: Number(deleteMessageParam.msgIdList[i])
-                };
-                msgIdList[i] = msgBaseInfo;
-            }
-            var delParam = {
-                origin: deleteMessageParam.sender,
-                msgIdCount: msgIdList.length,
-                opType: deleteMessageParam.optType,
-                msgType: deleteMessageParam.isGroupMsg,
-                msgIdList: msgIdList
-            };
-            this.tsdkClient.deleteHistoryMessage(delParam, function (ret) {
-                if (ret.result != 0) {
-                    evt = {
-                        result: false,
-                        info: "delete message failure!"
-                    };
-                }
-                callback(evt);
-            });
-        };
-        TsdkClientAdapt.prototype.queryHistoryMessage = function (queryHistoryMessageParam, callback) {
-            var evt = { result: true, info: "query message to be read successfully!" };
-            if (util.isUndefined(queryHistoryMessageParam) || util.isNull(queryHistoryMessageParam)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(queryHistoryMessageParam.operationType) || util.isNull(queryHistoryMessageParam.operationType) || !util.isBinaryNumber(queryHistoryMessageParam.operationType)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.operationType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(queryHistoryMessageParam.msgType) || util.isNull(queryHistoryMessageParam.msgType) || !util.isIntegerRange(queryHistoryMessageParam.msgType, 0, 3) || queryHistoryMessageParam.msgType == 2) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.msgType");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(queryHistoryMessageParam.count) || util.isNull(queryHistoryMessageParam.count) || !util.isNumber(queryHistoryMessageParam.count)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.count");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (enum_1.IM_HISTORYMESSAGE_TYPE.BULLETIN != queryHistoryMessageParam.msgType && (util.isUndefined(queryHistoryMessageParam.sender) || util.isNull(queryHistoryMessageParam.sender))) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("queryHistoryMessageParam.sender");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            if (util.isUndefined(callback) || !util.isFunction(callback)) {
-                var err = errorCode_1.EC_SDK_ERROR.IM_PARAM_INVALID_ERROR("callback");
-                TsdkClientAdapt.notifyErr(err);
-                return;
-            }
-            var queryParam = {
-                origin: queryHistoryMessageParam.sender,
-                msgId: Number(queryHistoryMessageParam.msgId),
-                count: queryHistoryMessageParam.count,
-                queryType: queryHistoryMessageParam.operationType,
-                historyMsgType: queryHistoryMessageParam.msgType
-            };
-            this.tsdkClient.queryHistoryMessage(queryParam, function (ret) {
-                if (ret.result == 0) {
-                    var queryHistoryInfo = ret.param.queryResult;
-                    var chatListInfo = queryHistoryInfo.chatMsgList;
-                    var queryHistoryResult = void 0;
-                    var chatInfoArr = new Array();
-                    for (var index = 0; chatListInfo != null && index < chatListInfo.length; index++) {
-                        var element = chatListInfo[index];
-                        var chatInfo = {
-                            chatType: element.chatType,
-                            sourceFlag: element.sourceType,
-                            contentType: 1,
-                            utcStamp: element.utcStamp,
-                            origin: element.origin,
-                            target: element.target,
-                            groupID: element.groupId,
-                            content: element.content,
-                            name: element.originName,
-                            regionID: element.regionId,
-                            clientChatID: element.clientMsgId,
-                            serverChatID: element.serverMsgId,
-                            groupName: element.groupName,
-                            mediaType: element.chatMediaType,
-                            deliverTime: element.serverDeliverTime,
-                            atUserInfoList: new Array(),
-                        };
-                        chatInfoArr.push(chatInfo);
-                    }
-                    queryHistoryResult = {
-                        operationType: queryHistoryInfo.queryType,
-                        msgType: queryHistoryInfo.historyMsgType,
-                        sender: queryHistoryInfo.origin,
-                        totalCount: queryHistoryInfo.totalCount,
-                        chatList: chatInfoArr
-                    };
-                    evt.info = queryHistoryResult;
-                }
-                else {
-                    evt = {
-                        result: false,
-                        info: "query message failure!"
-                    };
-                }
-                callback(evt);
-            });
-        };
         TsdkClientAdapt.prototype.uiPluginSetButtonState = function (button, isOff, callbacks) {
             this.tsdkClient.uiPluginSetButtonState(button, isOff, callbacks);
         };
@@ -5580,13 +3479,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         MEDIADEVICE_TYPE[MEDIADEVICE_TYPE["SPEAKER"] = 1] = "SPEAKER";
         MEDIADEVICE_TYPE[MEDIADEVICE_TYPE["CAMERA"] = 2] = "CAMERA";
     })(MEDIADEVICE_TYPE = exports.MEDIADEVICE_TYPE || (exports.MEDIADEVICE_TYPE = {}));
-    var IM_HISTORYMESSAGE_TYPE;
-    (function (IM_HISTORYMESSAGE_TYPE) {
-        IM_HISTORYMESSAGE_TYPE[IM_HISTORYMESSAGE_TYPE["SINGLECHAT"] = 0] = "SINGLECHAT";
-        IM_HISTORYMESSAGE_TYPE[IM_HISTORYMESSAGE_TYPE["GROUPCHAT"] = 1] = "GROUPCHAT";
-        IM_HISTORYMESSAGE_TYPE[IM_HISTORYMESSAGE_TYPE["BULLETIN"] = 3] = "BULLETIN";
-    })(IM_HISTORYMESSAGE_TYPE = exports.IM_HISTORYMESSAGE_TYPE || (exports.IM_HISTORYMESSAGE_TYPE = {}));
-    ;
     var CLOUDEC_SDK_LOG_LEVEL;
     (function (CLOUDEC_SDK_LOG_LEVEL) {
         CLOUDEC_SDK_LOG_LEVEL[CLOUDEC_SDK_LOG_LEVEL["LOG_ERROR"] = 0] = "LOG_ERROR";
@@ -5870,7 +3762,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var store = __webpack_require__(53)('wks');
-var uid = __webpack_require__(36);
+var uid = __webpack_require__(35);
 var Symbol = __webpack_require__(2).Symbol;
 var USE_SYMBOL = typeof Symbol == 'function';
 
@@ -6131,6 +4023,16 @@ module.exports = function (it) {
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports) {
+
+module.exports = function (it) {
+  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
@@ -6141,16 +4043,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = function (it) {
-  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
-  return it;
-};
 
 
 /***/ }),
@@ -6168,7 +4060,7 @@ module.exports = function (it, key) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(8);
-var createDesc = __webpack_require__(35);
+var createDesc = __webpack_require__(34);
 module.exports = __webpack_require__(7) ? function (object, key, value) {
   return dP.f(object, key, createDesc(1, value));
 } : function (object, key, value) {
@@ -6184,7 +4076,7 @@ module.exports = __webpack_require__(7) ? function (object, key, value) {
 var global = __webpack_require__(2);
 var hide = __webpack_require__(14);
 var has = __webpack_require__(13);
-var SRC = __webpack_require__(36)('src');
+var SRC = __webpack_require__(35)('src');
 var TO_STRING = 'toString';
 var $toString = Function[TO_STRING];
 var TPL = ('' + $toString).split(TO_STRING);
@@ -6256,7 +4148,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var pIE = __webpack_require__(51);
-var createDesc = __webpack_require__(35);
+var createDesc = __webpack_require__(34);
 var toIObject = __webpack_require__(17);
 var toPrimitive = __webpack_require__(24);
 var has = __webpack_require__(13);
@@ -6297,7 +4189,7 @@ module.exports = Object.getPrototypeOf || function (O) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // optional / simple context binding
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 module.exports = function (fn, that, length) {
   aFunction(fn);
   if (that === undefined) return fn;
@@ -6467,32 +4359,32 @@ module.exports = function (TYPE, $create) {
 "use strict";
 
 if (__webpack_require__(7)) {
-  var LIBRARY = __webpack_require__(37);
+  var LIBRARY = __webpack_require__(36);
   var global = __webpack_require__(2);
   var fails = __webpack_require__(3);
   var $export = __webpack_require__(0);
   var $typed = __webpack_require__(63);
   var $buffer = __webpack_require__(92);
   var ctx = __webpack_require__(20);
-  var anInstance = __webpack_require__(43);
-  var propertyDesc = __webpack_require__(35);
+  var anInstance = __webpack_require__(42);
+  var propertyDesc = __webpack_require__(34);
   var hide = __webpack_require__(14);
-  var redefineAll = __webpack_require__(45);
+  var redefineAll = __webpack_require__(44);
   var toInteger = __webpack_require__(26);
   var toLength = __webpack_require__(9);
   var toIndex = __webpack_require__(120);
-  var toAbsoluteIndex = __webpack_require__(39);
+  var toAbsoluteIndex = __webpack_require__(38);
   var toPrimitive = __webpack_require__(24);
   var has = __webpack_require__(13);
   var classof = __webpack_require__(52);
   var isObject = __webpack_require__(4);
   var toObject = __webpack_require__(10);
   var isArrayIter = __webpack_require__(83);
-  var create = __webpack_require__(40);
+  var create = __webpack_require__(39);
   var getPrototypeOf = __webpack_require__(19);
-  var gOPN = __webpack_require__(41).f;
+  var gOPN = __webpack_require__(40).f;
   var getIterFn = __webpack_require__(85);
-  var uid = __webpack_require__(36);
+  var uid = __webpack_require__(35);
   var wks = __webpack_require__(5);
   var createArrayMethod = __webpack_require__(28);
   var createArrayIncludes = __webpack_require__(54);
@@ -6500,7 +4392,7 @@ if (__webpack_require__(7)) {
   var ArrayIterators = __webpack_require__(88);
   var Iterators = __webpack_require__(48);
   var $iterDetect = __webpack_require__(58);
-  var setSpecies = __webpack_require__(42);
+  var setSpecies = __webpack_require__(41);
   var arrayFill = __webpack_require__(87);
   var arrayCopyWithin = __webpack_require__(110);
   var $DP = __webpack_require__(8);
@@ -7008,6 +4900,78 @@ module.exports = {
 /* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var META = __webpack_require__(35)('meta');
+var isObject = __webpack_require__(4);
+var has = __webpack_require__(13);
+var setDesc = __webpack_require__(8).f;
+var id = 0;
+var isExtensible = Object.isExtensible || function () {
+  return true;
+};
+var FREEZE = !__webpack_require__(3)(function () {
+  return isExtensible(Object.preventExtensions({}));
+});
+var setMeta = function (it) {
+  setDesc(it, META, { value: {
+    i: 'O' + ++id, // object ID
+    w: {}          // weak collections IDs
+  } });
+};
+var fastKey = function (it, create) {
+  // return primitive with prefix
+  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if (!has(it, META)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return 'F';
+    // not necessary to add metadata
+    if (!create) return 'E';
+    // add missing metadata
+    setMeta(it);
+  // return object ID
+  } return it[META].i;
+};
+var getWeak = function (it, create) {
+  if (!has(it, META)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return true;
+    // not necessary to add metadata
+    if (!create) return false;
+    // add missing metadata
+    setMeta(it);
+  // return hash weak collections IDs
+  } return it[META].w;
+};
+// add metadata on freeze-family methods calling
+var onFreeze = function (it) {
+  if (FREEZE && meta.NEED && isExtensible(it) && !has(it, META)) setMeta(it);
+  return it;
+};
+var meta = module.exports = {
+  KEY: META,
+  NEED: false,
+  fastKey: fastKey,
+  getWeak: getWeak,
+  onFreeze: onFreeze
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 22.1.3.31 Array.prototype[@@unscopables]
+var UNSCOPABLES = __webpack_require__(5)('unscopables');
+var ArrayProto = Array.prototype;
+if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(14)(ArrayProto, UNSCOPABLES, {});
+module.exports = function (key) {
+  ArrayProto[UNSCOPABLES][key] = true;
+};
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -7043,7 +5007,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(337), __webpack_require__(338), __webpack_require__(339), __webpack_require__(6), __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkServiceSocket_1, tsdkFFI_1, tsdkManager_1, util_1, config_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(337), __webpack_require__(338), __webpack_require__(339), __webpack_require__(6), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkServiceSocket_1, tsdkFFI_1, tsdkManager_1, util_1, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkManagerWrapper = (function () {
@@ -7182,79 +5146,198 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var META = __webpack_require__(36)('meta');
-var isObject = __webpack_require__(4);
-var has = __webpack_require__(13);
-var setDesc = __webpack_require__(8).f;
-var id = 0;
-var isExtensible = Object.isExtensible || function () {
-  return true;
-};
-var FREEZE = !__webpack_require__(3)(function () {
-  return isExtensible(Object.preventExtensions({}));
-});
-var setMeta = function (it) {
-  setDesc(it, META, { value: {
-    i: 'O' + ++id, // object ID
-    w: {}          // weak collections IDs
-  } });
-};
-var fastKey = function (it, create) {
-  // return primitive with prefix
-  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
-  if (!has(it, META)) {
-    // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return 'F';
-    // not necessary to add metadata
-    if (!create) return 'E';
-    // add missing metadata
-    setMeta(it);
-  // return object ID
-  } return it[META].i;
-};
-var getWeak = function (it, create) {
-  if (!has(it, META)) {
-    // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return true;
-    // not necessary to add metadata
-    if (!create) return false;
-    // add missing metadata
-    setMeta(it);
-  // return hash weak collections IDs
-  } return it[META].w;
-};
-// add metadata on freeze-family methods calling
-var onFreeze = function (it) {
-  if (FREEZE && meta.NEED && isExtensible(it) && !has(it, META)) setMeta(it);
-  return it;
-};
-var meta = module.exports = {
-  KEY: META,
-  NEED: false,
-  fastKey: fastKey,
-  getWeak: getWeak,
-  onFreeze: onFreeze
-};
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 22.1.3.31 Array.prototype[@@unscopables]
-var UNSCOPABLES = __webpack_require__(5)('unscopables');
-var ArrayProto = Array.prototype;
-if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(14)(ArrayProto, UNSCOPABLES, {});
-module.exports = function (key) {
-  ArrayProto[UNSCOPABLES][key] = true;
-};
-
-
-/***/ }),
 /* 34 */
+/***/ (function(module, exports) {
+
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+var id = 0;
+var px = Math.random();
+module.exports = function (key) {
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
+
+module.exports = false;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys = __webpack_require__(96);
+var enumBugKeys = __webpack_require__(70);
+
+module.exports = Object.keys || function keys(O) {
+  return $keys(O, enumBugKeys);
+};
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(26);
+var max = Math.max;
+var min = Math.min;
+module.exports = function (index, length) {
+  index = toInteger(index);
+  return index < 0 ? max(index + length, 0) : min(index, length);
+};
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var anObject = __webpack_require__(1);
+var dPs = __webpack_require__(97);
+var enumBugKeys = __webpack_require__(70);
+var IE_PROTO = __webpack_require__(69)('IE_PROTO');
+var Empty = function () { /* empty */ };
+var PROTOTYPE = 'prototype';
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function () {
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = __webpack_require__(67)('iframe');
+  var i = enumBugKeys.length;
+  var lt = '<';
+  var gt = '>';
+  var iframeDocument;
+  iframe.style.display = 'none';
+  __webpack_require__(71).appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
+  return createDict();
+};
+
+module.exports = Object.create || function create(O, Properties) {
+  var result;
+  if (O !== null) {
+    Empty[PROTOTYPE] = anObject(O);
+    result = new Empty();
+    Empty[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : dPs(result, Properties);
+};
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
+var $keys = __webpack_require__(96);
+var hiddenKeys = __webpack_require__(70).concat('length', 'prototype');
+
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+  return $keys(O, hiddenKeys);
+};
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var global = __webpack_require__(2);
+var dP = __webpack_require__(8);
+var DESCRIPTORS = __webpack_require__(7);
+var SPECIES = __webpack_require__(5)('species');
+
+module.exports = function (KEY) {
+  var C = global[KEY];
+  if (DESCRIPTORS && C && !C[SPECIES]) dP.f(C, SPECIES, {
+    configurable: true,
+    get: function () { return this; }
+  });
+};
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+module.exports = function (it, Constructor, name, forbiddenField) {
+  if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
+    throw TypeError(name + ': incorrect invocation!');
+  } return it;
+};
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var ctx = __webpack_require__(20);
+var call = __webpack_require__(108);
+var isArrayIter = __webpack_require__(83);
+var anObject = __webpack_require__(1);
+var toLength = __webpack_require__(9);
+var getIterFn = __webpack_require__(85);
+var BREAK = {};
+var RETURN = {};
+var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
+  var iterFn = ITERATOR ? function () { return iterable; } : getIterFn(iterable);
+  var f = ctx(fn, that, entries ? 2 : 1);
+  var index = 0;
+  var length, step, iterator, result;
+  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
+  // fast case for arrays with default iterator
+  if (isArrayIter(iterFn)) for (length = toLength(iterable.length); length > index; index++) {
+    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+    if (result === BREAK || result === RETURN) return result;
+  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
+    result = call(iterator, f, step.value, entries);
+    if (result === BREAK || result === RETURN) return result;
+  }
+};
+exports.BREAK = BREAK;
+exports.RETURN = RETURN;
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var redefine = __webpack_require__(15);
+module.exports = function (target, src, safe) {
+  for (var key in src) redefine(target, key, src[key], safe);
+  return target;
+};
+
+
+/***/ }),
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1) {
@@ -7315,197 +5398,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     exports.default = Observer;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports) {
-
-module.exports = function (bitmap, value) {
-  return {
-    enumerable: !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
-  };
-};
-
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports) {
-
-var id = 0;
-var px = Math.random();
-module.exports = function (key) {
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-};
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports) {
-
-module.exports = false;
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys = __webpack_require__(96);
-var enumBugKeys = __webpack_require__(70);
-
-module.exports = Object.keys || function keys(O) {
-  return $keys(O, enumBugKeys);
-};
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var toInteger = __webpack_require__(26);
-var max = Math.max;
-var min = Math.min;
-module.exports = function (index, length) {
-  index = toInteger(index);
-  return index < 0 ? max(index + length, 0) : min(index, length);
-};
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject = __webpack_require__(1);
-var dPs = __webpack_require__(97);
-var enumBugKeys = __webpack_require__(70);
-var IE_PROTO = __webpack_require__(69)('IE_PROTO');
-var Empty = function () { /* empty */ };
-var PROTOTYPE = 'prototype';
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function () {
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = __webpack_require__(67)('iframe');
-  var i = enumBugKeys.length;
-  var lt = '<';
-  var gt = '>';
-  var iframeDocument;
-  iframe.style.display = 'none';
-  __webpack_require__(71).appendChild(iframe);
-  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-  // createDict = iframe.contentWindow.Object;
-  // html.removeChild(iframe);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-  iframeDocument.close();
-  createDict = iframeDocument.F;
-  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
-  return createDict();
-};
-
-module.exports = Object.create || function create(O, Properties) {
-  var result;
-  if (O !== null) {
-    Empty[PROTOTYPE] = anObject(O);
-    result = new Empty();
-    Empty[PROTOTYPE] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO] = O;
-  } else result = createDict();
-  return Properties === undefined ? result : dPs(result, Properties);
-};
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys = __webpack_require__(96);
-var hiddenKeys = __webpack_require__(70).concat('length', 'prototype');
-
-exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-  return $keys(O, hiddenKeys);
-};
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var global = __webpack_require__(2);
-var dP = __webpack_require__(8);
-var DESCRIPTORS = __webpack_require__(7);
-var SPECIES = __webpack_require__(5)('species');
-
-module.exports = function (KEY) {
-  var C = global[KEY];
-  if (DESCRIPTORS && C && !C[SPECIES]) dP.f(C, SPECIES, {
-    configurable: true,
-    get: function () { return this; }
-  });
-};
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports) {
-
-module.exports = function (it, Constructor, name, forbiddenField) {
-  if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
-    throw TypeError(name + ': incorrect invocation!');
-  } return it;
-};
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var ctx = __webpack_require__(20);
-var call = __webpack_require__(108);
-var isArrayIter = __webpack_require__(83);
-var anObject = __webpack_require__(1);
-var toLength = __webpack_require__(9);
-var getIterFn = __webpack_require__(85);
-var BREAK = {};
-var RETURN = {};
-var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
-  var iterFn = ITERATOR ? function () { return iterable; } : getIterFn(iterable);
-  var f = ctx(fn, that, entries ? 2 : 1);
-  var index = 0;
-  var length, step, iterator, result;
-  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
-  // fast case for arrays with default iterator
-  if (isArrayIter(iterFn)) for (length = toLength(iterable.length); length > index; index++) {
-    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
-    if (result === BREAK || result === RETURN) return result;
-  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
-    result = call(iterator, f, step.value, entries);
-    if (result === BREAK || result === RETURN) return result;
-  }
-};
-exports.BREAK = BREAK;
-exports.RETURN = RETURN;
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var redefine = __webpack_require__(15);
-module.exports = function (target, src, safe) {
-  for (var key in src) redefine(target, key, src[key], safe);
-  return target;
-};
 
 
 /***/ }),
@@ -7643,7 +5535,7 @@ module.exports = function (key) {
 // true  -> Array#includes
 var toIObject = __webpack_require__(17);
 var toLength = __webpack_require__(9);
-var toAbsoluteIndex = __webpack_require__(39);
+var toAbsoluteIndex = __webpack_require__(38);
 module.exports = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIObject($this);
@@ -7785,7 +5677,7 @@ module.exports = function (KEY, length, exec) {
 
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject = __webpack_require__(1);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var SPECIES = __webpack_require__(5)('species');
 module.exports = function (O, D) {
   var C = anObject(O).constructor;
@@ -7803,10 +5695,10 @@ module.exports = function (O, D) {
 var global = __webpack_require__(2);
 var $export = __webpack_require__(0);
 var redefine = __webpack_require__(15);
-var redefineAll = __webpack_require__(45);
-var meta = __webpack_require__(32);
-var forOf = __webpack_require__(44);
-var anInstance = __webpack_require__(43);
+var redefineAll = __webpack_require__(44);
+var meta = __webpack_require__(31);
+var forOf = __webpack_require__(43);
+var anInstance = __webpack_require__(42);
 var isObject = __webpack_require__(4);
 var fails = __webpack_require__(3);
 var $iterDetect = __webpack_require__(58);
@@ -7892,7 +5784,7 @@ module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
 
 var global = __webpack_require__(2);
 var hide = __webpack_require__(14);
-var uid = __webpack_require__(36);
+var uid = __webpack_require__(35);
 var TYPED = uid('typed_array');
 var VIEW = uid('view');
 var ABV = !!(global.ArrayBuffer && global.DataView);
@@ -7927,7 +5819,7 @@ module.exports = {
 "use strict";
 
 // Forced replacement prototype accessors methods
-module.exports = __webpack_require__(37) || !__webpack_require__(3)(function () {
+module.exports = __webpack_require__(36) || !__webpack_require__(3)(function () {
   var K = Math.random();
   // In FF throws only define methods
   // eslint-disable-next-line no-undef, no-useless-call
@@ -7963,9 +5855,9 @@ module.exports = function (COLLECTION) {
 
 // https://tc39.github.io/proposal-setmap-offrom/
 var $export = __webpack_require__(0);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var ctx = __webpack_require__(20);
-var forOf = __webpack_require__(44);
+var forOf = __webpack_require__(43);
 
 module.exports = function (COLLECTION) {
   $export($export.S, COLLECTION, { from: function from(source /* , mapFn, thisArg */) {
@@ -8009,7 +5901,7 @@ module.exports = function (it) {
 
 var global = __webpack_require__(2);
 var core = __webpack_require__(23);
-var LIBRARY = __webpack_require__(37);
+var LIBRARY = __webpack_require__(36);
 var wksExt = __webpack_require__(95);
 var defineProperty = __webpack_require__(8).f;
 module.exports = function (name) {
@@ -8023,7 +5915,7 @@ module.exports = function (name) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var shared = __webpack_require__(53)('keys');
-var uid = __webpack_require__(36);
+var uid = __webpack_require__(35);
 module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
 };
@@ -8176,7 +6068,7 @@ module.exports = function (TO_STRING) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(37);
+var LIBRARY = __webpack_require__(36);
 var $export = __webpack_require__(0);
 var redefine = __webpack_require__(15);
 var hide = __webpack_require__(14);
@@ -8253,8 +6145,8 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
 
 "use strict";
 
-var create = __webpack_require__(40);
-var descriptor = __webpack_require__(35);
+var create = __webpack_require__(39);
+var descriptor = __webpack_require__(34);
 var setToStringTag = __webpack_require__(46);
 var IteratorPrototype = {};
 
@@ -8320,7 +6212,7 @@ module.exports = function (it) {
 "use strict";
 
 var $defineProperty = __webpack_require__(8);
-var createDesc = __webpack_require__(35);
+var createDesc = __webpack_require__(34);
 
 module.exports = function (object, index, value) {
   if (index in object) $defineProperty.f(object, index, createDesc(0, value));
@@ -8362,7 +6254,7 @@ module.exports = function (original, length) {
 // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
 
 var toObject = __webpack_require__(10);
-var toAbsoluteIndex = __webpack_require__(39);
+var toAbsoluteIndex = __webpack_require__(38);
 var toLength = __webpack_require__(9);
 module.exports = function fill(value /* , start = 0, end = @length */) {
   var O = toObject(this);
@@ -8382,7 +6274,7 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(33);
+var addToUnscopables = __webpack_require__(32);
 var step = __webpack_require__(111);
 var Iterators = __webpack_require__(48);
 var toIObject = __webpack_require__(17);
@@ -8588,7 +6480,7 @@ module.exports = function () {
 "use strict";
 
 // 25.4.1.5 NewPromiseCapability(C)
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 
 function PromiseCapability(C) {
   var resolve, reject;
@@ -8614,16 +6506,16 @@ module.exports.f = function (C) {
 
 var global = __webpack_require__(2);
 var DESCRIPTORS = __webpack_require__(7);
-var LIBRARY = __webpack_require__(37);
+var LIBRARY = __webpack_require__(36);
 var $typed = __webpack_require__(63);
 var hide = __webpack_require__(14);
-var redefineAll = __webpack_require__(45);
+var redefineAll = __webpack_require__(44);
 var fails = __webpack_require__(3);
-var anInstance = __webpack_require__(43);
+var anInstance = __webpack_require__(42);
 var toInteger = __webpack_require__(26);
 var toLength = __webpack_require__(9);
 var toIndex = __webpack_require__(120);
-var gOPN = __webpack_require__(41).f;
+var gOPN = __webpack_require__(40).f;
 var dP = __webpack_require__(8).f;
 var arrayFill = __webpack_require__(87);
 var setToStringTag = __webpack_require__(46);
@@ -8961,7 +6853,7 @@ module.exports = function (object, names) {
 
 var dP = __webpack_require__(8);
 var anObject = __webpack_require__(1);
-var getKeys = __webpack_require__(38);
+var getKeys = __webpack_require__(37);
 
 module.exports = __webpack_require__(7) ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
@@ -8980,7 +6872,7 @@ module.exports = __webpack_require__(7) ? Object.defineProperties : function def
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = __webpack_require__(17);
-var gOPN = __webpack_require__(41).f;
+var gOPN = __webpack_require__(40).f;
 var toString = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
@@ -9006,7 +6898,7 @@ module.exports.f = function getOwnPropertyNames(it) {
 "use strict";
 
 // 19.1.2.1 Object.assign(target, source, ...)
-var getKeys = __webpack_require__(38);
+var getKeys = __webpack_require__(37);
 var gOPS = __webpack_require__(55);
 var pIE = __webpack_require__(51);
 var toObject = __webpack_require__(10);
@@ -9046,7 +6938,7 @@ module.exports = !$assign || __webpack_require__(3)(function () {
 
 "use strict";
 
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var isObject = __webpack_require__(4);
 var invoke = __webpack_require__(101);
 var arraySlice = [].slice;
@@ -9207,7 +7099,7 @@ module.exports = function (iterator, fn, value, entries) {
 /* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var toObject = __webpack_require__(10);
 var IObject = __webpack_require__(50);
 var toLength = __webpack_require__(9);
@@ -9245,7 +7137,7 @@ module.exports = function (that, callbackfn, aLen, memo, isRight) {
 // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
 
 var toObject = __webpack_require__(10);
-var toAbsoluteIndex = __webpack_require__(39);
+var toAbsoluteIndex = __webpack_require__(38);
 var toLength = __webpack_require__(9);
 
 module.exports = [].copyWithin || function copyWithin(target /* = 0 */, start /* = 0, end = @length */) {
@@ -9354,16 +7246,16 @@ module.exports = __webpack_require__(62)(MAP, function (get) {
 "use strict";
 
 var dP = __webpack_require__(8).f;
-var create = __webpack_require__(40);
-var redefineAll = __webpack_require__(45);
+var create = __webpack_require__(39);
+var redefineAll = __webpack_require__(44);
 var ctx = __webpack_require__(20);
-var anInstance = __webpack_require__(43);
-var forOf = __webpack_require__(44);
+var anInstance = __webpack_require__(42);
+var forOf = __webpack_require__(43);
 var $iterDefine = __webpack_require__(79);
 var step = __webpack_require__(111);
-var setSpecies = __webpack_require__(42);
+var setSpecies = __webpack_require__(41);
 var DESCRIPTORS = __webpack_require__(7);
-var fastKey = __webpack_require__(32).fastKey;
+var fastKey = __webpack_require__(31).fastKey;
 var validate = __webpack_require__(49);
 var SIZE = DESCRIPTORS ? '_s' : 'size';
 
@@ -9527,7 +7419,7 @@ module.exports = __webpack_require__(62)(SET, function (get) {
 
 var each = __webpack_require__(28)(0);
 var redefine = __webpack_require__(15);
-var meta = __webpack_require__(32);
+var meta = __webpack_require__(31);
 var assign = __webpack_require__(99);
 var weak = __webpack_require__(119);
 var isObject = __webpack_require__(4);
@@ -9591,12 +7483,12 @@ if (fails(function () { return new $WeakMap().set((Object.freeze || Object)(tmp)
 
 "use strict";
 
-var redefineAll = __webpack_require__(45);
-var getWeak = __webpack_require__(32).getWeak;
+var redefineAll = __webpack_require__(44);
+var getWeak = __webpack_require__(31).getWeak;
 var anObject = __webpack_require__(1);
 var isObject = __webpack_require__(4);
-var anInstance = __webpack_require__(43);
-var forOf = __webpack_require__(44);
+var anInstance = __webpack_require__(42);
+var forOf = __webpack_require__(43);
 var createArrayMethod = __webpack_require__(28);
 var $has = __webpack_require__(13);
 var validate = __webpack_require__(49);
@@ -9698,7 +7590,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // all object keys, includes non-enumerable and symbols
-var gOPN = __webpack_require__(41);
+var gOPN = __webpack_require__(40);
 var gOPS = __webpack_require__(55);
 var anObject = __webpack_require__(1);
 var Reflect = __webpack_require__(2).Reflect;
@@ -9781,7 +7673,7 @@ module.exports = function (that, maxLength, fillString, left) {
 /* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getKeys = __webpack_require__(38);
+var getKeys = __webpack_require__(37);
 var toIObject = __webpack_require__(17);
 var isEnum = __webpack_require__(51).f;
 module.exports = function (isEntries) {
@@ -9818,7 +7710,7 @@ module.exports = function (NAME) {
 /* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var forOf = __webpack_require__(44);
+var forOf = __webpack_require__(43);
 
 module.exports = function (iter, ITERATOR) {
   var result = [];
@@ -10109,11 +8001,11 @@ var has = __webpack_require__(13);
 var DESCRIPTORS = __webpack_require__(7);
 var $export = __webpack_require__(0);
 var redefine = __webpack_require__(15);
-var META = __webpack_require__(32).KEY;
+var META = __webpack_require__(31).KEY;
 var $fails = __webpack_require__(3);
 var shared = __webpack_require__(53);
 var setToStringTag = __webpack_require__(46);
-var uid = __webpack_require__(36);
+var uid = __webpack_require__(35);
 var wks = __webpack_require__(5);
 var wksExt = __webpack_require__(95);
 var wksDefine = __webpack_require__(68);
@@ -10122,12 +8014,12 @@ var isArray = __webpack_require__(56);
 var anObject = __webpack_require__(1);
 var toIObject = __webpack_require__(17);
 var toPrimitive = __webpack_require__(24);
-var createDesc = __webpack_require__(35);
-var _create = __webpack_require__(40);
+var createDesc = __webpack_require__(34);
+var _create = __webpack_require__(39);
 var gOPNExt = __webpack_require__(98);
 var $GOPD = __webpack_require__(18);
 var $DP = __webpack_require__(8);
-var $keys = __webpack_require__(38);
+var $keys = __webpack_require__(37);
 var gOPD = $GOPD.f;
 var dP = $DP.f;
 var gOPN = gOPNExt.f;
@@ -10250,11 +8142,11 @@ if (!USE_NATIVE) {
 
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f = $defineProperty;
-  __webpack_require__(41).f = gOPNExt.f = $getOwnPropertyNames;
+  __webpack_require__(40).f = gOPNExt.f = $getOwnPropertyNames;
   __webpack_require__(51).f = $propertyIsEnumerable;
   __webpack_require__(55).f = $getOwnPropertySymbols;
 
-  if (DESCRIPTORS && !__webpack_require__(37)) {
+  if (DESCRIPTORS && !__webpack_require__(36)) {
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -10343,7 +8235,7 @@ setToStringTag(global.JSON, 'JSON', true);
 /***/ (function(module, exports, __webpack_require__) {
 
 // all enumerable object keys, includes symbols
-var getKeys = __webpack_require__(38);
+var getKeys = __webpack_require__(37);
 var gOPS = __webpack_require__(55);
 var pIE = __webpack_require__(51);
 module.exports = function (it) {
@@ -10365,7 +8257,7 @@ module.exports = function (it) {
 
 var $export = __webpack_require__(0);
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', { create: __webpack_require__(40) });
+$export($export.S, 'Object', { create: __webpack_require__(39) });
 
 
 /***/ }),
@@ -10422,7 +8314,7 @@ __webpack_require__(27)('getPrototypeOf', function () {
 
 // 19.1.2.14 Object.keys(O)
 var toObject = __webpack_require__(10);
-var $keys = __webpack_require__(38);
+var $keys = __webpack_require__(37);
 
 __webpack_require__(27)('keys', function () {
   return function keys(it) {
@@ -10447,7 +8339,7 @@ __webpack_require__(27)('getOwnPropertyNames', function () {
 
 // 19.1.2.5 Object.freeze(O)
 var isObject = __webpack_require__(4);
-var meta = __webpack_require__(32).onFreeze;
+var meta = __webpack_require__(31).onFreeze;
 
 __webpack_require__(27)('freeze', function ($freeze) {
   return function freeze(it) {
@@ -10462,7 +8354,7 @@ __webpack_require__(27)('freeze', function ($freeze) {
 
 // 19.1.2.17 Object.seal(O)
 var isObject = __webpack_require__(4);
-var meta = __webpack_require__(32).onFreeze;
+var meta = __webpack_require__(31).onFreeze;
 
 __webpack_require__(27)('seal', function ($seal) {
   return function seal(it) {
@@ -10477,7 +8369,7 @@ __webpack_require__(27)('seal', function ($seal) {
 
 // 19.1.2.15 Object.preventExtensions(O)
 var isObject = __webpack_require__(4);
-var meta = __webpack_require__(32).onFreeze;
+var meta = __webpack_require__(31).onFreeze;
 
 __webpack_require__(27)('preventExtensions', function ($preventExtensions) {
   return function preventExtensions(it) {
@@ -10668,7 +8560,7 @@ var cof = __webpack_require__(21);
 var inheritIfRequired = __webpack_require__(74);
 var toPrimitive = __webpack_require__(24);
 var fails = __webpack_require__(3);
-var gOPN = __webpack_require__(41).f;
+var gOPN = __webpack_require__(40).f;
 var gOPD = __webpack_require__(18).f;
 var dP = __webpack_require__(8).f;
 var $trim = __webpack_require__(47).trim;
@@ -10677,7 +8569,7 @@ var $Number = global[NUMBER];
 var Base = $Number;
 var proto = $Number.prototype;
 // Opera ~12 has broken Object#toString
-var BROKEN_COF = cof(__webpack_require__(40)(proto)) == NUMBER;
+var BROKEN_COF = cof(__webpack_require__(39)(proto)) == NUMBER;
 var TRIM = 'trim' in String.prototype;
 
 // 7.1.3 ToNumber(argument)
@@ -11265,7 +9157,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
-var toAbsoluteIndex = __webpack_require__(39);
+var toAbsoluteIndex = __webpack_require__(38);
 var fromCharCode = String.fromCharCode;
 var $fromCodePoint = String.fromCodePoint;
 
@@ -11864,7 +9756,7 @@ $export($export.P + $export.F * (__webpack_require__(50) != Object || !__webpack
 var $export = __webpack_require__(0);
 var html = __webpack_require__(71);
 var cof = __webpack_require__(21);
-var toAbsoluteIndex = __webpack_require__(39);
+var toAbsoluteIndex = __webpack_require__(38);
 var toLength = __webpack_require__(9);
 var arraySlice = [].slice;
 
@@ -11897,7 +9789,7 @@ $export($export.P + $export.F * __webpack_require__(3)(function () {
 "use strict";
 
 var $export = __webpack_require__(0);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var toObject = __webpack_require__(10);
 var fails = __webpack_require__(3);
 var $sort = [].sort;
@@ -12122,7 +10014,7 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', { copyWithin: __webpack_require__(110) });
 
-__webpack_require__(33)('copyWithin');
+__webpack_require__(32)('copyWithin');
 
 
 /***/ }),
@@ -12134,7 +10026,7 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', { fill: __webpack_require__(87) });
 
-__webpack_require__(33)('fill');
+__webpack_require__(32)('fill');
 
 
 /***/ }),
@@ -12155,7 +10047,7 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(33)(KEY);
+__webpack_require__(32)(KEY);
 
 
 /***/ }),
@@ -12176,14 +10068,14 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(33)(KEY);
+__webpack_require__(32)(KEY);
 
 
 /***/ }),
 /* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(42)('Array');
+__webpack_require__(41)('Array');
 
 
 /***/ }),
@@ -12193,7 +10085,7 @@ __webpack_require__(42)('Array');
 var global = __webpack_require__(2);
 var inheritIfRequired = __webpack_require__(74);
 var dP = __webpack_require__(8).f;
-var gOPN = __webpack_require__(41).f;
+var gOPN = __webpack_require__(40).f;
 var isRegExp = __webpack_require__(57);
 var $flags = __webpack_require__(59);
 var $RegExp = global.RegExp;
@@ -12232,7 +10124,7 @@ if (__webpack_require__(7) && (!CORRECT_NEW || __webpack_require__(3)(function (
   __webpack_require__(15)(global, 'RegExp', $RegExp);
 }
 
-__webpack_require__(42)('RegExp');
+__webpack_require__(41)('RegExp');
 
 
 /***/ }),
@@ -12400,15 +10292,15 @@ __webpack_require__(60)('split', 2, function (defined, SPLIT, $split) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(37);
+var LIBRARY = __webpack_require__(36);
 var global = __webpack_require__(2);
 var ctx = __webpack_require__(20);
 var classof = __webpack_require__(52);
 var $export = __webpack_require__(0);
 var isObject = __webpack_require__(4);
-var aFunction = __webpack_require__(12);
-var anInstance = __webpack_require__(43);
-var forOf = __webpack_require__(44);
+var aFunction = __webpack_require__(11);
+var anInstance = __webpack_require__(42);
+var forOf = __webpack_require__(43);
 var speciesConstructor = __webpack_require__(61);
 var task = __webpack_require__(89).set;
 var microtask = __webpack_require__(90)();
@@ -12584,7 +10476,7 @@ if (!USE_NATIVE) {
     this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
     this._n = false;          // <- notify
   };
-  Internal.prototype = __webpack_require__(45)($Promise.prototype, {
+  Internal.prototype = __webpack_require__(44)($Promise.prototype, {
     // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
     then: function then(onFulfilled, onRejected) {
       var reaction = newPromiseCapability(speciesConstructor(this, $Promise));
@@ -12616,7 +10508,7 @@ if (!USE_NATIVE) {
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, { Promise: $Promise });
 __webpack_require__(46)($Promise, PROMISE);
-__webpack_require__(42)(PROMISE);
+__webpack_require__(41)(PROMISE);
 Wrapper = __webpack_require__(23)[PROMISE];
 
 // statics
@@ -12712,7 +10604,7 @@ var $export = __webpack_require__(0);
 var $typed = __webpack_require__(63);
 var buffer = __webpack_require__(92);
 var anObject = __webpack_require__(1);
-var toAbsoluteIndex = __webpack_require__(39);
+var toAbsoluteIndex = __webpack_require__(38);
 var toLength = __webpack_require__(9);
 var isObject = __webpack_require__(4);
 var ArrayBuffer = __webpack_require__(2).ArrayBuffer;
@@ -12752,7 +10644,7 @@ $export($export.P + $export.U + $export.F * __webpack_require__(3)(function () {
   }
 });
 
-__webpack_require__(42)(ARRAY_BUFFER);
+__webpack_require__(41)(ARRAY_BUFFER);
 
 
 /***/ }),
@@ -12870,7 +10762,7 @@ __webpack_require__(29)('Float64', 8, function (init) {
 
 // 26.1.1 Reflect.apply(target, thisArgument, argumentsList)
 var $export = __webpack_require__(0);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var anObject = __webpack_require__(1);
 var rApply = (__webpack_require__(2).Reflect || {}).apply;
 var fApply = Function.apply;
@@ -12892,8 +10784,8 @@ $export($export.S + $export.F * !__webpack_require__(3)(function () {
 
 // 26.1.2 Reflect.construct(target, argumentsList [, newTarget])
 var $export = __webpack_require__(0);
-var create = __webpack_require__(40);
-var aFunction = __webpack_require__(12);
+var create = __webpack_require__(39);
+var aFunction = __webpack_require__(11);
 var anObject = __webpack_require__(1);
 var isObject = __webpack_require__(4);
 var fails = __webpack_require__(3);
@@ -13150,7 +11042,7 @@ var gOPD = __webpack_require__(18);
 var getPrototypeOf = __webpack_require__(19);
 var has = __webpack_require__(13);
 var $export = __webpack_require__(0);
-var createDesc = __webpack_require__(35);
+var createDesc = __webpack_require__(34);
 var anObject = __webpack_require__(1);
 var isObject = __webpack_require__(4);
 
@@ -13214,7 +11106,7 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(33)('includes');
+__webpack_require__(32)('includes');
 
 
 /***/ }),
@@ -13228,7 +11120,7 @@ var $export = __webpack_require__(0);
 var flattenIntoArray = __webpack_require__(122);
 var toObject = __webpack_require__(10);
 var toLength = __webpack_require__(9);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var arraySpeciesCreate = __webpack_require__(86);
 
 $export($export.P, 'Array', {
@@ -13243,7 +11135,7 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(33)('flatMap');
+__webpack_require__(32)('flatMap');
 
 
 /***/ }),
@@ -13271,7 +11163,7 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(33)('flatten');
+__webpack_require__(32)('flatten');
 
 
 /***/ }),
@@ -13470,7 +11362,7 @@ $export($export.S, 'Object', {
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var $defineProperty = __webpack_require__(8);
 
 // B.2.2.2 Object.prototype.__defineGetter__(P, getter)
@@ -13489,7 +11381,7 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(64), 'Object',
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var $defineProperty = __webpack_require__(8);
 
 // B.2.2.3 Object.prototype.__defineSetter__(P, setter)
@@ -14051,7 +11943,7 @@ metadata.exp({ hasOwnMetadata: function hasOwnMetadata(metadataKey, target /* , 
 
 var $metadata = __webpack_require__(30);
 var anObject = __webpack_require__(1);
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var toMetaKey = $metadata.key;
 var ordinaryDefineOwnMetadata = $metadata.set;
 
@@ -14096,12 +11988,12 @@ var global = __webpack_require__(2);
 var core = __webpack_require__(23);
 var microtask = __webpack_require__(90)();
 var OBSERVABLE = __webpack_require__(5)('observable');
-var aFunction = __webpack_require__(12);
+var aFunction = __webpack_require__(11);
 var anObject = __webpack_require__(1);
-var anInstance = __webpack_require__(43);
-var redefineAll = __webpack_require__(45);
+var anInstance = __webpack_require__(42);
+var redefineAll = __webpack_require__(44);
 var hide = __webpack_require__(14);
-var forOf = __webpack_require__(44);
+var forOf = __webpack_require__(43);
 var RETURN = forOf.RETURN;
 
 var getMethod = function (fn) {
@@ -14287,7 +12179,7 @@ hide($Observable.prototype, OBSERVABLE, function () { return this; });
 
 $export($export.G, { Observable: $Observable });
 
-__webpack_require__(42)('Observable');
+__webpack_require__(41)('Observable');
 
 
 /***/ }),
@@ -14333,7 +12225,7 @@ $export($export.G + $export.B, {
 /***/ (function(module, exports, __webpack_require__) {
 
 var $iterators = __webpack_require__(88);
-var getKeys = __webpack_require__(38);
+var getKeys = __webpack_require__(37);
 var redefine = __webpack_require__(15);
 var global = __webpack_require__(2);
 var hide = __webpack_require__(14);
@@ -15220,7 +13112,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(333), __webpack_require__(6), __webpack_require__(359), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkClient_1, util_1, tsdkServiceDaemonSocket_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(333), __webpack_require__(6), __webpack_require__(356), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkClient_1, util_1, tsdkServiceDaemonSocket_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TerminalSDK = (function () {
@@ -15584,6 +13476,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (typeof (listeners.OnEvtConfEndResult) != "undefined") {
                 tsdkClient.on('OnEvtConfEndResult', listeners.OnEvtConfEndResult);
             }
+            if (typeof (listeners.OnEvtConfSetShareOwnerFailed) != "undefined") {
+                tsdkClient.on('OnEvtConfSetShareOwnerFailed', listeners.OnEvtConfSetShareOwnerFailed);
+            }
+            if (typeof (listeners.OnEvtConfStartShareFailed) != "undefined") {
+                tsdkClient.on('OnEvtConfStartShareFailed', listeners.OnEvtConfStartShareFailed);
+            }
             if (typeof (listeners.OnEvtCtdStartCallResult) != "undefined") {
                 tsdkClient.on('OnEvtCtdStartCallResult', listeners.OnEvtCtdStartCallResult);
             }
@@ -15601,63 +13499,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             if (typeof (listeners.OnEvtGetIconResult) != "undefined") {
                 tsdkClient.on('OnEvtGetIconResult', listeners.OnEvtGetIconResult);
-            }
-            if (typeof (listeners.OnEvtAddFriendInd) != "undefined") {
-                tsdkClient.on('OnEvtAddFriendInd', listeners.OnEvtAddFriendInd);
-            }
-            if (typeof (listeners.OnEvtUserStatusUpdate) != "undefined") {
-                tsdkClient.on('OnEvtUserStatusUpdate', listeners.OnEvtUserStatusUpdate);
-            }
-            if (typeof (listeners.OnEvtUserInfoUpdate) != "undefined") {
-                tsdkClient.on('OnEvtUserInfoUpdate', listeners.OnEvtUserInfoUpdate);
-            }
-            if (typeof (listeners.OnEvtJoinChatGroupReq) != "undefined") {
-                tsdkClient.on('OnEvtJoinChatGroupReq', listeners.OnEvtJoinChatGroupReq);
-            }
-            if (typeof (listeners.OnEvtJoinChatGroupRsp) != "undefined") {
-                tsdkClient.on('OnEvtJoinChatGroupRsp', listeners.OnEvtJoinChatGroupRsp);
-            }
-            if (typeof (listeners.OnEvtJoinChatGroupInd) != "undefined") {
-                tsdkClient.on('OnEvtJoinChatGroupInd', listeners.OnEvtJoinChatGroupInd);
-            }
-            if (typeof (listeners.OnEvtDelChatGroupMemberResult) != "undefined") {
-                tsdkClient.on('OnEvtDelChatGroupMemberResult', listeners.OnEvtDelChatGroupMemberResult);
-            }
-            if (typeof (listeners.OnEvtLeaveChatGroupResult) != "undefined") {
-                tsdkClient.on('OnEvtLeaveChatGroupResult', listeners.OnEvtLeaveChatGroupResult);
-            }
-            if (typeof (listeners.OnEvtChatGroupInfoUpdate) != "undefined") {
-                tsdkClient.on('OnEvtChatGroupInfoUpdate', listeners.OnEvtChatGroupInfoUpdate);
-            }
-            if (typeof (listeners.OnEvtInputtingStatusInd) != "undefined") {
-                tsdkClient.on('OnEvtInputtingStatusInd', listeners.OnEvtInputtingStatusInd);
-            }
-            if (typeof (listeners.OnEvtChatMsg) != "undefined") {
-                tsdkClient.on('OnEvtChatMsg', listeners.OnEvtChatMsg);
-            }
-            if (typeof (listeners.OnEvtBatchChatMsg) != "undefined") {
-                tsdkClient.on('OnEvtBatchChatMsg', listeners.OnEvtBatchChatMsg);
-            }
-            if (typeof (listeners.OnEvtSystemBulletin) != "undefined") {
-                tsdkClient.on('OnEvtSystemBulletin', listeners.OnEvtSystemBulletin);
-            }
-            if (typeof (listeners.OnEvtSms) != "undefined") {
-                tsdkClient.on('OnEvtSms', listeners.OnEvtSms);
-            }
-            if (typeof (listeners.OnEvtUndeliverInd) != "undefined") {
-                tsdkClient.on('OnEvtUndeliverInd', listeners.OnEvtUndeliverInd);
-            }
-            if (typeof (listeners.OnEvtMsgReadInd) != "undefined") {
-                tsdkClient.on('OnEvtMsgReadInd', listeners.OnEvtMsgReadInd);
-            }
-            if (typeof (listeners.OnEvtMsgSendResult) != "undefined") {
-                tsdkClient.on('OnEvtMsgSendResult', listeners.OnEvtMsgSendResult);
-            }
-            if (typeof (listeners.OnEvtMsgWithdrawResult) != "undefined") {
-                tsdkClient.on('OnEvtMsgWithdrawResult', listeners.OnEvtMsgWithdrawResult);
-            }
-            if (typeof (listeners.OnEvtMsgWithdrawInd) != "undefined") {
-                tsdkClient.on('OnEvtMsgWithdrawInd', listeners.OnEvtMsgWithdrawInd);
             }
             if (typeof (listeners.OnPluginEvtFrameHwndInfoUpdate) != "undefined") {
                 tsdkClient.on('OnPluginEvtFrameHwndInfoUpdate', listeners.OnPluginEvtFrameHwndInfoUpdate);
@@ -15760,7 +13601,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(340), __webpack_require__(341), __webpack_require__(334), __webpack_require__(344), __webpack_require__(347), __webpack_require__(350), __webpack_require__(353), __webpack_require__(356)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkManagerService_1, tsdkLoginService_1, tsdkCallService_1, tsdkConfService_1, tsdkCtdService_1, tsdkEaddrService_1, tsdkImService_1, tsdkUiPluginService_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(45), __webpack_require__(340), __webpack_require__(341), __webpack_require__(334), __webpack_require__(344), __webpack_require__(347), __webpack_require__(350), __webpack_require__(353)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkManagerService_1, tsdkLoginService_1, tsdkCallService_1, tsdkConfService_1, tsdkCtdService_1, tsdkEaddrService_1, tsdkUiPluginService_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkClient = (function () {
@@ -15776,14 +13617,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.confService = new tsdkConfService_1.default();
             this.ctdService = new tsdkCtdService_1.default();
             this.eaddrService = new tsdkEaddrService_1.default();
-            this.imService = new tsdkImService_1.default();
             this.uiPluginService = new tsdkUiPluginService_1.default();
             this.registerLoginEvent();
             this.registerConfEvent();
             this.registerCallEvent();
             this.registerCtdEvent();
             this.registerEaddrEvent();
-            this.registerImEvent();
             this.registerUiPluginEvent();
         }
         TsdkClient.prototype.setConfigParam = function (configParam, callback) {
@@ -16219,99 +14058,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         TsdkClient.prototype.searchDepartment = function (searchParam, callback) {
             this.eaddrService.searchDepartment(searchParam, callback);
         };
-        TsdkClient.prototype.getUserInfo = function (account, callback) {
-            this.imService.getUserInfo(account, callback);
-        };
-        TsdkClient.prototype.setUserInfo = function (userInfo, callback) {
-            this.imService.setUserInfo(userInfo, callback);
-        };
-        TsdkClient.prototype.setPersonalStatus = function (statusInfo, callback) {
-            this.imService.setPersonalStatus(statusInfo, callback);
-        };
-        TsdkClient.prototype.detectUserStatus = function (detectParam, callback) {
-            this.imService.detectUserStatus(detectParam, callback);
-        };
-        TsdkClient.prototype.getContactAndChatGroups = function (reqParam, callback) {
-            this.imService.getContactAndChatGroups(reqParam, callback);
-        };
-        TsdkClient.prototype.addContact = function (reqParam, callback) {
-            this.imService.addContact(reqParam, callback);
-        };
-        TsdkClient.prototype.delContact = function (contactId, groupId, callback) {
-            this.imService.delContact(contactId, groupId, callback);
-        };
-        TsdkClient.prototype.modifyContact = function (contact, callback) {
-            this.imService.modifyContact(contact, callback);
-        };
-        TsdkClient.prototype.addFriend = function (reqParam, callback) {
-            this.imService.addFriend(reqParam, callback);
-        };
-        TsdkClient.prototype.delFriend = function (contactId, groupId, callback) {
-            this.imService.delFriend(contactId, groupId, callback);
-        };
-        TsdkClient.prototype.addContactGroup = function (reqParam, callback) {
-            this.imService.addContactGroup(reqParam, callback);
-        };
-        TsdkClient.prototype.delContactGroup = function (groupId, callback) {
-            this.imService.delContactGroup(groupId, callback);
-        };
-        TsdkClient.prototype.modifyContactGroup = function (groupInfo, callback) {
-            this.imService.modifyContactGroup(groupInfo, callback);
-        };
-        TsdkClient.prototype.updateContactGroupOrder = function (groupOrder, callback) {
-            this.imService.updateContactGroupOrder(groupOrder, callback);
-        };
-        TsdkClient.prototype.moveContact = function (reqParam, callback) {
-            this.imService.moveContact(reqParam, callback);
-        };
-        TsdkClient.prototype.addChatGroup = function (groupInfo, callback) {
-            this.imService.addChatGroup(groupInfo, callback);
-        };
-        TsdkClient.prototype.delChatGroup = function (groupType, groupId, callback) {
-            this.imService.delChatGroup(groupType, groupId, callback);
-        };
-        TsdkClient.prototype.modifyChatGroup = function (opType, groupInfo, callback) {
-            this.imService.modifyChatGroup(opType, groupInfo, callback);
-        };
-        TsdkClient.prototype.queryChatGroups = function (groupQueryParam, callback) {
-            this.imService.queryChatGroups(groupQueryParam, callback);
-        };
-        TsdkClient.prototype.getChatGroupDetail = function (groupId, callback) {
-            this.imService.getChatGroupDetail(groupId, callback);
-        };
-        TsdkClient.prototype.getChatGroupMembers = function (memberGetParam, callback) {
-            this.imService.getChatGroupMembers(memberGetParam, callback);
-        };
-        TsdkClient.prototype.requestJoinChatGroup = function (reqJoinGroupParam, callback) {
-            this.imService.requestJoinChatGroup(reqJoinGroupParam, callback);
-        };
-        TsdkClient.prototype.confirmJoinChatGroup = function (confirmJoinGroupParam, callback) {
-            this.imService.confirmJoinChatGroup(confirmJoinGroupParam, callback);
-        };
-        TsdkClient.prototype.delChatGroupMember = function (groupType, memberAccount, groupId, callback) {
-            this.imService.delChatGroupMember(groupType, memberAccount, groupId, callback);
-        };
-        TsdkClient.prototype.leaveChatGroup = function (groupType, groupId, callback) {
-            this.imService.leaveChatGroup(groupType, groupId, callback);
-        };
-        TsdkClient.prototype.setInputting = function (peerAccount, isInputting, callback) {
-            this.imService.setInputting(peerAccount, isInputting, callback);
-        };
-        TsdkClient.prototype.sendMessage = function (chatMsg, callback) {
-            this.imService.sendMessage(chatMsg, callback);
-        };
-        TsdkClient.prototype.withdrawMessage = function (withdrawMsgReq, callback) {
-            this.imService.withdrawMessage(withdrawMsgReq, callback);
-        };
-        TsdkClient.prototype.setMessageRead = function (setReadParam, callback) {
-            this.imService.setMessageRead(setReadParam, callback);
-        };
-        TsdkClient.prototype.queryHistoryMessage = function (queryParam, callback) {
-            this.imService.queryHistoryMessage(queryParam, callback);
-        };
-        TsdkClient.prototype.deleteHistoryMessage = function (delParam, callback) {
-            this.imService.deleteHistoryMessage(delParam, callback);
-        };
         TsdkClient.prototype.uiPluginSetButtonState = function (button, isOff, callback) {
             this.uiPluginService.uiPluginSetButtonState(button, isOff, callback);
         };
@@ -16673,6 +14419,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             observer_1.default.subscribe('OnEvtConfEndResult', function (ret) {
                 _this.notify("OnEvtConfEndResult", ret);
             });
+            observer_1.default.subscribe('OnEvtConfSetShareOwnerFailed', function (ret) {
+                _this.notify("OnEvtConfSetShareOwnerFailed", ret);
+            });
+            observer_1.default.subscribe('OnEvtConfStartShareFailed', function (ret) {
+                _this.notify("OnEvtConfStartShareFailed", ret);
+            });
         };
         ;
         TsdkClient.prototype.registerCtdEvent = function () {
@@ -16698,67 +14450,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
             observer_1.default.subscribe('OnEvtGetIconResult', function (ret) {
                 _this.notify("OnEvtGetIconResult", ret);
-            });
-        };
-        ;
-        TsdkClient.prototype.registerImEvent = function () {
-            var _this = this;
-            observer_1.default.subscribe('OnEvtAddFriendInd', function (ret) {
-                _this.notify("OnEvtAddFriendInd", ret);
-            });
-            observer_1.default.subscribe('OnEvtUserStatusUpdate', function (ret) {
-                _this.notify("OnEvtUserStatusUpdate", ret);
-            });
-            observer_1.default.subscribe('OnEvtUserInfoUpdate', function (ret) {
-                _this.notify("OnEvtUserInfoUpdate", ret);
-            });
-            observer_1.default.subscribe('OnEvtJoinChatGroupReq', function (ret) {
-                _this.notify("OnEvtJoinChatGroupReq", ret);
-            });
-            observer_1.default.subscribe('OnEvtJoinChatGroupRsp', function (ret) {
-                _this.notify("OnEvtJoinChatGroupRsp", ret);
-            });
-            observer_1.default.subscribe('OnEvtJoinChatGroupInd', function (ret) {
-                _this.notify("OnEvtJoinChatGroupInd", ret);
-            });
-            observer_1.default.subscribe('OnEvtDelChatGroupMemberResult', function (ret) {
-                _this.notify("OnEvtDelChatGroupMemberResult", ret);
-            });
-            observer_1.default.subscribe('OnEvtLeaveChatGroupResult', function (ret) {
-                _this.notify("OnEvtLeaveChatGroupResult", ret);
-            });
-            observer_1.default.subscribe('OnEvtChatGroupInfoUpdate', function (ret) {
-                _this.notify("OnEvtChatGroupInfoUpdate", ret);
-            });
-            observer_1.default.subscribe('OnEvtInputtingStatusInd', function (ret) {
-                _this.notify("OnEvtInputtingStatusInd", ret);
-            });
-            observer_1.default.subscribe('OnEvtChatMsg', function (ret) {
-                _this.notify("OnEvtChatMsg", ret);
-            });
-            observer_1.default.subscribe('OnEvtBatchChatMsg', function (ret) {
-                _this.notify("OnEvtBatchChatMsg", ret);
-            });
-            observer_1.default.subscribe('OnEvtSystemBulletin', function (ret) {
-                _this.notify("OnEvtSystemBulletin", ret);
-            });
-            observer_1.default.subscribe('OnEvtSms', function (ret) {
-                _this.notify("OnEvtSms", ret);
-            });
-            observer_1.default.subscribe('OnEvtUndeliverInd', function (ret) {
-                _this.notify("OnEvtUndeliverInd", ret);
-            });
-            observer_1.default.subscribe('OnEvtMsgReadInd', function (ret) {
-                _this.notify("OnEvtMsgReadInd", ret);
-            });
-            observer_1.default.subscribe('OnEvtMsgSendResult', function (ret) {
-                _this.notify("OnEvtMsgSendResult", ret);
-            });
-            observer_1.default.subscribe('OnEvtMsgWithdrawResult', function (ret) {
-                _this.notify("OnEvtMsgWithdrawResult", ret);
-            });
-            observer_1.default.subscribe('OnEvtMsgWithdrawInd', function (ret) {
-                _this.notify("OnEvtMsgWithdrawInd", ret);
             });
         };
         ;
@@ -16897,7 +14588,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(335)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkCallWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(45), __webpack_require__(335)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkCallWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CallService = (function () {
@@ -17684,7 +15375,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(336), __webpack_require__(6), __webpack_require__(11), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkCall_1, util_1, config_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(336), __webpack_require__(6), __webpack_require__(12), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkCall_1, util_1, config_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkCallWrapper = (function () {
@@ -18249,7 +15940,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkCall = (function () {
@@ -18999,7 +16690,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkManager = (function () {
@@ -19116,7 +16807,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ManagerService = (function () {
@@ -19232,7 +16923,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(342)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkLoginWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(45), __webpack_require__(342)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkLoginWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LoginService = (function () {
@@ -19425,7 +17116,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(343), __webpack_require__(6), __webpack_require__(11), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkLogin_1, util_1, config_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(343), __webpack_require__(6), __webpack_require__(12), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkLogin_1, util_1, config_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkLoginWrapper = (function () {
@@ -19522,7 +17213,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkLogin = (function () {
@@ -19698,7 +17389,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(345)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkConfWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(45), __webpack_require__(345)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkConfWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ConfService = (function () {
@@ -20964,6 +18655,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         OnEvtConfResumingInd: ConfService.handleOnEvtConfResumingInd,
                         OnEvtConfResumeResult: ConfService.handleOnEvtConfResumeResult,
                         OnEvtConfEndResult: ConfService.handleOnEvtConfEndResult,
+                        OnEvtConfSetShareOwnerFailed: ConfService.handleOnEvtConfSetShareOwnerFailed,
+                        OnEvtConfStartShareFailed: ConfService.handleOnEvtConfStartShareFailed,
                     });
                     return [2];
                 });
@@ -21108,6 +18801,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         ConfService.handleOnEvtConfEndResult = function (data) {
             observer_1.default.publish('OnEvtConfEndResult', data);
         };
+        ConfService.handleOnEvtConfSetShareOwnerFailed = function (data) {
+            observer_1.default.publish('OnEvtConfSetShareOwnerFailed', data);
+        };
+        ConfService.handleOnEvtConfStartShareFailed = function (data) {
+            observer_1.default.publish('OnEvtConfStartShareFailed', data);
+        };
         return ConfService;
     }());
     exports.default = ConfService;
@@ -21155,7 +18854,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(346), __webpack_require__(6), __webpack_require__(11), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkConf_1, util_1, config_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(346), __webpack_require__(6), __webpack_require__(12), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkConf_1, util_1, config_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkConfWrapper = (function () {
@@ -22236,7 +19935,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 346 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkConf = (function () {
@@ -23435,6 +21134,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (callbacks && typeof callbacks.OnEvtConfEndResult == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[3046] = callbacks.OnEvtConfEndResult;
             }
+            if (callbacks && typeof callbacks.OnEvtConfSetShareOwnerFailed == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[3047] = callbacks.OnEvtConfSetShareOwnerFailed;
+            }
+            if (callbacks && typeof callbacks.OnEvtConfStartShareFailed == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[3048] = callbacks.OnEvtConfStartShareFailed;
+            }
         };
         ;
         return TsdkConf;
@@ -23484,7 +21189,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(348)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkCtdWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(45), __webpack_require__(348)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkCtdWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CtdService = (function () {
@@ -23593,7 +21298,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(349), __webpack_require__(6), __webpack_require__(11), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkCtd_1, util_1, config_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(349), __webpack_require__(6), __webpack_require__(12), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkCtd_1, util_1, config_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkCtdWrapper = (function () {
@@ -23666,7 +21371,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkCtd = (function () {
@@ -23779,7 +21484,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(351)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkEaddrWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(45), __webpack_require__(351)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkEaddrWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var EaddrService = (function () {
@@ -23930,7 +21635,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(352), __webpack_require__(6), __webpack_require__(11), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkEaddr_1, util_1, config_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(352), __webpack_require__(6), __webpack_require__(12), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkEaddr_1, util_1, config_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkEaddrWrapper = (function () {
@@ -24039,7 +21744,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkEaddr = (function () {
@@ -24188,1516 +21893,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(354)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkImWrapper_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var ImService = (function () {
-        function ImService() {
-            this.wrapper = tsdkImWrapper_1.default.getInstance();
-            this.wrapper.build();
-            ImService.registerImEvent();
-        }
-        ImService.prototype.getUserInfo = function (account, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.getUserInfo(account)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.setUserInfo = function (userInfo, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.setUserInfo(userInfo)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.setPersonalStatus = function (statusInfo, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.setPersonalStatus(statusInfo)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.detectUserStatus = function (detectParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.detectUserStatus(detectParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.getContactAndChatGroups = function (reqParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.getContactAndChatGroups(reqParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.addContact = function (reqParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.addContact(reqParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.delContact = function (contactId, groupId, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.delContact(contactId, groupId)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.modifyContact = function (contact, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.modifyContact(contact)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.addFriend = function (reqParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.addFriend(reqParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.delFriend = function (contactId, groupId, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.delFriend(contactId, groupId)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.addContactGroup = function (reqParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.addContactGroup(reqParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.delContactGroup = function (groupId, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.delContactGroup(groupId)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.modifyContactGroup = function (groupInfo, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.modifyContactGroup(groupInfo)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.updateContactGroupOrder = function (groupOrder, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.updateContactGroupOrder(groupOrder)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.moveContact = function (reqParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.moveContact(reqParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.addChatGroup = function (groupInfo, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.addChatGroup(groupInfo)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.delChatGroup = function (groupType, groupId, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.delChatGroup(groupType, groupId)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.modifyChatGroup = function (opType, groupInfo, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.modifyChatGroup(opType, groupInfo)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.queryChatGroups = function (groupQueryParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.queryChatGroups(groupQueryParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.getChatGroupDetail = function (groupId, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.getChatGroupDetail(groupId)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.getChatGroupMembers = function (memberGetParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.getChatGroupMembers(memberGetParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.requestJoinChatGroup = function (reqJoinGroupParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.requestJoinChatGroup(reqJoinGroupParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.confirmJoinChatGroup = function (confirmJoinGroupParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.confirmJoinChatGroup(confirmJoinGroupParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.delChatGroupMember = function (groupType, memberAccount, groupId, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.delChatGroupMember(groupType, memberAccount, groupId)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.leaveChatGroup = function (groupType, groupId, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.leaveChatGroup(groupType, groupId)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.setInputting = function (peerAccount, isInputting, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.setInputting(peerAccount, isInputting)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.sendMessage = function (chatMsg, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.sendMessage(chatMsg)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.withdrawMessage = function (withdrawMsgReq, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.withdrawMessage(withdrawMsgReq)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.setMessageRead = function (setReadParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.setMessageRead(setReadParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.queryHistoryMessage = function (queryParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.queryHistoryMessage(queryParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.prototype.deleteHistoryMessage = function (delParam, callback) {
-            return __awaiter(this, void 0, void 0, function () {
-                var tsdkData;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.wrapper.deleteHistoryMessage(delParam)];
-                        case 1:
-                            tsdkData = _a.sent();
-                            callback(tsdkData);
-                            return [2];
-                    }
-                });
-            });
-        };
-        ImService.registerImEvent = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                var wrapper;
-                return __generator(this, function (_a) {
-                    util_1.default.debug("ImService", "registerImEvent");
-                    wrapper = tsdkImWrapper_1.default.getInstance();
-                    wrapper.registerImEvent({
-                        OnEvtAddFriendInd: ImService.handleOnEvtAddFriendInd,
-                        OnEvtUserStatusUpdate: ImService.handleOnEvtUserStatusUpdate,
-                        OnEvtUserInfoUpdate: ImService.handleOnEvtUserInfoUpdate,
-                        OnEvtJoinChatGroupReq: ImService.handleOnEvtJoinChatGroupReq,
-                        OnEvtJoinChatGroupRsp: ImService.handleOnEvtJoinChatGroupRsp,
-                        OnEvtJoinChatGroupInd: ImService.handleOnEvtJoinChatGroupInd,
-                        OnEvtDelChatGroupMemberResult: ImService.handleOnEvtDelChatGroupMemberResult,
-                        OnEvtLeaveChatGroupResult: ImService.handleOnEvtLeaveChatGroupResult,
-                        OnEvtChatGroupInfoUpdate: ImService.handleOnEvtChatGroupInfoUpdate,
-                        OnEvtInputtingStatusInd: ImService.handleOnEvtInputtingStatusInd,
-                        OnEvtChatMsg: ImService.handleOnEvtChatMsg,
-                        OnEvtBatchChatMsg: ImService.handleOnEvtBatchChatMsg,
-                        OnEvtSystemBulletin: ImService.handleOnEvtSystemBulletin,
-                        OnEvtSms: ImService.handleOnEvtSms,
-                        OnEvtUndeliverInd: ImService.handleOnEvtUndeliverInd,
-                        OnEvtMsgReadInd: ImService.handleOnEvtMsgReadInd,
-                        OnEvtMsgSendResult: ImService.handleOnEvtMsgSendResult,
-                        OnEvtMsgWithdrawResult: ImService.handleOnEvtMsgWithdrawResult,
-                        OnEvtMsgWithdrawInd: ImService.handleOnEvtMsgWithdrawInd,
-                    });
-                    return [2];
-                });
-            });
-        };
-        ;
-        ImService.handleOnEvtAddFriendInd = function (data) {
-            observer_1.default.publish('OnEvtAddFriendInd', data);
-        };
-        ImService.handleOnEvtUserStatusUpdate = function (data) {
-            observer_1.default.publish('OnEvtUserStatusUpdate', data);
-        };
-        ImService.handleOnEvtUserInfoUpdate = function (data) {
-            observer_1.default.publish('OnEvtUserInfoUpdate', data);
-        };
-        ImService.handleOnEvtJoinChatGroupReq = function (data) {
-            observer_1.default.publish('OnEvtJoinChatGroupReq', data);
-        };
-        ImService.handleOnEvtJoinChatGroupRsp = function (data) {
-            observer_1.default.publish('OnEvtJoinChatGroupRsp', data);
-        };
-        ImService.handleOnEvtJoinChatGroupInd = function (data) {
-            observer_1.default.publish('OnEvtJoinChatGroupInd', data);
-        };
-        ImService.handleOnEvtDelChatGroupMemberResult = function (data) {
-            observer_1.default.publish('OnEvtDelChatGroupMemberResult', data);
-        };
-        ImService.handleOnEvtLeaveChatGroupResult = function (data) {
-            observer_1.default.publish('OnEvtLeaveChatGroupResult', data);
-        };
-        ImService.handleOnEvtChatGroupInfoUpdate = function (data) {
-            observer_1.default.publish('OnEvtChatGroupInfoUpdate', data);
-        };
-        ImService.handleOnEvtInputtingStatusInd = function (data) {
-            observer_1.default.publish('OnEvtInputtingStatusInd', data);
-        };
-        ImService.handleOnEvtChatMsg = function (data) {
-            observer_1.default.publish('OnEvtChatMsg', data);
-        };
-        ImService.handleOnEvtBatchChatMsg = function (data) {
-            observer_1.default.publish('OnEvtBatchChatMsg', data);
-        };
-        ImService.handleOnEvtSystemBulletin = function (data) {
-            observer_1.default.publish('OnEvtSystemBulletin', data);
-        };
-        ImService.handleOnEvtSms = function (data) {
-            observer_1.default.publish('OnEvtSms', data);
-        };
-        ImService.handleOnEvtUndeliverInd = function (data) {
-            observer_1.default.publish('OnEvtUndeliverInd', data);
-        };
-        ImService.handleOnEvtMsgReadInd = function (data) {
-            observer_1.default.publish('OnEvtMsgReadInd', data);
-        };
-        ImService.handleOnEvtMsgSendResult = function (data) {
-            observer_1.default.publish('OnEvtMsgSendResult', data);
-        };
-        ImService.handleOnEvtMsgWithdrawResult = function (data) {
-            observer_1.default.publish('OnEvtMsgWithdrawResult', data);
-        };
-        ImService.handleOnEvtMsgWithdrawInd = function (data) {
-            observer_1.default.publish('OnEvtMsgWithdrawInd', data);
-        };
-        return ImService;
-    }());
-    exports.default = ImService;
-    ;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 354 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(355), __webpack_require__(6), __webpack_require__(11), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkIm_1, util_1, config_1, tsdkManagerWrapper_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var TsdkImWrapper = (function () {
-        function TsdkImWrapper() {
-            if (TsdkImWrapper._instance) {
-                throw new Error("Error: Instantiation failed: Use TsdkImWrapper.getInstance() instead of new.");
-            }
-            TsdkImWrapper._instance = this;
-        }
-        TsdkImWrapper.getInstance = function () {
-            return TsdkImWrapper._instance;
-        };
-        TsdkImWrapper.prototype.build = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    util_1.default.info("TsdkImWrapper", "step in TsdkImWrapper to build");
-                    if (!TsdkImWrapper.tsdkIm) {
-                        if (config_1.CloudEC_CONFIG.INVOKE_MODE == 1) {
-                            TsdkImWrapper.tsdkIm = new tsdkIm_1.default({
-                                socket: tsdkManagerWrapper_1.default.tsdkServiceSocket
-                            });
-                        }
-                        else {
-                            TsdkImWrapper.tsdkIm = new tsdkIm_1.default({
-                                ffi: tsdkManagerWrapper_1.default.tsdkFFI
-                            });
-                        }
-                    }
-                    return [2];
-                });
-            });
-        };
-        TsdkImWrapper.prototype.getUserInfo = function (account) {
-            util_1.default.info("TsdkImWrapper", "getUserInfo");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.getUserInfo(account, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.setUserInfo = function (userInfo) {
-            util_1.default.info("TsdkImWrapper", "setUserInfo");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.setUserInfo(userInfo, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.setPersonalStatus = function (statusInfo) {
-            util_1.default.info("TsdkImWrapper", "setPersonalStatus");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.setPersonalStatus(statusInfo, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.detectUserStatus = function (detectParam) {
-            util_1.default.info("TsdkImWrapper", "detectUserStatus");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.detectUserStatus(detectParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.getContactAndChatGroups = function (reqParam) {
-            util_1.default.info("TsdkImWrapper", "getContactAndChatGroups");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.getContactAndChatGroups(reqParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.addContact = function (reqParam) {
-            util_1.default.info("TsdkImWrapper", "addContact");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.addContact(reqParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.delContact = function (contactId, groupId) {
-            util_1.default.info("TsdkImWrapper", "delContact");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.delContact(contactId, groupId, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.modifyContact = function (contact) {
-            util_1.default.info("TsdkImWrapper", "modifyContact");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.modifyContact(contact, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.addFriend = function (reqParam) {
-            util_1.default.info("TsdkImWrapper", "addFriend");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.addFriend(reqParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.delFriend = function (contactId, groupId) {
-            util_1.default.info("TsdkImWrapper", "delFriend");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.delFriend(contactId, groupId, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.addContactGroup = function (reqParam) {
-            util_1.default.info("TsdkImWrapper", "addContactGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.addContactGroup(reqParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.delContactGroup = function (groupId) {
-            util_1.default.info("TsdkImWrapper", "delContactGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.delContactGroup(groupId, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.modifyContactGroup = function (groupInfo) {
-            util_1.default.info("TsdkImWrapper", "modifyContactGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.modifyContactGroup(groupInfo, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.updateContactGroupOrder = function (groupOrder) {
-            util_1.default.info("TsdkImWrapper", "updateContactGroupOrder");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.updateContactGroupOrder(groupOrder, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.moveContact = function (reqParam) {
-            util_1.default.info("TsdkImWrapper", "moveContact");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.moveContact(reqParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.addChatGroup = function (groupInfo) {
-            util_1.default.info("TsdkImWrapper", "addChatGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.addChatGroup(groupInfo, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.delChatGroup = function (groupType, groupId) {
-            util_1.default.info("TsdkImWrapper", "delChatGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.delChatGroup(groupType, groupId, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.modifyChatGroup = function (opType, groupInfo) {
-            util_1.default.info("TsdkImWrapper", "modifyChatGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.modifyChatGroup(opType, groupInfo, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.queryChatGroups = function (groupQueryParam) {
-            util_1.default.info("TsdkImWrapper", "queryChatGroups");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.queryChatGroups(groupQueryParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.getChatGroupDetail = function (groupId) {
-            util_1.default.info("TsdkImWrapper", "getChatGroupDetail");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.getChatGroupDetail(groupId, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.getChatGroupMembers = function (memberGetParam) {
-            util_1.default.info("TsdkImWrapper", "getChatGroupMembers");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.getChatGroupMembers(memberGetParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.requestJoinChatGroup = function (reqJoinGroupParam) {
-            util_1.default.info("TsdkImWrapper", "requestJoinChatGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.requestJoinChatGroup(reqJoinGroupParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.confirmJoinChatGroup = function (confirmJoinGroupParam) {
-            util_1.default.info("TsdkImWrapper", "confirmJoinChatGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.confirmJoinChatGroup(confirmJoinGroupParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.delChatGroupMember = function (groupType, memberAccount, groupId) {
-            util_1.default.info("TsdkImWrapper", "delChatGroupMember");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.delChatGroupMember(groupType, memberAccount, groupId, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.leaveChatGroup = function (groupType, groupId) {
-            util_1.default.info("TsdkImWrapper", "leaveChatGroup");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.leaveChatGroup(groupType, groupId, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.setInputting = function (peerAccount, isInputting) {
-            util_1.default.info("TsdkImWrapper", "setInputting");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.setInputting(peerAccount, isInputting, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.sendMessage = function (chatMsg) {
-            util_1.default.info("TsdkImWrapper", "sendMessage");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.sendMessage(chatMsg, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.withdrawMessage = function (withdrawMsgReq) {
-            util_1.default.info("TsdkImWrapper", "withdrawMessage");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.withdrawMessage(withdrawMsgReq, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.setMessageRead = function (setReadParam) {
-            util_1.default.info("TsdkImWrapper", "setMessageRead");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.setMessageRead(setReadParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.queryHistoryMessage = function (queryParam) {
-            util_1.default.info("TsdkImWrapper", "queryHistoryMessage");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.queryHistoryMessage(queryParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.deleteHistoryMessage = function (delParam) {
-            util_1.default.info("TsdkImWrapper", "deleteHistoryMessage");
-            var callback = { response: {} };
-            var promise = new Promise(function (resolve, reject) {
-                callback.response = function (data) {
-                    resolve(data);
-                };
-            });
-            TsdkImWrapper.tsdkIm.deleteHistoryMessage(delParam, callback);
-            return promise;
-        };
-        ;
-        TsdkImWrapper.prototype.registerImEvent = function (callbacks) {
-            TsdkImWrapper.tsdkIm.setBasicImEvent(callbacks);
-        };
-        TsdkImWrapper._instance = new TsdkImWrapper();
-        return TsdkImWrapper;
-    }());
-    exports.default = TsdkImWrapper;
-    ;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 355 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var TsdkIm = (function () {
-        function TsdkIm(opts) {
-            if (config_1.CloudEC_CONFIG.INVOKE_MODE == 1) {
-                if (opts.socket) {
-                    this.tsdkInvokeTunnel = opts.socket;
-                }
-            }
-            else {
-                if (opts.ffi) {
-                    this.tsdkInvokeTunnel = opts.ffi;
-                }
-            }
-        }
-        ;
-        TsdkIm.prototype.sendData = function (data) {
-            var sendStr = JSON.stringify(data);
-            if (this.tsdkInvokeTunnel) {
-                this.tsdkInvokeTunnel.sendData(sendStr);
-            }
-        };
-        ;
-        TsdkIm.prototype.callbackResponse = function (callbacks, rsp) {
-            if (callbacks && typeof callbacks.response == "function") {
-                this.tsdkInvokeTunnel.rspFuncs[rsp] = callbacks.response;
-            }
-        };
-        ;
-        TsdkIm.prototype.getUserInfo = function (account, callbacks) {
-            this.callbackResponse(callbacks, 6001);
-            var data = {
-                "cmd": 0x11771,
-                "description": "tsdk_get_user_info",
-                "param": {
-                    "account": account
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.setUserInfo = function (userInfo, callbacks) {
-            this.callbackResponse(callbacks, 6002);
-            var data = {
-                "cmd": 0x11772,
-                "description": "tsdk_set_user_info",
-                "param": {
-                    "userInfo": userInfo
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.setPersonalStatus = function (statusInfo, callbacks) {
-            this.callbackResponse(callbacks, 6003);
-            var data = {
-                "cmd": 0x11773,
-                "description": "tsdk_set_personal_status",
-                "param": {
-                    "statusInfo": statusInfo
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.detectUserStatus = function (detectParam, callbacks) {
-            this.callbackResponse(callbacks, 6004);
-            var data = {
-                "cmd": 0x11774,
-                "description": "tsdk_detect_user_status",
-                "param": {
-                    "detectParam": detectParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.getContactAndChatGroups = function (reqParam, callbacks) {
-            this.callbackResponse(callbacks, 6005);
-            var data = {
-                "cmd": 0x11775,
-                "description": "tsdk_get_contact_and_chat_groups",
-                "param": {
-                    "reqParam": reqParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.addContact = function (reqParam, callbacks) {
-            this.callbackResponse(callbacks, 6006);
-            var data = {
-                "cmd": 0x11776,
-                "description": "tsdk_add_contact",
-                "param": {
-                    "reqParam": reqParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.delContact = function (contactId, groupId, callbacks) {
-            this.callbackResponse(callbacks, 6007);
-            var data = {
-                "cmd": 0x11777,
-                "description": "tsdk_del_contact",
-                "param": {
-                    "contactId": contactId, "groupId": groupId
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.modifyContact = function (contact, callbacks) {
-            this.callbackResponse(callbacks, 6008);
-            var data = {
-                "cmd": 0x11778,
-                "description": "tsdk_modify_contact",
-                "param": {
-                    "contact": contact
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.addFriend = function (reqParam, callbacks) {
-            this.callbackResponse(callbacks, 6009);
-            var data = {
-                "cmd": 0x11779,
-                "description": "tsdk_add_friend",
-                "param": {
-                    "reqParam": reqParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.delFriend = function (contactId, groupId, callbacks) {
-            this.callbackResponse(callbacks, 6010);
-            var data = {
-                "cmd": 0x1177a,
-                "description": "tsdk_del_friend",
-                "param": {
-                    "contactId": contactId, "groupId": groupId
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.addContactGroup = function (reqParam, callbacks) {
-            this.callbackResponse(callbacks, 6011);
-            var data = {
-                "cmd": 0x1177b,
-                "description": "tsdk_add_contact_group",
-                "param": {
-                    "reqParam": reqParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.delContactGroup = function (groupId, callbacks) {
-            this.callbackResponse(callbacks, 6012);
-            var data = {
-                "cmd": 0x1177c,
-                "description": "tsdk_del_contact_group",
-                "param": {
-                    "groupId": groupId
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.modifyContactGroup = function (groupInfo, callbacks) {
-            this.callbackResponse(callbacks, 6013);
-            var data = {
-                "cmd": 0x1177d,
-                "description": "tsdk_modify_contact_group",
-                "param": {
-                    "groupInfo": groupInfo
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.updateContactGroupOrder = function (groupOrder, callbacks) {
-            this.callbackResponse(callbacks, 6014);
-            var data = {
-                "cmd": 0x1177e,
-                "description": "tsdk_update_contact_group_order",
-                "param": {
-                    "groupOrder": groupOrder
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.moveContact = function (reqParam, callbacks) {
-            this.callbackResponse(callbacks, 6015);
-            var data = {
-                "cmd": 0x1177f,
-                "description": "tsdk_move_contact",
-                "param": {
-                    "reqParam": reqParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.addChatGroup = function (groupInfo, callbacks) {
-            this.callbackResponse(callbacks, 6016);
-            var data = {
-                "cmd": 0x11780,
-                "description": "tsdk_add_chat_group",
-                "param": {
-                    "groupInfo": groupInfo
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.delChatGroup = function (groupType, groupId, callbacks) {
-            this.callbackResponse(callbacks, 6017);
-            var data = {
-                "cmd": 0x11781,
-                "description": "tsdk_del_chat_group",
-                "param": {
-                    "groupType": groupType, "groupId": groupId
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.modifyChatGroup = function (opType, groupInfo, callbacks) {
-            this.callbackResponse(callbacks, 6018);
-            var data = {
-                "cmd": 0x11782,
-                "description": "tsdk_modify_chat_group",
-                "param": {
-                    "opType": opType, "groupInfo": groupInfo
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.queryChatGroups = function (groupQueryParam, callbacks) {
-            this.callbackResponse(callbacks, 6019);
-            var data = {
-                "cmd": 0x11783,
-                "description": "tsdk_query_chat_groups",
-                "param": {
-                    "groupQueryParam": groupQueryParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.getChatGroupDetail = function (groupId, callbacks) {
-            this.callbackResponse(callbacks, 6020);
-            var data = {
-                "cmd": 0x11784,
-                "description": "tsdk_get_chat_group_detail",
-                "param": {
-                    "groupId": groupId
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.getChatGroupMembers = function (memberGetParam, callbacks) {
-            this.callbackResponse(callbacks, 6021);
-            var data = {
-                "cmd": 0x11785,
-                "description": "tsdk_get_chat_group_members",
-                "param": {
-                    "memberGetParam": memberGetParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.requestJoinChatGroup = function (reqJoinGroupParam, callbacks) {
-            this.callbackResponse(callbacks, 6022);
-            var data = {
-                "cmd": 0x11786,
-                "description": "tsdk_request_join_chat_group",
-                "param": {
-                    "reqJoinGroupParam": reqJoinGroupParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.confirmJoinChatGroup = function (confirmJoinGroupParam, callbacks) {
-            this.callbackResponse(callbacks, 6023);
-            var data = {
-                "cmd": 0x11787,
-                "description": "tsdk_confirm_join_chat_group",
-                "param": {
-                    "confirmJoinGroupParam": confirmJoinGroupParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.delChatGroupMember = function (groupType, memberAccount, groupId, callbacks) {
-            this.callbackResponse(callbacks, 6024);
-            var data = {
-                "cmd": 0x11788,
-                "description": "tsdk_del_chat_group_member",
-                "param": {
-                    "groupType": groupType, "memberAccount": memberAccount, "groupId": groupId
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.leaveChatGroup = function (groupType, groupId, callbacks) {
-            this.callbackResponse(callbacks, 6025);
-            var data = {
-                "cmd": 0x11789,
-                "description": "tsdk_leave_chat_group",
-                "param": {
-                    "groupType": groupType, "groupId": groupId
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.setInputting = function (peerAccount, isInputting, callbacks) {
-            this.callbackResponse(callbacks, 6026);
-            var data = {
-                "cmd": 0x1178a,
-                "description": "tsdk_set_inputting",
-                "param": {
-                    "peerAccount": peerAccount, "isInputting": isInputting
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.sendMessage = function (chatMsg, callbacks) {
-            this.callbackResponse(callbacks, 6027);
-            var data = {
-                "cmd": 0x1178b,
-                "description": "tsdk_send_message",
-                "param": {
-                    "chatMsg": chatMsg
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.withdrawMessage = function (withdrawMsgReq, callbacks) {
-            this.callbackResponse(callbacks, 6028);
-            var data = {
-                "cmd": 0x1178c,
-                "description": "tsdk_withdraw_message",
-                "param": {
-                    "withdrawMsgReq": withdrawMsgReq
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.setMessageRead = function (setReadParam, callbacks) {
-            this.callbackResponse(callbacks, 6029);
-            var data = {
-                "cmd": 0x1178d,
-                "description": "tsdk_set_message_read",
-                "param": {
-                    "setReadParam": setReadParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.queryHistoryMessage = function (queryParam, callbacks) {
-            this.callbackResponse(callbacks, 6030);
-            var data = {
-                "cmd": 0x1178e,
-                "description": "tsdk_query_history_message",
-                "param": {
-                    "queryParam": queryParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.deleteHistoryMessage = function (delParam, callbacks) {
-            this.callbackResponse(callbacks, 6031);
-            var data = {
-                "cmd": 0x1178f,
-                "description": "tsdk_delete_history_message",
-                "param": {
-                    "delParam": delParam
-                }
-            };
-            this.sendData(data);
-        };
-        ;
-        TsdkIm.prototype.setBasicImEvent = function (callbacks) {
-            if (callbacks && typeof callbacks.OnEvtAddFriendInd == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6001] = callbacks.OnEvtAddFriendInd;
-            }
-            if (callbacks && typeof callbacks.OnEvtUserStatusUpdate == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6002] = callbacks.OnEvtUserStatusUpdate;
-            }
-            if (callbacks && typeof callbacks.OnEvtUserInfoUpdate == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6003] = callbacks.OnEvtUserInfoUpdate;
-            }
-            if (callbacks && typeof callbacks.OnEvtJoinChatGroupReq == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6004] = callbacks.OnEvtJoinChatGroupReq;
-            }
-            if (callbacks && typeof callbacks.OnEvtJoinChatGroupRsp == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6005] = callbacks.OnEvtJoinChatGroupRsp;
-            }
-            if (callbacks && typeof callbacks.OnEvtJoinChatGroupInd == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6006] = callbacks.OnEvtJoinChatGroupInd;
-            }
-            if (callbacks && typeof callbacks.OnEvtDelChatGroupMemberResult == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6007] = callbacks.OnEvtDelChatGroupMemberResult;
-            }
-            if (callbacks && typeof callbacks.OnEvtLeaveChatGroupResult == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6008] = callbacks.OnEvtLeaveChatGroupResult;
-            }
-            if (callbacks && typeof callbacks.OnEvtChatGroupInfoUpdate == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6009] = callbacks.OnEvtChatGroupInfoUpdate;
-            }
-            if (callbacks && typeof callbacks.OnEvtInputtingStatusInd == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6010] = callbacks.OnEvtInputtingStatusInd;
-            }
-            if (callbacks && typeof callbacks.OnEvtChatMsg == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6011] = callbacks.OnEvtChatMsg;
-            }
-            if (callbacks && typeof callbacks.OnEvtBatchChatMsg == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6012] = callbacks.OnEvtBatchChatMsg;
-            }
-            if (callbacks && typeof callbacks.OnEvtSystemBulletin == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6013] = callbacks.OnEvtSystemBulletin;
-            }
-            if (callbacks && typeof callbacks.OnEvtSms == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6014] = callbacks.OnEvtSms;
-            }
-            if (callbacks && typeof callbacks.OnEvtUndeliverInd == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6015] = callbacks.OnEvtUndeliverInd;
-            }
-            if (callbacks && typeof callbacks.OnEvtMsgReadInd == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6016] = callbacks.OnEvtMsgReadInd;
-            }
-            if (callbacks && typeof callbacks.OnEvtMsgSendResult == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6017] = callbacks.OnEvtMsgSendResult;
-            }
-            if (callbacks && typeof callbacks.OnEvtMsgWithdrawResult == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6018] = callbacks.OnEvtMsgWithdrawResult;
-            }
-            if (callbacks && typeof callbacks.OnEvtMsgWithdrawInd == "function") {
-                this.tsdkInvokeTunnel.notifyFuncs[6019] = callbacks.OnEvtMsgWithdrawInd;
-            }
-        };
-        ;
-        return TsdkIm;
-    }());
-    exports.default = TsdkIm;
-    ;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 356 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(34), __webpack_require__(357)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkUiPluginWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(45), __webpack_require__(354)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, observer_1, tsdkUiPluginWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var UiPluginService = (function () {
@@ -25966,7 +22162,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 357 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -26004,7 +22200,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(358), __webpack_require__(6), __webpack_require__(11), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkUiPlugin_1, util_1, config_1, tsdkManagerWrapper_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(355), __webpack_require__(6), __webpack_require__(12), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, tsdkUiPlugin_1, util_1, config_1, tsdkManagerWrapper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkUiPluginWrapper = (function () {
@@ -26158,10 +22354,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 
 
 /***/ }),
-/* 358 */
+/* 355 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TsdkUiPlugin = (function () {
@@ -26383,7 +22579,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 359 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, util_1, Util) {

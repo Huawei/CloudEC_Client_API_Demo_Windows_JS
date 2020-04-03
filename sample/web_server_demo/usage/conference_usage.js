@@ -51,7 +51,7 @@ function login() {
 				document.getElementById("cloudec_conflist_div").dispatchEvent(event);
 				event = new Event('cloudec:login');
 				document.getElementById("configPanel").dispatchEvent(event);
-				client.setDisplayName(evt.info.sipAccount);
+				client.setDisplayName(evt.info.userAccount);
 			}
 
 		});
