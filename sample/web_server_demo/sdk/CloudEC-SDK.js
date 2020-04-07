@@ -2008,7 +2008,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         number: attendees[i].number,
                         role: attendees[i].role,
                         email: attendees[i].email,
-                        accountId: attendees[i].number,
+                        accountId: "",
                     };
                     configedAttendees.push(tsdkAttendeeBaseInfo);
                 }
@@ -2095,7 +2095,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         number: attendees[i].number,
                         role: attendees[i].role,
                         email: attendees[i].email,
-                        accountId: attendees[i].number,
+                        accountId: "",
                     };
                     configedAttendees.push(tsdkAttendeeBaseInfo_1);
                 }
@@ -2363,7 +2363,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     number: attendees[i].number,
                     role: attendees[i].role,
                     email: attendees[i].email,
-                    accountId: attendees[i].number,
+                    accountId: "",
                 };
                 configedAttendees[i] = TsdkAttendeeBaseInfo;
             }
@@ -2623,7 +2623,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             number: attendees[i].number,
                             role: attendees[i].role,
                             email: attendees[i].email,
-                            accountId: attendees[i].number,
+                            accountId: "",
                         };
                         configedAttendees.push(tsdkAttendeeBaseInfo);
                     }
