@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CloudLinkMeetingDaemon"
-#define MyAppVersion "19.1.18"
+#define MyAppVersion "19.1.19"
 #define MyAppPublisher "Huawei Inc."
 #define MyAppCopyright "Copyright (c) Huawei Technologies Co., Ltd. 2010-2019. All rights reserved."
 #define MyAppExeName "CloudLinkMeetingDaemon.exe"

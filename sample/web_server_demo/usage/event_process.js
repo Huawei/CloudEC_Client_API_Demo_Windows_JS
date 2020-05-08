@@ -498,6 +498,10 @@
         OnEvtConfStartShareFailed:function(ret) {
             console.log("OnEvtConfStartShareFailed"+ JSON.stringify(ret));
         },
+
+        OnEvtNoStream:function(ret) {
+            console.log("OnEvtNoStream"+ JSON.stringify(ret));
+        },
     }
 
     root.client = cloudEC.createClient(listeners);

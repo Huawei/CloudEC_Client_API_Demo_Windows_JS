@@ -318,6 +318,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (typeof (listeners.OnEvtConfStartShareFailed) != "undefined") {
                 tsdkClientAdapt.on('OnEvtConfStartShareFailed', listeners.OnEvtConfStartShareFailed);
             }
+            if (typeof (listeners.OnEvtNoStream) != "undefined") {
+                tsdkClientAdapt.on('OnEvtNoStream', listeners.OnEvtNoStream);
+            }
             return tsdkClientAdapt;
         };
         CloudEC.prototype.configure = function (options) {
@@ -729,6 +732,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 OnEvtMediaErrorInfo: function (ret) {
                     _this.notify("OnEvtMediaErrorInfo", ret);
                 },
+                OnEvtNoStream: function (ret) {
+                    _this.notify("OnEvtNoStream", ret);
+                },
                 OnEvtSetIptServiceResult: function (ret) {
                     var evt;
                     if (ret.param.setServiceResult.reasonCode == 0) {
@@ -915,6 +921,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                     var evt = { result: true, info: "ower change" };
                     if (ret.param.owner) {
                         var owner = ret.param.owner;
+                        console.log("OnEvtAsOwnerChange, actionType:" + ret.param.actionType + "isSelf:" + owner.statusInfo.isSelf);
                         if (ret.param.actionType == 1 && owner.statusInfo.isSelf == 1) {
                             _this.tsdkClient.appShareStart(0, _this.confinfo.confHandle, function (ret) { });
                         }
@@ -1334,7 +1341,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 supportCtd: 0,
                 supportIm: serverConfig_1.CloudEC_SERVERCONFIG.IS_SUPPORT_IM,
                 supportRichMediaMessage: 0,
-                supportEnterpriseAddressBook: 1,
+                supportEnterpriseAddressBook: 0,
                 useUiPlugin: 1,
                 isWsInvokeMode: 1,
                 supportSvcConfCaps: serverConfig_1.CloudEC_SERVERCONFIG.IS_SUPPORT_SVC_CONFERENCE,
@@ -13338,6 +13345,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             if (typeof (listeners.OnEvtMediaErrorInfo) != "undefined") {
                 tsdkClient.on('OnEvtMediaErrorInfo', listeners.OnEvtMediaErrorInfo);
             }
+            if (typeof (listeners.OnEvtNoStream) != "undefined") {
+                tsdkClient.on('OnEvtNoStream', listeners.OnEvtNoStream);
+            }
             if (typeof (listeners.OnEvtBookConfResult) != "undefined") {
                 tsdkClient.on('OnEvtBookConfResult', listeners.OnEvtBookConfResult);
             }
@@ -14276,6 +14286,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
             observer_1.default.subscribe('OnEvtMediaErrorInfo', function (ret) {
                 _this.notify("OnEvtMediaErrorInfo", ret);
+            });
+            observer_1.default.subscribe('OnEvtNoStream', function (ret) {
+                _this.notify("OnEvtNoStream", ret);
             });
         };
         ;
@@ -15235,6 +15248,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         OnEvtIptServiceInfo: CallService.handleOnEvtIptServiceInfo,
                         OnEvtStatisticInfo: CallService.handleOnEvtStatisticInfo,
                         OnEvtMediaErrorInfo: CallService.handleOnEvtMediaErrorInfo,
+                        OnEvtNoStream: CallService.handleOnEvtNoStream,
                     });
                     return [2];
                 });
@@ -15327,6 +15341,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         };
         CallService.handleOnEvtMediaErrorInfo = function (data) {
             observer_1.default.publish('OnEvtMediaErrorInfo', data);
+        };
+        CallService.handleOnEvtNoStream = function (data) {
+            observer_1.default.publish('OnEvtNoStream', data);
         };
         return CallService;
     }());
@@ -16549,6 +16566,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             if (callbacks && typeof callbacks.OnEvtMediaErrorInfo == "function") {
                 this.tsdkInvokeTunnel.notifyFuncs[2029] = callbacks.OnEvtMediaErrorInfo;
+            }
+            if (callbacks && typeof callbacks.OnEvtNoStream == "function") {
+                this.tsdkInvokeTunnel.notifyFuncs[2030] = callbacks.OnEvtNoStream;
             }
         };
         ;
